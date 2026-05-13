@@ -1,133 +1,44 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
-icon: 'star'
+title: "SpaPortal API documentation"
+description: "Build booking and availability integrations with the SpaPortal public API."
+icon: "house"
 ---
 
-## Setting up
+SpaPortal API gives booking clients access to destinations, hotels, visit types, prices, availability, and bookings.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
+Use these docs to integrate an external booking flow with SpaPortal.
 
 <Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Make your first authenticated request.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="API v1" icon="square-terminal" href="/api/v1">
+    Browse the current public API reference.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Authentication" icon="key" href="/guides/authentication">
+    Send your API key in the `Authorization` header.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Booking flow" icon="calendar-check" href="/guides/booking">
+    Combine catalog, availability, price, and booking endpoints.
   </Card>
 </Columns>
 
-## Create beautiful pages
+## API versions
 
-Everything you need to create world-class documentation.
+API v1 is the current public API. It is used by booking clients such as SpaBooking.cz, SpaBooking.de, and FrantiskovyLazne.cz.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+API v2 is reserved for new endpoints and breaking improvements. The first documented v2 endpoint is the bulk calendar dates endpoint.
 
-## Make your content agent ready
+## Base URLs
 
-Make your docs work for humans and AI agents alike.
+Use the production API for live traffic:
 
-<Columns cols={2}>
-  <Card
-    title="Prompt component"
-    icon="robot"
-    href="/agent-ready/prompt"
-  >
-    Embed shareable AI prompts readers can copy or open in Cursor.
-  </Card>
-  <Card
-    title="Visibility"
-    icon="eye"
-    href="/agent-ready/visibility"
-  >
-    Show different content to humans and agents reading your docs.
-  </Card>
-  <Card
-    title="Contextual menu"
-    icon="bolt"
-    href="/agent-ready/contextual"
-  >
-    Give readers one-click access to Claude, ChatGPT, Cursor, and more.
-  </Card>
-  <Card
-    title="AI coding tools"
-    icon="wand-magic-sparkles"
-    href="/ai-tools/claude-code"
-  >
-    Set up Claude Code, Cursor, or Windsurf with Mintlify's skill.
-  </Card>
-</Columns>
+```txt
+https://spaportal.cz/api/v1
+```
 
-## Need inspiration?
+Use the staging API for integration testing:
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+```txt
+https://staging.spaportal.cz/api/v1
+```

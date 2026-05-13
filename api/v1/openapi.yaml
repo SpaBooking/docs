@@ -1,0 +1,1864 @@
+openapi: 3.0.3
+info:
+  title: SpaPortal API v1
+  version: "1.0"
+  description: Public API for booking clients that integrate with SpaPortal.
+servers:
+  - url: https://spaportal.cz/api/v1
+    description: Production
+  - url: https://staging.spaportal.cz/api/v1
+    description: Staging
+security:
+  - bearerAuth: []
+  - accessTokenQuery: []
+tags:
+  - name: System
+  - name: Catalog
+  - name: Availability
+  - name: Pricing
+  - name: Booking
+paths:
+  /check:
+    get:
+      tags: [System]
+      summary: Check API status
+      operationId: checkApiStatus
+      security: []
+      responses:
+        "200":
+          description: API status.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /destinations:
+    get:
+      tags: [Catalog]
+      summary: Get destinations
+      operationId: getDestinations
+      description: Returns all destinations available to the authenticated API key.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+      responses:
+        "200":
+          description: Destinations available to the API key.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Destination"
+              examples:
+                default:
+                  $ref: "#/components/examples/DestinationsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /hotels:
+    get:
+      tags: [Catalog]
+      summary: Get hotels
+      operationId: getHotels
+      description: |
+        Returns hotels matching the supplied filters.
+
+        `lowest_price` is the cheapest matching room price per night per guest. When a two-bed room is priced per room, the API returns the per-guest display price.
+
+        `stars`, `image`, and `thumbnail` can be `null`. Set `include_room_types=false` when you do not need nested room type data.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/Max"
+        - $ref: "#/components/parameters/Offset"
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by destination ID.
+        - name: visit_type_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by visit type ID.
+        - name: number_of_beds
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+          description: Filter by room occupancy.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+        - name: include_room_types
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: Include room types in the hotel response.
+      responses:
+        "200":
+          description: Hotels matching the filters.
+          headers:
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCount"
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hotel"
+              examples:
+                default:
+                  $ref: "#/components/examples/HotelsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /hotels/{hotelId}:
+    get:
+      tags: [Catalog]
+      summary: Get hotel
+      operationId: getHotel
+      description: |
+        Returns one hotel by ID.
+
+        The `lowest_price` semantics match `GET /hotels`: the value is a per-night, per-guest display price for the cheapest matching room.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: hotelId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Hotel ID.
+        - name: visit_type_id
+          in: query
+          schema:
+            type: integer
+          description: Filter room and price data by visit type ID.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+      responses:
+        "200":
+          description: Hotel detail.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hotel"
+              examples:
+                default:
+                  $ref: "#/components/examples/HotelResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /visit-types:
+    get:
+      tags: [Catalog]
+      summary: Get visit types
+      operationId: getVisitTypes
+      description: |
+        Returns visit types matching the supplied filters.
+
+        `reservation_time_span` can be `DAYS` or `WEEKS`. `procedure_frequency` can be `DAY`, `WEEK`, or `VISIT`.
+
+        Each visit type can include applicable loyalty programs and hotel-level lowest prices.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/Max"
+        - $ref: "#/components/parameters/Offset"
+        - name: hotel_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by hotel ID.
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by destination ID.
+        - name: hotel_stars_min
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+          description: Minimum hotel star rating.
+        - name: hotel_stars_max
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+          description: Maximum hotel star rating.
+        - name: number_of_beds
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+          description: Filter by room occupancy.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+        - name: nights_min
+          in: query
+          schema:
+            type: integer
+          description: Minimum number of nights.
+        - name: nights_max
+          in: query
+          schema:
+            type: integer
+          description: Maximum number of nights.
+      responses:
+        "200":
+          description: Visit types matching the filters.
+          headers:
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCount"
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VisitType"
+              examples:
+                default:
+                  $ref: "#/components/examples/VisitTypesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /visit-type-categories:
+    get:
+      tags: [Catalog]
+      summary: Get visit type categories
+      operationId: getVisitTypeCategories
+      description: Returns visit type categories. Set `include_visit_types=true` to include visit types inside each category.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/Max"
+        - $ref: "#/components/parameters/Offset"
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by destination ID.
+        - name: number_of_beds
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+          description: Filter nested visit types by room occupancy.
+        - name: include_visit_types
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Include matching visit types under each category.
+      responses:
+        "200":
+          description: Visit type categories.
+          headers:
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCount"
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VisitTypeCategory"
+              examples:
+                default:
+                  $ref: "#/components/examples/VisitTypeCategoriesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /visit-type-categories/{categoryId}:
+    get:
+      tags: [Catalog]
+      summary: Get visit type category
+      operationId: getVisitTypeCategory
+      description: Returns one visit type category by ID. Set `include_visit_types=true` to include visit types inside the category.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Visit type category ID.
+        - name: include_visit_types
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Include matching visit types in the category.
+      responses:
+        "200":
+          description: Visit type category detail.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VisitTypeCategory"
+              examples:
+                default:
+                  $ref: "#/components/examples/VisitTypeCategoryResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /tags:
+    get:
+      tags: [Catalog]
+      summary: Get tags
+      operationId: getTags
+      description: Returns tags used to label visit types with commercial or marketing metadata.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/Max"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Tags available to the API key.
+          headers:
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCount"
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+              examples:
+                default:
+                  $ref: "#/components/examples/TagsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /loyalty-programs:
+    get:
+      tags: [Catalog]
+      summary: Get loyalty programs
+      operationId: getLoyaltyPrograms
+      description: |
+        Returns loyalty programs available to the authenticated API key.
+
+        For shared API keys spanning multiple companies, duplicate programs with the same `id` and localized `name` are deduplicated.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/Max"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: Loyalty programs available to the API key.
+          headers:
+            X-Total-Count:
+              $ref: "#/components/headers/XTotalCount"
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoyaltyProgram"
+              examples:
+                default:
+                  $ref: "#/components/examples/LoyaltyProgramsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /calendar/dates:
+    get:
+      tags: [Availability]
+      summary: Get calendar dates
+      operationId: getCalendarDates
+      description: |
+        Returns calendar dates with availability and price data.
+
+        `selectable` indicates whether the user can start a booking on the date. `price` is `null` when the date is not available or when the query is not specific enough to calculate a final price.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: visit_type_id
+          in: query
+          schema:
+            type: integer
+          description: Visit type ID.
+        - name: hotel_id
+          in: query
+          schema:
+            type: integer
+          description: Hotel ID.
+        - name: room_type_id
+          in: query
+          schema:
+            type: integer
+          description: Room type ID.
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          description: Destination ID.
+        - name: guests
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2
+          description: Number of guests.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+      responses:
+        "200":
+          description: Calendar dates with availability and optional price data.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CalendarDate"
+              examples:
+                default:
+                  $ref: "#/components/examples/CalendarDatesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /calendar/checkouts:
+    get:
+      tags: [Availability]
+      summary: Get checkout dates
+      operationId: getCalendarCheckouts
+      description: |
+        Returns possible checkout dates for a selected check-in date.
+
+        When `room_type_id` or `hotel_id` is supplied, the response contains only checkout dates with available prices.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Check-in date in `YYYY-MM-DD` format.
+        - name: visit_type_id
+          in: query
+          schema:
+            type: integer
+          description: Visit type ID.
+        - name: hotel_id
+          in: query
+          schema:
+            type: integer
+          description: Hotel ID.
+        - name: room_type_id
+          in: query
+          schema:
+            type: integer
+          description: Room type ID.
+      responses:
+        "200":
+          description: Valid checkout dates.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+              examples:
+                default:
+                  $ref: "#/components/examples/CalendarCheckoutsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /price:
+    get:
+      tags: [Pricing]
+      summary: Get price
+      operationId: getPrice
+      description: Returns the final price for a concrete visit type, room type, arrival date, and departure date. Loyalty program IDs can apply guest-level discounts.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: visit_type_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Visit type ID.
+        - name: room_type_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Room type ID.
+        - name: date_from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Arrival date in `YYYY-MM-DD` format.
+        - name: date_to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Departure date in `YYYY-MM-DD` format.
+        - name: guest_1_loyalty_program_id
+          in: query
+          schema:
+            type: integer
+          description: Optional loyalty program ID for the first guest.
+        - name: guest_2_loyalty_program_id
+          in: query
+          schema:
+            type: integer
+          description: Optional loyalty program ID for the second guest.
+      responses:
+        "200":
+          description: Final price by language.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PriceByLanguage"
+              examples:
+                default:
+                  $ref: "#/components/examples/PriceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /lowest-price:
+    get:
+      tags: [Pricing]
+      summary: Get lowest price
+      operationId: getLowestPrice
+      description: Returns the lowest per-night, per-guest display price for a partial or complete search query.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: visit_type_id
+          in: query
+          schema:
+            type: integer
+          description: Visit type ID.
+        - name: hotel_id
+          in: query
+          schema:
+            type: integer
+          description: Hotel ID.
+        - name: destination_id
+          in: query
+          schema:
+            type: integer
+          description: Destination ID.
+        - name: room_type_id
+          in: query
+          schema:
+            type: integer
+          description: Room type ID.
+        - name: number_of_beds
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2
+          description: Filter by occupancy.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+      responses:
+        "200":
+          description: Lowest matching price by language.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LowestPriceByLanguage"
+              examples:
+                default:
+                  $ref: "#/components/examples/LowestPriceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /price-lists:
+    get:
+      tags: [Pricing]
+      summary: Get price lists
+      operationId: getPriceLists
+      description: |
+        Returns price lists for the supplied filters.
+
+        The response includes price per night and, when `nights` is supplied, total price for the requested stay length.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: visit_type_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by visit type ID.
+        - name: hotel_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by hotel ID.
+        - name: beds
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2
+          description: Filter by room occupancy.
+        - name: nights
+          in: query
+          schema:
+            type: integer
+          description: Filter by number of nights.
+        - name: max_nested
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: Maximum number of nested items to return.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+      responses:
+        "200":
+          description: Price list data.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PriceList"
+              examples:
+                default:
+                  $ref: "#/components/examples/PriceListsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /booking:
+    get:
+      tags: [Booking]
+      summary: Get booking configuration
+      operationId: getBookingConfiguration
+      description: |
+        Matches partial booking parameters such as destination name, visit type name, hotel name, room type category, and dates.
+
+        The response can contain any matched destination, visit type, hotel, room type, price, lowest price, and availability. If the query is incomplete or ambiguous, some fields can be omitted or `availability` can be `null`.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - name: destination_name
+          in: query
+          schema:
+            type: string
+          description: Destination name in any supported language.
+        - name: visit_type_name
+          in: query
+          schema:
+            type: string
+          description: Visit type name in any supported language.
+        - name: hotel_name
+          in: query
+          schema:
+            type: string
+          description: Hotel name in any supported language.
+        - name: room_type_category
+          in: query
+          schema:
+            type: string
+          description: Room type category in any supported language.
+        - $ref: "#/components/parameters/DateFrom"
+        - $ref: "#/components/parameters/DateTo"
+      responses:
+        "200":
+          description: Matched booking configuration, availability, and price data.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingConfiguration"
+              examples:
+                default:
+                  $ref: "#/components/examples/BookingConfigurationResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+    post:
+      tags: [Booking]
+      summary: Create booking
+      operationId: createBooking
+      description: |
+        Creates a booking or a non-binding booking request.
+
+        When `binding_booking` is `false`, SpaPortal creates a non-binding request and an operator can contact the customer later. When `binding_booking` is `true`, the billed contact must include an address.
+
+        The first `Accept-Language` value determines the customer communication language for automated emails.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingCreateRequest"
+            examples:
+              default:
+                $ref: "#/components/examples/BookingCreateRequest"
+      responses:
+        "200":
+          description: Created booking or booking request.
+          headers:
+            Content-Language:
+              $ref: "#/components/headers/ContentLanguage"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingCreateResponse"
+              examples:
+                default:
+                  $ref: "#/components/examples/BookingCreateResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Multiple companies matched the booking payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+    accessTokenQuery:
+      type: apiKey
+      in: query
+      name: access_token
+
+  parameters:
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      schema:
+        type: string
+        example: cs_CZ,de
+      description: Comma-separated list of languages to include.
+    Max:
+      name: max
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+      description: Number of records to return.
+    Offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of records to skip.
+    DateFrom:
+      name: date_from
+      in: query
+      schema:
+        type: string
+        format: date
+      description: Start date in `YYYY-MM-DD` format.
+    DateTo:
+      name: date_to
+      in: query
+      schema:
+        type: string
+        format: date
+      description: End date in `YYYY-MM-DD` format.
+
+  headers:
+    XTotalCount:
+      description: Total number of matching records.
+      schema:
+        type: integer
+    ContentLanguage:
+      description: Languages included in the response.
+      schema:
+        type: string
+        example: cs_CZ,de
+
+  examples:
+    DestinationsResponse:
+      summary: Destination list
+      value:
+        - id: 1
+          name:
+            cs_CZ: Frantiskovy Lazne
+            de: Franzensbad
+            en: Frantiskovy Lazne
+            ru: Frantiskovy Lazne
+
+    HotelsResponse:
+      summary: Hotel list
+      value:
+        - id: 1
+          name: Pawlik
+          stars: 4
+          phone_number: "+420 354 201 111"
+          email:
+            cs_CZ: info@frantiskovylazne.cz
+            de: info@franzensbad.cz
+          description:
+            cs_CZ: Kralovska vila mesta Frantiskovy Lazne uprostred lazenskeho parku.
+            de: Die Koenigsvilla Franzensbads im Zentrum der Stadt.
+          equipment:
+            cs_CZ: Hotel je vybaven moderni saunou.
+            de: Hotel hat eine Sauna.
+          services:
+            cs_CZ: Kuryri sluzby v cene pobytu.
+            de: DHL included.
+          lowest_price:
+            cs_CZ:
+              amount_per_night: 1024.5
+              currency: CZK
+            de:
+              amount_per_night: 40
+              currency: EUR
+          commercial_slogan:
+            cs_CZ: Buy it or leave it.
+            de: ""
+          image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/hotels/example/pawlik.jpg
+          thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/hotels/example/pawlik.webp
+          booking_url:
+            cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik
+            de: https://reservierung.franzensbad.cz?hotel=Pawlik
+          destination:
+            id: 1
+            name:
+              cs_CZ: Frantiskovy Lazne
+              de: Franzensbad
+          address:
+            address_line: Dr. Pohoreckeho 22
+            city: Frantiskovy Lazne
+            postal_code: "351 01"
+            country_code: CZE
+          roomTypes:
+            - id: 1
+              category:
+                cs_CZ: Prezidentske apartma
+                de: App. Aquaforum
+              facilities: [shower, toilet, bath]
+              beds: 2
+              image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example/room.jpg
+              thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example/room.webp
+              booking_url:
+                cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik&roomType=APPARTEMENT
+                de: https://reservierung.franzensbad.cz?hotel=Pawlik&roomType=APPARTEMENT
+              description:
+                cs_CZ: Pokoj s koupelnou, sprchou, WC a fenem.
+                de: Luxurioeses Appartement.
+              lowest_price:
+                cs_CZ:
+                  amount_per_night: 1024.5
+                  currency: CZK
+                de:
+                  amount_per_night: 40
+                  currency: EUR
+
+    HotelResponse:
+      summary: Hotel detail
+      value:
+        id: 1
+        name: Pawlik
+        stars: 4
+        phone_number: "+420 354 201 111"
+        email:
+          cs_CZ: info@frantiskovylazne.cz
+          de: info@franzensbad.cz
+        description:
+          cs_CZ: Kralovska vila mesta Frantiskovy Lazne uprostred lazenskeho parku.
+          de: Die Koenigsvilla Franzensbads im Zentrum der Stadt.
+        equipment:
+          cs_CZ: Hotel je vybaven moderni saunou.
+          de: Hotel hat eine Sauna.
+        services:
+          cs_CZ: Kuryri sluzby v cene pobytu.
+          de: DHL included.
+        lowest_price:
+          cs_CZ:
+            amount_per_night: 1024.5
+            currency: CZK
+          de:
+            amount_per_night: 40
+            currency: EUR
+        commercial_slogan:
+          cs_CZ: Buy it or leave it.
+          de: ""
+        image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/hotels/example/pawlik.jpg
+        thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/hotels/example/pawlik.webp
+        booking_url:
+          cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik
+          de: https://reservierung.franzensbad.cz?hotel=Pawlik
+        destination:
+          id: 1
+          name:
+            cs_CZ: Frantiskovy Lazne
+            de: Franzensbad
+        address:
+          address_line: Dr. Pohoreckeho 22
+          city: Frantiskovy Lazne
+          postal_code: "351 01"
+          country_code: CZE
+        roomTypes:
+          - id: 1
+            category:
+              cs_CZ: Prezidentske apartma
+              de: App. Aquaforum
+            facilities: [shower, toilet, bath]
+            beds: 2
+            image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example/room.jpg
+            thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example/room.webp
+            booking_url:
+              cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik&roomType=APPARTEMENT
+              de: https://reservierung.franzensbad.cz?hotel=Pawlik&roomType=APPARTEMENT
+            description:
+              cs_CZ: Pokoj s koupelnou, sprchou, WC a fenem.
+              de: Luxurioeses Appartement.
+            lowest_price:
+              cs_CZ:
+                amount_per_night: 1024.5
+                currency: CZK
+              de:
+                amount_per_night: 40
+                currency: EUR
+
+    VisitTypesResponse:
+      summary: Visit type list
+      value:
+        - id: 1
+          priority_position: 1
+          on_demand: false
+          name:
+            cs_CZ: Frantiskolazenska lecebna kura
+            de: Franzensbader Heilkur
+          visit_type_categories:
+            - id: 1
+              name:
+                cs_CZ: Lazensky pobyt
+                de: Heilkur
+          booking_url:
+            cs_CZ: https://rezervace.frantiskovylazne.cz?visitType=Franzensbader%20Heilkur
+            de: https://reservierung.franzensbad.cz?visitType=Franzensbader%20Heilkur
+          description:
+            cs_CZ: Prohlidka lekarem a procedury podle zdravotniho stavu.
+            de: Kuraufenthalt mit aerztlicher Untersuchung.
+          nights_min: 1
+          nights_max: 3
+          reservation_time_span: DAYS
+          time_constraints:
+            - date_from: "2026-10-01"
+              date_to: "2026-12-01"
+          procedures: 12
+          procedure_frequency: VISIT
+          procedures_per_day: 4
+          boarding: HALF_BOARD
+          available_boardings: [HALF_BOARD, FULL_BOARD, BREAKFAST, LUNCH, DINNER, ALL_INCLUSIVE]
+          tags:
+            - id: 1
+              name:
+                cs_CZ: Byt stale mlad
+                de: Sei noch jung
+              color: "0000ff"
+          lowest_price:
+            cs_CZ:
+              amount_per_night: 1024.5
+              currency: CZK
+            de:
+              amount_per_night: 40
+              currency: EUR
+          commercial_slogan:
+            cs_CZ: Buy it or leave it.
+            de: ""
+          notice:
+            cs_CZ: Cena bez rozdilu kategorie.
+            de: ""
+          services:
+            cs_CZ: 14x ubytovani.
+            de: 14x Unterkunft.
+          hotels:
+            - id: 1
+              name: Pawlik
+              lowest_price:
+                cs_CZ:
+                  amount_per_night: 1024.5
+                  currency: CZK
+                de:
+                  amount_per_night: 40
+                  currency: EUR
+          loyalty_programs:
+            - id: 2
+              name:
+                cs_CZ: VIP Club Premium
+                de: VIP Club Premium
+                en: VIP Club Premium
+
+    VisitTypeCategoriesResponse:
+      summary: Visit type category list
+      value:
+        - id: 1
+          name:
+            cs_CZ: Lecebny pobyt
+            de: Heilkur
+          visitTypes:
+            - id: 1
+              priority_position: 1
+              on_demand: false
+              name:
+                cs_CZ: Frantiskolazenska lecebna kura
+                de: Franzensbader Heilkur
+              nights_min: 1
+              nights_max: 3
+              reservation_time_span: DAYS
+
+    VisitTypeCategoryResponse:
+      summary: Visit type category detail
+      value:
+        id: 1
+        name:
+          cs_CZ: Lecebny pobyt
+          de: Heilkur
+        visitTypes:
+          - id: 1
+            priority_position: 1
+            on_demand: false
+            name:
+              cs_CZ: Frantiskolazenska lecebna kura
+              de: Franzensbader Heilkur
+            nights_min: 1
+            nights_max: 3
+            reservation_time_span: DAYS
+
+    TagsResponse:
+      summary: Tag list
+      value:
+        - id: 1
+          name:
+            cs_CZ: Byt stale mlad
+            de: Sei noch jung
+          color: "0000ff"
+
+    LoyaltyProgramsResponse:
+      summary: Loyalty program list
+      value:
+        - id: 1
+          name:
+            cs_CZ: VIP Club Gold
+            de: VIP Club Gold
+            en: VIP Club Gold
+
+    CalendarDatesResponse:
+      summary: Calendar dates
+      value:
+        - date: "2026-12-01"
+          selectable: false
+          availability: NOT_AVAILABLE
+          price: null
+        - date: "2026-12-02"
+          selectable: true
+          availability: ON_DEMAND
+          price:
+            is_final: true
+            cs_CZ:
+              amount: 1590
+              currency: CZK
+            de:
+              amount: 61.2857
+              currency: EUR
+
+    CalendarCheckoutsResponse:
+      summary: Checkout dates
+      value:
+        - date: "2026-12-09"
+        - date: "2026-12-16"
+
+    PriceResponse:
+      summary: Final price
+      value:
+        cs_CZ:
+          amount: 18924
+          currency: CZK
+          price_breakdown:
+            base_price: 19920
+            discounts:
+              - price_discount: 996
+                guest: 1
+                loyalty_program:
+                  id: 2
+                  name:
+                    cs_CZ: VIP Club Premium
+                    de: VIP Club Premium
+                    en: VIP Club Premium
+        de:
+          amount: 758
+          currency: EUR
+          price_breakdown:
+            base_price: 798
+            discounts:
+              - price_discount: 40
+                guest: 1
+                loyalty_program:
+                  id: 2
+                  name:
+                    cs_CZ: VIP Club Premium
+                    de: VIP Club Premium
+                    en: VIP Club Premium
+
+    LowestPriceResponse:
+      summary: Lowest price
+      value:
+        cs_CZ:
+          amount_per_night: 1024.5
+          currency: CZK
+        de:
+          amount_per_night: 40
+          currency: EUR
+
+    PriceListsResponse:
+      summary: Price lists
+      value:
+        - id: 1
+          visit_type:
+            id: 1
+            name:
+              cs_CZ: Frantiskolazenska lecebna kura
+              de: Franzensbader Heilkur
+            on_demand: false
+          seasons:
+            - date_from: "2026-04-28"
+              date_to: "2027-01-01"
+              rooms:
+                - room_type:
+                    id: 1
+                    category:
+                      cs_CZ: Prezidentske apartma
+                      de: App.
+                    booking_url:
+                      cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik&roomType=APPARTEMENT
+                      de: https://reservierung.franzensbad.cz?hotel=Pawlik&roomType=APPARTEMENT
+                  price_per_night:
+                    cs_CZ:
+                      amount: 1024.5
+                      currency: CZK
+                    de:
+                      amount: 40
+                      currency: EUR
+                  price_total:
+                    cs_CZ:
+                      amount: 10245
+                      currency: CZK
+                    de:
+                      amount: 400
+                      currency: EUR
+
+    BookingConfigurationResponse:
+      summary: Booking configuration
+      value:
+        destination:
+          id: 1
+          name:
+            cs_CZ: Frantiskovy Lazne
+            de: Franzensbad
+        visit_type:
+          id: 1
+          priority_position: 1
+          on_demand: false
+          name:
+            cs_CZ: Frantiskolazenska lecebna kura
+            de: Franzensbader Heilkur
+          nights_min: 1
+          nights_max: 3
+          reservation_time_span: DAYS
+        hotel:
+          id: 1
+          name: Pawlik
+          stars: 4
+        room_type:
+          id: 1
+          category:
+            cs_CZ: Prezidentske apartma
+            de: App. Aquaforum
+          beds: 2
+        date_from: "2026-12-02"
+        date_to: "2026-12-16"
+        price:
+          cs_CZ:
+            amount: 10245
+            currency: CZK
+          de:
+            amount: 400
+            currency: EUR
+        lowest_price:
+          cs_CZ:
+            amount_per_night: 1024.5
+            currency: CZK
+          de:
+            amount_per_night: 40
+            currency: EUR
+        availability: ON_DEMAND
+
+    BookingCreateRequest:
+      summary: Booking request
+      value:
+        binding_booking: true
+        currency: EUR
+        visit_type_id: 1
+        hotel_id: 1
+        room_type_id: 1
+        date_from: "2026-04-01"
+        date_to: "2026-04-21"
+        customer_note: I prefer the corner room on the third floor.
+        affilUserName: e-shop@pawlik-aquaforum.cz
+        billed_to:
+          gender: male
+          first_name: Bohuslav
+          last_name: Martinu
+          email: bohuslav@example.com
+          phone: "+420355455675"
+          consent_marketing: true
+          address:
+            street: Milady Horakove
+            house_number: 5A
+            city: Praha
+            zip_code: "16000"
+            country: CZE
+        guests:
+          - gender: female
+            first_name: Charlotte
+            last_name: Martinu
+            birth_date: "1894-01-01"
+            loyalty_program_id: 1
+            loyalty_program_code: GOLD000001
+
+    BookingCreateResponse:
+      summary: Created booking
+      value:
+        id: 1
+
+  responses:
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/ErrorResponse"
+              - $ref: "#/components/schemas/ValidationErrorResponse"
+    Unauthorized:
+      description: Invalid API key.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    UnprocessableEntity:
+      description: Resource exists but cannot be used for this request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+
+    ValidationErrorResponse:
+      type: object
+      required: [success, message, errors]
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    LocalizedString:
+      type: object
+      additionalProperties:
+        type: string
+        nullable: true
+      example:
+        cs_CZ: Frantiskovy Lazne
+        de: Franzensbad
+
+    CurrencyAmount:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: number
+          nullable: true
+        currency:
+          type: string
+          enum: [CZK, EUR]
+
+    LowestPriceAmount:
+      type: object
+      properties:
+        amount_per_night:
+          type: number
+          nullable: true
+        currency:
+          type: string
+          enum: [CZK, EUR]
+
+    PriceByLanguage:
+      type: object
+      additionalProperties:
+        allOf:
+          - $ref: "#/components/schemas/CurrencyAmount"
+          - type: object
+            properties:
+              price_breakdown:
+                type: object
+                additionalProperties: true
+
+    LowestPriceByLanguage:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/LowestPriceAmount"
+
+    Destination:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+
+    Address:
+      type: object
+      properties:
+        address_line:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        postal_code:
+          type: string
+          nullable: true
+        country_code:
+          type: string
+          nullable: true
+
+    RoomType:
+      type: object
+      properties:
+        id:
+          type: integer
+        category:
+          $ref: "#/components/schemas/LocalizedString"
+        facilities:
+          type: array
+          items:
+            type: string
+        beds:
+          type: integer
+        image:
+          type: string
+          nullable: true
+        thumbnail:
+          type: string
+          nullable: true
+        booking_url:
+          $ref: "#/components/schemas/LocalizedString"
+        description:
+          $ref: "#/components/schemas/LocalizedString"
+        lowest_price:
+          $ref: "#/components/schemas/LowestPriceByLanguage"
+
+    Hotel:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        stars:
+          type: integer
+          nullable: true
+        address:
+          $ref: "#/components/schemas/Address"
+        phone_number:
+          type: string
+        email:
+          $ref: "#/components/schemas/LocalizedString"
+        description:
+          $ref: "#/components/schemas/LocalizedString"
+        equipment:
+          $ref: "#/components/schemas/LocalizedString"
+        services:
+          $ref: "#/components/schemas/LocalizedString"
+        lowest_price:
+          $ref: "#/components/schemas/LowestPriceByLanguage"
+        commercial_slogan:
+          $ref: "#/components/schemas/LocalizedString"
+        image:
+          type: string
+          nullable: true
+        thumbnail:
+          type: string
+          nullable: true
+        booking_url:
+          $ref: "#/components/schemas/LocalizedString"
+        destination:
+          $ref: "#/components/schemas/Destination"
+        roomTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoomType"
+
+    VisitTypeCategory:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: integer
+            - type: string
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+        visitTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitTypeSummary"
+
+    VisitTypeSummary:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: integer
+            - type: string
+        priority_position:
+          type: integer
+        on_demand:
+          type: boolean
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+        nights_min:
+          type: integer
+        nights_max:
+          type: integer
+        reservation_time_span:
+          type: string
+          enum: [DAYS, WEEKS]
+
+    TimeConstraint:
+      type: object
+      properties:
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+
+    Tag:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: integer
+            - type: string
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+        color:
+          type: string
+          description: Hex color without the `#` prefix.
+
+    LoyaltyProgram:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          oneOf:
+            - type: integer
+            - type: string
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+
+    VisitType:
+      type: object
+      properties:
+        id:
+          oneOf:
+            - type: integer
+            - type: string
+        priority_position:
+          type: integer
+        on_demand:
+          type: boolean
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+        visit_type_categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitTypeCategory"
+        booking_url:
+          $ref: "#/components/schemas/LocalizedString"
+        description:
+          $ref: "#/components/schemas/LocalizedString"
+        nights_min:
+          type: integer
+        nights_max:
+          type: integer
+        reservation_time_span:
+          type: string
+          enum: [DAYS, WEEKS]
+        time_constraints:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimeConstraint"
+        procedures:
+          type: integer
+        procedure_frequency:
+          type: string
+          enum: [DAY, WEEK, VISIT]
+        procedures_per_day:
+          type: integer
+        boarding:
+          type: string
+        available_boardings:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        lowest_price:
+          $ref: "#/components/schemas/LowestPriceByLanguage"
+        commercial_slogan:
+          $ref: "#/components/schemas/LocalizedString"
+        notice:
+          $ref: "#/components/schemas/LocalizedString"
+        services:
+          $ref: "#/components/schemas/LocalizedString"
+        hotels:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              lowest_price:
+                $ref: "#/components/schemas/LowestPriceByLanguage"
+        loyalty_programs:
+          type: array
+          items:
+            $ref: "#/components/schemas/LoyaltyProgram"
+
+    CalendarDate:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        selectable:
+          type: boolean
+          nullable: true
+        availability:
+          type: string
+          enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]
+        price:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    PriceList:
+      type: object
+      properties:
+        id:
+          type: integer
+        visit_type:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              $ref: "#/components/schemas/LocalizedString"
+            on_demand:
+              type: boolean
+        seasons:
+          type: array
+          items:
+            type: object
+            properties:
+              date_from:
+                type: string
+                format: date
+              date_to:
+                type: string
+                format: date
+              rooms:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    room_type:
+                      $ref: "#/components/schemas/RoomType"
+                    price_per_night:
+                      $ref: "#/components/schemas/PriceByLanguage"
+                    price_total:
+                      $ref: "#/components/schemas/PriceByLanguage"
+
+    BookingConfiguration:
+      type: object
+      properties:
+        availability:
+          type: string
+          nullable: true
+          enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+        destination:
+          $ref: "#/components/schemas/Destination"
+        hotel:
+          $ref: "#/components/schemas/Hotel"
+        visit_type:
+          $ref: "#/components/schemas/VisitType"
+        room_type:
+          $ref: "#/components/schemas/RoomType"
+        price:
+          $ref: "#/components/schemas/PriceByLanguage"
+        lowest_price:
+          $ref: "#/components/schemas/LowestPriceByLanguage"
+
+    BookingCreateRequest:
+      type: object
+      required:
+        - visit_type_id
+        - hotel_id
+        - room_type_id
+        - date_from
+        - date_to
+        - billed_to
+        - guests
+      properties:
+        binding_booking:
+          type: boolean
+          default: false
+        currency:
+          type: string
+          enum: [CZK, EUR]
+          default: CZK
+        visit_type_id:
+          type: integer
+        hotel_id:
+          type: integer
+        room_type_id:
+          type: integer
+        date_from:
+          type: string
+          format: date
+        date_to:
+          type: string
+          format: date
+        customer_note:
+          type: string
+          nullable: true
+        affilUserName:
+          type: string
+          nullable: true
+        billed_to:
+          $ref: "#/components/schemas/BilledTo"
+        guests:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/BookingGuest"
+
+    BilledTo:
+      type: object
+      required: [gender, first_name, last_name, email, phone, consent_marketing]
+      properties:
+        gender:
+          type: string
+          enum: [male, female]
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        consent_marketing:
+          type: boolean
+        address:
+          type: object
+          nullable: true
+          properties:
+            street:
+              type: string
+            house_number:
+              type: string
+            city:
+              type: string
+            zip_code:
+              type: string
+            country:
+              type: string
+              maxLength: 3
+
+    BookingGuest:
+      type: object
+      required: [gender, first_name, last_name, birth_date]
+      properties:
+        gender:
+          type: string
+          enum: [male, female]
+        first_name:
+          type: string
+        last_name:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        loyalty_program_id:
+          type: integer
+          nullable: true
+        loyalty_program_code:
+          type: string
+          nullable: true
+
+    BookingCreateResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          oneOf:
+            - type: integer
+            - type: string

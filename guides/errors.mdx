@@ -1,0 +1,34 @@
+---
+title: "Errors"
+description: "Understand common SpaPortal API error responses."
+icon: "triangle-alert"
+---
+
+Error responses use JSON.
+
+```json
+{
+  "success": false,
+  "message": "Missing API key"
+}
+```
+
+Validation errors include an `errors` array:
+
+```json
+{
+  "success": false,
+  "message": "Zod validation error",
+  "errors": []
+}
+```
+
+## Common status codes
+
+| Status | Meaning |
+| ---: | --- |
+| `400` | The request is malformed, a required parameter is missing, or validation failed. |
+| `401` | The API key is invalid. |
+| `404` | A referenced resource was not found. |
+| `422` | A referenced resource exists but cannot be used for the requested operation. |
+| `500` | An unexpected server error occurred. |

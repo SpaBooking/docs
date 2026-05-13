@@ -1,72 +1,71 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "SpaPortal Docs",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0F766E",
+    "light": "#14B8A6",
+    "dark": "#0F766E"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Getting started",
+        "icon": "rocket",
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
+            "pages": ["index", "quickstart", "api/v1/index"]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "icon": "book-open",
+        "groups": [
           {
-            "group": "Customization",
+            "group": "Guides",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/components",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "Agent ready",
-            "pages": [
-              "agent-ready/prompt",
-              "agent-ready/visibility",
-              "agent-ready/contextual",
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/index",
+              "guides/authentication",
+              "guides/pagination",
+              "guides/localization",
+              "guides/errors",
+              "guides/booking",
+              "guides/webhooks"
             ]
           }
         ]
       },
       {
         "tab": "API reference",
+        "icon": "square-terminal",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "API v1",
+            "root": "api/v1/index",
             "pages": [
-              "api-reference/introduction"
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "/api/v1/openapi.yaml",
+                  "directory": "api/v1/reference"
+                }
+              }
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "API v2",
+            "root": "api/v2/index",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              {
+                "group": "Endpoints",
+                "openapi": {
+                  "source": "/api/v2/openapi.yaml",
+                  "directory": "api/v2/reference"
+                }
+              }
             ]
           }
         ]
@@ -75,14 +74,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "SpaPortal",
+          "href": "https://spaportal.cz",
+          "icon": "house"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "SpaBooking",
+          "href": "https://spabooking.cz",
+          "icon": "external-link"
         }
       ]
     }
@@ -95,32 +94,38 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:info@spaportal.cz"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "API v1",
+      "href": "/api/v1"
+    }
+  },
+  "api": {
+    "playground": {
+      "display": "interactive"
     }
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+    "socials": {}
+  },
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.spaportal.cz"
     }
   }
 }

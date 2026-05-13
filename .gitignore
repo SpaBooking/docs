@@ -1,0 +1,64 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# backups
+/backups
+
+# next.js
+/.next/
+/out/
+
+/tmp/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# staging file - only for testing purposes - do not store it to repo!!!
+.env.staging
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# Sentry Config File
+.sentryclirc
+
+# IntelliJ
+.idea/*
+out/
+*.iml
+
+# Generated exports
+/seasonExport
+
+# AWS sensitive credentials
+/infrastructure/prod/.cloudformation.yml
+/infrastructure/stag/.cloudformation.yml
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+scripts/initialData/copyOfProduction/*.js
+transformProdDbData/*.json

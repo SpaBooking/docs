@@ -5,3 +5,11 @@
 # Draft content
 drafts/
 *.draft.mdx
+
+# Mintlify starter content kept only as reference while SpaPortal docs are rebuilt.
+agent-ready/
+ai-tools/
+api-reference/
+essentials/
+snippets/
+development.mdx

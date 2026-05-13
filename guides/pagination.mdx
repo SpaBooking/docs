@@ -1,0 +1,24 @@
+---
+title: "Pagination"
+description: "Use max and offset to page through list endpoints."
+icon: "list-ordered"
+---
+
+List endpoints return a page of results.
+
+Use these query parameters:
+
+| Parameter | Default | Maximum | Description |
+| --- | ---: | ---: | --- |
+| `max` | `10` | `100` | Number of records to return. |
+| `offset` | `0` | - | Number of records to skip. |
+
+```bash
+curl \
+  -H "Authorization: Bearer <API_KEY>" \
+  "https://spaportal.cz/api/v1/hotels?max=10&offset=20"
+```
+
+Read the `X-Total-Count` response header to get the total number of matching records.
+
+Some nested list responses also support `max_nested`. Its default is `10` and maximum is `100`.

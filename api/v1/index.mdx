@@ -1,0 +1,36 @@
+---
+title: "API v1"
+description: "Current SpaPortal public API reference."
+icon: "square-terminal"
+---
+
+API v1 is the current public API for booking clients.
+
+It exposes catalog, availability, pricing, and booking endpoints under:
+
+```txt
+https://spaportal.cz/api/v1
+```
+
+## Main resources
+
+<Columns cols={2}>
+  <Card title="Catalog" icon="list" href="/api/v1">
+    Destinations, hotels, visit types, categories, tags, and loyalty programs.
+  </Card>
+  <Card title="Availability" icon="calendar-days" href="/api/v1">
+    Calendar dates and checkout dates for booking forms.
+  </Card>
+  <Card title="Pricing" icon="badge-dollar-sign" href="/api/v1">
+    Final prices, lowest prices, and price lists.
+  </Card>
+  <Card title="Booking" icon="calendar-check" href="/api/v1">
+    Booking configuration and booking creation.
+  </Card>
+</Columns>
+
+## Source of truth
+
+This reference is based on the current implementation in `spaportal-3/app/api/v1` and the historical Apiary file `APIARY.md`.
+
+When the two sources disagree, prefer the current implementation.

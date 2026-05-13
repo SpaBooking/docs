@@ -1,0 +1,29 @@
+---
+title: "Booking flow"
+description: "Build a booking flow with catalog, availability, price, and booking endpoints."
+icon: "calendar-check"
+---
+
+Use catalog endpoints to build selection screens. Then validate availability and price before you create a booking.
+
+## Recommended flow
+
+1. Fetch destinations with `GET /destinations`.
+2. Fetch hotels with `GET /hotels`.
+3. Fetch visit types with `GET /visit-types`.
+4. Fetch room availability with `GET /calendar/dates`.
+5. Fetch possible checkout dates with `GET /calendar/checkouts`.
+6. Fetch the final price with `GET /price`.
+7. Create a booking with `POST /booking`.
+
+## Booking configuration
+
+Use `GET /booking` when you need SpaPortal to match a partial selection by names.
+
+For example, you can pass a destination name, hotel name, visit type name, room type category, and date range. The response returns matching objects, availability, and either a final price or lowest price.
+
+## Binding bookings
+
+When `binding_booking` is `true`, the billed contact must include an address.
+
+Use `binding_booking: false` for non-binding booking requests.
