@@ -16,7 +16,7 @@
         "groups": [
           {
             "group": "Getting started",
-            "pages": ["index", "quickstart", "api/v1/index"]
+            "pages": ["index", "quickstart"]
           }
         ]
       },
