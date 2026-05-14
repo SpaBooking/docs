@@ -16,10 +16,12 @@ The first phase focuses on public booking-form use cases and public catalog data
 
 Use this proposal to agree on the product-facing contract before implementation:
 
+- How API versions are exposed and how API v1 is deprecated later.
 - How clients authenticate public requests.
 - How list endpoints paginate.
 - How localized fields are requested and returned.
 - How IDs, currencies, money values, dates, and errors are shaped.
+- How image and thumbnail fields are shaped.
 - How the new `room-types` resource should work.
 - How API v1 clients can migrate safely.
 
@@ -29,6 +31,7 @@ These decisions are part of the current proposal.
 
 | Area | Decision |
 | --- | --- |
+| Versioning | Keep major API versions in the URL path, such as `/api/v1` and `/api/v2`. |
 | Naming | Use `camelCase` for query parameters and JSON fields. |
 | Paths | Use plural resource paths such as `/hotels`, `/room-types`, and `/visit-types`. |
 | IDs | Use ObjectId string values as public `id` values in API v2. |
@@ -42,6 +45,7 @@ These decisions are part of the current proposal.
 | Totals | Return `pagination.total` by default for public catalog/list endpoints. |
 | Money | Use `amountMinor`, `currency`, and `currencyExponent`. |
 | Currency filter | Support `currency` only on endpoints that return prices. |
+| Images | Use `images[]` with `url` and `thumbnailUrl` for image collections. |
 | Room types | Add `room-types` as a first-class public API v2 resource. |
 | Room type prices | Return `lowestPrices` by default on room type endpoints. |
 | Room type booking URLs | Return `bookingUrl` by default on room type endpoints. |
@@ -57,9 +61,62 @@ Product and engineering should still confirm:
 - Whether the existing `POST /api/v2/calendar/dates/bulk` endpoint should make a
   clean breaking change to the final API v2 contract, or temporarily accept both
   old and new field names.
+- The exact API v1 deprecation and sunset dates. API v1 should not be deprecated
+  until API v2 covers the required production use cases.
 - The future list of secret-key endpoints and scopes. API v2 phase one does not
   include secret-key endpoints.
 - The room type details listed in the room type section.
+
+## Versioning strategy
+
+Use major versions in the URL path.
+
+```txt
+https://spaportal.cz/api/v1
+https://spaportal.cz/api/v2
+```
+
+```txt
+https://staging.spaportal.cz/api/v1
+https://staging.spaportal.cz/api/v2
+```
+
+Do not version API v2 through hostnames, query parameters, or media type
+headers. Path versioning is explicit, easy to test, and already matches the
+existing SpaPortal API structure.
+
+Additive changes can be made inside the same major version:
+
+- New optional response fields.
+- New endpoints.
+- New optional query parameters.
+- New enum values when clients can safely ignore unknown values.
+
+Breaking changes require a new major version:
+
+- Removing or renaming fields.
+- Changing field types.
+- Changing ID semantics.
+- Changing authentication requirements.
+- Changing pagination or error shapes.
+
+API v1 remains the current production API until API v2 covers the required
+production integration use cases.
+
+Recommended API v1 deprecation plan:
+
+1. Keep API v1 fully supported while API v2 is incomplete.
+2. Add Mongo `_id` values to selected API v1 responses as a migration bridge.
+3. Publish API v2 endpoint coverage and migration notes as endpoints are added.
+4. Move API v1 into maintenance mode only after API v2 supports the required
+   production flows.
+5. Announce API v1 deprecation with a concrete sunset date before sending
+   deprecation headers.
+6. Use at least a 12-month migration window after the deprecation announcement
+   unless product explicitly approves a shorter window for low-risk clients.
+
+When API v1 is deprecated, responses can include `Deprecation` and `Sunset`
+headers and a documentation link to the migration guide.
 
 ## Naming
 
@@ -341,6 +398,56 @@ Common error codes:
 | `conflict` | The request conflicts with current state. |
 | `rate_limited` | The client exceeded a rate limit. |
 | `internal_error` | An unexpected server error occurred. |
+
+## Images and thumbnails
+
+Use one image object shape across API v2.
+
+```json
+{
+  "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
+  "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
+}
+```
+
+Image collections use `images[]`.
+
+```json
+{
+  "images": [
+    {
+      "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
+      "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
+    }
+  ]
+}
+```
+
+Use `thumbnailUrl` in API v2, not `thumbnail_url`, because API v2 uses
+`camelCase`. The product requirement for `images[]` with thumbnail URLs is still
+covered by this schema.
+
+If one primary image is useful for clients, return it separately as
+`primaryImage` and also keep it in `images[]`.
+
+```json
+{
+  "primaryImage": {
+    "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
+    "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
+  },
+  "images": [
+    {
+      "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
+      "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
+    }
+  ]
+}
+```
+
+Use `null` for `thumbnailUrl` only when the original image exists but no
+thumbnail is available. Use an empty `images` array when the resource has no
+images.
 
 ## Room types
 
