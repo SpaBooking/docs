@@ -347,14 +347,19 @@ keys only when product needs separate wording, legal text, market-specific
 labels, or SEO content for Germany, Austria, and Switzerland.
 
 If `Accept-Language` is provided, parse it using normal HTTP language negotiation
-rules, including `q` weights. Return the matching supported locale keys in
-preference order, de-duplicated after fallback matching.
+rules, including `q` weights. Unsupported locale tags are ignored. They should
+not produce an error and should not be returned in localized response objects.
+Return the matching supported locale keys in preference order, de-duplicated
+after fallback matching.
 
 When resolving a requested locale, match in this order:
 
 1. Exact requested tag, such as `de-AT`.
 2. Base language fallback, such as `de`.
 3. Configured project default, such as `cs-CZ`.
+
+Do not return `406 Not Acceptable` when none of the requested locales are
+supported. Return the default locale instead.
 
 Examples:
 
@@ -366,6 +371,7 @@ Examples:
 | `Accept-Language: de-CH,de;q=0.9` | `de-CH`, then `de` |
 | `Accept-Language: de-DE` when only `de` exists | `de` |
 | `Accept-Language: fr-FR,en;q=0.8` when French is unsupported | `en`, then default `cs-CZ` if `en` is missing |
+| `Accept-Language: fr-FR,it-IT` when both are unsupported | default `cs-CZ` |
 | no `Accept-Language` | all supported locale keys |
 
 If `Accept-Language` is omitted, return all supported language keys. Do not
