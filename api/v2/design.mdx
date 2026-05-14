@@ -39,8 +39,9 @@ These decisions are part of the current proposal.
 | Authentication | Use `X-SpaPortal-Public-Key` for public API v2 endpoints. |
 | Secret keys | Defer secret-key and server-to-server endpoints to a later phase. |
 | Query credentials | Do not support credentials in query parameters. |
-| Localization | Use `Accept-Language`; do not support `?language=...`. |
+| Localization | Use BCP 47 language tags in `Accept-Language`; do not support `?language=...`. |
 | Missing language | Return all supported language keys when `Accept-Language` is omitted. |
+| Locale metadata | Add `GET /api/v2/locales` to list supported locale tags and fallback metadata. |
 | Pagination | Use cursor pagination for public list endpoints. |
 | Totals | Return `pagination.total` by default for public catalog/list endpoints. |
 | Money | Use `amountMinor`, `currency`, and `currencyExponent`. |
@@ -174,7 +175,7 @@ API v2 uses ObjectId string values as public `id` values.
 {
   "id": "66f16191f739705faa020768",
   "name": {
-    "cs_CZ": "Pawlik"
+    "cs-CZ": "Pawlik"
   }
 }
 ```
@@ -264,31 +265,176 @@ make total counts opt-in or omit them.
 Use `Accept-Language` to request localized fields.
 
 ```http
-Accept-Language: de,en
+Accept-Language: de-AT,de;q=0.9,en;q=0.8
 ```
 
-Supported language keys are:
+Clients can send this header in several valid forms.
 
-- `cs_CZ`
+For a simple API integration that wants exactly one locale:
+
+```http
+Accept-Language: de-AT
+```
+
+For a client that wants Austrian German first, then generic German, then
+English:
+
+```http
+Accept-Language: de-AT,de,en
+```
+
+For a browser-like preference list with explicit priorities:
+
+```http
+Accept-Language: de-AT,de;q=0.9,en;q=0.8,cs-CZ;q=0.7
+```
+
+The `q` value is optional. It means quality or priority. If omitted, the value
+is treated as `q=1.0`. API clients can usually send a single locale or a short
+ordered list without `q`. Browsers often send a longer list with `q` values
+automatically.
+
+API v2 uses canonical BCP 47 language tags for public request and response
+locale keys. Use hyphenated tags such as `cs-CZ`, `de-DE`, `de-AT`, `de-CH`,
+`en`, and `ru`.
+
+Do not expose underscore locale keys such as `cs_CZ` in API v2 responses. If
+current storage uses legacy keys, map them at the API boundary.
+
+Initial supported public tags are:
+
+- `cs-CZ`
 - `de`
 - `en`
 - `ru`
+
+Future regional variants can be added without changing the response shape:
+
+- `de-DE`
+- `de-AT`
+- `de-CH`
 
 Localized fields remain objects keyed by language.
 
 ```json
 {
   "name": {
+    "de-AT": "Franzensbad",
     "de": "Franzensbad",
     "en": "Frantiskovy Lazne"
   }
 }
 ```
 
+For example, a future response with all German regional variants can look like
+this:
+
+```json
+{
+  "description": {
+    "de": "Kurhotel in Franzensbad.",
+    "de-DE": "Kurhotel in Franzensbad.",
+    "de-AT": "Kurhotel in Franzensbad.",
+    "de-CH": "Kurhotel in Franzensbad.",
+    "en": "Spa hotel in Frantiskovy Lazne.",
+    "cs-CZ": "Lazensky hotel ve Frantiskovych Laznich."
+  }
+}
+```
+
+The regional values can be identical at first. They should exist as separate
+keys only when product needs separate wording, legal text, market-specific
+labels, or SEO content for Germany, Austria, and Switzerland.
+
+If `Accept-Language` is provided, parse it using normal HTTP language negotiation
+rules, including `q` weights. Return the matching supported locale keys in
+preference order, de-duplicated after fallback matching.
+
+When resolving a requested locale, match in this order:
+
+1. Exact requested tag, such as `de-AT`.
+2. Base language fallback, such as `de`.
+3. Configured project default, such as `cs-CZ`.
+
+Examples:
+
+| Request | Returned locale keys |
+| --- | --- |
+| `Accept-Language: de-AT` | `de-AT` |
+| `Accept-Language: de-AT,de,en` | `de-AT`, then `de`, then `en` |
+| `Accept-Language: de-AT,de;q=0.9,en;q=0.8` | `de-AT`, then `de`, then `en` |
+| `Accept-Language: de-CH,de;q=0.9` | `de-CH`, then `de` |
+| `Accept-Language: de-DE` when only `de` exists | `de` |
+| `Accept-Language: fr-FR,en;q=0.8` when French is unsupported | `en`, then default `cs-CZ` if `en` is missing |
+| no `Accept-Language` | all supported locale keys |
+
 If `Accept-Language` is omitted, return all supported language keys. Do not
 support `?language=...`.
 
-Return `Content-Language` with the language keys included in the response.
+Return `Content-Language` with the language keys included in the response. Also
+return `Vary: Accept-Language` when the response differs by `Accept-Language`.
+
+For heavy multilingual responses, keep the same object shape and return all
+available canonical locale keys when `Accept-Language` is omitted. Do not create
+parallel field names such as `nameDe`, `nameDeAt`, or `nameCs`.
+
+Add a locale metadata endpoint so clients can discover supported tags and
+fallbacks.
+
+```http
+GET /api/v2/locales
+```
+
+```json
+{
+  "data": [
+    {
+      "code": "cs-CZ",
+      "name": "Czech (Czechia)",
+      "default": true,
+      "fallbackCode": null,
+      "direction": "ltr"
+    },
+    {
+      "code": "de-AT",
+      "name": "German (Austria)",
+      "default": false,
+      "fallbackCode": "de",
+      "direction": "ltr"
+    },
+    {
+      "code": "de-DE",
+      "name": "German (Germany)",
+      "default": false,
+      "fallbackCode": "de",
+      "direction": "ltr"
+    },
+    {
+      "code": "de-CH",
+      "name": "German (Switzerland)",
+      "default": false,
+      "fallbackCode": "de",
+      "direction": "ltr"
+    }
+  ]
+}
+```
+
+This endpoint is not paginated unless the locale list becomes unexpectedly
+large.
+
+### Localization references
+
+This proposal follows the same broad direction as these public standards and
+APIs:
+
+- [MDN: `Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Language) describes language tags such as `en-US`, `fr-CA`, and `sr-Latn`, including weighted `q` values.
+- [MDN: BCP 47 language tag](https://developer.mozilla.org/en-US/docs/Glossary/BCP_47_language_tag) summarizes the web-standard locale tag format used for internationalization.
+- [Contentful localization strategies](https://www.contentful.com/help/localization/field-and-entry-localization/) explicitly model regional language variants such as `de-DE`, `de-AT`, and `de-CH`, plus fallback behavior.
+- [Phrase locales API](https://developers.phrase.com/en/api/strings/locales/list-locales) exposes locale `code` values such as `de-DE` and `en-GB`, and includes fallback locale metadata.
+- [Localazy JSON localization](https://localazy.com/docs/cli/json-format/) supports multilingual JSON with locale codes and includes BCP output formatting.
+- [Microsoft Translator languages API](https://learn.microsoft.com/en-us/rest/api/translator/translator/languages?view=rest-translator-v3.0) uses BCP 47 tags as language keys and localizes display names through `Accept-Language`.
+- [Google Cloud Translation language support](https://docs.cloud.google.com/translate/docs/languages) uses region/script variants such as `zh-CN`, `zh-TW`, and `zh-HK` where variants matter.
 
 ## Money and currencies
 
@@ -427,23 +573,8 @@ Use `thumbnailUrl` in API v2, not `thumbnail_url`, because API v2 uses
 `camelCase`. The product requirement for `images[]` with thumbnail URLs is still
 covered by this schema.
 
-If one primary image is useful for clients, return it separately as
-`primaryImage` and also keep it in `images[]`.
-
-```json
-{
-  "primaryImage": {
-    "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
-    "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
-  },
-  "images": [
-    {
-      "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
-      "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
-    }
-  ]
-}
-```
+Do not return a separate `primaryImage` field in API v2. If a frontend needs a
+single preferred image, it can use the first item in `images[]`.
 
 Use `null` for `thumbnailUrl` only when the original image exists but no
 thumbnail is available. Use an empty `images` array when the resource has no
@@ -518,10 +649,6 @@ GET /api/v2/room-types?include=hotel
       },
       "beds": 2,
       "facilities": ["shower", "toilet", "bath"],
-      "primaryImage": {
-        "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
-        "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
-      },
       "images": [
         {
           "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
