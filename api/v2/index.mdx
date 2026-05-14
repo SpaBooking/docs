@@ -6,6 +6,30 @@ icon: "square-terminal"
 
 API v2 is reserved for new endpoints and breaking improvements.
 
-The first documented endpoint is `POST /calendar/dates/bulk`. It batches multiple calendar date lookups into one request.
+<Warning>
+  API v2 is still being designed. The endpoint reference documents only behavior
+  that exists today.
+</Warning>
+
+<Card
+  title="API v2 design proposal"
+  icon="drafting-compass"
+  href="/api/v2/design"
+>
+  Review the proposed contract for authentication, IDs, pagination,
+  localization, money values, error handling, and room types.
+</Card>
+
+## Current status
+
+The first documented endpoint is `POST /calendar/dates/bulk`. It batches
+multiple calendar date lookups into one request.
+
+That endpoint currently still follows API v1 compatibility conventions in
+several places, including bearer authentication, `access_token`, `snake_case`
+parameters, and legacy numeric API ids.
+
+The design proposal describes the target API v2 contract. Do not treat the
+proposal as implemented behavior until the endpoint reference is updated.
 
 Use API v1 for all current production integrations unless a SpaPortal administrator tells you to adopt a v2 endpoint.

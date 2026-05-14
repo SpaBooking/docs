@@ -1,0 +1,442 @@
+---
+title: "API v2 design proposal"
+description: "Review the proposed API v2 conventions before implementation."
+icon: "drafting-compass"
+---
+
+<Note>
+  This page is a draft for product and engineering review. It describes the
+  proposed API v2 contract, not the current implementation.
+</Note>
+
+API v2 is the place for breaking API improvements and new public resources.
+The first phase focuses on public booking-form use cases and public catalog data.
+
+## Review goals
+
+Use this proposal to agree on the product-facing contract before implementation:
+
+- How clients authenticate public requests.
+- How list endpoints paginate.
+- How localized fields are requested and returned.
+- How IDs, currencies, money values, dates, and errors are shaped.
+- How the new `room-types` resource should work.
+- How API v1 clients can migrate safely.
+
+## Resolved decisions
+
+These decisions are part of the current proposal.
+
+| Area | Decision |
+| --- | --- |
+| Naming | Use `camelCase` for query parameters and JSON fields. |
+| Paths | Use plural resource paths such as `/hotels`, `/room-types`, and `/visit-types`. |
+| IDs | Use ObjectId string values as public `id` values in API v2. |
+| Legacy IDs | Do not expose legacy numeric API v1 ids in API v2. |
+| Authentication | Use `X-SpaPortal-Public-Key` for public API v2 endpoints. |
+| Secret keys | Defer secret-key and server-to-server endpoints to a later phase. |
+| Query credentials | Do not support credentials in query parameters. |
+| Localization | Use `Accept-Language`; do not support `?language=...`. |
+| Missing language | Return all supported language keys when `Accept-Language` is omitted. |
+| Pagination | Use cursor pagination for public list endpoints. |
+| Totals | Return `pagination.total` by default for public catalog/list endpoints. |
+| Money | Use `amountMinor`, `currency`, and `currencyExponent`. |
+| Currency filter | Support `currency` only on endpoints that return prices. |
+| Room types | Add `room-types` as a first-class public API v2 resource. |
+| Room type prices | Return `lowestPrices` by default on room type endpoints. |
+| Room type booking URLs | Return `bookingUrl` by default on room type endpoints. |
+| Hotel room types | Paginate `/hotels/{hotelId}/room-types` from the beginning. |
+
+## Open review points
+
+Product and engineering should still confirm:
+
+- Which API v1 endpoints are migrated into API v2 first.
+- Which API v1 responses should gain Mongo `_id` values first to support
+  migration.
+- Whether the existing `POST /api/v2/calendar/dates/bulk` endpoint should make a
+  clean breaking change to the final API v2 contract, or temporarily accept both
+  old and new field names.
+- The future list of secret-key endpoints and scopes. API v2 phase one does not
+  include secret-key endpoints.
+- The room type details listed in the room type section.
+
+## Naming
+
+API v2 uses `camelCase` in query parameters and JSON payloads.
+
+```http
+GET /api/v2/hotels?destinationId=66f16191f739705faa020768&limit=50
+```
+
+API v2 does not use API v1 `snake_case` names in the final contract.
+
+```http
+GET /api/v2/hotels?destination_id=1&max=50&offset=0
+```
+
+Modern APIs are not unanimous here. Google-style HTTP/JSON APIs use a camel-case
+JSON ecosystem, while Stripe is a mature API that uses `snake_case`. SpaPortal
+API v2 chooses `camelCase` because it is a new JSON contract in a TypeScript and
+browser-client ecosystem.
+
+The current `POST /api/v2/calendar/dates/bulk` endpoint still accepts API v1
+style field names. After this proposal is accepted, migrate it to `camelCase`
+and ObjectId string IDs.
+
+## Authentication
+
+API v2 separates browser-safe public identification from future server-side
+authorization.
+
+Send public keys in a dedicated header:
+
+```http
+X-SpaPortal-Public-Key: pk_live_...
+```
+
+Public keys identify the channel and scope the request. They are not secrets.
+
+Use public keys for endpoints that a public booking form must call:
+
+- Catalog data.
+- Availability data.
+- Pricing data.
+- Non-sensitive booking-form operations.
+
+The first API v2 phase is public-key only. Secret keys and secret-key scopes are
+reserved for a later server-to-server API phase.
+
+Do not send API v2 credentials in query parameters.
+
+## IDs
+
+API v2 uses ObjectId string values as public `id` values.
+
+```json
+{
+  "id": "66f16191f739705faa020768",
+  "name": {
+    "cs_CZ": "Pawlik"
+  }
+}
+```
+
+API v2 does not expose Mongo-style `_id` field names and does not expose legacy
+numeric API v1 ids.
+
+For migration, API v1 can later add `_id` fields while keeping its existing
+numeric `id` fields. API v2 should expose that same ObjectId value as `id`.
+
+Every detail lookup must still be scoped through the authenticated channel and
+company context. Knowing an ID must not grant cross-tenant access.
+
+## Pagination
+
+API v2 list endpoints use cursor pagination.
+
+```http
+GET /api/v2/room-types?limit=25&cursor=eyJzb3J0VmFsdWUiOi...
+```
+
+Response:
+
+```json
+{
+  "data": [],
+  "pagination": {
+    "limit": 25,
+    "nextCursor": null,
+    "hasMore": false,
+    "total": 372
+  }
+}
+```
+
+Use these parameters:
+
+| Parameter | Default | Maximum | Description |
+| --- | ---: | ---: | --- |
+| `limit` | `25` | `100` | Number of records to return. |
+| `cursor` | - | - | Opaque cursor from the previous page. |
+| `sort` | endpoint-specific | - | Allowlisted sort key. |
+
+Return `pagination.total` by default for public catalog/list endpoints such as
+hotels, destinations, visit types, room types, tags, and loyalty programs.
+
+Future high-volume or sensitive endpoints, such as reservations or payments, can
+make total counts opt-in or omit them.
+
+## Localization
+
+Use `Accept-Language` to request localized fields.
+
+```http
+Accept-Language: de,en
+```
+
+Supported language keys are:
+
+- `cs_CZ`
+- `de`
+- `en`
+- `ru`
+
+Localized fields remain objects keyed by language.
+
+```json
+{
+  "name": {
+    "de": "Franzensbad",
+    "en": "Frantiskovy Lazne"
+  }
+}
+```
+
+If `Accept-Language` is omitted, return all supported language keys. Do not
+support `?language=...`.
+
+Return `Content-Language` with the language keys included in the response.
+
+## Money and currencies
+
+Use ISO 4217 currency codes.
+
+Money values use the smallest currency unit:
+
+```json
+{
+  "amountMinor": 3150000,
+  "currency": "CZK",
+  "currencyExponent": 2
+}
+```
+
+`currencyExponent` tells the client how many decimal places the currency uses.
+For `CZK` and `EUR`, exponent `2` means `3150000` is `31500.00`.
+
+For multi-currency fields, return a currency-keyed object:
+
+```json
+{
+  "lowestPrices": {
+    "CZK": {
+      "amountMinor": 3150000,
+      "currency": "CZK",
+      "currencyExponent": 2,
+      "unit": "personPerNight"
+    },
+    "EUR": {
+      "amountMinor": 124000,
+      "currency": "EUR",
+      "currencyExponent": 2,
+      "unit": "personPerNight"
+    }
+  }
+}
+```
+
+Use `currency` only on endpoints that return prices, or where prices are part of
+the response.
+
+If `currency` is omitted, return all available currencies. If a supported
+currency is explicitly requested and no price exists, return that currency with
+`null`.
+
+```json
+{
+  "lowestPrices": {
+    "EUR": null
+  }
+}
+```
+
+Do not infer currency from `Accept-Language`. Do not implicitly convert prices.
+
+## Dates and times
+
+Use date-only strings for calendar dates and stay dates.
+
+```json
+{
+  "dateFrom": "2026-04-01",
+  "dateTo": "2026-04-30"
+}
+```
+
+Use UTC timestamps for exact instants.
+
+```json
+{
+  "createdAt": "2026-04-01T10:15:30.000Z"
+}
+```
+
+Do not let browser or server local time zones change date-only values.
+
+## Error shape
+
+API v2 should use one error shape.
+
+```json
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "hotelId must be a valid ObjectId.",
+    "details": [
+      {
+        "field": "hotelId",
+        "code": "invalid_object_id"
+      }
+    ],
+    "requestId": "req_..."
+  }
+}
+```
+
+Common error codes:
+
+| Code | Meaning |
+| --- | --- |
+| `invalid_request` | The request is malformed or validation failed. |
+| `missing_authentication` | The request did not include credentials. |
+| `invalid_authentication` | The provided key is invalid. |
+| `insufficient_scope` | The key is valid but cannot access the operation. |
+| `not_found` | The resource was not found in the scoped context. |
+| `conflict` | The request conflicts with current state. |
+| `rate_limited` | The client exceeded a rate limit. |
+| `internal_error` | An unexpected server error occurred. |
+
+## Room types
+
+API v2 adds `room-types` as a first-class resource.
+
+A room type is a category of room in a hotel. It is not a concrete room instance.
+One hotel can have multiple room types.
+
+### Endpoints
+
+| Endpoint | Description |
+| --- | --- |
+| `GET /api/v2/room-types` | List room types across hotels available to the public key. |
+| `GET /api/v2/room-types/{roomTypeId}` | Get one room type. |
+| `GET /api/v2/hotels/{hotelId}/room-types` | List room types in one hotel. |
+| `GET /api/v2/hotels/{hotelId}/room-types/{roomTypeId}` | Get one room type and verify it belongs to the hotel. |
+
+All room type list endpoints are paginated.
+
+### Relationship to hotels
+
+Room type responses include `hotelId` by default.
+
+```json
+{
+  "id": "66f16191f739705faa020770",
+  "hotelId": "66f16191f739705faa020769"
+}
+```
+
+Do not embed the full hotel object by default. Use `include=hotel` when a client
+needs a compact hotel summary.
+
+```http
+GET /api/v2/room-types?include=hotel
+```
+
+### Query parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `limit` | number | Cursor page size. Default `25`, maximum `100`. |
+| `cursor` | string | Opaque cursor from the previous response. |
+| `hotelId` | string | Filter to one hotel. |
+| `destinationId` | string | Filter to room types in hotels assigned to a destination. |
+| `visitTypeId` | string | Filter to room types compatible with a visit type. |
+| `beds` | number | Filter to exact bed count. |
+| `code` | string | Filter to one room type code. |
+| `search` | string | Search localized category name and code, if supported. |
+| `dateFrom` | string | Date-only value for availability and pricing filters. |
+| `dateTo` | string | Date-only value for availability and pricing filters. |
+| `availableOnly` | boolean | Return only room types with capacity in the date range. |
+| `currency` | string | Filter returned price fields to one currency. |
+| `include` | string | Supported value: `hotel`. |
+| `sort` | string | Allowlisted sort key. |
+
+### Response example
+
+```json
+{
+  "data": [
+    {
+      "id": "66f16191f739705faa020770",
+      "hotelId": "66f16191f739705faa020769",
+      "code": "SUPERIOR-DBL",
+      "category": {
+        "de": "Superior Doppelzimmer"
+      },
+      "beds": 2,
+      "facilities": ["shower", "toilet", "bath"],
+      "primaryImage": {
+        "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
+        "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
+      },
+      "images": [
+        {
+          "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example.jpg",
+          "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example.webp"
+        }
+      ],
+      "description": {
+        "de": "Luxurioses Zimmer mit Bad."
+      },
+      "lowestPrices": {
+        "CZK": {
+          "amountMinor": 3150000,
+          "currency": "CZK",
+          "currencyExponent": 2,
+          "unit": "personPerNight"
+        }
+      },
+      "bookingUrl": {
+        "de": "https://reservierung.example.test?hotel=Pawlik&roomType=SUPERIOR-DBL"
+      }
+    }
+  ],
+  "pagination": {
+    "limit": 25,
+    "nextCursor": null,
+    "hasMore": false,
+    "total": 1
+  }
+}
+```
+
+### Remaining room type review points
+
+Product should still confirm these details:
+
+- Should top-level `/room-types` include compact hotel data by default, or only
+  with `include=hotel`?
+- Should `availableOnly=true` require both `dateFrom` and `dateTo`?
+- Should `beds` be exact match only, or should API v2 also support `minBeds`?
+- Should public room type lists include room types without currently valid
+  price lists?
+- Do we need `search` over localized `category` and `code` in the first release?
+
+## Migration plan
+
+Recommended implementation order:
+
+1. Add shared API v2 helpers for auth, errors, IDs, localization, pagination, and
+   money.
+2. Keep API v1 auth helpers untouched.
+3. Migrate `POST /api/v2/calendar/dates/bulk` to `camelCase` and ObjectId string
+   IDs after the shared helpers exist.
+4. Add one low-risk read endpoint, such as `/api/v2/destinations`, as a reference
+   implementation.
+5. Add `/api/v2/room-types`.
+6. Add contract tests for auth, localization, ObjectId scoping, parent-child room
+   type scoping, and pagination.
+
+For API v1 migration support, add Mongo `_id` values to selected API v1
+responses first. API v1 should keep existing numeric `id` fields.

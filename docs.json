@@ -59,6 +59,7 @@
             "group": "API v2",
             "root": "api/v2/index",
             "pages": [
+              "api/v2/design",
               {
                 "group": "Endpoints",
                 "openapi": {
