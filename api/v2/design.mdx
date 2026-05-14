@@ -161,6 +161,41 @@ Use these parameters:
 | `cursor` | - | - | Opaque cursor from the previous page. |
 | `sort` | endpoint-specific | - | Allowlisted sort key. |
 
+MongoDB is compatible with cursor pagination when every list endpoint uses a
+stable, indexed sort. Do not treat the public cursor as a raw Mongo `_id`.
+Return an opaque cursor that contains the last sort value and the last ObjectId.
+
+Mongo ObjectId values are not random hashes. They include a timestamp component
+and can be used for stable creation-order pagination, but API v2 should not
+depend on ObjectId ordering for every product sort.
+
+For the default creation-order sort, implementation can use ObjectId internally:
+
+```json
+{
+  "sort": "createdAt:desc",
+  "lastId": "66f16191f739705faa020768"
+}
+```
+
+For non-unique sorts, always add ObjectId as a tie-breaker:
+
+```json
+{
+  "sort": "name:asc",
+  "lastSortValue": "Pawlik",
+  "lastId": "66f16191f739705faa020768"
+}
+```
+
+The query must continue after both values, for example `name > lastSortValue`
+or `name == lastSortValue and id > lastId` for ascending sorts. Add compound
+indexes that match the supported filters and sort keys.
+
+Changing filters, `sort`, `Accept-Language`, or `currency` should require a new
+pagination sequence. Cursors may include these request options internally and
+return `invalid_request` when they do not match the current request.
+
 Return `pagination.total` by default for public catalog/list endpoints such as
 hotels, destinations, visit types, room types, tags, and loyalty programs.
 
