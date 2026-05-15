@@ -6,6 +6,8 @@ icon: "calendar-check"
 
 Use catalog endpoints to build selection screens. Then validate availability and price before you create a booking.
 
+For exact parameters and response schemas, use the [API reference](/api).
+
 ## Recommended flow
 
 1. Fetch destinations with `GET /destinations`.
@@ -15,6 +17,10 @@ Use catalog endpoints to build selection screens. Then validate availability and
 5. Fetch possible checkout dates with `GET /calendar/checkouts`.
 6. Fetch the final price with `GET /price`.
 7. Create a booking with `POST /booking`.
+
+<Card title="API v1 endpoints" icon="square-terminal" href="/api/v1">
+  Browse the current production endpoint reference.
+</Card>
 
 ## Booking configuration
 

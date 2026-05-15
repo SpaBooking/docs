@@ -1,0 +1,41 @@
+---
+title: "Dates"
+description: "Format dates in SpaPortal API requests and responses."
+icon: "calendar-days"
+---
+
+SpaPortal API date fields use ISO 8601 calendar dates in `YYYY-MM-DD` format.
+
+Examples:
+
+```txt
+2026-04-01
+2026-04-21
+```
+
+Date fields do not include a time or time zone.
+
+## Common fields
+
+| Field | Meaning |
+| --- | --- |
+| `date_from` | Arrival date, start date, or the beginning of a search range in API v1. |
+| `date_to` | Departure date, end date, or the end of a search range in API v1. |
+| `dateFrom` | Target API v2 equivalent of `date_from`. |
+| `dateTo` | Target API v2 equivalent of `date_to`. |
+
+## Booking dates
+
+For booking and price requests, `date_from` is the arrival date and `date_to` is
+the departure date.
+
+The departure date must be after the arrival date.
+
+## Availability ranges
+
+Availability endpoints can also use `date_from` and `date_to` as a search
+range.
+
+When a range is omitted, the endpoint chooses defaults based on the nearest
+available booking period. Check the endpoint reference for endpoint-specific
+defaults.

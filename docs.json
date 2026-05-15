@@ -20,12 +20,6 @@
               "index",
               "quickstart"
             ]
-          },
-          {
-            "group": "SpaPortal Dashboard",
-            "pages": [
-              ""
-            ]
           }
         ]
       },
@@ -36,12 +30,8 @@
             "group": "Guides",
             "pages": [
               "guides/index",
-              "guides/authentication",
-              "guides/pagination",
-              "guides/localization",
-              "guides/errors",
               "guides/booking",
-              "guides/webhooks"
+              "guides/versioning"
             ]
           }
         ]
@@ -50,28 +40,32 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API v1",
-            "root": "api/v1/index",
+            "group": "API reference",
             "pages": [
-              {
-                "group": "Endpoints",
-                "openapi": {
-                  "source": "/api/v1/openapi.yaml",
-                  "directory": "api/v1/reference"
-                }
-              }
-            ]
-          },
-          {
-            "group": "API v2",
-            "root": "api/v2/index",
-            "pages": [
+              "api/index",
+              "api/conventions",
+              "api/authentication",
+              "api/dates",
+              "api/currencies",
+              "api/localization",
+              "api/pagination",
+              "api/errors",
+              "api/webhooks",
+              "api/v2/index",
               "api/v2/design",
               {
-                "group": "Endpoints",
+                "group": "API v2 endpoints",
                 "openapi": {
                   "source": "/api/v2/openapi.yaml",
                   "directory": "api/v2/reference"
+                }
+              },
+              "api/v1/index",
+              {
+                "group": "API v1 endpoints",
+                "openapi": {
+                  "source": "/api/v1/openapi.yaml",
+                  "directory": "api/v1/reference"
                 }
               }
             ]
@@ -93,8 +87,8 @@
     ],
     "primary": {
       "type": "button",
-      "label": "API v1",
-      "href": "/api/v1"
+      "label": "SpaPortal",
+      "href": "/spa-portal"
     }
   },
   "api": {
@@ -114,6 +108,32 @@
       "vscode"
     ]
   },
+  "redirects": [
+    {
+      "source": "/guides/authentication",
+      "destination": "/api/authentication"
+    },
+    {
+      "source": "/guides/pagination",
+      "destination": "/api/pagination"
+    },
+    {
+      "source": "/guides/localization",
+      "destination": "/api/localization"
+    },
+    {
+      "source": "/guides/errors",
+      "destination": "/api/errors"
+    },
+    {
+      "source": "/guides/webhooks",
+      "destination": "/api/webhooks"
+    },
+    {
+      "source": "/api-reference/:slug*",
+      "destination": "/api"
+    }
+  ],
   "footer": {
     "socials": {}
   },

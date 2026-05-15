@@ -1,0 +1,45 @@
+---
+title: "API versioning"
+description: "Choose the right SpaPortal API version for an integration."
+icon: "git-branch"
+---
+
+Use API v1 for current production integrations.
+
+Use API v2 only when the endpoint you need is documented and a SpaPortal
+administrator confirms that it is ready for your integration.
+
+## Version paths
+
+SpaPortal exposes major API versions in the URL path:
+
+```txt
+https://spaportal.cz/api/v1
+https://spaportal.cz/api/v2
+```
+
+Staging uses the same paths:
+
+```txt
+https://staging.spaportal.cz/api/v1
+https://staging.spaportal.cz/api/v2
+```
+
+## Breaking changes
+
+Breaking changes require a new major version.
+
+Examples include renamed fields, changed ID semantics, changed pagination, or
+changed authentication requirements.
+
+Additive changes can be made inside the same major version.
+
+Examples include new optional fields, new optional query parameters, new
+endpoints, or new enum values that clients can ignore safely.
+
+## Migration
+
+API v1 remains supported while API v2 is incomplete.
+
+When API v1 deprecation is announced, SpaPortal will publish migration notes and
+a concrete sunset date.

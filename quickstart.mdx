@@ -8,7 +8,7 @@ icon: "rocket"
 
 Ask a SpaPortal administrator for an API key.
 
-Keep the key secret. It can access data for one or more configured companies.
+Keep the key private. It can access data for one or more configured companies.
 
 ## Send a request
 
@@ -23,6 +23,10 @@ curl \
 
 The response contains localized fields for the languages you request.
 
+<Card title="Authentication" icon="key" href="/api/authentication">
+  Read the full authentication contract.
+</Card>
+
 ## Use pagination
 
 List endpoints return a limited number of items. Use `max` and `offset` to page through results.
@@ -34,6 +38,10 @@ curl \
 ```
 
 Read the `X-Total-Count` response header to get the total number of matching records.
+
+<Card title="Pagination" icon="list-ordered" href="/api/pagination">
+  Read the full pagination contract.
+</Card>
 
 ## Continue with the booking flow
 

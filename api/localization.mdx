@@ -1,0 +1,48 @@
+---
+title: "Localization"
+description: "Request localized SpaPortal API fields."
+icon: "languages"
+---
+
+SpaPortal stores selected text fields in multiple languages.
+
+Send `Accept-Language` to choose the localized values you want:
+
+```bash
+curl \
+  -H "Authorization: Bearer <API_KEY>" \
+  -H "Accept-Language: cs_CZ,de" \
+  "https://spaportal.cz/api/v1/hotels"
+```
+
+Localized response fields are objects keyed by language:
+
+```json
+{
+  "name": {
+    "cs_CZ": "Frantiskovy Lazne",
+    "de": "Franzensbad"
+  }
+}
+```
+
+The response includes `Content-Language` with the languages returned.
+
+## Supported languages
+
+API v1 supports these language keys:
+
+| Key | Language |
+| --- | --- |
+| `cs_CZ` | Czech |
+| `de` | German |
+| `en` | English |
+| `ru` | Russian |
+
+## API v2 direction
+
+API v2 uses `Accept-Language` for language selection.
+
+The target API v2 contract uses BCP 47 language tags and does not support a
+`language` query parameter. When `Accept-Language` is omitted, API v2 returns
+all supported language keys.

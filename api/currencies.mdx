@@ -1,0 +1,59 @@
+---
+title: "Currencies"
+description: "Understand money and currency fields in the SpaPortal API."
+icon: "badge-dollar-sign"
+---
+
+SpaPortal API price fields include a currency code.
+
+API v1 supports:
+
+| Code | Currency |
+| --- | --- |
+| `CZK` | Czech koruna |
+| `EUR` | Euro |
+
+## API v1 money fields
+
+API v1 returns decimal price amounts.
+
+```json
+{
+  "amount": 18924,
+  "currency": "CZK"
+}
+```
+
+Lowest-price fields use `amount_per_night`:
+
+```json
+{
+  "amount_per_night": 1024.5,
+  "currency": "CZK"
+}
+```
+
+Some price responses are keyed by language because the returned currency follows
+the localized booking context.
+
+## Booking currency
+
+`POST /booking` accepts a `currency` value. If you omit it, API v1 defaults to
+`CZK`.
+
+Use only a currency supported by the selected hotel and booking channel.
+
+## API v2 direction
+
+The target API v2 contract represents money with minor units:
+
+```json
+{
+  "amountMinor": 1892400,
+  "currency": "CZK",
+  "currencyExponent": 2
+}
+```
+
+API v2 uses `currency` only on endpoints that return prices or can include
+prices.

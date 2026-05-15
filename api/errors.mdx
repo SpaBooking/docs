@@ -1,10 +1,10 @@
 ---
 title: "Errors"
-description: "Understand common SpaPortal API error responses."
+description: "Handle SpaPortal API error responses."
 icon: "triangle-alert"
 ---
 
-Error responses use JSON.
+SpaPortal API error responses use JSON.
 
 ```json
 {
@@ -13,7 +13,7 @@ Error responses use JSON.
 }
 ```
 
-Validation errors include an `errors` array:
+Validation errors can include an `errors` array:
 
 ```json
 {
@@ -32,3 +32,13 @@ Validation errors include an `errors` array:
 | `404` | A referenced resource was not found. |
 | `422` | A referenced resource exists but cannot be used for the requested operation. |
 | `500` | An unexpected server error occurred. |
+
+## Handling errors
+
+Read both the HTTP status and the JSON `message`.
+
+Treat `400`, `401`, `404`, and `422` as client-correctable errors. Retry only
+after you change the request.
+
+Treat `500` as a temporary server error. Retry with backoff if the operation is
+safe to repeat.

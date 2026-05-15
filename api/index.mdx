@@ -1,0 +1,79 @@
+---
+title: "API reference"
+description: "Conventions, endpoints, and public contracts for the SpaPortal API."
+icon: "square-terminal"
+---
+
+The API reference describes the public SpaPortal API contract.
+
+Use it when you need exact request formats, authentication rules, response
+shapes, error behavior, date formats, currencies, and endpoint details.
+
+## Default version
+
+API v2 is the default reference direction for new public API design.
+
+<Warning>
+  API v2 is still in progress. Use API v1 for production integrations unless a
+  SpaPortal administrator tells you to use a v2 endpoint.
+</Warning>
+
+## Reference sections
+
+<Columns cols={2}>
+  <Card title="API v2" icon="square-terminal" href="/api/v2">
+    Review current v2 endpoints and the target v2 contract.
+  </Card>
+  <Card title="Conventions" icon="braces" href="/api/conventions">
+    Understand naming, IDs, and response shapes.
+  </Card>
+  <Card title="Authentication" icon="key" href="/api/authentication">
+    Send credentials with public API requests.
+  </Card>
+  <Card title="Dates" icon="calendar-days" href="/api/dates">
+    Format arrival, departure, and availability dates.
+  </Card>
+  <Card title="Currencies" icon="badge-dollar-sign" href="/api/currencies">
+    Understand price and currency fields.
+  </Card>
+  <Card title="Localization" icon="languages" href="/api/localization">
+    Request localized fields with `Accept-Language`.
+  </Card>
+  <Card title="Pagination" icon="list-ordered" href="/api/pagination">
+    Page through list responses.
+  </Card>
+  <Card title="Errors" icon="triangle-alert" href="/api/errors">
+    Handle status codes and error responses.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/api/webhooks">
+    Review public webhook contract status.
+  </Card>
+</Columns>
+
+## Base URLs
+
+Use the production API for live traffic:
+
+```txt
+https://spaportal.cz/api/v2
+```
+
+Use the staging API for integration testing:
+
+```txt
+https://staging.spaportal.cz/api/v2
+```
+
+API v1 remains available under the same hosts:
+
+```txt
+https://spaportal.cz/api/v1
+https://staging.spaportal.cz/api/v1
+```
+
+## Endpoint reference
+
+The generated endpoint reference is split by API version.
+
+Start with [API v2](/api/v2) for new contracts. Use [API v1](/api/v1) for
+current production integrations.
