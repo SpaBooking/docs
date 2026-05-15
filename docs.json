@@ -11,18 +11,26 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Getting started",
-        "icon": "rocket",
+        "tab": "Introduction",
         "groups": [
           {
             "group": "Getting started",
-            "pages": ["index", "quickstart"]
+            "pages": [
+              "spa-portal",
+              "index",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "SpaPortal Dashboard",
+            "pages": [
+              ""
+            ]
           }
         ]
       },
       {
         "tab": "Guides",
-        "icon": "book-open",
         "groups": [
           {
             "group": "Guides",
@@ -40,7 +48,6 @@
       },
       {
         "tab": "API reference",
-        "icon": "square-terminal",
         "groups": [
           {
             "group": "API v1",
@@ -71,21 +78,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "SpaPortal",
-          "href": "https://spaportal.cz",
-          "icon": "house"
-        },
-        {
-          "anchor": "SpaBooking",
-          "href": "https://spabooking.de",
-          "icon": "leaf"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
