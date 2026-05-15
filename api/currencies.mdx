@@ -57,3 +57,22 @@ The target API v2 contract represents money with minor units:
 
 API v2 uses `currency` only on endpoints that return prices or can include
 prices.
+
+`POST /api/v2/calendar/dates/bulk` accepts `currency` in `shared` or in each
+item. If you omit `currency`, the endpoint returns available prices as
+`amounts` keyed by currency:
+
+```json
+{
+  "price": {
+    "isFinal": true,
+    "amounts": {
+      "CZK": {
+        "amountMinor": 180000,
+        "currency": "CZK",
+        "currencyExponent": 2
+      }
+    }
+  }
+}
+```

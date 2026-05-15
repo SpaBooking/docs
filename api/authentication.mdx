@@ -20,8 +20,8 @@ browser booking clients, but they still control access to channel-scoped data.
 Do not send API v2 credentials in query parameters.
 
 <Note>
-  The current `POST /api/v2/calendar/dates/bulk` endpoint still follows API v1
-  compatibility behavior. Check the endpoint reference before using it.
+  The current `POST /api/v2/calendar/dates/bulk` endpoint uses this header.
+  Check the endpoint reference for remaining compatibility behavior.
 </Note>
 
 ## API v1
@@ -46,5 +46,5 @@ Prefer the `Authorization` header for new API v1 integrations.
 
 | Status | Cause |
 | ---: | --- |
-| `400` | The key is missing, or the `Authorization` header does not use `Bearer <API_KEY>`. |
+| `400` | The key is missing, or an API v1 `Authorization` header does not use `Bearer <API_KEY>`. |
 | `401` | The key is invalid. |

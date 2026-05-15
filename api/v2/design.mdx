@@ -59,9 +59,8 @@ Product and engineering should still confirm:
 - Which API v1 endpoints are migrated into API v2 first.
 - Which API v1 responses should gain Mongo `_id` values first to support
   migration.
-- Whether the existing `POST /api/v2/calendar/dates/bulk` endpoint should make a
-  clean breaking change to the final API v2 contract, or temporarily accept both
-  old and new field names.
+- Which additional API v1 endpoints should migrate into API v2 after
+  `POST /api/v2/calendar/dates/bulk`.
 - The exact API v1 deprecation and sunset dates. API v1 should not be deprecated
   until API v2 covers the required production use cases.
 - The future list of secret-key endpoints and scopes. API v2 phase one does not
@@ -138,9 +137,8 @@ JSON ecosystem, while Stripe is a mature API that uses `snake_case`. SpaPortal
 API v2 chooses `camelCase` because it is a new JSON contract in a TypeScript and
 browser-client ecosystem.
 
-The current `POST /api/v2/calendar/dates/bulk` endpoint still accepts API v1
-style field names. After this proposal is accepted, migrate it to `camelCase`
-and ObjectId string IDs.
+The current `POST /api/v2/calendar/dates/bulk` endpoint uses `camelCase` field
+names and ObjectId string IDs.
 
 ## Authentication
 
@@ -705,8 +703,8 @@ Recommended implementation order:
 1. Add shared API v2 helpers for auth, errors, IDs, localization, pagination, and
    money.
 2. Keep API v1 auth helpers untouched.
-3. Migrate `POST /api/v2/calendar/dates/bulk` to `camelCase` and ObjectId string
-   IDs after the shared helpers exist.
+3. Use `POST /api/v2/calendar/dates/bulk` as the first implemented endpoint for
+   shared v2 auth, errors, ObjectId input, and money response behavior.
 4. Add one low-risk read endpoint, such as `/api/v2/destinations`, as a reference
    implementation.
 5. Add `/api/v2/room-types`.

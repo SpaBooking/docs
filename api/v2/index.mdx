@@ -25,9 +25,10 @@ API v2 is the default direction for new SpaPortal API design.
 The first documented endpoint is `POST /calendar/dates/bulk`. It batches
 multiple calendar date lookups into one request.
 
-That endpoint currently still follows API v1 compatibility conventions in
-several places, including bearer authentication, `access_token`, `snake_case`
-parameters, and legacy numeric API ids.
+That endpoint uses the API v2 public key header, `camelCase` request fields,
+ObjectId string values for resource identifiers, the API v2 error shape, and
+minor-unit money fields in calendar prices. It also accepts `currency` in
+`shared` or in each item to filter returned price amounts.
 
 The design proposal describes the target API v2 contract. Do not treat the
 proposal as implemented behavior until the endpoint reference is updated.

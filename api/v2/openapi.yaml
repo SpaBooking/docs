@@ -9,8 +9,7 @@ servers:
   - url: https://staging.spaportal.cz/api/v2
     description: Staging
 security:
-  - bearerAuth: []
-  - accessTokenQuery: []
+  - spaPortalPublicKey: []
 tags:
   - name: Availability
 paths:
@@ -20,6 +19,8 @@ paths:
       summary: Get calendar dates in bulk
       operationId: getCalendarDatesBulk
       description: Batch multiple calendar date lookups into one request.
+      parameters:
+        - $ref: "#/components/parameters/RequestId"
       requestBody:
         required: true
         content:
@@ -39,45 +40,90 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
         "422":
           $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 components:
+  parameters:
+    RequestId:
+      name: X-Request-Id
+      in: header
+      required: false
+      schema:
+        type: string
+      description: Optional client-provided request identifier echoed in error responses.
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-    accessTokenQuery:
+    spaPortalPublicKey:
       type: apiKey
-      in: query
-      name: access_token
+      in: header
+      name: X-SpaPortal-Public-Key
   responses:
     BadRequest:
       description: Invalid request.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
     Unauthorized:
       description: Invalid API key.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
     NotFound:
       description: Resource not found.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Conflict:
+      description: Request conflicts with current state or scoped context.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
     UnprocessableEntity:
       description: Resource exists but cannot be used for this request.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
+    InternalServerError:
+      description: Unexpected server error.
+      headers:
+        X-Request-Id:
+          $ref: "#/components/headers/RequestId"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  headers:
+    RequestId:
+      description: Request identifier for support and debugging.
+      schema:
+        type: string
   schemas:
     CalendarDatesBulkRequest:
       type: object
+      additionalProperties: false
       required: [items]
       properties:
         shared:
@@ -90,39 +136,92 @@ components:
             $ref: "#/components/schemas/CalendarDatesBulkQueryWithKey"
     CalendarDatesBulkQuery:
       type: object
+      additionalProperties: false
       properties:
-        visit_type_id:
-          type: integer
+        visitTypeId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Visit type ObjectId.
           nullable: true
-        hotel_id:
-          type: integer
+        hotelId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Hotel ObjectId.
           nullable: true
-        room_type_id:
-          type: integer
+        roomTypeId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Room type ObjectId.
           nullable: true
-        destination_id:
-          type: integer
+        destinationId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Destination ObjectId.
           nullable: true
         guests:
           type: integer
+          minimum: 1
+          maximum: 2
           nullable: true
-        date_from:
+        dateFrom:
           type: string
           format: date
           nullable: true
-        date_to:
+        dateTo:
           type: string
           format: date
+          nullable: true
+        currency:
+          type: string
+          enum: [CZK, EUR]
+          description: Return calendar prices only in this currency.
           nullable: true
     CalendarDatesBulkQueryWithKey:
-      allOf:
-        - $ref: "#/components/schemas/CalendarDatesBulkQuery"
-        - type: object
-          properties:
-            key:
-              type: string
-              maxLength: 100
-              description: Optional client key returned with the matching result.
+      type: object
+      additionalProperties: false
+      properties:
+        visitTypeId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Visit type ObjectId.
+          nullable: true
+        hotelId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Hotel ObjectId.
+          nullable: true
+        roomTypeId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Room type ObjectId.
+          nullable: true
+        destinationId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          description: Destination ObjectId.
+          nullable: true
+        guests:
+          type: integer
+          minimum: 1
+          maximum: 2
+          nullable: true
+        dateFrom:
+          type: string
+          format: date
+          nullable: true
+        dateTo:
+          type: string
+          format: date
+          nullable: true
+        currency:
+          type: string
+          enum: [CZK, EUR]
+          description: Return calendar prices only in this currency.
+          nullable: true
+        key:
+          type: string
+          maxLength: 100
+          description: Optional client key returned with the matching result.
     CalendarDatesBulkResponse:
       type: object
       properties:
@@ -151,15 +250,66 @@ components:
           type: string
           enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]
         price:
-          type: object
+          allOf:
+            - $ref: "#/components/schemas/CalendarDatePrice"
           nullable: true
-          additionalProperties: true
+    CalendarDatePrice:
+      type: object
+      required: [isFinal, amounts]
+      properties:
+        isFinal:
+          type: boolean
+        amounts:
+          type: object
+          properties:
+            CZK:
+              allOf:
+                - $ref: "#/components/schemas/Money"
+              nullable: true
+            EUR:
+              allOf:
+                - $ref: "#/components/schemas/Money"
+              nullable: true
+    Money:
+      type: object
+      required: [amountMinor, currency, currencyExponent]
+      properties:
+        amountMinor:
+          type: integer
+          description: Amount in the smallest currency unit.
+          example: 180000
+        currency:
+          type: string
+          enum: [CZK, EUR]
+        currencyExponent:
+          type: integer
+          enum: [2]
+          description: Decimal exponent for the currency.
     ErrorResponse:
       type: object
-      required: [success, message]
+      required: [error]
       properties:
-        success:
-          type: boolean
-          example: false
-        message:
-          type: string
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              enum:
+                - invalid_request
+                - missing_authentication
+                - invalid_authentication
+                - insufficient_scope
+                - not_found
+                - conflict
+                - rate_limited
+                - internal_error
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+            requestId:
+              type: string

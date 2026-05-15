@@ -6,20 +6,38 @@ icon: "triangle-alert"
 
 SpaPortal API error responses use JSON.
 
+API v2 uses a single `error` object:
+
+```json
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "hotelId must be a valid ObjectId.",
+    "requestId": "req_6b4c6b6f-0d34-47f1-bf3b-8a3f9d8d2e1f",
+    "details": [
+      {
+        "field": "hotelId",
+        "code": "invalid_object_id"
+      }
+    ]
+  }
+}
+```
+
+Common API v2 error codes are `invalid_request`, `missing_authentication`,
+`invalid_authentication`, `insufficient_scope`, `not_found`, `conflict`,
+`rate_limited`, and `internal_error`.
+
+API v2 error responses also include `X-Request-Id`. If you send
+`X-Request-Id` with the request, SpaPortal echoes that value. Otherwise,
+SpaPortal generates one.
+
+API v1 keeps the legacy `success` and `message` shape:
+
 ```json
 {
   "success": false,
   "message": "Missing API key"
-}
-```
-
-Validation errors can include an `errors` array:
-
-```json
-{
-  "success": false,
-  "message": "Zod validation error",
-  "errors": []
 }
 ```
 
@@ -35,7 +53,7 @@ Validation errors can include an `errors` array:
 
 ## Handling errors
 
-Read both the HTTP status and the JSON `message`.
+Read both the HTTP status and the JSON error code or message.
 
 Treat `400`, `401`, `404`, and `422` as client-correctable errors. Retry only
 after you change the request.
