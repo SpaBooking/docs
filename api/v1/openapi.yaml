@@ -38,6 +38,8 @@ paths:
       tags: [Catalog]
       summary: Get destinations
       operationId: getDestinations
+      x-mint:
+        href: /api/v1/reference/get-destinations
       description: Returns all destinations available to the authenticated API key.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -408,6 +410,8 @@ paths:
       tags: [Availability]
       summary: Get calendar dates
       operationId: getCalendarDates
+      x-mint:
+        href: /api/v1/reference/get-calendar-dates
       description: |
         Returns calendar dates with availability and price data.
 
@@ -533,6 +537,8 @@ paths:
       tags: [Pricing]
       summary: Get price
       operationId: getPrice
+      x-mint:
+        href: /api/v1/reference/get-price
       description: Returns the final price for a concrete visit type, room type, arrival date, and departure date. Loyalty program IDs can apply guest-level discounts.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -725,6 +731,8 @@ paths:
       tags: [Booking]
       summary: Get booking configuration
       operationId: getBookingConfiguration
+      x-mint:
+        href: /api/v1/reference/get-booking-configuration
       description: |
         Matches partial booking parameters such as destination name, visit type name, hotel name, room type category, and dates.
 
