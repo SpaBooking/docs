@@ -35,7 +35,7 @@ These decisions are part of the current proposal.
 | Naming | Use `camelCase` for query parameters and JSON fields. |
 | Paths | Use plural resource paths such as `/hotels`, `/room-types`, and `/visit-types`. |
 | IDs | Use ObjectId string values as public `id` values in API v2. |
-| Legacy IDs | Do not expose legacy numeric API v1 ids in API v2. |
+| Legacy IDs | Do not expose legacy numeric API v1 IDs in API v2. |
 | Authentication | Use `X-SpaPortal-Public-Key` for public API v2 endpoints. |
 | Secret keys | Defer secret-key and server-to-server endpoints to a later phase. |
 | Query credentials | Do not support credentials in query parameters. |
@@ -179,7 +179,7 @@ API v2 uses ObjectId string values as public `id` values.
 ```
 
 API v2 does not expose Mongo-style `_id` field names and does not expose legacy
-numeric API v1 ids.
+numeric API v1 IDs.
 
 For migration, API v1 can later add `_id` fields while keeping its existing
 numeric `id` fields. API v2 should expose that same ObjectId value as `id`.
