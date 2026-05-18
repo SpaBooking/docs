@@ -66,7 +66,9 @@ roomTypeId
 
 ## IDs
 
-API v1 uses legacy numeric IDs in public responses and request parameters.
+API v1 uses legacy numeric IDs as `id` values in public responses and request
+parameters. Public response objects that expose an entity `id` can also include
+`_id`, which is the same entity's MongoDB ObjectId string.
 
 API v2 uses ObjectId string values as public `id` values. It does not expose
 legacy numeric API v1 IDs in the target contract.

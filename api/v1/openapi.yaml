@@ -888,7 +888,8 @@ components:
     DestinationsResponse:
       summary: Destination list
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020001
+          id: 1
           name:
             cs_CZ: Frantiskovy Lazne
             de: Franzensbad
@@ -898,7 +899,8 @@ components:
     HotelsResponse:
       summary: Hotel list
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020002
+          id: 1
           name: Pawlik
           stars: 4
           phone_number: "+420 354 201 111"
@@ -930,6 +932,7 @@ components:
             cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik
             de: https://reservierung.franzensbad.cz?hotel=Pawlik
           destination:
+            _id: 66f16191f739705faa020001
             id: 1
             name:
               cs_CZ: Frantiskovy Lazne
@@ -940,7 +943,8 @@ components:
             postal_code: "351 01"
             country_code: CZE
           roomTypes:
-            - id: 1
+            - _id: 66f16191f739705faa020003
+              id: 1
               category:
                 cs_CZ: Prezidentske apartma
                 de: App. Aquaforum
@@ -965,6 +969,7 @@ components:
     HotelResponse:
       summary: Hotel detail
       value:
+        _id: 66f16191f739705faa020002
         id: 1
         name: Pawlik
         stars: 4
@@ -997,6 +1002,7 @@ components:
           cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik
           de: https://reservierung.franzensbad.cz?hotel=Pawlik
         destination:
+          _id: 66f16191f739705faa020001
           id: 1
           name:
             cs_CZ: Frantiskovy Lazne
@@ -1007,7 +1013,8 @@ components:
           postal_code: "351 01"
           country_code: CZE
         roomTypes:
-          - id: 1
+          - _id: 66f16191f739705faa020003
+            id: 1
             category:
               cs_CZ: Prezidentske apartma
               de: App. Aquaforum
@@ -1032,14 +1039,16 @@ components:
     VisitTypesResponse:
       summary: Visit type list
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020004
+          id: 1
           priority_position: 1
           on_demand: false
           name:
             cs_CZ: Frantiskolazenska lecebna kura
             de: Franzensbader Heilkur
           visit_type_categories:
-            - id: 1
+            - _id: 66f16191f739705faa020005
+              id: 1
               name:
                 cs_CZ: Lazensky pobyt
                 de: Heilkur
@@ -1061,7 +1070,8 @@ components:
           boarding: HALF_BOARD
           available_boardings: [HALF_BOARD, FULL_BOARD, BREAKFAST, LUNCH, DINNER, ALL_INCLUSIVE]
           tags:
-            - id: 1
+            - _id: 66f16191f739705faa020006
+              id: 1
               name:
                 cs_CZ: Byt stale mlad
                 de: Sei noch jung
@@ -1083,7 +1093,8 @@ components:
             cs_CZ: 14x ubytovani.
             de: 14x Unterkunft.
           hotels:
-            - id: 1
+            - _id: 66f16191f739705faa020002
+              id: 1
               name: Pawlik
               lowest_price:
                 cs_CZ:
@@ -1093,7 +1104,8 @@ components:
                   amount_per_night: 40
                   currency: EUR
           loyalty_programs:
-            - id: 2
+            - _id: 66f16191f739705faa020007
+              id: 2
               name:
                 cs_CZ: VIP Club Premium
                 de: VIP Club Premium
@@ -1102,12 +1114,14 @@ components:
     VisitTypeCategoriesResponse:
       summary: Visit type category list
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020005
+          id: 1
           name:
             cs_CZ: Lecebny pobyt
             de: Heilkur
           visitTypes:
-            - id: 1
+            - _id: 66f16191f739705faa020004
+              id: 1
               priority_position: 1
               on_demand: false
               name:
@@ -1120,12 +1134,14 @@ components:
     VisitTypeCategoryResponse:
       summary: Visit type category detail
       value:
+        _id: 66f16191f739705faa020005
         id: 1
         name:
           cs_CZ: Lecebny pobyt
           de: Heilkur
         visitTypes:
-          - id: 1
+          - _id: 66f16191f739705faa020004
+            id: 1
             priority_position: 1
             on_demand: false
             name:
@@ -1138,7 +1154,8 @@ components:
     TagsResponse:
       summary: Tag list
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020006
+          id: 1
           name:
             cs_CZ: Byt stale mlad
             de: Sei noch jung
@@ -1147,7 +1164,8 @@ components:
     LoyaltyProgramsResponse:
       summary: Loyalty program list
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020007
+          id: 1
           name:
             cs_CZ: VIP Club Gold
             de: VIP Club Gold
@@ -1190,6 +1208,7 @@ components:
               - price_discount: 996
                 guest: 1
                 loyalty_program:
+                  _id: 66f16191f739705faa020007
                   id: 2
                   name:
                     cs_CZ: VIP Club Premium
@@ -1204,6 +1223,7 @@ components:
               - price_discount: 40
                 guest: 1
                 loyalty_program:
+                  _id: 66f16191f739705faa020007
                   id: 2
                   name:
                     cs_CZ: VIP Club Premium
@@ -1223,8 +1243,10 @@ components:
     PriceListsResponse:
       summary: Price lists
       value:
-        - id: 1
+        - _id: 66f16191f739705faa020008
+          id: 1
           visit_type:
+            _id: 66f16191f739705faa020004
             id: 1
             name:
               cs_CZ: Frantiskolazenska lecebna kura
@@ -1235,10 +1257,16 @@ components:
               date_to: "2027-01-01"
               rooms:
                 - room_type:
+                    _id: 66f16191f739705faa020003
                     id: 1
                     category:
                       cs_CZ: Prezidentske apartma
                       de: App.
+                    hotel:
+                      _id: 66f16191f739705faa020002
+                      id: 1
+                      name: Pawlik
+                      stars: 4
                     booking_url:
                       cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik&roomType=APPARTEMENT
                       de: https://reservierung.franzensbad.cz?hotel=Pawlik&roomType=APPARTEMENT
@@ -1261,11 +1289,13 @@ components:
       summary: Booking configuration
       value:
         destination:
+          _id: 66f16191f739705faa020001
           id: 1
           name:
             cs_CZ: Frantiskovy Lazne
             de: Franzensbad
         visit_type:
+          _id: 66f16191f739705faa020004
           id: 1
           priority_position: 1
           on_demand: false
@@ -1276,10 +1306,12 @@ components:
           nights_max: 3
           reservation_time_span: DAYS
         hotel:
+          _id: 66f16191f739705faa020002
           id: 1
           name: Pawlik
           stars: 4
         room_type:
+          _id: 66f16191f739705faa020003
           id: 1
           category:
             cs_CZ: Prezidentske apartma
@@ -1339,7 +1371,8 @@ components:
     BookingCreateResponse:
       summary: Created booking
       value:
-        id: 1
+        _id: 66f16191f739705faa020009
+        id: 66f16191f739705faa020009
 
   responses:
     BadRequest:
@@ -1404,6 +1437,12 @@ components:
         cs_CZ: Frantiskovy Lazne
         de: Franzensbad
 
+    MongoObjectId:
+      type: string
+      pattern: "^[0-9a-fA-F]{24}$"
+      description: MongoDB ObjectId string for the same entity.
+      example: 66f16191f739705faa020001
+
     CurrencyAmount:
       type: object
       required: [amount, currency]
@@ -1445,6 +1484,8 @@ components:
       type: object
       required: [id, name]
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           type: integer
         name:
@@ -1469,6 +1510,8 @@ components:
     RoomType:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           type: integer
         category:
@@ -1491,10 +1534,25 @@ components:
           $ref: "#/components/schemas/LocalizedString"
         lowest_price:
           $ref: "#/components/schemas/LowestPriceByLanguage"
+        hotel:
+          type: object
+          description: Included on price list room type items.
+          properties:
+            _id:
+              $ref: "#/components/schemas/MongoObjectId"
+            id:
+              type: integer
+            name:
+              type: string
+            stars:
+              type: integer
+              nullable: true
 
     Hotel:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           type: integer
         name:
@@ -1536,6 +1594,8 @@ components:
     VisitTypeCategory:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           oneOf:
             - type: integer
@@ -1550,6 +1610,8 @@ components:
     VisitTypeSummary:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           oneOf:
             - type: integer
@@ -1581,6 +1643,8 @@ components:
     Tag:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           oneOf:
             - type: integer
@@ -1595,6 +1659,8 @@ components:
       type: object
       additionalProperties: true
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           oneOf:
             - type: integer
@@ -1605,6 +1671,8 @@ components:
     VisitType:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           oneOf:
             - type: integer
@@ -1664,6 +1732,8 @@ components:
           items:
             type: object
             properties:
+              _id:
+                $ref: "#/components/schemas/MongoObjectId"
               id:
                 type: integer
               name:
@@ -1695,11 +1765,15 @@ components:
     PriceList:
       type: object
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           type: integer
         visit_type:
           type: object
           properties:
+            _id:
+              $ref: "#/components/schemas/MongoObjectId"
             id:
               type: integer
             name:
@@ -1858,6 +1932,8 @@ components:
       type: object
       additionalProperties: true
       properties:
+        _id:
+          $ref: "#/components/schemas/MongoObjectId"
         id:
           oneOf:
             - type: integer
