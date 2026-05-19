@@ -9,7 +9,7 @@ All responses use standard HTTP status codes.
 
 | Status | Meaning |
 | --: | --- |
-| `200` | Request succeeded. Response body contains the result. |
+| `200` | Request succeeded. The response body contains the result. |
 | `201` | Resource created successfully. |
 
 ## Errors
@@ -19,5 +19,6 @@ All responses use standard HTTP status codes.
 | `400` | The request is malformed, a required parameter is missing, or validation failed. |
 | `401` | The API key is missing or invalid. |
 | `404` | The requested resource was not found. |
+| `409` | The request conflicts with the current state or matched more than one scoped resource. |
 | `422` | The resource exists but cannot be used for the requested operation. Usually validation errors. |
 | `500` | An unexpected server error occurred. Retry with backoff if the operation is safe to repeat. |

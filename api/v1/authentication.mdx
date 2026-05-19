@@ -1,0 +1,30 @@
+---
+title: "API v1 authentication"
+description: "Authenticate requests to API v1."
+icon: "key"
+---
+
+API v1 requests use an API key.
+
+Send the key as a bearer token:
+
+```bash
+curl \
+  -H "Authorization: Bearer <API_KEY>" \
+  "https://spaportal.cz/api/v1/destinations"
+```
+
+API v1 also accepts the `access_token` query parameter:
+
+```bash
+curl "https://spaportal.cz/api/v1/destinations?access_token=<API_KEY>"
+```
+
+Prefer the `Authorization` header for integrations that can set request headers.
+
+## Authentication errors
+
+| Status | Cause |
+| ---: | --- |
+| `400` | The key is missing, or the `Authorization` header does not use `Bearer <API_KEY>`. |
+| `401` | The key is invalid. |

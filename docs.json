@@ -134,30 +134,15 @@
     },
     {
       "source": "/guides/webhooks",
-      "destination": "/api/webhooks"
+      "destination": "/api"
     },
     {
       "source": "/api-reference/:slug*",
       "destination": "/api"
     },
     {
-      "source": "/api/dates",
-      "destination": "api/conventions",
-      "permanent": true
-    },
-    {
-      "source": "/api/currencies",
-      "destination": "api/conventions",
-      "permanent": true
-    },
-    {
-      "source": "/api/localization",
-      "destination": "api/conventions",
-      "permanent": true
-    },
-    {
-      "source": "/api/pagination",
-      "destination": "api/conventions",
+      "source": "/api/conventions",
+      "destination": "/api",
       "permanent": true
     }
   ],

@@ -1,0 +1,27 @@
+---
+title: "API v1 dates"
+description: "Format dates in API v1 requests and responses."
+icon: "calendar-days"
+---
+
+API v1 date fields use `YYYY-MM-DD`.
+
+```txt
+2026-04-01
+2026-04-21
+```
+
+Date fields do not include a time or time zone.
+
+## Common fields
+
+| Field | Meaning |
+| --- | --- |
+| `date_from` | Arrival date, start date, or the beginning of a search range. |
+| `date_to` | Departure date, end date, or the end of a search range. |
+| `start_date` | Check-in date for checkout-date lookup. |
+
+For booking and price requests, `date_from` is the arrival date and `date_to` is
+the departure date.
+
+The departure date must be after the arrival date.

@@ -1,0 +1,40 @@
+---
+title: "API v1 currencies"
+description: "Understand money and currency fields in API v1."
+icon: "badge-dollar-sign"
+---
+
+API v1 price fields include a currency code.
+
+Supported currencies:
+
+| Code | Currency |
+| --- | --- |
+| `CZK` | Czech koruna |
+| `EUR` | Euro |
+
+## Money fields
+
+API v1 returns decimal price amounts.
+
+```json
+{
+  "amount": 18924,
+  "currency": "CZK"
+}
+```
+
+Lowest-price fields use `amount_per_night`:
+
+```json
+{
+  "amount_per_night": 1024.5,
+  "currency": "CZK"
+}
+```
+
+Some price responses are keyed by language because the returned currency follows
+the localized booking context.
+
+`POST /booking` accepts a `currency` value. If you omit it, API v1 defaults to
+`CZK`.

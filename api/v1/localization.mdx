@@ -1,0 +1,38 @@
+---
+title: "API v1 localization"
+description: "Request localized API v1 fields."
+icon: "languages"
+---
+
+API v1 stores selected text fields in multiple languages.
+
+Send `Accept-Language` to choose the localized values you want:
+
+```bash
+curl \
+  -H "Authorization: Bearer <API_KEY>" \
+  -H "Accept-Language: cs_CZ,de" \
+  "https://spaportal.cz/api/v1/hotels"
+```
+
+Localized response fields are objects keyed by language:
+
+```json
+{
+  "name": {
+    "cs_CZ": "Frantiskovy Lazne",
+    "de": "Franzensbad"
+  }
+}
+```
+
+The response includes `Content-Language` with the languages returned.
+
+## Supported languages
+
+| Key | Language |
+| --- | --- |
+| `cs_CZ` | Czech |
+| `de` | German |
+| `en` | English |
+| `ru` | Russian |
