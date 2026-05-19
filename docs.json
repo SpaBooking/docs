@@ -46,8 +46,7 @@
               "api/authentication",
               "api/status-codes",
               "api/errors",
-              "api/versioning",
-              "api/v2/design"
+              "api/versioning"
             ]
           },
           {
