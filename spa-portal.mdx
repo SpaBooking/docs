@@ -3,29 +3,45 @@ title: "SpaPortal"
 icon: "bath"
 ---
 
-SpaPortal is a hotel booking platform for spa stays and wellness packages.
+SpaPortal is a booking management system that enables you to manage reservations across multiple distribution channels from a single platform.
 
-It manages destinations, hotels, visit types, room availability, pricing, and
-booking requests for public booking channels.
+<Frame>
+  ![Screenshot 2026 05 19 At 9 47 02](/images/Screenshot-2026-05-19-at-9.47.02.png)
+</Frame>
 
-Use SpaPortal API when you connect an external booking client to that data.
+SpaPortal currently supports two channels: your own **direct channel** and the **SpaBooking partner platform**. All reservations arriving through either channel are consolidated into a unified view of availability, pricing, and reservations across all your properties.
 
-## What you can build
+The **SpaPortal API** extends this capability to developers, allowing you to build **custom integrations and customer-facing applications** on top of your own data. You can query your property portfolio, retrieve real-time availability and pricing, and create or manage reservations programmatically — giving you full flexibility to embed SpaPortal's functionality into your own website, mobile app, or third-party system.
 
-With the public API, you can:
+## Why use SpaPortal
 
-- List destinations, hotels, visit types, categories, tags, and loyalty
-  programs.
-- Read localized names and descriptions for booking forms.
-- Check available dates, checkout dates, and prices.
-- Create bookings through the public booking flow.
+SpaPortal makes it easy to establish and grow your spa property's online presence.
 
-## API versions
+**Centralized reservations**\
+Bookings from all channels land in one place, eliminating double bookings and manual work.
 
-API v1 is the current production API. Start with API v1 for live integrations.
+**Real-time data**\
+Availability and pricing always reflect the current state across all properties.
 
-API v2 is used for new public resources and breaking improvements. Review the
-[API v2 design proposal](/api/v2/design) before depending on API v2 behavior.
+**Full flexibility**\
+Build exactly the website you need, unconstrained by off-the-shelf solutions.
+
+**Single source of truth**\
+Your inventory and reservations are consistently accessible across every integration.
+
+## What you can build with SpaPortal
+
+**Direct booking website**\
+Display your properties with live availability and pricing, and let guests book without leaving your site.
+
+**Mobile application**\
+Offer a native booking experience on iOS or Android.
+
+**Booking widget**\
+Embed a booking form or availability checker into any existing website.
+
+**Internal tools**\
+Build custom dashboards or back-office views tailored to your team's needs.
 
 ## Next steps
 
@@ -33,13 +49,8 @@ API v2 is used for new public resources and breaking improvements. Review the
   <Card title="Quickstart" icon="rocket" href="/quickstart">
     Make your first authenticated API request.
   </Card>
+
   <Card title="API reference" icon="square-terminal" href="/api">
     Browse API conventions and endpoints.
-  </Card>
-  <Card title="Authentication" icon="key" href="/api/authentication">
-    Learn how to send your API key.
-  </Card>
-  <Card title="Booking flow" icon="calendar-check" href="/guides/booking">
-    Follow the recommended sequence for a booking client.
   </Card>
 </Columns>
