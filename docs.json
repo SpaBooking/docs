@@ -67,7 +67,14 @@
           {
             "group": "Previous Versions",
             "pages": [
-              "api/v1"
+              "api/v1",
+              {
+                "group": "API v1 endpoints",
+                "openapi": {
+                  "source": "/api/v1/openapi.yaml",
+                  "directory": "api/v1/reference"
+                }
+              }
             ]
           }
         ]
