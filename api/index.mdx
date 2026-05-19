@@ -1,79 +1,70 @@
----
-title: "API reference"
-description: "Conventions, endpoints, and public contracts for the SpaPortal API."
-icon: "square-terminal"
----
+## Conventions
 
-The API reference describes the public SpaPortal API contract.
+The base URL to send all API requests is `https://spaportal.cz/api/`. The SpaPortal API follows RESTful conventions when possible, with most operations performed via `GET`, `POST`, `PATCH`, and `DELETE` requests. Request and response bodies are encoded as JSON.
 
-Use it when you need exact request formats, authentication rules, response
-shapes, error behavior, date formats, currencies, and endpoint details.
+- HTTPS only
+- JSON bodies for `POST` — send `Content-Type: application/json`
+- Query parameters for `GET` filters
 
-## Default version
+## Paths and field names
 
-API v2 is the default reference direction for new public API design.
-
-<Warning>
-  API v2 is still in progress. Use API v1 for production integrations unless a
-  SpaPortal administrator tells you to use a v2 endpoint.
-</Warning>
-
-## Reference sections
-
-<Columns cols={2}>
-  <Card title="API v2" icon="square-terminal" href="/api/v2">
-    Review current v2 endpoints and the target v2 contract.
-  </Card>
-  <Card title="Conventions" icon="braces" href="/api/conventions">
-    Understand naming, IDs, and response shapes.
-  </Card>
-  <Card title="Authentication" icon="key" href="/api/authentication">
-    Send credentials with public API requests.
-  </Card>
-  <Card title="Dates" icon="calendar-days" href="/api/dates">
-    Format arrival, departure, and availability dates.
-  </Card>
-  <Card title="Currencies" icon="badge-dollar-sign" href="/api/currencies">
-    Understand price and currency fields.
-  </Card>
-  <Card title="Localization" icon="languages" href="/api/localization">
-    Request localized fields with `Accept-Language`.
-  </Card>
-  <Card title="Pagination" icon="list-ordered" href="/api/pagination">
-    Page through list responses.
-  </Card>
-  <Card title="Errors" icon="triangle-alert" href="/api/errors">
-    Handle status codes and error responses.
-  </Card>
-  <Card title="Webhooks" icon="webhook" href="/api/webhooks">
-    Review public webhook contract status.
-  </Card>
-</Columns>
-
-## Base URLs
-
-Use the production API for live traffic:
+API paths are versioned:
 
 ```txt
 https://spaportal.cz/api/v2
 ```
 
-Use the staging API for integration testing:
+Resource paths use plural nouns: `/hotels`, `/visit-types`, `/calendar/dates`.
 
-```txt
-https://staging.spaportal.cz/api/v2
+## IDs
+
+- **v1** — legacy numeric `id`; some objects also expose `_id` (references v2 id)
+- **v2** — ObjectId string as `id` (24-character hex); no legacy numeric IDs
+
+## Dates and time
+
+Calendar dates and times use ISO 8601. Exact timestamps (e.g. `createdAt`, `updatedAt`) use millisecond precision, always in UTC, denoted by the `Z` suffix:
+
+- **Date** - `2026-04-01`
+- **Time** - `2026-04-01T10:15:30.000Z`
+
+## Currencies
+
+Supported currencies: `CZK` (Czech koruna) and `EUR` (Euro).
+
+Money values use the smallest currency unit. `currencyExponent` tells you how many decimal places to apply — for both `CZK` and `EUR` that is `2`, so `1892400` equals `18,924.00`.
+
+```json
+{ "amountMinor": 1892400, "currency": "CZK", "currencyExponent": 2 }
 ```
 
-API v1 remains available under the same hosts:
+## Localization
 
-```txt
-https://spaportal.cz/api/v1
-https://staging.spaportal.cz/api/v1
+Set `Accept-Language` header to request specific languages.
+
+```bash
+-H "Accept-Language: cs_CZ,de"
 ```
 
-## Endpoint reference
+ Localized fields are returned as objects keyed by language code.
 
-The generated endpoint reference is split by API version.
+```json
+{ "name": { "cs_CZ": "Frantiskovy Lazne", "de": "Franzensbad" } }
+```
 
-Start with [API v2](/api/v2) for new contracts. Use [API v1](/api/v1) for
-current production integrations.
+The language code uses BCP 47 tags (`cs-CZ`, `de`, `en`, `ru`).
+
+When `Accept-Language` header is omitted, API returns all supported language keys.
+
+## Pagination
+
+SpaPortal API uses cursor pagination:
+
+```json
+{
+  "data": [],
+  "pagination": { "nextCursor": "...", "hasMore": true, "total": 42 }
+}
+```
+
+Pass `cursor` in GET parameters from the previous response to fetch the next page.

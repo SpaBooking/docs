@@ -1,50 +1,18 @@
----
-title: "Authentication"
-description: "Authenticate requests to the SpaPortal API."
-icon: "key"
----
-
-SpaPortal API requests use API keys.
-
-## API v2
-
-The target API v2 public contract uses a dedicated public key header:
+The API uses a dedicated public key header:
 
 ```http
 X-SpaPortal-Public-Key: pk_live_...
 ```
 
-Public keys identify the channel and scope the request. They are safe for
-browser booking clients, but they still control access to channel-scoped data.
+Public keys identify the channel and scope all requests to it.
 
-Do not send API v2 credentials in query parameters.
+## Getting your public key
 
-<Note>
-  The current `POST /api/v2/calendar/dates/bulk` endpoint uses this header.
-  Check the endpoint reference for remaining compatibility behavior.
-</Note>
-
-## API v1
-
-Send the API key as a bearer token:
-
-```bash
-curl \
-  -H "Authorization: Bearer <API_KEY>" \
-  "https://spaportal.cz/api/v1/destinations"
-```
-
-API v1 also accepts the `access_token` query parameter:
-
-```bash
-curl "https://spaportal.cz/api/v1/destinations?access_token=<API_KEY>"
-```
-
-Prefer the `Authorization` header for new API v1 integrations.
+Every distribution channel in SpaPortal has its own public key. To find yours: `Administration → Distribution Channel → [your channel] → Channel detail → Public keys`
 
 ## Authentication errors
 
 | Status | Cause |
-| ---: | --- |
-| `400` | The key is missing, or an API v1 `Authorization` header does not use `Bearer <API_KEY>`. |
+| --: | --- |
+| `400` | The key is missing. |
 | `401` | The key is invalid. |

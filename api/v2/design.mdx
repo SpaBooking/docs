@@ -1,16 +1,8 @@
----
-title: "API v2 design proposal"
-description: "Review the proposed API v2 conventions before implementation."
-icon: "drafting-compass"
----
-
 <Note>
-  This page is a draft for product and engineering review. It describes the
-  proposed API v2 contract, not the current implementation.
+  This page is a draft for product and engineering review. It describes the proposed API v2 contract, not the current implementation.
 </Note>
 
-API v2 is the place for breaking API improvements and new public resources.
-The first phase focuses on public booking-form use cases and public catalog data.
+API v2 is the place for breaking API improvements and new public resources. The first phase focuses on public booking-form use cases and public catalog data.
 
 ## Review goals
 
@@ -57,14 +49,10 @@ These decisions are part of the current proposal.
 Product and engineering should still confirm:
 
 - Which API v1 endpoints are migrated into API v2 first.
-- Which API v1 responses should gain Mongo `_id` values first to support
-  migration.
-- Which additional API v1 endpoints should migrate into API v2 after
-  `POST /api/v2/calendar/dates/bulk`.
-- The exact API v1 deprecation and sunset dates. API v1 should not be deprecated
-  until API v2 covers the required production use cases.
-- The future list of secret-key endpoints and scopes. API v2 phase one does not
-  include secret-key endpoints.
+- Which API v1 responses should gain Mongo `_id` values first to support migration.
+- Which additional API v1 endpoints should migrate into API v2 after `POST /api/v2/calendar/dates/bulk`.
+- The exact API v1 deprecation and sunset dates. API v1 should not be deprecated until API v2 covers the required production use cases.
+- The future list of secret-key endpoints and scopes. API v2 phase one does not include secret-key endpoints.
 - The room type details listed in the room type section.
 
 ## Versioning strategy
@@ -81,9 +69,7 @@ https://staging.spaportal.cz/api/v1
 https://staging.spaportal.cz/api/v2
 ```
 
-Do not version API v2 through hostnames, query parameters, or media type
-headers. Path versioning is explicit, easy to test, and already matches the
-existing SpaPortal API structure.
+Do not version API v2 through hostnames, query parameters, or media type headers. Path versioning is explicit, easy to test, and already matches the existing SpaPortal API structure.
 
 Additive changes can be made inside the same major version:
 
@@ -100,23 +86,18 @@ Breaking changes require a new major version:
 - Changing authentication requirements.
 - Changing pagination or error shapes.
 
-API v1 remains the current production API until API v2 covers the required
-production integration use cases.
+API v1 remains the current production API until API v2 covers the required production integration use cases.
 
 Recommended API v1 deprecation plan:
 
 1. Keep API v1 fully supported while API v2 is incomplete.
 2. Add Mongo `_id` values to selected API v1 responses as a migration bridge.
 3. Publish API v2 endpoint coverage and migration notes as endpoints are added.
-4. Move API v1 into maintenance mode only after API v2 supports the required
-   production flows.
-5. Announce API v1 deprecation with a concrete sunset date before sending
-   deprecation headers.
-6. Use at least a 12-month migration window after the deprecation announcement
-   unless product explicitly approves a shorter window for low-risk clients.
+4. Move API v1 into maintenance mode only after API v2 supports the required production flows.
+5. Announce API v1 deprecation with a concrete sunset date before sending deprecation headers.
+6. Use at least a 12-month migration window after the deprecation announcement unless product explicitly approves a shorter window for low-risk clients.
 
-When API v1 is deprecated, responses can include `Deprecation` and `Sunset`
-headers and a documentation link to the migration guide.
+When API v1 is deprecated, responses can include `Deprecation` and `Sunset` headers and a documentation link to the migration guide.
 
 ## Naming
 
@@ -132,18 +113,13 @@ API v2 does not use API v1 `snake_case` names in the final contract.
 GET /api/v2/hotels?destination_id=1&max=50&offset=0
 ```
 
-Modern APIs are not unanimous here. Google-style HTTP/JSON APIs use a camel-case
-JSON ecosystem, while Stripe is a mature API that uses `snake_case`. SpaPortal
-API v2 chooses `camelCase` because it is a new JSON contract in a TypeScript and
-browser-client ecosystem.
+Modern APIs are not unanimous here. Google-style HTTP/JSON APIs use a camel-case JSON ecosystem, while Stripe is a mature API that uses `snake_case`. SpaPortal API v2 chooses `camelCase` because it is a new JSON contract in a TypeScript and browser-client ecosystem.
 
-The current `POST /api/v2/calendar/dates/bulk` endpoint uses `camelCase` field
-names and ObjectId string IDs.
+The current `POST /api/v2/calendar/dates/bulk` endpoint uses `camelCase` field names and ObjectId string IDs.
 
 ## Authentication
 
-API v2 separates browser-safe public identification from future server-side
-authorization.
+API v2 separates browser-safe public identification from future server-side authorization.
 
 Send public keys in a dedicated header:
 
@@ -160,8 +136,7 @@ Use public keys for endpoints that a public booking form must call:
 - Pricing data.
 - Non-sensitive booking-form operations.
 
-The first API v2 phase is public-key only. Secret keys and secret-key scopes are
-reserved for a later server-to-server API phase.
+The first API v2 phase is public-key only. Secret keys and secret-key scopes are reserved for a later server-to-server API phase.
 
 Do not send API v2 credentials in query parameters.
 
@@ -178,14 +153,11 @@ API v2 uses ObjectId string values as public `id` values.
 }
 ```
 
-API v2 does not expose Mongo-style `_id` field names and does not expose legacy
-numeric API v1 IDs.
+API v2 does not expose Mongo-style `_id` field names and does not expose legacy numeric API v1 IDs.
 
-For migration, API v1 can later add `_id` fields while keeping its existing
-numeric `id` fields. API v2 should expose that same ObjectId value as `id`.
+For migration, API v1 can later add `_id` fields while keeping its existing numeric `id` fields. API v2 should expose that same ObjectId value as `id`.
 
-Every detail lookup must still be scoped through the authenticated channel and
-company context. Knowing an ID must not grant cross-tenant access.
+Every detail lookup must still be scoped through the authenticated channel and company context. Knowing an ID must not grant cross-tenant access.
 
 ## Pagination
 
@@ -212,18 +184,14 @@ Response:
 Use these parameters:
 
 | Parameter | Default | Maximum | Description |
-| --- | ---: | ---: | --- |
+| --- | --: | --: | --- |
 | `limit` | `25` | `100` | Number of records to return. |
 | `cursor` | - | - | Opaque cursor from the previous page. |
 | `sort` | endpoint-specific | - | Allowlisted sort key. |
 
-MongoDB is compatible with cursor pagination when every list endpoint uses a
-stable, indexed sort. Do not treat the public cursor as a raw Mongo `_id`.
-Return an opaque cursor that contains the last sort value and the last ObjectId.
+MongoDB is compatible with cursor pagination when every list endpoint uses a stable, indexed sort. Do not treat the public cursor as a raw Mongo `_id`. Return an opaque cursor that contains the last sort value and the last ObjectId.
 
-Mongo ObjectId values are not random hashes. They include a timestamp component
-and can be used for stable creation-order pagination, but API v2 should not
-depend on ObjectId ordering for every product sort.
+Mongo ObjectId values are not random hashes. They include a timestamp component and can be used for stable creation-order pagination, but API v2 should not depend on ObjectId ordering for every product sort.
 
 For the default creation-order sort, implementation can use ObjectId internally:
 
@@ -244,19 +212,13 @@ For non-unique sorts, always add ObjectId as a tie-breaker:
 }
 ```
 
-The query must continue after both values, for example `name > lastSortValue`
-or `name == lastSortValue and id > lastId` for ascending sorts. Add compound
-indexes that match the supported filters and sort keys.
+The query must continue after both values, for example `name > lastSortValue` or `name == lastSortValue and id > lastId` for ascending sorts. Add compound indexes that match the supported filters and sort keys.
 
-Changing filters, `sort`, `Accept-Language`, or `currency` should require a new
-pagination sequence. Cursors may include these request options internally and
-return `invalid_request` when they do not match the current request.
+Changing filters, `sort`, `Accept-Language`, or `currency` should require a new pagination sequence. Cursors may include these request options internally and return `invalid_request` when they do not match the current request.
 
-Return `pagination.total` by default for public catalog/list endpoints such as
-hotels, destinations, visit types, room types, tags, and loyalty programs.
+Return `pagination.total` by default for public catalog/list endpoints such as hotels, destinations, visit types, room types, tags, and loyalty programs.
 
-Future high-volume or sensitive endpoints, such as reservations or payments, can
-make total counts opt-in or omit them.
+Future high-volume or sensitive endpoints, such as reservations or payments, can make total counts opt-in or omit them.
 
 ## Localization
 
@@ -274,8 +236,7 @@ For a simple API integration that wants exactly one locale:
 Accept-Language: de-AT
 ```
 
-For a client that wants Austrian German first, then generic German, then
-English:
+For a client that wants Austrian German first, then generic German, then English:
 
 ```http
 Accept-Language: de-AT,de,en
@@ -287,17 +248,11 @@ For a browser-like preference list with explicit priorities:
 Accept-Language: de-AT,de;q=0.9,en;q=0.8,cs-CZ;q=0.7
 ```
 
-The `q` value is optional. It means quality or priority. If omitted, the value
-is treated as `q=1.0`. API clients can usually send a single locale or a short
-ordered list without `q`. Browsers often send a longer list with `q` values
-automatically.
+The `q` value is optional. It means quality or priority. If omitted, the value is treated as `q=1.0`. API clients can usually send a single locale or a short ordered list without `q`. Browsers often send a longer list with `q` values automatically.
 
-API v2 uses canonical BCP 47 language tags for public request and response
-locale keys. Use hyphenated tags such as `cs-CZ`, `de-DE`, `de-AT`, `de-CH`,
-`en`, and `ru`.
+API v2 uses canonical BCP 47 language tags for public request and response locale keys. Use hyphenated tags such as `cs-CZ`, `de-DE`, `de-AT`, `de-CH`, `en`, and `ru`.
 
-Do not expose underscore locale keys such as `cs_CZ` in API v2 responses. If
-current storage uses legacy keys, map them at the API boundary.
+Do not expose underscore locale keys such as `cs_CZ` in API v2 responses. If current storage uses legacy keys, map them at the API boundary.
 
 Initial supported public tags are:
 
@@ -324,8 +279,7 @@ Localized fields remain objects keyed by language.
 }
 ```
 
-For example, a future response with all German regional variants can look like
-this:
+For example, a future response with all German regional variants can look like this:
 
 ```json
 {
@@ -340,15 +294,9 @@ this:
 }
 ```
 
-The regional values can be identical at first. They should exist as separate
-keys only when product needs separate wording, legal text, market-specific
-labels, or SEO content for Germany, Austria, and Switzerland.
+The regional values can be identical at first. They should exist as separate keys only when product needs separate wording, legal text, market-specific labels, or SEO content for Germany, Austria, and Switzerland.
 
-If `Accept-Language` is provided, parse it using normal HTTP language negotiation
-rules, including `q` weights. Unsupported locale tags are ignored. They should
-not produce an error and should not be returned in localized response objects.
-Return the matching supported locale keys in preference order, de-duplicated
-after fallback matching.
+If `Accept-Language` is provided, parse it using normal HTTP language negotiation rules, including `q` weights. Unsupported locale tags are ignored. They should not produce an error and should not be returned in localized response objects. Return the matching supported locale keys in preference order, de-duplicated after fallback matching.
 
 When resolving a requested locale, match in this order:
 
@@ -356,8 +304,7 @@ When resolving a requested locale, match in this order:
 2. Base language fallback, such as `de`.
 3. Configured project default, such as `cs-CZ`.
 
-Do not return `406 Not Acceptable` when none of the requested locales are
-supported. Return the default locale instead.
+Do not return `406 Not Acceptable` when none of the requested locales are supported. Return the default locale instead.
 
 Examples:
 
@@ -372,18 +319,13 @@ Examples:
 | `Accept-Language: fr-FR,it-IT` when both are unsupported | default `cs-CZ` |
 | no `Accept-Language` | all supported locale keys |
 
-If `Accept-Language` is omitted, return all supported language keys. Do not
-support `?language=...`.
+If `Accept-Language` is omitted, return all supported language keys. Do not support `?language=...`.
 
-Return `Content-Language` with the language keys included in the response. Also
-return `Vary: Accept-Language` when the response differs by `Accept-Language`.
+Return `Content-Language` with the language keys included in the response. Also return `Vary: Accept-Language` when the response differs by `Accept-Language`.
 
-For heavy multilingual responses, keep the same object shape and return all
-available canonical locale keys when `Accept-Language` is omitted. Do not create
-parallel field names such as `nameDe`, `nameDeAt`, or `nameCs`.
+For heavy multilingual responses, keep the same object shape and return all available canonical locale keys when `Accept-Language` is omitted. Do not create parallel field names such as `nameDe`, `nameDeAt`, or `nameCs`.
 
-Add a locale metadata endpoint so clients can discover supported tags and
-fallbacks.
+Add a locale metadata endpoint so clients can discover supported tags and fallbacks.
 
 ```http
 GET /api/v2/locales
@@ -424,13 +366,11 @@ GET /api/v2/locales
 }
 ```
 
-This endpoint is not paginated unless the locale list becomes unexpectedly
-large.
+This endpoint is not paginated unless the locale list becomes unexpectedly large.
 
 ### Localization references
 
-This proposal follows the same broad direction as these public standards and
-APIs:
+This proposal follows the same broad direction as these public standards and APIs:
 
 - [MDN: `Accept-Language`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-Language) describes language tags such as `en-US`, `fr-CA`, and `sr-Latn`, including weighted `q` values.
 - [MDN: BCP 47 language tag](https://developer.mozilla.org/en-US/docs/Glossary/BCP_47_language_tag) summarizes the web-standard locale tag format used for internationalization.
@@ -454,8 +394,7 @@ Money values use the smallest currency unit:
 }
 ```
 
-`currencyExponent` tells the client how many decimal places the currency uses.
-For `CZK` and `EUR`, exponent `2` means `3150000` is `31500.00`.
+`currencyExponent` tells the client how many decimal places the currency uses. For `CZK` and `EUR`, exponent `2` means `3150000` is `31500.00`.
 
 For multi-currency fields, return a currency-keyed object:
 
@@ -478,12 +417,9 @@ For multi-currency fields, return a currency-keyed object:
 }
 ```
 
-Use `currency` only on endpoints that return prices, or where prices are part of
-the response.
+Use `currency` only on endpoints that return prices, or where prices are part of the response.
 
-If `currency` is omitted, return all available currencies. If a supported
-currency is explicitly requested and no price exists, return that currency with
-`null`.
+If `currency` is omitted, return all available currencies. If a supported currency is explicitly requested and no price exists, return that currency with `null`.
 
 ```json
 {
@@ -573,23 +509,17 @@ Image collections use `images[]`.
 }
 ```
 
-Use `thumbnailUrl` in API v2, not `thumbnail_url`, because API v2 uses
-`camelCase`. The product requirement for `images[]` with thumbnail URLs is still
-covered by this schema.
+Use `thumbnailUrl` in API v2, not `thumbnail_url`, because API v2 uses `camelCase`. The product requirement for `images[]` with thumbnail URLs is still covered by this schema.
 
-Do not return a separate `primaryImage` field in API v2. If a frontend needs a
-single preferred image, it can use the first item in `images[]`.
+Do not return a separate `primaryImage` field in API v2. If a frontend needs a single preferred image, it can use the first item in `images[]`.
 
-Use `null` for `thumbnailUrl` only when the original image exists but no
-thumbnail is available. Use an empty `images` array when the resource has no
-images.
+Use `null` for `thumbnailUrl` only when the original image exists but no thumbnail is available. Use an empty `images` array when the resource has no images.
 
 ## Room types
 
 API v2 adds `room-types` as a first-class resource.
 
-A room type is a category of room in a hotel. It is not a concrete room instance.
-One hotel can have multiple room types.
+A room type is a category of room in a hotel. It is not a concrete room instance. One hotel can have multiple room types.
 
 ### Endpoints
 
@@ -613,8 +543,7 @@ Room type responses include `hotelId` by default.
 }
 ```
 
-Do not embed the full hotel object by default. Use `include=hotel` when a client
-needs a compact hotel summary.
+Do not embed the full hotel object by default. Use `include=hotel` when a client needs a compact hotel summary.
 
 ```http
 GET /api/v2/room-types?include=hotel
@@ -688,28 +617,21 @@ GET /api/v2/room-types?include=hotel
 
 Product should still confirm these details:
 
-- Should top-level `/room-types` include compact hotel data by default, or only
-  with `include=hotel`?
+- Should top-level `/room-types` include compact hotel data by default, or only with `include=hotel`?
 - Should `availableOnly=true` require both `dateFrom` and `dateTo`?
 - Should `beds` be exact match only, or should API v2 also support `minBeds`?
-- Should public room type lists include room types without currently valid
-  price lists?
+- Should public room type lists include room types without currently valid price lists?
 - Do we need `search` over localized `category` and `code` in the first release?
 
 ## Migration plan
 
 Recommended implementation order:
 
-1. Add shared API v2 helpers for auth, errors, IDs, localization, pagination, and
-   money.
+1. Add shared API v2 helpers for auth, errors, IDs, localization, pagination, and money.
 2. Keep API v1 auth helpers untouched.
-3. Use `POST /api/v2/calendar/dates/bulk` as the first implemented endpoint for
-   shared v2 auth, errors, ObjectId input, and money response behavior.
-4. Add one low-risk read endpoint, such as `/api/v2/destinations`, as a reference
-   implementation.
+3. Use `POST /api/v2/calendar/dates/bulk` as the first implemented endpoint for shared v2 auth, errors, ObjectId input, and money response behavior.
+4. Add one low-risk read endpoint, such as `/api/v2/destinations`, as a reference implementation.
 5. Add `/api/v2/room-types`.
-6. Add contract tests for auth, localization, ObjectId scoping, parent-child room
-   type scoping, and pagination.
+6. Add contract tests for auth, localization, ObjectId scoping, parent-child room type scoping, and pagination.
 
-For API v1 migration support, add Mongo `_id` values to selected API v1
-responses first. API v1 should keep existing numeric `id` fields.
+For API v1 migration support, add Mongo `_id` values to selected API v1 responses first. API v1 should keep existing numeric `id` fields.

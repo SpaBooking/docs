@@ -1,12 +1,4 @@
----
-title: "Errors"
-description: "Handle SpaPortal API error responses."
-icon: "triangle-alert"
----
-
-SpaPortal API error responses use JSON.
-
-API v2 uses a single `error` object:
+SpaPortal API uses a single `error` object:
 
 ```json
 {
@@ -24,13 +16,9 @@ API v2 uses a single `error` object:
 }
 ```
 
-Common API v2 error codes are `invalid_request`, `missing_authentication`,
-`invalid_authentication`, `insufficient_scope`, `not_found`, `conflict`,
-`rate_limited`, and `internal_error`.
+Common API error codes are `invalid_request`, `missing_authentication`, `invalid_authentication`, `insufficient_scope`, `not_found`, `conflict`, `rate_limited`, and `internal_error`.
 
-API v2 error responses also include `X-Request-Id`. If you send
-`X-Request-Id` with the request, SpaPortal echoes that value. Otherwise,
-SpaPortal generates one.
+API error responses also include `X-Request-Id`. If you send `X-Request-Id` with the request, SpaPortal echoes that value. Otherwise, SpaPortal generates new one.
 
 API v1 keeps the legacy `success` and `message` shape:
 
@@ -41,22 +29,10 @@ API v1 keeps the legacy `success` and `message` shape:
 }
 ```
 
-## Common status codes
-
-| Status | Meaning |
-| ---: | --- |
-| `400` | The request is malformed, a required parameter is missing, or validation failed. |
-| `401` | The API key is invalid. |
-| `404` | A referenced resource was not found. |
-| `422` | A referenced resource exists but cannot be used for the requested operation. |
-| `500` | An unexpected server error occurred. |
-
 ## Handling errors
 
 Read both the HTTP status and the JSON error code or message.
 
-Treat `400`, `401`, `404`, and `422` as client-correctable errors. Retry only
-after you change the request.
+Treat `400`, `401`, `404`, and `422` as client-correctable errors. Retry only after you change the request.
 
-Treat `500` as a temporary server error. Retry with backoff if the operation is
-safe to repeat.
+Treat `500` as a temporary server error. Retry with backoff if the operation is safe to repeat.
