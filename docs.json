@@ -16,7 +16,7 @@
           {
             "group": "Getting started",
             "pages": [
-              "spa-portal",
+              "spaportal",
               "quickstart"
             ]
           }

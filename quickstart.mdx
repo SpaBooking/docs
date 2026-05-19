@@ -1,52 +1,66 @@
 ---
 title: "Quickstart"
-description: "Make your first request to the SpaPortal API."
 icon: "rocket"
 ---
 
-## Before you start
+## Authenticate
 
-Ask a SpaPortal administrator for an API key.
+### 1. Get your public key
 
-Keep the key private. It can access data for one or more configured companies.
+Every distribution channel in SpaPortal has its own **public key** that identifies your channel and scopes all requests to it.
 
-## Send a request
+To find yours, go to: `Administration → Distribution Channel → [your channel] → Channel detail → Public keys`
 
-Send the API key as a bearer token:
+### 2. Use public key
+
+Pass the public key in the `X-SpaPortal-Public-Key` header on every request:
+
+```bash
+X-SpaPortal-Public-Key: pk_live_...
+```
+
+<Card title="Authentication" icon="key" horizontal href="/api/authentication">
+  Full authentication reference.
+</Card>
+
+## Make your first request
+
+The base URL for the current API (v2) is:
+
+```text
+https://spaportal.cz/api/v2
+```
+
+Fetch a list of hotels:
 
 ```bash
 curl \
-  -H "Authorization: Bearer <API_KEY>" \
-  -H "Accept-Language: cs_CZ,de" \
-  "https://spaportal.cz/api/v1/hotels?max=10&offset=0"
+  -H "X-SpaPortal-Public-Key: pk_live_..." \
+  "https://spaportal.cz/api/v2/hotels"
 ```
 
-The response contains localized fields for the languages you request.
+**Example response:**
 
-<Card title="Authentication" icon="key" href="/api/authentication">
-  Read the full authentication contract.
-</Card>
-
-## Use pagination
-
-List endpoints return a limited number of items. Use `max` and `offset` to page through results.
-
-```bash
-curl \
-  -H "Authorization: Bearer <API_KEY>" \
-  "https://spaportal.cz/api/v1/visit-types?max=20&offset=20"
+```json
+{
+  "items": [
+    {
+      "id": "hotel-123",
+      "name": "Grand Spa Hotel",
+      "destinationId": "dest-1"
+    }
+  ],
+  "totalCount": 42
+}
 ```
 
-Read the `X-Total-Count` response header to get the total number of matching records.
+## Next steps
 
-<Card title="Pagination" icon="list-ordered" href="/api/pagination">
-  Read the full pagination contract.
+You're authenticated and making requests. Follow the API reference for all endpoints:
+
+<Card title="API Reference" icon="square-terminal" href="/api/">
+  All endpoints, parameters, and response shapes.
 </Card>
 
-## Continue with the booking flow
-
-Use the catalog endpoints first, then check availability and price before creating a booking.
-
-<Card title="Booking guide" icon="calendar-check" href="/guides/booking">
-  Follow the recommended API flow for booking clients.
-</Card>
+<CardGroup cols={2}>
+</CardGroup>
