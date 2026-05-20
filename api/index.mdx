@@ -39,6 +39,17 @@ Calendar dates and times use ISO 8601. Exact timestamps (e.g. `createdAt`, `upda
 
 Supported currencies: `CZK` (Czech koruna) and `EUR` (Euro).
 
+Endpoints that return prices accept a `currency` request parameter when you want
+one or more specific currencies:
+
+```bash
+GET /api/v2/room-types?currency=EUR,CZK
+```
+
+Use a comma-separated list of supported ISO 4217 currency codes. If `currency`
+is omitted, the API returns all supported currencies available for the requested
+resource.
+
 Money values use the smallest currency unit. `currencyExponent` tells you how many decimal places to apply — for both `CZK` and `EUR` that is `2`, so `1892400` equals `18,924.00`.
 
 ```json
@@ -63,21 +74,31 @@ Both fields can be `null` when an image is not available.
 
 ## Localization
 
-Set `Accept-Language` header to request specific languages.
+Set the `Accept-Language` header to request localized fields.
 
 ```bash
--H "Accept-Language: cs_CZ,de"
+-H "Accept-Language: cs-CZ,de-DE,en"
 ```
 
- Localized fields are returned as objects keyed by language code.
+API v2 accepts BCP 47 language tags in requests. Supported response locale keys
+are `cs-CZ`, `de`, `en`, and `ru`.
+
+Regional request tags are matched to the closest supported locale. For example,
+`de-DE` and `de-AT` both return localized fields under `de`.
+
+Localized fields are returned as objects keyed by supported response locale.
 
 ```json
-{ "name": { "cs_CZ": "Frantiskovy Lazne", "de": "Franzensbad" } }
+{
+  "name": {
+    "cs-CZ": "Frantiskovy Lazne",
+    "de": "Franzensbad"
+  }
+}
 ```
 
-The language code uses BCP 47 tags (`cs-CZ`, `de`, `en`, `ru`).
-
-When `Accept-Language` header is omitted, API returns all supported language keys.
+When `Accept-Language` is omitted, the API returns all supported locale keys for
+that field.
 
 ## Pagination
 

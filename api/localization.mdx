@@ -4,45 +4,46 @@ description: "Request localized SpaPortal API fields."
 icon: "languages"
 ---
 
-SpaPortal stores selected text fields in multiple languages.
+SpaPortal stores selected text fields in multiple locales.
 
 Send `Accept-Language` to choose the localized values you want:
 
 ```bash
 curl \
-  -H "Authorization: Bearer <API_KEY>" \
-  -H "Accept-Language: cs_CZ,de" \
-  "https://spaportal.cz/api/v1/hotels"
+  -H "X-SpaPortal-Public-Key: <public_key>" \
+  -H "Accept-Language: cs-CZ,de-DE,en" \
+  "https://spaportal.cz/api/v2/room-types"
 ```
 
-Localized response fields are objects keyed by language:
+API v2 accepts BCP 47 language tags in requests. Supported response locale keys
+are `cs-CZ`, `de`, `en`, and `ru`.
+
+Regional request tags are matched to the closest supported locale. For example,
+`de-DE` and `de-AT` both return localized fields under `de`.
+
+Localized response fields are objects keyed by supported response locale:
 
 ```json
 {
   "name": {
-    "cs_CZ": "Frantiskovy Lazne",
+    "cs-CZ": "Frantiskovy Lazne",
     "de": "Franzensbad"
   }
 }
 ```
 
-The response includes `Content-Language` with the languages returned.
+The response includes `Content-Language` with the locale tags returned.
 
-## Supported languages
+## Language ranges
 
-API v1 supports these language keys:
+Use these request values to select localized fields:
 
-| Key | Language |
+| Header value | Meaning |
 | --- | --- |
-| `cs_CZ` | Czech |
-| `de` | German |
-| `en` | English |
-| `ru` | Russian |
+| `cs-CZ` | Czech for Czechia |
+| `de`, `de-DE`, `de-AT` | German, returned as `de` |
+| `en`, `en-US`, `en-GB` | English, returned as `en` |
+| `ru`, `ru-RU` | Russian, returned as `ru` |
 
-## API v2 direction
-
-API v2 uses `Accept-Language` for language selection.
-
-The target API v2 contract uses BCP 47 language tags and does not support a
-`language` query parameter. When `Accept-Language` is omitted, API v2 returns
-all supported language keys.
+When `Accept-Language` is omitted, the API returns all supported locale keys for
+that field.

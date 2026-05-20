@@ -4,48 +4,51 @@ description: "Understand money and currency fields in the SpaPortal API."
 icon: "badge-dollar-sign"
 ---
 
-SpaPortal API price fields include a currency code.
+SpaPortal API price fields include an ISO 4217 currency code.
 
-API v1 supports:
+Supported currencies:
 
 | Code | Currency |
 | --- | --- |
 | `CZK` | Czech koruna |
 | `EUR` | Euro |
 
-## API v1 money fields
+## Requesting currency
 
-API v1 returns decimal price amounts.
+Endpoints that return prices accept `currency` when you want one or more
+specific currencies:
+
+```bash
+GET /api/v2/room-types?currency=EUR,CZK
+```
+
+Use a comma-separated list of supported currency codes. If `currency` is
+omitted, the API returns all supported currencies available for the requested
+resource.
+
+For `POST /api/v2/calendar/dates/bulk`, send `currency` in `shared` or in each
+item:
 
 ```json
 {
-  "amount": 18924,
-  "currency": "CZK"
+  "shared": {
+    "currency": "EUR,CZK"
+  },
+  "items": [
+    {
+      "key": "pawlik-superior",
+      "hotelId": "65f...",
+      "roomTypeId": "65f...",
+      "dateFrom": "2026-04-01",
+      "dateTo": "2026-04-04"
+    }
+  ]
 }
 ```
 
-Lowest-price fields use `amount_per_night`:
+## Money fields
 
-```json
-{
-  "amount_per_night": 1024.5,
-  "currency": "CZK"
-}
-```
-
-Some price responses are keyed by language because the returned currency follows
-the localized booking context.
-
-## Booking currency
-
-`POST /booking` accepts a `currency` value. If you omit it, API v1 defaults to
-`CZK`.
-
-Use only a currency supported by the selected hotel and booking channel.
-
-## API v2 direction
-
-The target API v2 contract represents money with minor units:
+Money fields use minor units:
 
 ```json
 {
@@ -55,24 +58,28 @@ The target API v2 contract represents money with minor units:
 }
 ```
 
-API v2 uses `currency` only on endpoints that return prices or can include
-prices.
+`currencyExponent` tells you how many decimal places to apply. For both `CZK`
+and `EUR`, the exponent is `2`, so `1892400` equals `18,924.00`.
 
-`POST /api/v2/calendar/dates/bulk` accepts `currency` in `shared` or in each
-item. If you omit `currency`, the endpoint returns available prices as
-`amounts` keyed by currency:
+When no currency is requested, price fields are keyed by currency:
 
 ```json
 {
-  "price": {
-    "isFinal": true,
-    "amounts": {
-      "CZK": {
-        "amountMinor": 180000,
-        "currency": "CZK",
-        "currencyExponent": 2
-      }
+  "lowestPrices": {
+    "CZK": {
+      "amountMinor": 180000,
+      "currency": "CZK",
+      "currencyExponent": 2
+    },
+    "EUR": {
+      "amountMinor": 7200,
+      "currency": "EUR",
+      "currencyExponent": 2
     }
   }
 }
 ```
+
+When one or more currencies are requested, the response contains only those
+currencies. If the resource exists but has no amount in a requested currency,
+the value can be `null`.

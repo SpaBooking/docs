@@ -173,8 +173,9 @@ components:
           nullable: true
         currency:
           type: string
-          enum: [CZK, EUR]
-          description: Return calendar prices only in this currency.
+          pattern: "^(CZK|EUR)(,(CZK|EUR))*$"
+          example: EUR,CZK
+          description: Return calendar prices only in these comma-separated currencies.
           nullable: true
     CalendarDatesBulkQueryWithKey:
       type: object
@@ -215,8 +216,9 @@ components:
           nullable: true
         currency:
           type: string
-          enum: [CZK, EUR]
-          description: Return calendar prices only in this currency.
+          pattern: "^(CZK|EUR)(,(CZK|EUR))*$"
+          example: EUR,CZK
+          description: Return calendar prices only in these comma-separated currencies.
           nullable: true
         key:
           type: string

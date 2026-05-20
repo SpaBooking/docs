@@ -44,6 +44,10 @@
             "pages": [
               "api/index",
               "api/authentication",
+              "api/dates",
+              "api/currencies",
+              "api/localization",
+              "api/pagination",
               "api/status-codes",
               "api/errors",
               "api/versioning"
