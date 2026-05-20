@@ -1,0 +1,74 @@
+---
+title: "Get room type"
+description: "Returns one room type by ObjectId."
+---
+
+```http
+GET /api/v2/room-types/{roomTypeId}
+```
+
+Returns one room type available to your distribution channel.
+
+## Path parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `roomTypeId` | string | Room type ObjectId. |
+
+## Query parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `visitTypeId` | string | Visit type ObjectId for price context. |
+| `dateFrom` | date | Start date for price context. |
+| `dateTo` | date | End date. Must be after `dateFrom`. |
+| `currency` | string | Comma-separated currency list, for example `EUR,CZK`. |
+| `include` | string | Use `hotel` to include basic hotel data. |
+
+## Example
+
+```bash
+curl \
+  -H "X-SpaPortal-Public-Key: <public_key>" \
+  -H "Accept-Language: cs-CZ,de-DE" \
+  "https://spaportal.cz/api/v2/room-types/66f16191f739705faa020003?currency=EUR&include=hotel"
+```
+
+## Response
+
+```json
+{
+  "id": "66f16191f739705faa020003",
+  "hotelId": "66f16191f739705faa020001",
+  "code": "SUPERIOR-DBL",
+  "category": {
+    "cs-CZ": "Superior dvouluzkovy pokoj",
+    "de": "Superior Doppelzimmer"
+  },
+  "beds": 2,
+  "facilities": ["shower", "toilet"],
+  "images": [],
+  "description": {
+    "cs-CZ": "Pokoj s koupelnou.",
+    "de": "Zimmer mit Bad."
+  },
+  "lowestPrices": {
+    "EUR": {
+      "amountMinor": 7200,
+      "currency": "EUR",
+      "currencyExponent": 2,
+      "unit": "roomPerNight"
+    }
+  },
+  "bookingUrl": {
+    "cs-CZ": "https://booking.example/cs",
+    "de": "https://booking.example/de"
+  },
+  "hotel": {
+    "id": "66f16191f739705faa020001",
+    "name": "Pawlik",
+    "stars": 4,
+    "destinationId": "66f16191f739705faa020010"
+  }
+}
+```

@@ -1,0 +1,151 @@
+---
+title: "Get calendar dates in bulk"
+description: "Returns availability and prices for multiple calendar date queries."
+---
+
+```http
+POST /api/v2/calendar/dates/bulk
+```
+
+Returns calendar dates with availability and optional prices for multiple query
+items in one request.
+
+Use this endpoint when a booking form needs to load more than one calendar range
+or selection context at the same time.
+
+## Request body
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `shared` | object | Optional values applied to every item unless the item overrides them. |
+| `items` | array | Calendar date queries. Required. Minimum `1`, maximum `20`. |
+
+Each item accepts these fields:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `key` | string | Optional client key returned with the matching result. Maximum length is `100`. |
+| `visitTypeId` | string | Visit type ObjectId. |
+| `hotelId` | string | Hotel ObjectId. |
+| `roomTypeId` | string | Room type ObjectId. |
+| `destinationId` | string | Destination ObjectId. |
+| `guests` | integer | Number of guests. Minimum `1`, maximum `2`. |
+| `dateFrom` | date | Start date in `YYYY-MM-DD` format. |
+| `dateTo` | date | End date in `YYYY-MM-DD` format. |
+| `currency` | string | Comma-separated currency list, for example `EUR,CZK`. |
+
+## Shared values
+
+Use `shared` for values that are the same for most or all items. This keeps the
+request smaller when only one field changes between items, such as `roomTypeId`.
+
+For every item, the API builds the effective query with these rules:
+
+| Case | Result |
+| --- | --- |
+| The field is omitted from the item | The value from `shared` is used. |
+| The field is set on the item | The item value overrides `shared`. |
+| The field is set to `null` on the item | `null` is used and `shared` is ignored. |
+| The field is missing from both places | `null` is used. |
+
+For example, this request uses the same hotel and visit type for both items.
+The second item overrides only `currency`:
+
+```json
+{
+  "shared": {
+    "hotelId": "66f16191f739705faa020001",
+    "visitTypeId": "66f16191f739705faa020003",
+    "currency": "EUR"
+  },
+  "items": [
+    {
+      "key": "room-1",
+      "roomTypeId": "66f16191f739705faa020004"
+    },
+    {
+      "key": "room-2",
+      "roomTypeId": "66f16191f739705faa020005",
+      "currency": "CZK"
+    }
+  ]
+}
+```
+
+The first item uses `currency: "EUR"` from `shared`. The second item uses
+`currency: "CZK"` from the item.
+
+## Example
+
+```bash
+curl \
+  -X POST "https://spaportal.cz/api/v2/calendar/dates/bulk" \
+  -H "Content-Type: application/json" \
+  -H "X-SpaPortal-Public-Key: <public_key>" \
+  --data '{
+    "shared": {
+      "hotelId": "66f16191f739705faa020001",
+      "visitTypeId": "66f16191f739705faa020003",
+      "currency": "EUR,CZK"
+    },
+    "items": [
+      {
+        "key": "superior-march",
+        "roomTypeId": "66f16191f739705faa020004",
+        "dateFrom": "2026-03-01",
+        "dateTo": "2026-03-31"
+      },
+      {
+        "key": "suite-march",
+        "roomTypeId": "66f16191f739705faa020005",
+        "dateFrom": "2026-03-01",
+        "dateTo": "2026-03-31"
+      }
+    ]
+  }'
+```
+
+## Response
+
+The response contains one result for each item. `key` is copied from the request
+item when supplied.
+
+```json
+{
+  "results": [
+    {
+      "key": "superior-march",
+      "data": [
+        {
+          "date": "2026-03-15",
+          "selectable": true,
+          "availability": "AVAILABLE",
+          "price": {
+            "isFinal": true,
+            "amounts": {
+              "CZK": {
+                "amountMinor": 180000,
+                "currency": "CZK",
+                "currencyExponent": 2
+              },
+              "EUR": {
+                "amountMinor": 7250,
+                "currency": "EUR",
+                "currencyExponent": 2
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+`availability` can be `NOT_AVAILABLE`, `AVAILABLE`, or `ON_DEMAND`.
+
+When `currency` is supplied, `price.amounts` contains only requested currencies.
+If a requested currency has no amount, its value can be `null`.
+
+When a single item cannot be resolved, the request fails with a v2 error
+response. The error details include the failing item index and `key`.

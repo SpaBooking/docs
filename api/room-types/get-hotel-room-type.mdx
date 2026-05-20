@@ -1,0 +1,39 @@
+---
+title: "Get hotel room type"
+description: "Returns one room type scoped by hotel."
+---
+
+```http
+GET /api/v2/hotels/{hotelId}/room-types/{roomTypeId}
+```
+
+Returns one room type for one hotel available to your distribution channel.
+
+## Path parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `hotelId` | string | Hotel ObjectId. |
+| `roomTypeId` | string | Room type ObjectId. |
+
+## Query parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `visitTypeId` | string | Visit type ObjectId for price context. |
+| `dateFrom` | date | Start date for price context. |
+| `dateTo` | date | End date. Must be after `dateFrom`. |
+| `currency` | string | Comma-separated currency list, for example `EUR,CZK`. |
+| `include` | string | Use `hotel` to include basic hotel data. |
+
+## Example
+
+```bash
+curl \
+  -H "X-SpaPortal-Public-Key: <public_key>" \
+  "https://spaportal.cz/api/v2/hotels/66f16191f739705faa020001/room-types/66f16191f739705faa020003?currency=EUR"
+```
+
+## Response
+
+The response shape is the same as [Get room type](/api/room-types/get-room-type).

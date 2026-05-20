@@ -30,12 +30,16 @@ Resource paths use plural nouns: `/hotels`, `/visit-types`, `/calendar/dates`.
 
 ## Dates and time
 
+[Read the dates guide](/api/dates).
+
 Calendar dates and times use ISO 8601. Exact timestamps (e.g. `createdAt`, `updatedAt`) use millisecond precision, always in UTC, denoted by the `Z` suffix:
 
 - **Date** - `2026-04-01`
 - **Time** - `2026-04-01T10:15:30.000Z`
 
 ## Currencies
+
+[Read the currencies guide](/api/currencies).
 
 Supported currencies: `CZK` (Czech koruna) and `EUR` (Euro).
 
@@ -74,6 +78,8 @@ Both fields can be `null` when an image is not available.
 
 ## Localization
 
+[Read the localization guide](/api/localization).
+
 Set the `Accept-Language` header to request localized fields.
 
 ```bash
@@ -101,6 +107,8 @@ When `Accept-Language` is omitted, the API returns all supported locale keys for
 that field.
 
 ## Pagination
+
+[Read the pagination guide](/api/pagination).
 
 SpaPortal API uses cursor pagination:
 
