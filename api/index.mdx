@@ -64,15 +64,20 @@ Money values use the smallest currency unit. `currencyExponent` tells you how ma
 
 Some entities, such as hotels, room types, and visit types, can include image URLs.
 
-- `image` points to the original image.
-- `thumbnail` points to a smaller generated image for previews and lists.
+- `url` points to the original image.
+- `thumbnailUrl` points to a smaller generated image for previews and lists.
 
-Both fields can be `null` when an image is not available.
+Image collections are returned as arrays. `thumbnailUrl` can be `null` when a
+thumbnail is not available.
 
 ```json
 {
-  "image": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/hotels/example/pawlik.jpg",
-  "thumbnail": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/hotels/example/pawlik.webp"
+  "images": [
+    {
+      "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/room-types/superior.jpg",
+      "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/room-types/superior.webp"
+    }
+  ]
 }
 ```
 
