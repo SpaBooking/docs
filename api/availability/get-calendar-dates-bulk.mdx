@@ -7,11 +7,7 @@ description: "Returns availability and prices for multiple calendar date queries
 POST /api/v2/calendar/dates/bulk
 ```
 
-Returns calendar dates with availability and optional prices for multiple query
-items in one request.
-
-Use this endpoint when a booking form needs to load more than one calendar range
-or selection context at the same time.
+Returns availability and prices for multiple calendar queries in one request.
 
 ## Request body
 
@@ -36,10 +32,8 @@ Each item accepts these fields:
 
 ## Shared values
 
-Use `shared` for values that are the same for most or all items. This keeps the
-request smaller when only one field changes between items, such as `roomTypeId`.
-
-For every item, the API builds the effective query with these rules:
+Put values common to all items in `shared`; set only the differences per item.
+Each item's effective query resolves like this:
 
 | Case | Result |
 | --- | --- |
@@ -48,8 +42,7 @@ For every item, the API builds the effective query with these rules:
 | The field is set to `null` on the item | `null` is used and `shared` is ignored. |
 | The field is missing from both places | `null` is used. |
 
-For example, this request uses the same hotel and visit type for both items.
-The second item overrides only `currency`:
+Both items share the hotel and visit type; the second overrides `currency`:
 
 ```json
 {
@@ -71,9 +64,6 @@ The second item overrides only `currency`:
   ]
 }
 ```
-
-The first item uses `currency: "EUR"` from `shared`. The second item uses
-`currency: "CZK"` from the item.
 
 ## Example
 
@@ -107,8 +97,7 @@ curl \
 
 ## Response
 
-The response contains one result for each item. `key` is copied from the request
-item when supplied.
+One result per item, in request order. `key` is echoed when supplied.
 
 ```json
 {
@@ -142,10 +131,10 @@ item when supplied.
 }
 ```
 
-`availability` can be `NOT_AVAILABLE`, `AVAILABLE`, or `ON_DEMAND`.
+`availability` is `NOT_AVAILABLE`, `AVAILABLE`, or `ON_DEMAND`.
 
-When `currency` is supplied, `price.amounts` contains only requested currencies.
-If a requested currency has no amount, its value can be `null`.
+With `currency`, `price.amounts` contains only the requested currencies; a
+currency with no amount is `null`.
 
-When a single item cannot be resolved, the request fails with a v2 error
-response. The error details include the failing item index and `key`.
+If any item fails, the whole request fails — no partial results. The error
+details name the failing item index and `key`.

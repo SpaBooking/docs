@@ -1,13 +1,11 @@
 ---
-title: "Get room types"
-description: "Returns room types available to your distribution channel."
+title: "List room types"
+description: "Returns a list of room types."
 ---
 
 ```http
 GET /api/v2/room-types
 ```
-
-Returns room types available to your distribution channel.
 
 ## Query parameters
 
@@ -18,13 +16,12 @@ Returns room types available to your distribution channel.
 | `hotelId` | string | Filter by hotel ObjectId. |
 | `destinationId` | string | Filter by destination ObjectId. |
 | `visitTypeId` | string | Filter by visit type ObjectId. |
-| `beds` | integer | Filter by number of beds. |
+| `beds` | integer | Filter by number of beds. Minimum `1`, maximum `10`. |
 | `code` | string | Filter by room type code. |
 | `search` | string | Search by localized category name. |
-| `dateFrom` | date | Start date for availability and price context. |
-| `dateTo` | date | End date. Must be after `dateFrom`. |
+| `dateFrom` | date | Start date of the availability range. |
+| `dateTo` | date | End date of the availability range. Must be after `dateFrom`. |
 | `availableOnly` | boolean | Return only room types with availability in the supplied date range. Requires `dateFrom` and `dateTo`. |
-| `currency` | string | Comma-separated currency list, for example `EUR,CZK`. |
 | `include` | string | Use `hotel` to include basic hotel data. |
 | `sort` | string | One of `createdAt:desc`, `createdAt:asc`, `id:asc`, `id:desc`. |
 
@@ -34,13 +31,12 @@ Returns room types available to your distribution channel.
 curl \
   -H "X-SpaPortal-Public-Key: <public_key>" \
   -H "Accept-Language: cs-CZ,de-DE" \
-  "https://spaportal.cz/api/v2/room-types?limit=25&currency=EUR,CZK&include=hotel"
+  "https://spaportal.cz/api/v2/room-types?limit=25&include=hotel"
 ```
 
 ## Response
 
-Localized fields use the response locale keys requested by `Accept-Language`.
-Regional tags such as `de-DE` are returned under the supported locale key `de`.
+`description` contains Markdown. `category` is plain text.
 
 ```json
 {
@@ -64,24 +60,6 @@ Regional tags such as `de-DE` are returned under the supported locale key `de`.
       "description": {
         "cs-CZ": "Pokoj s koupelnou.",
         "de": "Zimmer mit Bad."
-      },
-      "lowestPrices": {
-        "CZK": {
-          "amountMinor": 180000,
-          "currency": "CZK",
-          "currencyExponent": 2,
-          "unit": "roomPerNight"
-        },
-        "EUR": {
-          "amountMinor": 7200,
-          "currency": "EUR",
-          "currencyExponent": 2,
-          "unit": "roomPerNight"
-        }
-      },
-      "bookingUrl": {
-        "cs-CZ": "https://booking.example/cs",
-        "de": "https://booking.example/de"
       },
       "hotel": {
         "id": "66f16191f739705faa020001",

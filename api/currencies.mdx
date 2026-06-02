@@ -15,19 +15,8 @@ Supported currencies:
 
 ## Requesting currency
 
-Endpoints that return prices accept `currency` when you want one or more
-specific currencies:
-
-```bash
-GET /api/v2/room-types?currency=EUR,CZK
-```
-
-Use a comma-separated list of supported currency codes. If `currency` is
-omitted, the API returns all supported currencies available for the requested
-resource.
-
-For `POST /api/v2/calendar/dates/bulk`, send `currency` in `shared` or in each
-item:
+`POST /api/v2/calendar/dates/bulk` accepts `currency` when you want one or more
+specific currencies. Send it in `shared` or in each item:
 
 ```json
 {
@@ -46,6 +35,9 @@ item:
 }
 ```
 
+Use a comma-separated list of supported currency codes. If `currency` is
+omitted, the response includes all supported currencies.
+
 ## Money fields
 
 Money fields use minor units:
@@ -61,25 +53,28 @@ Money fields use minor units:
 `currencyExponent` tells you how many decimal places to apply. For both `CZK`
 and `EUR`, the exponent is `2`, so `1892400` equals `18,924.00`.
 
-When no currency is requested, price fields are keyed by currency:
+Calendar date prices group their amounts by currency under `amounts`. When no
+currency is requested, all supported currencies are returned:
 
 ```json
 {
-  "lowestPrices": {
-    "CZK": {
-      "amountMinor": 180000,
-      "currency": "CZK",
-      "currencyExponent": 2
-    },
-    "EUR": {
-      "amountMinor": 7200,
-      "currency": "EUR",
-      "currencyExponent": 2
+  "price": {
+    "isFinal": true,
+    "amounts": {
+      "CZK": {
+        "amountMinor": 180000,
+        "currency": "CZK",
+        "currencyExponent": 2
+      },
+      "EUR": {
+        "amountMinor": 7200,
+        "currency": "EUR",
+        "currencyExponent": 2
+      }
     }
   }
 }
 ```
 
-When one or more currencies are requested, the response contains only those
-currencies. If the resource exists but has no amount in a requested currency,
-the value can be `null`.
+When one or more currencies are requested, `amounts` contains only those
+currencies. If a requested currency has no amount, its value can be `null`.

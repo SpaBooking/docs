@@ -16,8 +16,8 @@ All responses use standard HTTP status codes.
 
 | Status | Meaning |
 | --: | --- |
-| `400` | The request is malformed, a required parameter is missing, or validation failed. |
-| `401` | The API key is missing or invalid. |
+| `400` | The request is malformed, a required parameter is missing (including the API key), or validation failed. |
+| `401` | The API key is invalid. |
 | `404` | The requested resource was not found. |
 | `409` | The request conflicts with the current state or matched more than one scoped resource. |
 | `422` | The resource exists but cannot be used for the requested operation. Usually validation errors. |

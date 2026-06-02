@@ -9,12 +9,13 @@ SpaPortal API uses a single `error` object:
 {
   "error": {
     "code": "invalid_request",
-    "message": "hotelId must be a valid ObjectId.",
+    "message": "Invalid request body.",
     "requestId": "req_6b4c6b6f-0d34-47f1-bf3b-8a3f9d8d2e1f",
     "details": [
       {
         "field": "hotelId",
-        "code": "invalid_object_id"
+        "code": "invalid_string",
+        "message": "Must be a 24-character ObjectId string."
       }
     ]
   }

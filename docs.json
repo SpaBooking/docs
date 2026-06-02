@@ -63,18 +63,10 @@
                 ]
               },
               {
-                "group": "Hotels",
-                "pages": [
-                  "api/hotels/get-hotels"
-                ]
-              },
-              {
                 "group": "Room types",
                 "pages": [
                   "api/room-types/get-room-types",
-                  "api/room-types/get-room-type",
-                  "api/room-types/get-hotel-room-types",
-                  "api/room-types/get-hotel-room-type"
+                  "api/room-types/get-room-type"
                 ]
               }
             ]
@@ -133,7 +125,7 @@
   "redirects": [
     {
       "source": "/untitled-page",
-      "destination": "/api/hotels/get-hotels",
+      "destination": "/api/room-types/get-room-types",
       "permanent": true
     },
     {

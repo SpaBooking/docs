@@ -1,13 +1,11 @@
 ---
-title: "Get room type"
+title: "Get a room type"
 description: "Returns one room type by ObjectId."
 ---
 
 ```http
 GET /api/v2/room-types/{roomTypeId}
 ```
-
-Returns one room type available to your distribution channel.
 
 ## Path parameters
 
@@ -19,10 +17,7 @@ Returns one room type available to your distribution channel.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `visitTypeId` | string | Visit type ObjectId for price context. |
-| `dateFrom` | date | Start date for price context. |
-| `dateTo` | date | End date. Must be after `dateFrom`. |
-| `currency` | string | Comma-separated currency list, for example `EUR,CZK`. |
+| `visitTypeId` | string | Visit type ObjectId. |
 | `include` | string | Use `hotel` to include basic hotel data. |
 
 ## Example
@@ -31,10 +26,12 @@ Returns one room type available to your distribution channel.
 curl \
   -H "X-SpaPortal-Public-Key: <public_key>" \
   -H "Accept-Language: cs-CZ,de-DE" \
-  "https://spaportal.cz/api/v2/room-types/66f16191f739705faa020003?currency=EUR&include=hotel"
+  "https://spaportal.cz/api/v2/room-types/66f16191f739705faa020003?include=hotel"
 ```
 
 ## Response
+
+`description` contains Markdown. `category` is plain text.
 
 ```json
 {
@@ -51,18 +48,6 @@ curl \
   "description": {
     "cs-CZ": "Pokoj s koupelnou.",
     "de": "Zimmer mit Bad."
-  },
-  "lowestPrices": {
-    "EUR": {
-      "amountMinor": 7200,
-      "currency": "EUR",
-      "currencyExponent": 2,
-      "unit": "roomPerNight"
-    }
-  },
-  "bookingUrl": {
-    "cs-CZ": "https://booking.example/cs",
-    "de": "https://booking.example/de"
   },
   "hotel": {
     "id": "66f16191f739705faa020001",

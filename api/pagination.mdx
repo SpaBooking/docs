@@ -8,7 +8,14 @@ List endpoints return a limited set of records.
 
 ## API v2
 
-The target API v2 contract uses cursor pagination for public list endpoints.
+API v2 list endpoints use cursor pagination.
+
+Send these query parameters:
+
+| Parameter | Default | Maximum | Description |
+| --- | ---: | ---: | --- |
+| `limit` | `25` | `100` | Number of records to return. |
+| `cursor` | - | - | Opaque cursor from the previous page's `nextCursor`. |
 
 Responses include pagination metadata:
 
@@ -16,14 +23,20 @@ Responses include pagination metadata:
 {
   "data": [],
   "pagination": {
-    "nextCursor": "eyJpZCI6IjY2ZjE2MTkxZjczOTcwNWZhYTAyMDc2OCJ9",
+    "limit": 25,
+    "nextCursor": "eyJzb3J0IjoiY3JlYXRlZEF0OmRlc2MiLCJsYXN0SWQiOiI2NmYxNjE5MWY3Mzk3MDVmYWEwMjA3NjgiLCJsYXN0U29ydFZhbHVlIjoiMjAyNi0wMS0wMlQwMDowMDowMC4wMDBaIn0",
     "hasMore": true,
     "total": 42
   }
 }
 ```
 
-Public catalog and list endpoints return `pagination.total` by default.
+- `limit` echoes the page size that was applied.
+- `nextCursor` is an opaque token. Pass it back as `cursor` to fetch the next page. Do not parse or build it yourself. It is `null` when there are no more records.
+- `hasMore` is `true` when another page is available.
+- `total` is the number of matching records across all pages.
+
+To page through results, repeat the request with `cursor` set to the previous response's `nextCursor` until `hasMore` is `false`.
 
 ## API v1
 
