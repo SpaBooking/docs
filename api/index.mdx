@@ -43,16 +43,8 @@ Calendar dates and times use ISO 8601. Exact timestamps (e.g. `createdAt`, `upda
 
 Supported currencies: `CZK` (Czech koruna) and `EUR` (Euro).
 
-Endpoints that return prices accept a `currency` request parameter when you want
-one or more specific currencies:
-
-```bash
-GET /api/v2/room-types?currency=EUR,CZK
-```
-
-Use a comma-separated list of supported ISO 4217 currency codes. If `currency`
-is omitted, the API returns all supported currencies available for the requested
-resource.
+Price responses include every available currency; there is no currency request
+parameter.
 
 Money values use the smallest currency unit. `currencyExponent` tells you how many decimal places to apply — for both `CZK` and `EUR` that is `2`, so `1892400` equals `18,924.00`.
 
@@ -125,3 +117,27 @@ SpaPortal API uses cursor pagination:
 ```
 
 Pass `cursor` in GET parameters from the previous response to fetch the next page.
+
+## Search
+
+[Read the search guide](/api/search).
+
+List endpoints accept `search` for free-text filtering — case- and
+diacritics-insensitive, matched across all supported languages (`cs-CZ`, `de`,
+`en`, `ru`) at once, so a term in any language matches. Each endpoint documents
+which field(s) it searches.
+
+## Sorting
+
+[Read the sorting guide](/api/sorting).
+
+List endpoints accept `sort` as `<field>:<direction>` (`asc` or `desc`), for
+example `createdAt:desc`. Each endpoint documents its sortable fields and
+default order.
+
+## Includes
+
+[Read the includes guide](/api/includes).
+
+Use `include` to embed related resources (for example `include=hotel`) instead
+of making a second request. Each endpoint documents the values it supports.

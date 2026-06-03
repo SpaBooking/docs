@@ -48,6 +48,9 @@
               "api/currencies",
               "api/localization",
               "api/pagination",
+              "api/search",
+              "api/sorting",
+              "api/includes",
               "api/status-codes",
               "api/errors",
               "api/versioning"

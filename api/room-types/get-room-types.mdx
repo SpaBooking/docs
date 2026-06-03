@@ -16,9 +16,9 @@ GET /api/v2/room-types
 | `hotelId` | string | Filter by hotel id. |
 | `beds` | integer | Filter by number of beds. Minimum `1`, maximum `10`. |
 | `code` | string | Filter by room type code. |
-| `search` | string | Search by localized category name. |
-| `include` | string | Use `hotel` to include basic hotel data. |
-| `sort` | string | One of `createdAt:desc`, `createdAt:asc`, `id:asc`, `id:desc`. |
+| `search` | string | Full-text search of the localized category name (all languages). See [Search](/api/search). |
+| `include` | string | Set to `hotel` to embed the hotel. See [Includes](/api/includes). |
+| `sort` | string | One of `createdAt:desc`, `createdAt:asc`, `id:asc`, `id:desc` (default `createdAt:desc`). See [Sorting](/api/sorting). |
 
 ## Example
 

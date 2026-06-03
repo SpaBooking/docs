@@ -1,0 +1,16 @@
+---
+title: "Sorting"
+description: "Order list results with the sort parameter."
+icon: "arrow-up-arrow-down"
+---
+
+List endpoints accept a `sort` query parameter as `<field>:<direction>`, where
+direction is `asc` or `desc`.
+
+```bash
+GET /api/v2/room-types?sort=createdAt:desc
+```
+
+- Each endpoint documents its sortable fields and default order.
+- Sorting is stable: ties are broken by `id`, so cursor pagination never skips
+  or repeats a record.
