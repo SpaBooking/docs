@@ -171,12 +171,6 @@ components:
           type: string
           format: date
           nullable: true
-        currency:
-          type: string
-          pattern: "^(CZK|EUR)(,(CZK|EUR))*$"
-          example: EUR,CZK
-          description: Return calendar prices only in these comma-separated currencies.
-          nullable: true
     CalendarDatesBulkQueryWithKey:
       type: object
       additionalProperties: false
@@ -213,12 +207,6 @@ components:
         dateTo:
           type: string
           format: date
-          nullable: true
-        currency:
-          type: string
-          pattern: "^(CZK|EUR)(,(CZK|EUR))*$"
-          example: EUR,CZK
-          description: Return calendar prices only in these comma-separated currencies.
           nullable: true
         key:
           type: string

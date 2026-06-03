@@ -13,31 +13,6 @@ Supported currencies:
 | `CZK` | Czech koruna |
 | `EUR` | Euro |
 
-## Requesting currency
-
-`POST /api/v2/calendar/dates/bulk` accepts `currency` when you want one or more
-specific currencies. Send it in `shared` or in each item:
-
-```json
-{
-  "shared": {
-    "currency": "EUR,CZK"
-  },
-  "items": [
-    {
-      "key": "pawlik-superior",
-      "hotelId": "65f...",
-      "roomTypeId": "65f...",
-      "dateFrom": "2026-04-01",
-      "dateTo": "2026-04-04"
-    }
-  ]
-}
-```
-
-Use a comma-separated list of supported currency codes. If `currency` is
-omitted, the response includes all supported currencies.
-
 ## Money fields
 
 Money fields use minor units:
@@ -53,8 +28,9 @@ Money fields use minor units:
 `currencyExponent` tells you how many decimal places to apply. For both `CZK`
 and `EUR`, the exponent is `2`, so `1892400` equals `18,924.00`.
 
-Calendar date prices group their amounts by currency under `amounts`. When no
-currency is requested, all supported currencies are returned:
+Calendar date prices group their amounts by currency under `amounts` and return
+every currency that has a price. A currency with no price for that date is
+omitted.
 
 ```json
 {
@@ -75,6 +51,3 @@ currency is requested, all supported currencies are returned:
   }
 }
 ```
-
-When one or more currencies are requested, `amounts` contains only those
-currencies. If a requested currency has no amount, its value can be `null`.

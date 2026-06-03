@@ -28,7 +28,6 @@ Each item accepts these fields:
 | `guests` | integer | Number of guests. Minimum `1`, maximum `2`. |
 | `dateFrom` | date | Start date in `YYYY-MM-DD` format. |
 | `dateTo` | date | End date in `YYYY-MM-DD` format. |
-| `currency` | string | Comma-separated currency list, for example `EUR,CZK`. |
 
 ## Shared values
 
@@ -42,14 +41,14 @@ Each item's effective query resolves like this:
 | The field is set to `null` on the item | `null` is used and `shared` is ignored. |
 | The field is missing from both places | `null` is used. |
 
-Both items share the hotel and visit type; the second overrides `currency`:
+Both items share the hotel and visit type; the second overrides `guests`:
 
 ```json
 {
   "shared": {
     "hotelId": "66f16191f739705faa020001",
     "visitTypeId": "66f16191f739705faa020003",
-    "currency": "EUR"
+    "guests": 2
   },
   "items": [
     {
@@ -59,7 +58,7 @@ Both items share the hotel and visit type; the second overrides `currency`:
     {
       "key": "room-2",
       "roomTypeId": "66f16191f739705faa020005",
-      "currency": "CZK"
+      "guests": 1
     }
   ]
 }
@@ -75,8 +74,7 @@ curl \
   --data '{
     "shared": {
       "hotelId": "66f16191f739705faa020001",
-      "visitTypeId": "66f16191f739705faa020003",
-      "currency": "EUR,CZK"
+      "visitTypeId": "66f16191f739705faa020003"
     },
     "items": [
       {
@@ -133,8 +131,8 @@ One result per item, in request order. `key` is echoed when supplied.
 
 `availability` is `NOT_AVAILABLE`, `AVAILABLE`, or `ON_DEMAND`.
 
-With `currency`, `price.amounts` contains only the requested currencies; a
-currency with no amount is `null`.
+`price.amounts` includes every currency that has a price for the date; a
+currency with no price is omitted.
 
 If any item fails, the whole request fails — no partial results. The error
 details name the failing item index and `key`.
