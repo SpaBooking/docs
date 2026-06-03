@@ -1,6 +1,6 @@
 ---
 title: "Get a room type"
-description: "Returns one room type by ObjectId."
+description: "Returns one room type by id."
 ---
 
 ```http
@@ -11,13 +11,12 @@ GET /api/v2/room-types/{roomTypeId}
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `roomTypeId` | string | Room type ObjectId. |
+| `roomTypeId` | string | Room type id. |
 
 ## Query parameters
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `visitTypeId` | string | Visit type ObjectId. |
 | `include` | string | Use `hotel` to include basic hotel data. |
 
 ## Example

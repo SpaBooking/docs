@@ -1449,10 +1449,10 @@ components:
         cs_CZ: Frantiskovy Lazne
         de: Franzensbad
 
-    MongoObjectId:
+    ObjectId:
       type: string
       pattern: "^[0-9a-fA-F]{24}$"
-      description: MongoDB ObjectId string for the same entity.
+      description: Object id (24-character hex string) for the same entity.
       example: 66f16191f739705faa020001
 
     CurrencyAmount:
@@ -1497,7 +1497,7 @@ components:
       required: [id, name]
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           type: integer
         name:
@@ -1523,7 +1523,7 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           type: integer
         category:
@@ -1551,7 +1551,7 @@ components:
           description: Included on price list room type items.
           properties:
             _id:
-              $ref: "#/components/schemas/MongoObjectId"
+              $ref: "#/components/schemas/ObjectId"
             id:
               type: integer
             name:
@@ -1564,7 +1564,7 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           type: integer
         name:
@@ -1607,7 +1607,7 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           oneOf:
             - type: integer
@@ -1623,7 +1623,7 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           oneOf:
             - type: integer
@@ -1656,7 +1656,7 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           oneOf:
             - type: integer
@@ -1672,7 +1672,7 @@ components:
       additionalProperties: true
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           oneOf:
             - type: integer
@@ -1684,7 +1684,7 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           oneOf:
             - type: integer
@@ -1745,7 +1745,7 @@ components:
             type: object
             properties:
               _id:
-                $ref: "#/components/schemas/MongoObjectId"
+                $ref: "#/components/schemas/ObjectId"
               id:
                 type: integer
               name:
@@ -1778,14 +1778,14 @@ components:
       type: object
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           type: integer
         visit_type:
           type: object
           properties:
             _id:
-              $ref: "#/components/schemas/MongoObjectId"
+              $ref: "#/components/schemas/ObjectId"
             id:
               type: integer
             name:
@@ -1945,7 +1945,7 @@ components:
       additionalProperties: true
       properties:
         _id:
-          $ref: "#/components/schemas/MongoObjectId"
+          $ref: "#/components/schemas/ObjectId"
         id:
           oneOf:
             - type: integer

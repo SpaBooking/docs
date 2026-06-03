@@ -141,22 +141,22 @@ components:
         visitTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Visit type ObjectId.
+          description: Visit type id.
           nullable: true
         hotelId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Hotel ObjectId.
+          description: Hotel id.
           nullable: true
         roomTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Room type ObjectId.
+          description: Room type id.
           nullable: true
         destinationId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Destination ObjectId.
+          description: Destination id.
           nullable: true
         guests:
           type: integer
@@ -184,22 +184,22 @@ components:
         visitTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Visit type ObjectId.
+          description: Visit type id.
           nullable: true
         hotelId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Hotel ObjectId.
+          description: Hotel id.
           nullable: true
         roomTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Room type ObjectId.
+          description: Room type id.
           nullable: true
         destinationId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
-          description: Destination ObjectId.
+          description: Destination id.
           nullable: true
         guests:
           type: integer

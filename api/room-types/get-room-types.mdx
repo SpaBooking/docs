@@ -13,15 +13,10 @@ GET /api/v2/room-types
 | --- | --- | --- |
 | `limit` | integer | Number of records to return. Default is `25`. Maximum is `100`. |
 | `cursor` | string | Cursor from the previous page. |
-| `hotelId` | string | Filter by hotel ObjectId. |
-| `destinationId` | string | Filter by destination ObjectId. |
-| `visitTypeId` | string | Filter by visit type ObjectId. |
+| `hotelId` | string | Filter by hotel id. |
 | `beds` | integer | Filter by number of beds. Minimum `1`, maximum `10`. |
 | `code` | string | Filter by room type code. |
 | `search` | string | Search by localized category name. |
-| `dateFrom` | date | Start date of the availability range. |
-| `dateTo` | date | End date of the availability range. Must be after `dateFrom`. |
-| `availableOnly` | boolean | Return only room types with availability in the supplied date range. Requires `dateFrom` and `dateTo`. |
 | `include` | string | Use `hotel` to include basic hotel data. |
 | `sort` | string | One of `createdAt:desc`, `createdAt:asc`, `id:asc`, `id:desc`. |
 
