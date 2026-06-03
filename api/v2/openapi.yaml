@@ -12,13 +12,33 @@ security:
   - spaPortalPublicKey: []
 tags:
   - name: Availability
+  - name: Room types
 paths:
   /calendar/dates/bulk:
     post:
       tags: [Availability]
       summary: Get calendar dates in bulk
       operationId: getCalendarDatesBulk
-      description: Batch multiple calendar date lookups into one request.
+      description: |
+        Returns availability and prices for multiple calendar queries in one
+        request.
+
+        Put values common to all items in `shared`; set only the differences per
+        item. Each item's effective query resolves like this:
+
+        | Case | Result |
+        | --- | --- |
+        | Field omitted from the item | The `shared` value is used. |
+        | Field set on the item | The item value overrides `shared`. |
+        | Field set to `null` on the item | `null` is used; `shared` is ignored. |
+        | Field missing from both | `null` is used. |
+
+        Results are returned one per item, in request order; `key` is echoed when
+        supplied. `price.amounts` includes every currency that has a price for
+        the date - a currency with no price is omitted.
+
+        If any item fails, the whole request fails (no partial results); the
+        error details name the failing item index and `key`.
       parameters:
         - $ref: "#/components/parameters/RequestId"
       requestBody:
@@ -46,6 +66,120 @@ paths:
           $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /room-types:
+    get:
+      tags: [Room types]
+      summary: List room types
+      operationId: getRoomTypes
+      description: |
+        Returns active room types across the companies your public key is scoped
+        to. Localized fields (`category`, `description`) return the locale keys
+        selected by `Accept-Language`.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/RequestId"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          description: Number of records to return.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Cursor from the previous page's `pagination.nextCursor`.
+        - name: hotelId
+          in: query
+          schema:
+            type: string
+            pattern: "^[0-9a-fA-F]{24}$"
+          description: Filter by hotel id.
+        - name: beds
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+          description: Filter by number of beds.
+        - name: code
+          in: query
+          schema:
+            type: string
+          description: Filter by exact room type code.
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: >-
+            Full-text search of the localized category name across all supported
+            languages (case- and diacritics-insensitive). To match a code, use
+            `code`.
+        - name: include
+          in: query
+          schema:
+            type: string
+            enum: [hotel]
+          description: Set to `hotel` to embed the hotel in each room type.
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [createdAt:desc, createdAt:asc, id:asc, id:desc]
+            default: createdAt:desc
+          description: Sort order. Ties are broken by `id`.
+      responses:
+        "200":
+          description: A page of room types.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomTypesList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /room-types/{roomTypeId}:
+    get:
+      tags: [Room types]
+      summary: Get a room type
+      operationId: getRoomType
+      description: Returns a single room type by id.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/RequestId"
+        - name: roomTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[0-9a-fA-F]{24}$"
+          description: Room type id.
+        - name: include
+          in: query
+          schema:
+            type: string
+            enum: [hotel]
+          description: Set to `hotel` to embed the hotel.
+      responses:
+        "200":
+          description: The room type.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomType"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 components:
   parameters:
     RequestId:
@@ -55,6 +189,16 @@ components:
       schema:
         type: string
       description: Optional client-provided request identifier echoed in error responses.
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+        example: cs-CZ,de
+      description: >-
+        Comma-separated BCP 47 language tags selecting which locale keys
+        localized fields return. When omitted, all locale keys are returned.
   securitySchemes:
     spaPortalPublicKey:
       type: apiKey
@@ -303,3 +447,112 @@ components:
                 additionalProperties: true
             requestId:
               type: string
+    LocalizedString:
+      type: object
+      additionalProperties:
+        type: string
+        nullable: true
+      description: >-
+        Localized field keyed by supported response locale (`cs-CZ`, `de`, `en`,
+        `ru`). When `Accept-Language` is set, only the matched keys are returned.
+      example:
+        cs-CZ: Superior dvouluzkovy pokoj
+        de: Superior Doppelzimmer
+    Image:
+      type: object
+      required: [url, thumbnailUrl]
+      properties:
+        url:
+          type: string
+          description: Original image URL.
+        thumbnailUrl:
+          type: string
+          nullable: true
+          description: Generated preview image URL, or null when unavailable.
+    RoomType:
+      type: object
+      required:
+        - id
+        - hotelId
+        - code
+        - category
+        - beds
+        - facilities
+        - images
+        - description
+      properties:
+        id:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          example: 66f16191f739705faa020003
+        hotelId:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          example: 66f16191f739705faa020001
+        code:
+          type: string
+          nullable: true
+          example: SUPERIOR-DBL
+        category:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized category name (plain text).
+        beds:
+          type: integer
+          example: 2
+        facilities:
+          type: array
+          items:
+            type: string
+          example: [shower, toilet]
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        description:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized description (Markdown).
+        hotel:
+          type: object
+          description: Embedded only when `include=hotel`.
+          required: [id, name, stars, destinationId]
+          properties:
+            id:
+              type: string
+              pattern: "^[0-9a-fA-F]{24}$"
+            name:
+              type: string
+            stars:
+              type: integer
+              nullable: true
+            destinationId:
+              type: string
+              nullable: true
+              pattern: "^[0-9a-fA-F]{24}$"
+    Pagination:
+      type: object
+      required: [limit, nextCursor, hasMore, total]
+      properties:
+        limit:
+          type: integer
+          example: 25
+        nextCursor:
+          type: string
+          nullable: true
+          description: Pass as `cursor` to fetch the next page. Null on the last page.
+        hasMore:
+          type: boolean
+        total:
+          type: integer
+          description: Total number of matching records across all pages.
+    RoomTypesList:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoomType"
+        pagination:
+          $ref: "#/components/schemas/Pagination"

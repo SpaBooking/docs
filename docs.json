@@ -58,21 +58,10 @@
           },
           {
             "group": "Endpoints",
-            "pages": [
-              {
-                "group": "Availability",
-                "pages": [
-                  "api/availability/get-calendar-dates-bulk"
-                ]
-              },
-              {
-                "group": "Room types",
-                "pages": [
-                  "api/room-types/get-room-types",
-                  "api/room-types/get-room-type"
-                ]
-              }
-            ]
+            "openapi": {
+              "source": "/api/v2/openapi.yaml",
+              "directory": "api/v2/reference"
+            }
           },
           {
             "group": "Previous Versions",
@@ -128,7 +117,7 @@
   "redirects": [
     {
       "source": "/untitled-page",
-      "destination": "/api/room-types/get-room-types",
+      "destination": "/api",
       "permanent": true
     },
     {
