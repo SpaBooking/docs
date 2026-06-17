@@ -1,0 +1,127 @@
+---
+title: "Expand"
+description: "Embed related resources inline with the expand parameter."
+icon: "layer-group"
+---
+
+Use the `expand` query parameter to embed related data inline in the response
+instead of fetching it with a second request. Depending on the endpoint this is
+either a referenced object (a room type's `hotel`, inflated from its `hotelId`)
+or a related collection (a hotel's `roomTypes`). Nothing is expanded by default.
+
+```bash
+# Embed each hotel's room types
+GET /api/v2/hotels?expand=roomTypes
+
+# Embed each room type's hotel
+GET /api/v2/room-types?expand=hotel
+```
+
+## With and without expand
+
+A hotel does not include its room types by default. Without `expand` you get the
+hotel on its own; with `expand=roomTypes` the full `roomTypes` array is embedded
+inline — no second request needed. The only difference between the two responses
+is the added `roomTypes` block.
+
+<CodeGroup>
+
+```json Response without expand
+{
+  "id": "66f16191f739705faa020001",
+  "name": { "cs-CZ": "Pawlik", "de": "Pawlik-Aquaforum" },
+  "stars": 4,
+  "address": {
+    "addressLine": "Americká 384/26",
+    "city": "Františkovy Lázně",
+    "postalCode": "351 01",
+    "countryCode": "CZ"
+  },
+  "phoneNumber": "+420 354 401 111",
+  "description": { "cs-CZ": "Lázeňský hotel u pramene.", "de": "Kurhotel an der Quelle." },
+  "commercialSlogan": { "cs-CZ": "Wellness pobyt.", "de": "Wellnessaufenthalt." },
+  "equipment": { "cs-CZ": "Sauna, vnitřní bazén.", "de": "Sauna, Innenpool." },
+  "services": { "cs-CZ": "Lázeňské procedury.", "de": "Kuranwendungen." },
+  "images": [
+    { "url": "https://files.example/pawlik.jpg", "thumbnailUrl": "https://files.example/pawlik-thumb.webp" }
+  ],
+  "priceFrom": {
+    "CZK": {
+      "perNight": { "amountMinor": 200000, "currency": "CZK", "currencyExponent": 2 },
+      "perNightOriginal": { "amountMinor": 250000, "currency": "CZK", "currencyExponent": 2 },
+      "minimumStay": { "amountMinor": 400000, "currency": "CZK", "currencyExponent": 2 },
+      "minimumStayOriginal": { "amountMinor": 500000, "currency": "CZK", "currencyExponent": 2 },
+      "guests": 2,
+      "minimumNights": 2
+    },
+    "EUR": {
+      "perNight": { "amountMinor": 8000, "currency": "EUR", "currencyExponent": 2 },
+      "perNightOriginal": null,
+      "minimumStay": { "amountMinor": 16000, "currency": "EUR", "currencyExponent": 2 },
+      "minimumStayOriginal": null,
+      "guests": 2,
+      "minimumNights": 2
+    }
+  }
+}
+```
+
+```json Response with expand=roomTypes
+{
+  "id": "66f16191f739705faa020001",
+  "name": { "cs-CZ": "Pawlik", "de": "Pawlik-Aquaforum" },
+  "stars": 4,
+  "address": {
+    "addressLine": "Americká 384/26",
+    "city": "Františkovy Lázně",
+    "postalCode": "351 01",
+    "countryCode": "CZ"
+  },
+  "phoneNumber": "+420 354 401 111",
+  "description": { "cs-CZ": "Lázeňský hotel u pramene.", "de": "Kurhotel an der Quelle." },
+  "commercialSlogan": { "cs-CZ": "Wellness pobyt.", "de": "Wellnessaufenthalt." },
+  "equipment": { "cs-CZ": "Sauna, vnitřní bazén.", "de": "Sauna, Innenpool." },
+  "services": { "cs-CZ": "Lázeňské procedury.", "de": "Kuranwendungen." },
+  "images": [
+    { "url": "https://files.example/pawlik.jpg", "thumbnailUrl": "https://files.example/pawlik-thumb.webp" }
+  ],
+  "priceFrom": {
+    "CZK": {
+      "perNight": { "amountMinor": 200000, "currency": "CZK", "currencyExponent": 2 },
+      "perNightOriginal": { "amountMinor": 250000, "currency": "CZK", "currencyExponent": 2 },
+      "minimumStay": { "amountMinor": 400000, "currency": "CZK", "currencyExponent": 2 },
+      "minimumStayOriginal": { "amountMinor": 500000, "currency": "CZK", "currencyExponent": 2 },
+      "guests": 2,
+      "minimumNights": 2
+    },
+    "EUR": {
+      "perNight": { "amountMinor": 8000, "currency": "EUR", "currencyExponent": 2 },
+      "perNightOriginal": null,
+      "minimumStay": { "amountMinor": 16000, "currency": "EUR", "currencyExponent": 2 },
+      "minimumStayOriginal": null,
+      "guests": 2,
+      "minimumNights": 2
+    }
+  },
+  "roomTypes": [
+    {
+      "id": "66f16191f739705faa020003",
+      "hotelId": "66f16191f739705faa020001",
+      "code": "SUPERIOR-DBL",
+      "category": { "cs-CZ": "Superior dvoulůžkový pokoj", "de": "Superior Doppelzimmer" },
+      "beds": 2,
+      "facilities": ["shower", "toilet"],
+      "images": [],
+      "description": { "cs-CZ": "Pokoj s koupelnou.", "de": "Zimmer mit Bad." }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+The same pattern applies in the other direction: `GET /api/v2/room-types?expand=hotel`
+embeds each room type's `hotel`. For a paginated, filterable list of a single
+hotel's room types, use `GET /api/v2/room-types?hotelId=<id>` instead of expanding.
+
+Each endpoint lists the `expand` values it supports and what each adds.

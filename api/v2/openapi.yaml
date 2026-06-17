@@ -12,8 +12,55 @@ security:
   - spaPortalPublicKey: []
 tags:
   - name: Availability
+  - name: Hotels
   - name: Room types
+  - name: Amenities
 paths:
+  /amenities:
+    get:
+      tags: [Amenities]
+      summary: List the amenity dictionary
+      operationId: getAmenities
+      x-mint:
+        content: |
+          <Warning>
+            **Draft — not yet available.** This is a work-in-progress contract
+            for an endpoint that is not implemented yet. It may change before
+            release; do not build against it.
+          </Warning>
+      description: |
+        Returns the controlled amenity vocabulary - the catalog of possible
+        amenities, each with a stable `code`, a `category`, a `scope`, value
+        typing and localized labels. Fetch once to power amenity filters and to
+        resolve the `code`s returned in hotel and room-type `amenities`. This is
+        a small reference list, returned in full (not paginated).
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/RequestId"
+        - name: scope
+          in: query
+          schema:
+            type: string
+            enum: [hotel, roomType, both]
+          description: Filter to amenities applicable at this scope.
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Filter to a single category.
+      responses:
+        "200":
+          description: The amenity dictionary.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmenitiesList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /calendar/dates/bulk:
     post:
       tags: [Availability]
@@ -64,6 +111,140 @@ paths:
           $ref: "#/components/responses/Conflict"
         "422":
           $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /hotels:
+    get:
+      tags: [Hotels]
+      summary: List hotels
+      operationId: getHotels
+      x-mint:
+        content: |
+          <Warning>
+            **Draft — not yet available.** This is a work-in-progress contract
+            for an endpoint that is not implemented yet. It may change before
+            release; do not build against it.
+          </Warning>
+      description: |
+        Returns active hotels across the companies your public key is scoped to.
+        Each hotel includes `priceFrom`, the indicative cheapest ("from") price
+        computed server-side. This is not an availability check and takes no
+        pricing query parameters. Localized fields (`name`, `description`,
+        `commercialSlogan`, `equipment`, `services`) return the locale keys
+        selected by `Accept-Language`. `name` falls back to the default locale
+        (cs-CZ) and is never null.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/RequestId"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+          description: Number of records to return.
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: Cursor from the previous page's `pagination.nextCursor`.
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: >-
+            Full-text search of the hotel name across all supported languages
+            (case- and diacritics-insensitive).
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [createdAt:desc, createdAt:asc, id:asc, id:desc]
+            default: createdAt:desc
+          description: Sort order. Ties are broken by `id`.
+        - name: amenities
+          in: query
+          schema:
+            type: string
+          description: >-
+            Draft. Comma-separated amenity `code`s; returns only hotels that have
+            ALL listed amenities available (AND semantics).
+            E.g. `wellness.sauna,parking.parking`.
+        - name: amenityCategory
+          in: query
+          schema:
+            type: string
+          description: >-
+            Draft. Returns hotels that have any available amenity in this
+            category (e.g. `wellness`).
+        - name: expand
+          in: query
+          schema:
+            type: string
+            enum: [roomTypes]
+          description: >-
+            Expand related resources inline. Set to `roomTypes` to embed each
+            hotel's room types in the response (otherwise fetch them separately
+            via `GET /room-types?hotelId={hotelId}`).
+      responses:
+        "200":
+          description: A page of hotels.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HotelsList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /hotels/{hotelId}:
+    get:
+      tags: [Hotels]
+      summary: Get a hotel
+      operationId: getHotel
+      x-mint:
+        content: |
+          <Warning>
+            **Draft — not yet available.** This is a work-in-progress contract
+            for an endpoint that is not implemented yet. It may change before
+            release; do not build against it.
+          </Warning>
+      description: Returns a single hotel by id.
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguage"
+        - $ref: "#/components/parameters/RequestId"
+        - name: hotelId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[0-9a-fA-F]{24}$"
+          description: Hotel id.
+        - name: expand
+          in: query
+          schema:
+            type: string
+            enum: [roomTypes]
+          description: >-
+            Expand related resources inline. Set to `roomTypes` to embed the
+            hotel's room types in the response (otherwise fetch them separately
+            via `GET /room-types?hotelId={hotelId}`).
+      responses:
+        "200":
+          description: The hotel.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hotel"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /room-types:
@@ -117,7 +298,7 @@ paths:
             Full-text search of the localized category name across all supported
             languages (case- and diacritics-insensitive). To match a code, use
             `code`.
-        - name: include
+        - name: expand
           in: query
           schema:
             type: string
@@ -159,7 +340,7 @@ paths:
             type: string
             pattern: "^[0-9a-fA-F]{24}$"
           description: Room type id.
-        - name: include
+        - name: expand
           in: query
           schema:
             type: string
@@ -513,10 +694,19 @@ components:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: Localized description (Markdown).
+        amenities:
+          type: array
+          description: >-
+            Draft — not yet implemented. Structured, filterable amenities for the
+            room type (amenities whose `scope` is `roomType` or `both`). Resolve
+            each `code` against `GET /amenities`. Will eventually supersede the
+            free-text `facilities` list.
+          items:
+            $ref: "#/components/schemas/AmenityValue"
         hotel:
           type: object
-          description: Embedded only when `include=hotel`.
-          required: [id, name, stars, destinationId]
+          description: Embedded only when `expand=hotel`.
+          required: [id, name, stars]
           properties:
             id:
               type: string
@@ -526,10 +716,6 @@ components:
             stars:
               type: integer
               nullable: true
-            destinationId:
-              type: string
-              nullable: true
-              pattern: "^[0-9a-fA-F]{24}$"
     Pagination:
       type: object
       required: [limit, nextCursor, hasMore, total]
@@ -556,3 +742,262 @@ components:
             $ref: "#/components/schemas/RoomType"
         pagination:
           $ref: "#/components/schemas/Pagination"
+    HotelAddress:
+      type: object
+      required: [addressLine, city, postalCode, countryCode]
+      properties:
+        addressLine:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        postalCode:
+          type: string
+          nullable: true
+        countryCode:
+          type: string
+          nullable: true
+          description: ISO 3166-1 alpha-2 country code.
+          example: CZ
+    Hotel:
+      type: object
+      required:
+        - id
+        - name
+        - stars
+        - address
+        - phoneNumber
+        - description
+        - commercialSlogan
+        - equipment
+        - services
+        - images
+        - priceFrom
+      properties:
+        id:
+          type: string
+          pattern: "^[0-9a-fA-F]{24}$"
+          example: 66f16191f739705faa020001
+        name:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: >-
+            Localized hotel name (plain text). Falls back to the default locale
+            (cs-CZ) when a requested locale has no value, so it is never null.
+          example:
+            cs-CZ: Pawlik
+            de: Pawlik-Aquaforum
+        stars:
+          type: integer
+          nullable: true
+          example: 4
+        address:
+          $ref: "#/components/schemas/HotelAddress"
+        phoneNumber:
+          type: string
+          nullable: true
+        description:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized description (Markdown).
+        commercialSlogan:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized marketing slogan (plain text).
+        equipment:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized equipment description.
+        services:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized services description.
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        priceFrom:
+          allOf:
+            - $ref: "#/components/schemas/PriceFrom"
+          nullable: true
+          description: >-
+            Indicative cheapest ("from") price for the hotel, or null when no
+            active price list applies.
+        amenities:
+          type: array
+          description: >-
+            Draft — not yet implemented. Structured, filterable amenities for the
+            hotel. Resolve each `code` against `GET /amenities` for its label,
+            category and scope. Only present/conditional amenities are returned
+            (pure unknowns are omitted).
+          items:
+            $ref: "#/components/schemas/AmenityValue"
+        roomTypes:
+          type: array
+          description: >-
+            Draft. The hotel's room types. Embedded only when `expand=roomTypes`;
+            otherwise fetch them via `GET /room-types?hotelId={hotelId}`. Each
+            item omits the nested `hotel` block (it is this hotel).
+          items:
+            $ref: "#/components/schemas/RoomType"
+    HotelsList:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hotel"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+    PriceFromCurrency:
+      type: object
+      required:
+        - perNight
+        - perNightOriginal
+        - minimumStay
+        - minimumStayOriginal
+        - guests
+        - minimumNights
+      properties:
+        perNight:
+          $ref: "#/components/schemas/Money"
+        perNightOriginal:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          nullable: true
+          description: Pre-discount nightly price, or null when there is no discount.
+        minimumStay:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          description: Total price for `minimumNights` nights.
+        minimumStayOriginal:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          nullable: true
+          description: >-
+            Pre-discount total for the minimum stay, or null when there is no
+            discount.
+        guests:
+          type: integer
+          description: >-
+            Occupancy the price applies to - the configuration where the cheapest
+            offer was found (output, not an input).
+          example: 2
+        minimumNights:
+          type: integer
+          description: Minimum number of nights the offer requires.
+          example: 2
+    PriceFrom:
+      type: object
+      description: >-
+        Indicative cheapest ("from") price for a hotel, keyed by currency.
+        Computed server-side as the lowest available offer; not driven by query
+        parameters. A currency key is present only when the hotel has a price in
+        that currency.
+      properties:
+        CZK:
+          allOf:
+            - $ref: "#/components/schemas/PriceFromCurrency"
+          nullable: true
+        EUR:
+          allOf:
+            - $ref: "#/components/schemas/PriceFromCurrency"
+          nullable: true
+    Amenity:
+      type: object
+      required: [code, category, scope, valueType, supportsFree, label]
+      description: >-
+        Draft. A controlled-vocabulary amenity - the dictionary entry describing
+        a possible hotel/room amenity. Returned by `GET /amenities`.
+      properties:
+        code:
+          type: string
+          description: Stable machine key in `category.slug` form; use for filtering.
+          example: wellness.sauna
+        category:
+          type: string
+          description: Grouping facet.
+          example: wellness
+        scope:
+          type: string
+          enum: [hotel, roomType, both]
+          description: Where the amenity applies.
+        valueType:
+          type: string
+          enum: [boolean, count, enum]
+          description: Shape of the amenity's value.
+        supportsFree:
+          type: boolean
+          description: Whether the paid/free distinction is meaningful for this amenity.
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized display name.
+        mappings:
+          type: object
+          nullable: true
+          description: >-
+            Interop mappings to external standards (schema.org, Google Lodging,
+            Mews); filled incrementally.
+          properties:
+            schemaOrg:
+              type: string
+              nullable: true
+            google:
+              type: string
+              nullable: true
+            mews:
+              type: string
+              nullable: true
+          example:
+            schemaOrg: Sauna
+            google: Wellness.sauna
+            mews: PrivateSauna
+    AmenityValue:
+      type: object
+      required: [code, available]
+      description: >-
+        Draft. An amenity's state on a specific hotel or room type. Resolve
+        `code` against `GET /amenities` for its label, category and scope.
+      properties:
+        code:
+          type: string
+          description: References an `Amenity.code`.
+          example: wellness.sauna
+        available:
+          type: boolean
+          nullable: true
+          description: >-
+            Tri-state: `true` present, `false` absent, `null` unknown (not yet
+            sourced). Responses omit pure unknowns, so `null` is rare.
+        free:
+          type: boolean
+          nullable: true
+          description: >-
+            `true` included, `false` paid, `null` not applicable/unknown.
+            Meaningful only when the amenity's `supportsFree` is true.
+        quantity:
+          type: integer
+          nullable: true
+          description: >-
+            Count, when the amenity's `valueType` is `count` (e.g. parking
+            spaces).
+          example: 40
+        condition:
+          type: string
+          nullable: true
+          enum: [seasonal, dayOfWeek, underConstruction]
+          description: Conditional availability; null when unconditional.
+    AmenitiesList:
+      type: object
+      required: [data]
+      description: >-
+        Draft. The amenity dictionary, returned in full (a small controlled
+        reference list, not paginated).
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Amenity"
