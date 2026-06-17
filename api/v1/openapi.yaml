@@ -6,8 +6,6 @@ info:
 servers:
   - url: https://spaportal.cz/api/v1
     description: Production
-  - url: https://staging.spaportal.cz/api/v1
-    description: Staging
 security:
   - bearerAuth: []
   - accessTokenQuery: []

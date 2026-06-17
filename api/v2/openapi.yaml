@@ -6,8 +6,6 @@ info:
 servers:
   - url: https://spaportal.cz/api/v2
     description: Production
-  - url: https://staging.spaportal.cz/api/v2
-    description: Staging
 security:
   - spaPortalPublicKey: []
 tags:
@@ -189,7 +187,7 @@ paths:
             via `GET /room-types?hotelId={hotelId}`).
       responses:
         "200":
-          description: A page of hotels.
+          description: A paginated list of hotels.
           content:
             application/json:
               schema:
@@ -313,7 +311,7 @@ paths:
           description: Sort order. Ties are broken by `id`.
       responses:
         "200":
-          description: A page of room types.
+          description: A paginated list of room types.
           content:
             application/json:
               schema:
@@ -711,11 +709,22 @@ components:
             id:
               type: string
               pattern: "^[0-9a-fA-F]{24}$"
+              example: 66f16191f739705faa020001
             name:
-              type: string
+              allOf:
+                - $ref: "#/components/schemas/LocalizedString"
+              description: >-
+                Localized hotel name. Falls back to the default locale (cs-CZ),
+                so it is never null.
+              example:
+                cs-CZ: Pawlik
+                de: Pawlik-Aquaforum
             stars:
               type: integer
               nullable: true
+              minimum: 1
+              maximum: 5
+              example: 4
     Pagination:
       type: object
       required: [limit, nextCursor, hasMore, total]
@@ -791,6 +800,8 @@ components:
         stars:
           type: integer
           nullable: true
+          minimum: 1
+          maximum: 5
           example: 4
         address:
           $ref: "#/components/schemas/HotelAddress"
