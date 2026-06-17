@@ -26,15 +26,6 @@ Common API error codes are `invalid_request`, `missing_authentication`, `invalid
 
 API error responses also include `X-Request-Id`. If you send `X-Request-Id` with the request, SpaPortal echoes that value. Otherwise, SpaPortal generates a new one.
 
-API v1 keeps the legacy `success` and `message` shape:
-
-```json
-{
-  "success": false,
-  "message": "Missing API key"
-}
-```
-
 ## Handling errors
 
 Read both the HTTP status and the JSON error code or message.

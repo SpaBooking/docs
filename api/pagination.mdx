@@ -4,11 +4,7 @@ description: "Page through SpaPortal API list responses."
 icon: "list-ol"
 ---
 
-List endpoints return a limited set of records.
-
-## API v2
-
-API v2 list endpoints use cursor pagination.
+List endpoints return a limited set of records, using cursor pagination.
 
 Send these query parameters:
 
@@ -37,24 +33,3 @@ Responses include pagination metadata:
 - `total` is the number of matching records across all pages.
 
 To page through results, repeat the request with `cursor` set to the previous response's `nextCursor` until `hasMore` is `false`.
-
-## API v1
-
-API v1 uses offset pagination.
-
-| Parameter | Default | Maximum | Description |
-| --- | ---: | ---: | --- |
-| `max` | `10` | `100` | Number of records to return. |
-| `offset` | `0` | - | Number of records to skip. |
-
-```bash
-curl \
-  -H "Authorization: Bearer <API_KEY>" \
-  "https://spaportal.cz/api/v1/hotels?max=10&offset=20"
-```
-
-Read the `X-Total-Count` response header to get the total number of matching
-records.
-
-Some nested list responses also support `max_nested`. Its default is `10` and
-maximum is `100`.

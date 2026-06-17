@@ -27,11 +27,10 @@ paths:
             release; do not build against it.
           </Warning>
       description: |
-        Returns the controlled amenity vocabulary - the catalog of possible
-        amenities, each with a stable `code`, a `category`, a `scope`, value
-        typing and localized labels. Fetch once to power amenity filters and to
-        resolve the `code`s returned in hotel and room-type `amenities`. This is
-        a small reference list, returned in full (not paginated).
+        Returns the full list of possible amenities — each with a `code`, a
+        `category`, a `scope`, a value type, and localized labels. Fetch it once to
+        build amenity filters and to look up the `code`s returned on hotels and room
+        types. Small reference list, returned in full (not paginated).
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -39,8 +38,8 @@ paths:
           in: query
           schema:
             type: string
-            enum: [hotel, roomType, both]
-          description: Filter to amenities applicable at this scope.
+            enum: [hotel, roomType]
+          description: Filter to amenities that apply at this level.
         - name: category
           in: query
           schema:
@@ -80,7 +79,7 @@ paths:
 
         Results are returned one per item, in request order; `key` is echoed when
         supplied. `price.amounts` includes every currency that has a price for
-        the date - a currency with no price is omitted.
+        the date — a currency with no price is omitted.
 
         If any item fails, the whole request fails (no partial results); the
         error details name the failing item index and `key`.
@@ -125,8 +124,8 @@ paths:
           </Warning>
       description: |
         Returns active hotels across the companies your public key is scoped to.
-        Each hotel includes `priceFrom`, the indicative cheapest ("from") price
-        computed server-side. This is not an availability check and takes no
+        Each hotel includes `priceFrom`, the indicative cheapest ("from") price.
+        This is not an availability check and takes no
         pricing query parameters. Localized fields (`name`, `description`,
         `commercialSlogan`, `equipment`, `services`) return the locale keys
         selected by `Accept-Language`. `name` falls back to the default locale
@@ -167,14 +166,14 @@ paths:
             type: string
           description: >-
             Draft. Comma-separated amenity `code`s; returns only hotels that have
-            ALL listed amenities available (AND semantics).
+            ALL listed amenities (AND semantics).
             E.g. `wellness.sauna,parking.parking`.
         - name: amenityCategory
           in: query
           schema:
             type: string
           description: >-
-            Draft. Returns hotels that have any available amenity in this
+            Draft. Returns hotels that have any amenity in this
             category (e.g. `wellness`).
         - name: expand
           in: query
@@ -302,14 +301,14 @@ paths:
             type: string
           description: >-
             Draft. Comma-separated amenity `code`s; returns only room types that
-            have ALL listed amenities available (AND semantics).
+            have ALL listed amenities (AND semantics).
             E.g. `comfort.air_conditioning,comfort.balcony`.
         - name: amenityCategory
           in: query
           schema:
             type: string
           description: >-
-            Draft. Returns room types that have any available amenity in this
+            Draft. Returns room types that have any amenity in this
             category (e.g. `comfort`).
         - name: expand
           in: query
@@ -710,15 +709,14 @@ components:
         amenities:
           type: array
           description: >-
-            Draft — not yet implemented. Structured, filterable amenities for the
-            room type (amenities whose `scope` is `roomType` or `both`). Resolve
-            each `code` against `GET /amenities`. Will eventually supersede the
-            free-text `facilities` list.
+            Draft — not yet implemented. The room type's amenities (those whose
+            `scope` includes `roomType`). Resolve each `code` against
+            `GET /amenities`. Will eventually replace the free-text `facilities` list.
           items:
             $ref: "#/components/schemas/AmenityValue"
           example:
-            - { code: comfort.air_conditioning, available: true }
-            - { code: connectivity.wifi, available: true, free: true }
+            - { code: comfort.air_conditioning }
+            - { code: connectivity.wifi }
         hotel:
           type: object
           description: Embedded only when `expand=hotel`.
@@ -856,17 +854,15 @@ components:
         amenities:
           type: array
           description: >-
-            Draft — not yet implemented. Structured, filterable amenities for the
-            hotel. Resolve each `code` against `GET /amenities` for its label,
-            category and scope. Only present/conditional amenities are returned
-            (pure unknowns are omitted).
+            Draft — not yet implemented. The hotel's amenities. Resolve each `code`
+            against `GET /amenities` for its label, category and scope.
           items:
             $ref: "#/components/schemas/AmenityValue"
           example:
-            - { code: wellness.sauna, available: true, free: true }
-            - { code: connectivity.wifi, available: true, free: true }
-            - { code: parking.parking, available: true, free: false, quantity: 40 }
-            - { code: pools.indoor_pool, available: true, condition: seasonal }
+            - { code: wellness.sauna }
+            - { code: connectivity.wifi }
+            - { code: parking.parking, quantity: 40 }
+            - { code: pools.indoor_pool, condition: seasonal }
         roomTypes:
           type: array
           description: >-
@@ -916,8 +912,8 @@ components:
         guests:
           type: integer
           description: >-
-            Occupancy the price applies to - the configuration where the cheapest
-            offer was found (output, not an input).
+            Number of guests this "from" price is for (the occupancy with the
+            cheapest offer).
           example: 2
         minimumNights:
           type: integer
@@ -926,10 +922,9 @@ components:
     PriceFrom:
       type: object
       description: >-
-        Indicative cheapest ("from") price for a hotel, keyed by currency.
-        Computed server-side as the lowest available offer; not driven by query
-        parameters. A currency key is present only when the hotel has a price in
-        that currency.
+        Indicative cheapest ("from") price for a hotel, keyed by currency. It is the
+        lowest offer and is not affected by query parameters. A currency key is
+        present only when the hotel has a price in that currency.
       properties:
         CZK:
           allOf:
@@ -941,33 +936,32 @@ components:
           nullable: true
     Amenity:
       type: object
-      required: [code, category, scope, valueType, supportsFree, label]
+      required: [code, category, scope, valueType, label]
       description: >-
-        Draft. A controlled-vocabulary amenity - the dictionary entry describing
-        a possible hotel/room amenity. Returned by `GET /amenities`.
+        Draft. One possible amenity — a dictionary entry. Returned by `GET /amenities`.
       properties:
         code:
           type: string
-          description: Stable machine key in `category.slug` form; use for filtering.
+          description: Identifier in `category.slug` form; use it for filtering.
           example: wellness.sauna
         category:
           type: string
-          description: Grouping facet.
+          description: The category the amenity belongs to.
           example: wellness
         scope:
-          type: string
-          enum: [hotel, roomType, both]
-          description: Where the amenity applies.
-          example: both
+          type: array
+          items:
+            type: string
+            enum: [hotel, roomType]
+          description: >-
+            The levels where the amenity applies. E.g. `["hotel"]`, `["roomType"]`,
+            or `["hotel", "roomType"]`.
+          example: [hotel, roomType]
         valueType:
           type: string
           enum: [boolean, count]
-          description: Shape of the amenity's value.
+          description: Whether the amenity is a simple flag (`boolean`) or carries a `count`.
           example: boolean
-        supportsFree:
-          type: boolean
-          description: Whether the paid/free distinction is meaningful for this amenity.
-          example: true
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -976,49 +970,18 @@ components:
             cs-CZ: Sauna
             de: Sauna
             en: Sauna
-        mappings:
-          type: object
-          nullable: true
-          description: >-
-            Interop mappings to external standards (schema.org, Google Lodging,
-            Mews); filled incrementally.
-          properties:
-            schemaOrg:
-              type: string
-              nullable: true
-            google:
-              type: string
-              nullable: true
-            mews:
-              type: string
-              nullable: true
-          example:
-            schemaOrg: Sauna
-            google: Wellness.sauna
-            mews: PrivateSauna
     AmenityValue:
       type: object
-      required: [code, available]
+      required: [code]
       description: >-
-        Draft. An amenity's state on a specific hotel or room type. Resolve
-        `code` against `GET /amenities` for its label, category and scope.
+        Draft. An amenity offered by a specific hotel or room type — its presence
+        in the array means the hotel/room has it. Resolve `code` against
+        `GET /amenities` for its label, category and scope.
       properties:
         code:
           type: string
           description: References an `Amenity.code`.
           example: wellness.sauna
-        available:
-          type: boolean
-          nullable: true
-          description: >-
-            Tri-state: `true` present, `false` absent, `null` unknown (not yet
-            sourced). Responses omit pure unknowns, so `null` is rare.
-        free:
-          type: boolean
-          nullable: true
-          description: >-
-            `true` included, `false` paid, `null` not applicable/unknown.
-            Meaningful only when the amenity's `supportsFree` is true.
         quantity:
           type: integer
           nullable: true
@@ -1030,13 +993,13 @@ components:
           type: string
           nullable: true
           enum: [seasonal, dayOfWeek, underConstruction]
-          description: Conditional availability; null when unconditional.
+          description: Set only when availability is limited; omitted otherwise.
     AmenitiesList:
       type: object
       required: [data]
       description: >-
-        Draft. The amenity dictionary, returned in full (a small controlled
-        reference list, not paginated).
+        Draft. The full list of amenities, returned in one response (small, not
+        paginated).
       properties:
         data:
           type: array
@@ -1046,29 +1009,21 @@ components:
         data:
           - code: wellness.sauna
             category: wellness
-            scope: both
+            scope: [hotel, roomType]
             valueType: boolean
-            supportsFree: true
             label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
-            mappings: { schemaOrg: Sauna, google: Wellness.sauna, mews: PrivateSauna }
           - code: parking.parking
             category: parking
-            scope: hotel
+            scope: [hotel]
             valueType: count
-            supportsFree: true
             label: { cs-CZ: Parkoviště, de: Parkplatz, en: Parking }
-            mappings: { schemaOrg: ParkingFacility, google: Parking.self_parking, mews: null }
           - code: connectivity.wifi
             category: connectivity
-            scope: both
+            scope: [hotel, roomType]
             valueType: boolean
-            supportsFree: true
             label: { cs-CZ: Wi-Fi, de: WLAN, en: Wi-Fi }
-            mappings: { schemaOrg: InternetAccess, google: Connectivity.wifi_available, mews: null }
           - code: comfort.air_conditioning
             category: comfort
-            scope: roomType
+            scope: [roomType]
             valueType: boolean
-            supportsFree: false
             label: { cs-CZ: Klimatizace, de: Klimaanlage, en: Air conditioning }
-            mappings: { schemaOrg: null, google: null, mews: AirConditioning }
