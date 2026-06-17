@@ -296,6 +296,21 @@ paths:
             Full-text search of the localized category name across all supported
             languages (case- and diacritics-insensitive). To match a code, use
             `code`.
+        - name: amenities
+          in: query
+          schema:
+            type: string
+          description: >-
+            Draft. Comma-separated amenity `code`s; returns only room types that
+            have ALL listed amenities available (AND semantics).
+            E.g. `comfort.air_conditioning,comfort.balcony`.
+        - name: amenityCategory
+          in: query
+          schema:
+            type: string
+          description: >-
+            Draft. Returns room types that have any available amenity in this
+            category (e.g. `comfort`).
         - name: expand
           in: query
           schema:
@@ -701,6 +716,9 @@ components:
             free-text `facilities` list.
           items:
             $ref: "#/components/schemas/AmenityValue"
+          example:
+            - { code: comfort.air_conditioning, available: true }
+            - { code: connectivity.wifi, available: true, free: true }
         hotel:
           type: object
           description: Embedded only when `expand=hotel`.
@@ -844,6 +862,11 @@ components:
             (pure unknowns are omitted).
           items:
             $ref: "#/components/schemas/AmenityValue"
+          example:
+            - { code: wellness.sauna, available: true, free: true }
+            - { code: connectivity.wifi, available: true, free: true }
+            - { code: parking.parking, available: true, free: false, quantity: 40 }
+            - { code: pools.indoor_pool, available: true, condition: seasonal }
         roomTypes:
           type: array
           description: >-
@@ -935,17 +958,24 @@ components:
           type: string
           enum: [hotel, roomType, both]
           description: Where the amenity applies.
+          example: both
         valueType:
           type: string
-          enum: [boolean, count, enum]
+          enum: [boolean, count]
           description: Shape of the amenity's value.
+          example: boolean
         supportsFree:
           type: boolean
           description: Whether the paid/free distinction is meaningful for this amenity.
+          example: true
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: Localized display name.
+          example:
+            cs-CZ: Sauna
+            de: Sauna
+            en: Sauna
         mappings:
           type: object
           nullable: true
@@ -1012,3 +1042,33 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Amenity"
+      example:
+        data:
+          - code: wellness.sauna
+            category: wellness
+            scope: both
+            valueType: boolean
+            supportsFree: true
+            label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
+            mappings: { schemaOrg: Sauna, google: Wellness.sauna, mews: PrivateSauna }
+          - code: parking.parking
+            category: parking
+            scope: hotel
+            valueType: count
+            supportsFree: true
+            label: { cs-CZ: Parkoviště, de: Parkplatz, en: Parking }
+            mappings: { schemaOrg: ParkingFacility, google: Parking.self_parking, mews: null }
+          - code: connectivity.wifi
+            category: connectivity
+            scope: both
+            valueType: boolean
+            supportsFree: true
+            label: { cs-CZ: Wi-Fi, de: WLAN, en: Wi-Fi }
+            mappings: { schemaOrg: InternetAccess, google: Connectivity.wifi_available, mews: null }
+          - code: comfort.air_conditioning
+            category: comfort
+            scope: roomType
+            valueType: boolean
+            supportsFree: false
+            label: { cs-CZ: Klimatizace, de: Klimaanlage, en: Air conditioning }
+            mappings: { schemaOrg: null, google: null, mews: AirConditioning }

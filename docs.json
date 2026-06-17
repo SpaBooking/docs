@@ -51,6 +51,7 @@
               "api/search",
               "api/sorting",
               "api/expand",
+              "api/amenities",
               "api/status-codes",
               "api/errors",
               "api/versioning"
