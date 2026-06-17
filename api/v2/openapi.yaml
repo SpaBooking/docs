@@ -158,7 +158,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [createdAt:desc, createdAt:asc, id:asc, id:desc]
+            enum: [createdAt:desc, createdAt:asc]
             default: createdAt:desc
           description: Sort order. Ties are broken by `id`.
         - name: amenities
@@ -306,7 +306,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [createdAt:desc, createdAt:asc, id:asc, id:desc]
+            enum: [createdAt:desc, createdAt:asc]
             default: createdAt:desc
           description: Sort order. Ties are broken by `id`.
       responses:
