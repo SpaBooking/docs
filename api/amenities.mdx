@@ -17,7 +17,7 @@ for display. There are two parts:
 
 1. **The amenity dictionary** — the list of every _possible_ amenity, each with a
    stable `code`, a `category`, a value type, and localized labels. Fetch it once
-   from `GET /api/v2/amenities`.
+   from [`GET /api/v2/amenities`](/api/v2/reference/get-amenities).
 2. **Amenity values** — what a given hotel or room type actually offers, as a list
    of `code` + state objects on its `amenities` field.
 
@@ -26,6 +26,10 @@ labels and categories live in the dictionary. So fetch the dictionary **once**, 
 it, and look up codes locally.
 
 ## The amenity dictionary
+
+<Card title="GET /api/v2/amenities" icon="square-terminal" href="/api/v2/reference/get-amenities" horizontal>
+  The full endpoint spec — query parameters, response schema, and a request playground.
+</Card>
 
 `GET /api/v2/amenities` returns the full list of possible amenities — a small
 reference list, not paginated. Each entry:
@@ -169,7 +173,8 @@ amenity whose `scope` contains `hotel` can appear in a hotel's `amenities`; one 
 
 ## Filtering by amenity
 
-Both `GET /api/v2/hotels` and `GET /api/v2/room-types` accept two amenity filters:
+Both [`GET /api/v2/hotels`](/api/v2/reference/get-hotels) and
+[`GET /api/v2/room-types`](/api/v2/reference/get-room-types) accept two amenity filters:
 
 - `amenities` — comma-separated `code`s; returns only results that have **all** of
   them (AND semantics).
