@@ -58,6 +58,16 @@
             ]
           },
           {
+            "group": "Objects",
+            "pages": [
+              "api/objects/hotel",
+              "api/objects/room-type",
+              "api/objects/amenity",
+              "api/objects/amenity-value",
+              "api/objects/localized-string"
+            ]
+          },
+          {
             "group": "Endpoints",
             "openapi": {
               "source": "/api/v2/openapi.yaml",

@@ -1,0 +1,13 @@
+---
+title: "Localized string"
+description: "A text value localized per response locale."
+openapi-schema: "/api/v2/openapi.yaml LocalizedString"
+---
+
+<Warning>
+  **Draft — not yet available.** This is a work-in-progress contract. It may change
+  before release; do not build against it.
+</Warning>
+
+A text value keyed by response locale (`cs-CZ`, `de`, `en`, `ru`). When
+[`Accept-Language`](/api/localization) is set, only the matched keys are returned.

@@ -21,7 +21,7 @@ API paths are versioned:
 https://spaportal.cz/api/v2
 ```
 
-Resource paths use plural nouns: `/hotels`, `/visit-types`, `/calendar/dates`.
+Resource paths use plural nouns: `/hotels`, `/room-types`, `/amenities`.
 
 ## IDs
 
@@ -31,91 +31,29 @@ Resources are identified by `id` — a 24-character hex string.
 
 [Read the dates guide](/api/dates).
 
-Calendar dates and times use ISO 8601. Exact timestamps (e.g. `createdAt`, `updatedAt`) use millisecond precision, always in UTC, denoted by the `Z` suffix:
-
-- **Date** — `2026-04-01`
-- **Time** — `2026-04-01T10:15:30.000Z`
+Calendar dates use `YYYY-MM-DD`; exact timestamps use ISO 8601 in UTC with millisecond precision (e.g. `2026-04-01T10:15:30.000Z`).
 
 ## Currencies
 
 [Read the currencies guide](/api/currencies).
 
-Supported currencies: `CZK` (Czech koruna) and `EUR` (Euro).
-
-Price responses include every available currency; there is no currency request
-parameter.
-
-Money values use the smallest currency unit. `currencyExponent` tells you how many decimal places to apply — for both `CZK` and `EUR` that is `2`, so `1892400` equals `18,924.00`.
-
-```json
-{ "amountMinor": 1892400, "currency": "CZK", "currencyExponent": 2 }
-```
+Prices are returned in `CZK` and `EUR` as integer minor units (`amountMinor`); there is no currency request parameter.
 
 ## Images and thumbnails
 
-Some entities, such as hotels, room types, and visit types, can include image URLs.
-
-- `url` points to the original image.
-- `thumbnailUrl` points to a smaller generated image for previews and lists.
-
-Image collections are returned as arrays. `thumbnailUrl` can be `null` when a
-thumbnail is not available.
-
-```json
-{
-  "images": [
-    {
-      "url": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/room-types/superior.jpg",
-      "thumbnailUrl": "https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/room-types/superior.webp"
-    }
-  ]
-}
-```
+Hotels, room types, and visit types can include images as `{ url, thumbnailUrl }` objects — `thumbnailUrl` is a smaller generated preview, or `null` when unavailable.
 
 ## Localization
 
 [Read the localization guide](/api/localization).
 
-Set the `Accept-Language` header to request localized fields.
-
-```bash
--H "Accept-Language: cs-CZ,de-DE,en"
-```
-
-API v2 accepts BCP 47 language tags in requests. Supported response locale keys
-are `cs-CZ`, `de`, `en`, and `ru`.
-
-Regional request tags are matched to the closest supported locale. For example,
-`de-DE` and `de-AT` both return localized fields under `de`.
-
-Localized fields are returned as objects keyed by supported response locale.
-
-```json
-{
-  "name": {
-    "cs-CZ": "Frantiskovy Lazne",
-    "de": "Franzensbad"
-  }
-}
-```
-
-When `Accept-Language` is omitted, the API returns all supported locale keys for
-that field.
+Set the `Accept-Language` header (BCP 47 tags) to choose which locale keys localized fields return; omit it to get all of `cs-CZ`, `de`, `en`, `ru`.
 
 ## Pagination
 
 [Read the pagination guide](/api/pagination).
 
-SpaPortal API uses cursor pagination:
-
-```json
-{
-  "data": [],
-  "pagination": { "nextCursor": "...", "hasMore": true, "total": 42 }
-}
-```
-
-Pass `cursor` in GET parameters from the previous response to fetch the next page.
+List responses are `{ data, pagination }`; pass the previous response's `nextCursor` back as `cursor` to fetch the next page.
 
 ## Search
 

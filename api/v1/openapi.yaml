@@ -838,10 +838,12 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+      description: "See [Authentication](/api/v1/authentication) for how to obtain and send your API key."
     accessTokenQuery:
       type: apiKey
       in: query
       name: access_token
+      description: "See [Authentication](/api/v1/authentication) for how to obtain and send your API key."
 
   parameters:
     AcceptLanguage:
@@ -850,7 +852,7 @@ components:
       schema:
         type: string
         example: cs_CZ,de
-      description: Comma-separated list of languages to include.
+      description: "Comma-separated list of languages to include. See [Localization](/api/v1/localization) for details."
     Max:
       name: max
       in: query

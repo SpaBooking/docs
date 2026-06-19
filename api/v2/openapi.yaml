@@ -31,6 +31,8 @@ paths:
         `category`, a `scope`, a value type, and localized labels. Fetch it once to
         build amenity filters and to look up the `code`s returned on hotels and room
         types. Small reference list, returned in full (not paginated).
+
+        See the [Amenity](/api/objects/amenity) object for the full field reference.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -130,6 +132,8 @@ paths:
         `commercialSlogan`, `equipment`, `services`) return the locale keys
         selected by `Accept-Language`. `name` falls back to the default locale
         (cs-CZ) and is never null.
+
+        See the [Hotel](/api/objects/hotel) object for the full field reference.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -140,12 +144,12 @@ paths:
             minimum: 1
             maximum: 100
             default: 25
-          description: Number of records to return.
+          description: Number of records to return. See [Pagination](/api/pagination).
         - name: cursor
           in: query
           schema:
             type: string
-          description: Cursor from the previous page's `pagination.nextCursor`.
+          description: Cursor from the previous page's `pagination.nextCursor`. See [Pagination](/api/pagination).
         - name: search
           in: query
           schema:
@@ -253,6 +257,8 @@ paths:
         Returns active room types across the companies your public key is scoped
         to. Localized fields (`category`, `description`) return the locale keys
         selected by `Accept-Language`.
+
+        See the [Room type](/api/objects/room-type) object for the full field reference.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -263,12 +269,12 @@ paths:
             minimum: 1
             maximum: 100
             default: 25
-          description: Number of records to return.
+          description: Number of records to return. See [Pagination](/api/pagination).
         - name: cursor
           in: query
           schema:
             type: string
-          description: Cursor from the previous page's `pagination.nextCursor`.
+          description: Cursor from the previous page's `pagination.nextCursor`. See [Pagination](/api/pagination).
         - name: hotelId
           in: query
           schema:
@@ -392,11 +398,13 @@ components:
       description: >-
         Comma-separated BCP 47 language tags selecting which locale keys
         localized fields return. When omitted, all locale keys are returned.
+        See [Localization](/api/localization) for details.
   securitySchemes:
     spaPortalPublicKey:
       type: apiKey
       in: header
       name: X-SpaPortal-Public-Key
+      description: "See [Authentication](/api/authentication) for how to obtain and send your public key."
   responses:
     BadRequest:
       description: Invalid request.

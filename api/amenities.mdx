@@ -32,15 +32,9 @@ it, and look up codes locally.
 </Card>
 
 `GET /api/v2/amenities` returns the full list of possible amenities — a small
-reference list, not paginated. Each entry:
-
-| Field          | Meaning                                                                                                   |
-| -------------- | --------------------------------------------------------------------------------------------------------- |
-| `code`         | Identifier in `category.slug` form (e.g. `wellness.sauna`). Use it to filter and to match values.           |
-| `category`     | The category the amenity belongs to (e.g. `wellness`, `parking`, `connectivity`).                          |
-| `scope`        | The levels it applies to — `["hotel"]`, `["roomType"]`, or `["hotel", "roomType"]`.                         |
-| `valueType`    | `boolean` (the amenity is simply present) or `count` (has a `quantity`, e.g. parking spaces).               |
-| `label`        | Localized display name (`cs-CZ`, `de`, `en`, `ru`).                                                       |
+reference list, not paginated. Each entry has a `code`, a `category`, a `scope`, a
+`valueType`, and a localized `label` — see the [Amenity](/api/objects/amenity) object
+for the full field reference.
 
 Optionally narrow it by `scope` or `category`:
 
@@ -117,13 +111,9 @@ rather than hard-coding this list.
 ## Amenity values on hotels and room types
 
 Hotels and room types carry an `amenities` array — the amenities that hotel or room
-**has**. Each item references a dictionary `code`, optionally with extra detail:
-
-| Field       | Meaning                                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------ |
-| `code`      | References an `Amenity.code` in the dictionary.                                                               |
-| `quantity`  | A count, when the amenity's `valueType` is `count` (e.g. 40 parking spaces).                                  |
-| `condition` | Set only when availability is limited — `seasonal`, `dayOfWeek`, or `underConstruction`. Omitted otherwise.  |
+**has**. Each item references a dictionary `code`, optionally with a `quantity` or a
+`condition` — see the [Amenity value](/api/objects/amenity-value) object for the full
+field reference.
 
 The array lists the amenities a hotel or room **offers** — a `code`'s presence means
 it has that amenity. A `code` that is absent means it is not offered (or not yet

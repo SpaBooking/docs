@@ -1,0 +1,14 @@
+---
+title: "Amenity value"
+description: "An amenity offered by a hotel or room type."
+openapi-schema: "/api/v2/openapi.yaml AmenityValue"
+---
+
+<Warning>
+  **Draft — not yet available.** This is a work-in-progress contract. It may change
+  before release; do not build against it.
+</Warning>
+
+An amenity that a hotel or room type offers — a dictionary `code` with an optional
+`quantity` or `condition`. Resolve the `code` against the
+[amenity dictionary](/api/amenities) for its label, category, and scope.
