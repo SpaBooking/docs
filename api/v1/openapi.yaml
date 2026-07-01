@@ -71,6 +71,8 @@ paths:
 
         `lowest_price` is the cheapest matching room price per night per guest. When a two-bed room is priced per room, the API returns the per-guest display price.
 
+        `lowest_price.<lang>.amount_per_night` includes any active discount promotions. `original_amount_per_night` is the price before any discount — equal to `amount_per_night` when no promotion applies.
+
         `stars`, `image`, and `thumbnail` can be `null`. Set `include_room_types=false` when you do not need nested room type data.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -180,7 +182,7 @@ paths:
 
         `reservation_time_span` can be `DAYS` or `WEEKS`. `procedure_frequency` can be `DAY`, `WEEK`, or `VISIT`.
 
-        Each visit type can include applicable loyalty programs and hotel-level lowest prices.
+        Each visit type can include applicable loyalty programs and hotel-level lowest prices. The visit-type `lowest_price` and each per-hotel `lowest_price` include any active discount promotions; `original_amount_per_night` is the price before any discount.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
@@ -415,7 +417,7 @@ paths:
       x-mint:
         href: /api/v1/reference/get-calendar-dates
       description: |
-        Returns calendar dates with availability and price data.
+        Returns calendar dates with availability and price data. Per-night prices include any active discount promotions.
 
         `selectable` indicates whether the user can start a booking on the date. `price` is `null` when the date is not available or when the query is not specific enough to calculate a final price.
       parameters:
@@ -541,7 +543,11 @@ paths:
       operationId: getPrice
       x-mint:
         href: /api/v1/reference/get-price
-      description: Returns the final price for a concrete visit type, room type, arrival date, and departure date. Loyalty program IDs can apply guest-level discounts.
+      description: >-
+        Returns the final price for a concrete visit type, room type, arrival date,
+        and departure date. Loyalty program IDs can apply guest-level discounts.
+        The returned `amount` includes any active discount promotions, itemized in
+        `price_breakdown.promotions`.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: visit_type_id
@@ -607,7 +613,7 @@ paths:
       tags: [Pricing]
       summary: Get lowest price
       operationId: getLowestPrice
-      description: Returns the lowest per-night, per-guest display price for a partial or complete search query.
+      description: Returns the lowest per-night, per-guest price for a partial or complete search query. The price includes any active discount promotions.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: visit_type_id
@@ -739,6 +745,8 @@ paths:
         Matches partial booking parameters such as destination name, visit type name, hotel name, room type category, and dates.
 
         The response can contain any matched destination, visit type, hotel, room type, price, lowest price, and availability. If the query is incomplete or ambiguous, some fields can be omitted or `availability` can be `null`.
+
+        `price.amount` and `lowest_price` include any active discount promotions; individual promotions are itemized in `price.price_breakdown.promotions`.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: destination_name
@@ -931,9 +939,11 @@ components:
           lowest_price:
             cs_CZ:
               amount_per_night: 1024.5
+              original_amount_per_night: 1205.29
               currency: CZK
             de:
               amount_per_night: 40
+              original_amount_per_night: 47.06
               currency: EUR
           commercial_slogan:
             cs_CZ: Buy it or leave it.
@@ -973,9 +983,11 @@ components:
               lowest_price:
                 cs_CZ:
                   amount_per_night: 1024.5
+                  original_amount_per_night: 1205.29
                   currency: CZK
                 de:
                   amount_per_night: 40
+                  original_amount_per_night: 47.06
                   currency: EUR
 
     HotelResponse:
@@ -1001,9 +1013,11 @@ components:
         lowest_price:
           cs_CZ:
             amount_per_night: 1024.5
+            original_amount_per_night: 1205.29
             currency: CZK
           de:
             amount_per_night: 40
+            original_amount_per_night: 47.06
             currency: EUR
         commercial_slogan:
           cs_CZ: Buy it or leave it.
@@ -1043,9 +1057,11 @@ components:
             lowest_price:
               cs_CZ:
                 amount_per_night: 1024.5
+                original_amount_per_night: 1205.29
                 currency: CZK
               de:
                 amount_per_night: 40
+                original_amount_per_night: 47.06
                 currency: EUR
 
     VisitTypesResponse:
@@ -1091,9 +1107,11 @@ components:
           lowest_price:
             cs_CZ:
               amount_per_night: 1024.5
+              original_amount_per_night: 1205.29
               currency: CZK
             de:
               amount_per_night: 40
+              original_amount_per_night: 47.06
               currency: EUR
           commercial_slogan:
             cs_CZ: Buy it or leave it.
@@ -1111,9 +1129,11 @@ components:
               lowest_price:
                 cs_CZ:
                   amount_per_night: 1024.5
+                  original_amount_per_night: 1205.29
                   currency: CZK
                 de:
                   amount_per_night: 40
+                  original_amount_per_night: 47.06
                   currency: EUR
           loyalty_programs:
             - _id: 66f16191f739705faa020007
@@ -1212,7 +1232,7 @@ components:
       summary: Final price
       value:
         cs_CZ:
-          amount: 18924
+          amount: 15936
           currency: CZK
           price_breakdown:
             base_price: 19920
@@ -1226,8 +1246,18 @@ components:
                     cs_CZ: VIP Club Premium
                     de: VIP Club Premium
                     en: VIP Club Premium
+            promotions:
+              - name:
+                  cs_CZ: Letní sleva
+                  de: Sommerrabatt
+                  en: Summer discount
+                percentage: 15
+                amount: 2988
+                nights: 4
+                valid_from: "2026-06-21"
+                valid_to: "2026-06-25"
         de:
-          amount: 758
+          amount: 638.3
           currency: EUR
           price_breakdown:
             base_price: 798
@@ -1241,15 +1271,27 @@ components:
                     cs_CZ: VIP Club Premium
                     de: VIP Club Premium
                     en: VIP Club Premium
+            promotions:
+              - name:
+                  cs_CZ: Letní sleva
+                  de: Sommerrabatt
+                  en: Summer discount
+                percentage: 15
+                amount: 119.7
+                nights: 4
+                valid_from: "2026-06-21"
+                valid_to: "2026-06-25"
 
     LowestPriceResponse:
       summary: Lowest price
       value:
         cs_CZ:
           amount_per_night: 1024.5
+          original_amount_per_night: 1205.29
           currency: CZK
         de:
           amount_per_night: 40
+          original_amount_per_night: 47.06
           currency: EUR
 
     PriceListsResponse:
@@ -1333,17 +1375,45 @@ components:
         date_to: "2026-12-16"
         price:
           cs_CZ:
-            amount: 10245
+            amount: 10200
             currency: CZK
+            price_breakdown:
+              base_price: 12000
+              discounts: []
+              promotions:
+                - name:
+                    cs_CZ: Letní sleva
+                    de: Sommerrabatt
+                    en: Summer discount
+                  percentage: 15
+                  amount: 1800
+                  nights: 4
+                  valid_from: "2026-06-21"
+                  valid_to: "2026-06-25"
           de:
-            amount: 400
+            amount: 408
             currency: EUR
+            price_breakdown:
+              base_price: 480
+              discounts: []
+              promotions:
+                - name:
+                    cs_CZ: Letní sleva
+                    de: Sommerrabatt
+                    en: Summer discount
+                  percentage: 15
+                  amount: 72
+                  nights: 4
+                  valid_from: "2026-06-21"
+                  valid_to: "2026-06-25"
         lowest_price:
           cs_CZ:
             amount_per_night: 1024.5
+            original_amount_per_night: 1205.29
             currency: CZK
           de:
             amount_per_night: 40
+            original_amount_per_night: 47.06
             currency: EUR
         availability: ON_DEMAND
 
@@ -1472,6 +1542,15 @@ components:
         amount_per_night:
           type: number
           nullable: true
+          description: >-
+            Lowest per-night, per-guest price, including any active discount
+            promotions.
+        original_amount_per_night:
+          type: number
+          nullable: true
+          description: >-
+            Per-night price before any discount. Equals `amount_per_night` when
+            no promotion applies; higher when a promotion is active.
         currency:
           type: string
           enum: [CZK, EUR]
@@ -1485,12 +1564,61 @@ components:
             properties:
               price_breakdown:
                 type: object
+                description: >-
+                  How the top-level `amount` is composed: `base_price` minus
+                  loyalty discounts and promotions.
                 additionalProperties: true
+                properties:
+                  base_price:
+                    type: number
+                    description: Pre-discount total for the stay, in the response currency.
+                  discounts:
+                    type: array
+                    description: Loyalty-program discounts (per guest).
+                    items:
+                      type: object
+                      additionalProperties: true
+                  promotions:
+                    type: array
+                    description: >-
+                      Discount promotions applied to the stay. The top-level
+                      `amount` already accounts for them.
+                    items:
+                      $ref: "#/components/schemas/PromotionLine"
 
     LowestPriceByLanguage:
       type: object
       additionalProperties:
         $ref: "#/components/schemas/LowestPriceAmount"
+
+    PromotionLine:
+      type: object
+      description: >-
+        A discount promotion reflected in the price breakdown. The top-level
+        `amount` already has it subtracted.
+      properties:
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+        percentage:
+          type: number
+          description: Discount percentage (0-100).
+        amount:
+          type: number
+          description: Discount amount for this promotion, for the whole room, in the response currency.
+        nights:
+          type: integer
+          description: Number of stay nights the promotion applies to.
+        valid_from:
+          type: string
+          format: date
+          description: First discounted night (UTC `YYYY-MM-DD`).
+        valid_to:
+          type: string
+          format: date
+          description: >-
+            Exclusive end of the discounted range (UTC `YYYY-MM-DD`); the night
+            of this date is not discounted. This is the range actually applied —
+            the overlap of the promotion's validity with the stay.
 
     Destination:
       type: object

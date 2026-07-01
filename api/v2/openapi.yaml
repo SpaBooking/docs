@@ -81,7 +81,8 @@ paths:
 
         Results are returned one per item, in request order; `key` is echoed when
         supplied. `price.amounts` includes every currency that has a price for
-        the date — a currency with no price is omitted.
+        the date — a currency with no price is omitted. Per-date prices include
+        any active discount promotions.
 
         If any item fails, the whole request fails (no partial results); the
         error details name the failing item index and `key`.
