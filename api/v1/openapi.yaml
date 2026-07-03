@@ -183,6 +183,8 @@ paths:
         `reservation_time_span` can be `DAYS` or `WEEKS`. `procedure_frequency` can be `DAY`, `WEEK`, or `VISIT`.
 
         Each visit type can include applicable loyalty programs and hotel-level lowest prices. The visit-type `lowest_price` and each per-hotel `lowest_price` include any active discount promotions; `original_amount_per_night` is the price before any discount.
+
+        A `promotions` array is returned at the visit-type level and per nested hotel: the active promotions running now OR starting in the future (expired ones omitted), scoped to the caller's channel, each with its localized `name`, `percentage` and validity (`valid_from`/`valid_to`). The promotion `name` is not needed to render the strike-through price (use `lowest_price`), but lets you label a badge (e.g. "-15% Eröffnungsrabatt").
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
@@ -1113,6 +1115,14 @@ components:
               amount_per_night: 40
               original_amount_per_night: 47.06
               currency: EUR
+          promotions:
+            - id: 66f16191f739705faa0200aa
+              name:
+                cs_CZ: Zahajovací sleva
+                de: Eröffnungsrabatt
+              percentage: 15
+              valid_from: "2026-06-21"
+              valid_to: "2026-06-25"
           commercial_slogan:
             cs_CZ: Buy it or leave it.
             de: ""
@@ -1135,6 +1145,14 @@ components:
                   amount_per_night: 40
                   original_amount_per_night: 47.06
                   currency: EUR
+              promotions:
+                - id: 66f16191f739705faa0200aa
+                  name:
+                    cs_CZ: Zahajovací sleva
+                    de: Eröffnungsrabatt
+                  percentage: 15
+                  valid_from: "2026-06-21"
+                  valid_to: "2026-06-25"
           loyalty_programs:
             - _id: 66f16191f739705faa020007
               id: 2
@@ -1620,6 +1638,38 @@ components:
             of this date is not discounted. This is the range actually applied —
             the overlap of the promotion's validity with the stay.
 
+    Promotion:
+      type: object
+      description: >-
+        A discount promotion advertised for a visit type's price list (and per
+        hotel), listed by GET /visit-types. Includes promotions running now OR
+        starting in the future (expired ones are omitted), scoped to the caller's
+        channel. The discounted "from" price is already reflected in
+        `lowest_price` (`amount_per_night` vs `original_amount_per_night`); this
+        object adds the promotion's name, percentage and validity for a
+        label/badge. Itemized per-stay discounts (with amount/nights) remain in
+        `price_breakdown.promotions` on GET /price.
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          $ref: "#/components/schemas/LocalizedString"
+        percentage:
+          type: number
+          description: Discount percentage (0-100).
+        valid_from:
+          type: string
+          format: date
+          description: First day of the promotion's stay-date validity (UTC `YYYY-MM-DD`).
+        valid_to:
+          type: string
+          format: date
+          nullable: true
+          description: >-
+            Exclusive end of the validity window (UTC `YYYY-MM-DD`); null for
+            unlimited.
+
     Destination:
       type: object
       required: [id, name]
@@ -1861,6 +1911,13 @@ components:
             $ref: "#/components/schemas/Tag"
         lowest_price:
           $ref: "#/components/schemas/LowestPriceByLanguage"
+        promotions:
+          type: array
+          description: >-
+            Active current-or-future promotions for this visit type's price list,
+            scoped to the caller's channel (empty when none apply).
+          items:
+            $ref: "#/components/schemas/Promotion"
         commercial_slogan:
           $ref: "#/components/schemas/LocalizedString"
         notice:
@@ -1880,6 +1937,11 @@ components:
                 type: string
               lowest_price:
                 $ref: "#/components/schemas/LowestPriceByLanguage"
+              promotions:
+                type: array
+                description: Promotions from the visit-type set that apply to this hotel.
+                items:
+                  $ref: "#/components/schemas/Promotion"
         loyalty_programs:
           type: array
           items:
