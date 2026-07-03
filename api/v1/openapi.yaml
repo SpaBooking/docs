@@ -1116,8 +1116,7 @@ components:
               original_amount_per_night: 47.06
               currency: EUR
           promotions:
-            - id: 66f16191f739705faa0200aa
-              name:
+            - name:
                 cs_CZ: Zahajovací sleva
                 de: Eröffnungsrabatt
               percentage: 15
@@ -1146,8 +1145,7 @@ components:
                   original_amount_per_night: 47.06
                   currency: EUR
               promotions:
-                - id: 66f16191f739705faa0200aa
-                  name:
+                - name:
                     cs_CZ: Zahajovací sleva
                     de: Eröffnungsrabatt
                   percentage: 15
@@ -1650,9 +1648,6 @@ components:
         label/badge. Itemized per-stay discounts (with amount/nights) remain in
         `price_breakdown.promotions` on GET /price.
       properties:
-        id:
-          type: string
-          nullable: true
         name:
           $ref: "#/components/schemas/LocalizedString"
         percentage:
