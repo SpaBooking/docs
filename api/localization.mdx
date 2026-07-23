@@ -40,10 +40,21 @@ Use these request values to select localized fields:
 
 | Header value | Meaning |
 | --- | --- |
-| `cs-CZ` | Czech for Czechia |
+| `cs`, `cs-CZ` | Czech, returned as `cs-CZ` |
 | `de`, `de-DE`, `de-AT` | German, returned as `de` |
 | `en`, `en-US`, `en-GB` | English, returned as `en` |
 | `ru`, `ru-RU` | Russian, returned as `ru` |
 
+Quality values (`;q=`) order the returned keys. Tags with `q=0` are ignored.
+
 When `Accept-Language` is omitted, the API returns all supported locale keys for
-that field.
+that field. When the header contains only unsupported languages, the API returns
+`cs-CZ`.
+
+## Missing translations
+
+A requested key is always present in a localized field. When a translation is
+missing or empty, its value is `null` — the API never returns an empty string.
+
+The hotel `name` is the one exception: a missing translation falls back to the
+Czech value, so `name` values are never `null`.

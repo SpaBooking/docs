@@ -15,20 +15,5 @@ Examples:
 
 Date fields do not include a time or time zone.
 
-## Common fields
-
-| Field | Meaning |
-| --- | --- |
-| `dateFrom` | Arrival date, or the start of a search range. |
-| `dateTo` | Departure date, or the end of a search range. |
-
-## Booking dates
-
-For price and booking requests, `dateFrom` is the arrival date and `dateTo` is the
-departure date. The departure date must be after the arrival date.
-
-## Availability ranges
-
-Availability endpoints can also use `dateFrom` and `dateTo` as a search range. When
-a range is omitted, the endpoint picks defaults based on the nearest available
-booking period; see the endpoint reference for the specifics.
+Where an endpoint takes a date range, `dateFrom` is the start of the range and
+`dateTo` is the end.

@@ -16,7 +16,7 @@ To find yours, go to: `Administration → Distribution Channel → [your channel
 Pass the public key in the `X-SpaPortal-Public-Key` header on every request:
 
 ```bash
-X-SpaPortal-Public-Key: pk_live_...
+X-SpaPortal-Public-Key: <your_public_key>
 ```
 
 <Card title="Authentication" icon="key" horizontal href="/api/authentication">
@@ -35,11 +35,11 @@ Fetch a list of hotels:
 
 ```bash
 curl \
-  -H "X-SpaPortal-Public-Key: pk_live_..." \
+  -H "X-SpaPortal-Public-Key: <your_public_key>" \
   "https://spaportal.cz/api/v2/hotels"
 ```
 
-**Example response:**
+**Example response (abridged):**
 
 ```json
 {

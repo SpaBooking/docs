@@ -4,7 +4,7 @@ description: "Understand money and currency fields in the SpaPortal API."
 icon: "coins"
 ---
 
-SpaPortal API price fields include an ISO 4217 currency code.
+SpaPortal API monetary fields use `CZK` and `EUR`.
 
 Supported currencies:
 
@@ -13,9 +13,9 @@ Supported currencies:
 | `CZK` | Czech koruna |
 | `EUR` | Euro |
 
-## Money fields
+## Money objects
 
-Money fields use minor units:
+Fields represented by a `Money` object use minor units:
 
 ```json
 {
@@ -28,26 +28,11 @@ Money fields use minor units:
 `currencyExponent` tells you how many decimal places to apply. For both `CZK`
 and `EUR`, the exponent is `2`, so `1892400` equals `18,924.00`.
 
-Calendar date prices group their amounts by currency under `amounts` and return
-every currency that has a price. A currency with no price for that date is
-omitted.
+Price objects keyed by currency return every currency that has a value. A
+currency with no value is omitted.
 
-```json
-{
-  "price": {
-    "isFinal": true,
-    "amounts": {
-      "CZK": {
-        "amountMinor": 180000,
-        "currency": "CZK",
-        "currencyExponent": 2
-      },
-      "EUR": {
-        "amountMinor": 7200,
-        "currency": "EUR",
-        "currencyExponent": 2
-      }
-    }
-  }
-}
-```
+## Hotel pet fees
+
+`accommodationRules.pets.feePerNight` uses a different, simpler shape. Its `czk`
+and `eur` values are numbers in the corresponding major currency unit, for
+example `{ "czk": 500, "eur": 20 }`. Missing values are `null`.

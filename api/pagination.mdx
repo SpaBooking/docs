@@ -20,7 +20,7 @@ Responses include pagination metadata:
   "data": [],
   "pagination": {
     "limit": 25,
-    "nextCursor": "eyJzb3J0IjoiY3JlYXRlZEF0OmRlc2MiLCJsYXN0SWQiOiI2NmYxNjE5MWY3Mzk3MDVmYWEwMjA3NjgiLCJsYXN0U29ydFZhbHVlIjoiMjAyNi0wMS0wMlQwMDowMDowMC4wMDBaIn0",
+    "nextCursor": "eyJyZXNvdXJjZSI6ImhvdGVscyIsInNvcnQiOiJjcmVhdGVkQXQ6ZGVzYyIsImxhc3RJZCI6IjY2ZjE2MTkxZjczOTcwNWZhYTAyMDc2OCIsImxhc3RDcmVhdGVkQXQiOiIyMDI2LTAxLTAyVDAwOjAwOjAwLjAwMFoifQ",
     "hasMore": true,
     "total": 42
   }
@@ -33,3 +33,14 @@ Responses include pagination metadata:
 - `total` is the number of matching records across all pages.
 
 To page through results, repeat the request with `cursor` set to the previous response's `nextCursor` until `hasMore` is `false`.
+
+## Invalid cursors
+
+A cursor is valid only for the list and `sort` it came from. The API responds
+with `400 invalid_request` when the cursor:
+
+- cannot be decoded;
+- was issued by a different list endpoint;
+- was issued for a different `sort` value than the current request.
+
+Keep the same `sort` (and other filters) while paging.

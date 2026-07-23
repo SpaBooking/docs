@@ -1,15 +1,59 @@
 ---
 title: "Hotel"
-description: "A spa or wellness property."
+description: "A spa or wellness property and its structured guest profile."
 openapi-schema: "/api/v2/openapi.yaml Hotel"
 ---
 
-<Warning>
-  **Draft — not yet available.** This is a work-in-progress contract. It may change
-  before release; do not build against it.
-</Warning>
+A hotel contains identity, destination, contact details, images, localized
+content, structured accommodation rules, meal services, medical indications,
+staff languages, and hotel-level [amenities](/api/amenities).
 
-A spa or wellness property, with its name, address, star rating, contact details,
-images, and indicative `priceFrom`. Localized fields (`name`, `description`,
-`commercialSlogan`, `equipment`, `services`) return the locale keys selected by
-[`Accept-Language`](/api/localization).
+Localized values return only the keys selected by
+[`Accept-Language`](/api/localization). `name` falls back to the Czech value when
+a requested translation is missing. Other localized fields preserve the requested
+key and return `null` when its translation is missing.
+
+## Structured profile
+
+`shortDescription` is the localized short hotel description (up to 400
+characters per locale).
+
+`channelContent.tagline` is a localized tagline intended for sales channels (up
+to 100 characters per locale).
+
+`accommodationRules` always contains check-in and check-out ranges, the children
+policy, and the pets policy. The children policy includes whether children are
+accepted and an optional minimum age. The pets policy includes whether pets are
+accepted, an optional minimum stay, per-night fees in CZK and EUR, and localized
+conditions (up to 300 characters per locale). The `feePerNight.czk` and
+`feePerNight.eur` values are major-unit amounts, not `Money` objects. An unset
+time or optional numeric value is `null`.
+
+`mealServices` always contains `breakfast`, `lunch`, and `dinner`. Each meal
+reports whether it is enabled, its optional serving time, its service method
+(`buffet` or `served`), whether drinks are included, and a localized drinks note
+(up to 200 characters per locale).
+
+`indications` is an ordered array of medical indication codes:
+
+```text
+musculoskeletal, cardiovascular, dermatology, digestion_metabolism,
+nervous_system, prevention, gynecology, oncology_aftercare, diabetes
+```
+
+`staffLanguages` contains the language codes spoken by hotel staff: `cs`, `en`,
+`de`, and `ru`.
+
+## Amenities
+
+`amenities` contains the hotel's selected structured amenities. Each item's
+`code` references the [amenity dictionary](/api/amenities). The value also carries
+applicable access, fee, distance, type, opening-hour, and localized note details.
+
+Fetch [`GET /api/v2/amenities`](/api/v2/reference/amenities/list-the-amenity-dictionary)
+to resolve labels, categories, and supported detail fields. See
+[Amenity value](/api/objects/amenity-value) for the exact `detailKinds` to
+response-field mapping and the neutral values returned for unsupported fields.
+
+`priceFrom` is reserved for an indicative lowest price and currently returns
+`null`.

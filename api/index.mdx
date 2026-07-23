@@ -7,10 +7,9 @@ Learn the conventions, authentication, and pagination patterns used across the S
 
 ## Conventions
 
-The base URL to send all API requests is `https://spaportal.cz/api/`. The SpaPortal API follows RESTful conventions when possible, with most operations performed via `GET`, `POST`, `PATCH`, and `DELETE` requests. Request and response bodies are encoded as JSON.
+The base URL for API v2 is `https://spaportal.cz/api/v2`. The SpaPortal API follows RESTful conventions: resources are read with `GET` requests, filtered by query parameters. Response bodies are encoded as JSON.
 
 - HTTPS only
-- JSON bodies for `POST` — send `Content-Type: application/json`
 - Query parameters for `GET` filters
 
 ## Paths and field names
@@ -37,11 +36,13 @@ Calendar dates use `YYYY-MM-DD`; exact timestamps use ISO 8601 in UTC with milli
 
 [Read the currencies guide](/api/currencies).
 
-Prices are returned in `CZK` and `EUR` as integer minor units (`amountMinor`); there is no currency request parameter.
+Fields that use the `Money` object return `CZK` and `EUR` as integer minor units
+(`amountMinor`). Hotel pet fees use major-unit numbers instead. There is no
+currency request parameter.
 
 ## Images and thumbnails
 
-Hotels, room types, and visit types can include images as `{ url, thumbnailUrl }` objects — `thumbnailUrl` is a smaller generated preview, or `null` when unavailable.
+Hotels and room types can include images as `{ url, thumbnailUrl }` objects — `thumbnailUrl` is a smaller generated preview, or `null` when unavailable.
 
 ## Localization
 

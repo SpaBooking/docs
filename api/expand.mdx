@@ -24,85 +24,37 @@ hotel on its own; with `expand=roomTypes` the full `roomTypes` array is embedded
 inline — no second request needed. The only difference between the two responses
 is the added `roomTypes` block.
 
+The snippets below show only the fields relevant to expansion. The remaining
+hotel fields are unchanged and follow the complete [Hotel](/api/objects/hotel)
+schema. `priceFrom` currently returns `null`.
+
 <CodeGroup>
 
-```json Response without expand
+```json Relevant fields without expand
 {
   "id": "66f16191f739705faa020001",
   "name": { "cs-CZ": "Pawlik", "de": "Pawlik-Aquaforum" },
-  "stars": 4,
   "address": {
     "addressLine": "Americká 384/26",
     "city": "Františkovy Lázně",
     "postalCode": "351 01",
-    "countryCode": "CZ"
+    "country": "cze"
   },
-  "phoneNumber": "+420 354 401 111",
-  "description": { "cs-CZ": "Lázeňský hotel u pramene.", "de": "Kurhotel an der Quelle." },
-  "commercialSlogan": { "cs-CZ": "Wellness pobyt.", "de": "Wellnessaufenthalt." },
-  "equipment": { "cs-CZ": "Sauna, vnitřní bazén.", "de": "Sauna, Innenpool." },
-  "services": { "cs-CZ": "Lázeňské procedury.", "de": "Kuranwendungen." },
-  "images": [
-    { "url": "https://files.example/pawlik.jpg", "thumbnailUrl": "https://files.example/pawlik-thumb.webp" }
-  ],
-  "priceFrom": {
-    "CZK": {
-      "perNight": { "amountMinor": 200000, "currency": "CZK", "currencyExponent": 2 },
-      "perNightOriginal": { "amountMinor": 250000, "currency": "CZK", "currencyExponent": 2 },
-      "minimumStay": { "amountMinor": 400000, "currency": "CZK", "currencyExponent": 2 },
-      "minimumStayOriginal": { "amountMinor": 500000, "currency": "CZK", "currencyExponent": 2 },
-      "guests": 2,
-      "minimumNights": 2
-    },
-    "EUR": {
-      "perNight": { "amountMinor": 8000, "currency": "EUR", "currencyExponent": 2 },
-      "perNightOriginal": null,
-      "minimumStay": { "amountMinor": 16000, "currency": "EUR", "currencyExponent": 2 },
-      "minimumStayOriginal": null,
-      "guests": 2,
-      "minimumNights": 2
-    }
-  }
+  "priceFrom": null
 }
 ```
 
-```json Response with expand=roomTypes
+```json Relevant fields with expand=roomTypes
 {
   "id": "66f16191f739705faa020001",
   "name": { "cs-CZ": "Pawlik", "de": "Pawlik-Aquaforum" },
-  "stars": 4,
   "address": {
     "addressLine": "Americká 384/26",
     "city": "Františkovy Lázně",
     "postalCode": "351 01",
-    "countryCode": "CZ"
+    "country": "cze"
   },
-  "phoneNumber": "+420 354 401 111",
-  "description": { "cs-CZ": "Lázeňský hotel u pramene.", "de": "Kurhotel an der Quelle." },
-  "commercialSlogan": { "cs-CZ": "Wellness pobyt.", "de": "Wellnessaufenthalt." },
-  "equipment": { "cs-CZ": "Sauna, vnitřní bazén.", "de": "Sauna, Innenpool." },
-  "services": { "cs-CZ": "Lázeňské procedury.", "de": "Kuranwendungen." },
-  "images": [
-    { "url": "https://files.example/pawlik.jpg", "thumbnailUrl": "https://files.example/pawlik-thumb.webp" }
-  ],
-  "priceFrom": {
-    "CZK": {
-      "perNight": { "amountMinor": 200000, "currency": "CZK", "currencyExponent": 2 },
-      "perNightOriginal": { "amountMinor": 250000, "currency": "CZK", "currencyExponent": 2 },
-      "minimumStay": { "amountMinor": 400000, "currency": "CZK", "currencyExponent": 2 },
-      "minimumStayOriginal": { "amountMinor": 500000, "currency": "CZK", "currencyExponent": 2 },
-      "guests": 2,
-      "minimumNights": 2
-    },
-    "EUR": {
-      "perNight": { "amountMinor": 8000, "currency": "EUR", "currencyExponent": 2 },
-      "perNightOriginal": null,
-      "minimumStay": { "amountMinor": 16000, "currency": "EUR", "currencyExponent": 2 },
-      "minimumStayOriginal": null,
-      "guests": 2,
-      "minimumNights": 2
-    }
-  },
+  "priceFrom": null,
   "roomTypes": [
     {
       "id": "66f16191f739705faa020003",

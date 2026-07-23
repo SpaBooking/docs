@@ -1,197 +1,170 @@
 ---
 title: "Amenities"
-description: "Structured, filterable hotel and room amenities: the dictionary, values, and filters."
+description: "The hotel amenity dictionary, selected values, detail fields, and filters."
 icon: "list-check"
 ---
 
-<Warning>
-  **Draft — not yet available.** The amenities model described here is a
-  work-in-progress contract. The endpoints and fields appear in the API reference
-  but are not implemented yet; they may change before release. Don't build against
-  them.
-</Warning>
+Hotel services and amenities are exposed as structured, filterable data in API v2.
 
-Hotel and room **services & amenities** are exposed as structured, filterable data —
-not free-text — so you can filter ("hotels with a sauna and parking") and group them
-for display. There are two parts:
+There are two related resources:
 
-1. **The amenity dictionary** — the list of every _possible_ amenity, each with a
-   stable `code`, a `category`, a value type, and localized labels. Fetch it once
-   from [`GET /api/v2/amenities`](/api/v2/reference/amenities/list-the-amenity-dictionary).
-2. **Amenity values** — what a given hotel or room type actually offers, as a list
-   of `code` + state objects on its `amenities` field.
+1. **The amenity dictionary** lists every amenity SpaPortal can assign to a hotel.
+   Each entry has a stable `code`, a localized label, a localized category, and
+   the detail fields supported by that amenity.
+2. **Hotel amenity values** appear in `hotel.amenities`. Presence of an item means
+   that the hotel offers the amenity. The item stores its structured details and
+   a localized guest note when the dictionary includes the `note` detail kind.
 
-Hotel and room responses carry just the `code` (plus any `quantity` or `condition`);
-labels and categories live in the dictionary. So fetch the dictionary **once**, cache
-it, and look up codes locally.
-
-## The amenity dictionary
+## Amenity dictionary
 
 <Card title="GET /api/v2/amenities" icon="square-terminal" href="/api/v2/reference/amenities/list-the-amenity-dictionary" horizontal>
-  The full endpoint spec — query parameters, response schema, and a request playground.
+  Fetch the full amenity dictionary.
 </Card>
 
-`GET /api/v2/amenities` returns the full list of possible amenities — a small
-reference list, not paginated. Each entry has a `code`, a `category`, a `scope`, a
-`valueType`, and a localized `label` — see the [Amenity](/api/objects/amenity) object
-for the full field reference.
-
-Optionally narrow it by `scope` or `category`:
-
-```bash
-GET /api/v2/amenities                  # the whole dictionary
-GET /api/v2/amenities?scope=hotel      # amenities applicable at hotel level
-GET /api/v2/amenities?category=wellness
-```
+`GET /api/v2/amenities` returns the complete dictionary in one response. It is
+small and not paginated. Use [`Accept-Language`](/api/localization) to select the
+locale keys returned in localized fields.
 
 ```json Response
 {
   "data": [
     {
-      "code": "wellness.sauna",
-      "category": "wellness",
-      "scope": ["hotel", "roomType"],
-      "valueType": "boolean",
-      "label": { "cs-CZ": "Sauna", "de": "Sauna", "en": "Sauna" }
+      "code": "sauna",
+      "category": {
+        "code": "wellness",
+        "label": {
+          "cs-CZ": "Bazény a wellness",
+          "en": "Pools & wellness"
+        }
+      },
+      "label": {
+        "cs-CZ": "Sauna",
+        "en": "Sauna"
+      },
+      "detailKinds": ["proximity", "access", "sauna_types", "opening_hours"]
     },
     {
-      "code": "parking.parking",
-      "category": "parking",
-      "scope": ["hotel"],
-      "valueType": "count",
-      "label": { "cs-CZ": "Parkoviště", "de": "Parkplatz", "en": "Parking" }
-    },
-    {
-      "code": "connectivity.wifi",
-      "category": "connectivity",
-      "scope": ["hotel", "roomType"],
-      "valueType": "boolean",
-      "label": { "cs-CZ": "Wi-Fi", "de": "WLAN", "en": "Wi-Fi" }
-    },
-    {
-      "code": "pools.indoor_pool",
-      "category": "pools",
-      "scope": ["hotel"],
-      "valueType": "boolean",
-      "label": { "cs-CZ": "Vnitřní bazén", "de": "Innenpool", "en": "Indoor pool" }
-    },
-    {
-      "code": "comfort.air_conditioning",
-      "category": "comfort",
-      "scope": ["roomType"],
-      "valueType": "boolean",
-      "label": { "cs-CZ": "Klimatizace", "de": "Klimaanlage", "en": "Air conditioning" }
+      "code": "parking",
+      "category": {
+        "code": "parking",
+        "label": {
+          "cs-CZ": "Parkování",
+          "en": "Parking"
+        }
+      },
+      "label": {
+        "cs-CZ": "Parkoviště",
+        "en": "Parking"
+      },
+      "detailKinds": ["parking_types", "fee", "note"]
     }
   ]
 }
 ```
 
-### Example categories and codes
+Resolve hotel `amenities[].code` values against this dictionary instead of
+hard-coding display labels. Dictionary codes are stable.
 
-Codes follow a `category.slug` convention and are spa/wellness-oriented. The list
-below is a sample — the full set (from `GET /api/v2/amenities`) has more categories
-and codes, and grows over time.
+### Categories
 
-| Category        | Example codes                                                              |
-| --------------- | -------------------------------------------------------------------------- |
-| `wellness`      | `wellness.sauna`, `wellness.massage`, `wellness.spa`, …                    |
-| `pools`         | `pools.indoor_pool`, `pools.outdoor_pool`, `pools.hot_tub`, …              |
-| `connectivity`  | `connectivity.wifi`, `connectivity.public_terminal`, …                     |
-| `parking`       | `parking.parking`, `parking.ev_charging`, `parking.garage`, …              |
-| `foodAndDrink`  | `foodAndDrink.restaurant`, `foodAndDrink.bar`, `foodAndDrink.breakfast`, …  |
-| `services`      | `services.reception_24h`, `services.concierge`, `services.laundry`, …       |
-| `accessibility` | `accessibility.step_free_access`, `accessibility.accessible_bathroom`, …    |
-| `comfort`       | `comfort.air_conditioning`, `comfort.minibar`, `comfort.balcony`, …         |
-| `bathroom`      | `bathroom.shower`, `bathroom.bathtub`, `bathroom.hairdryer`, …              |
+| Code | English label |
+| --- | --- |
+| `health` | Health & treatment |
+| `wellness` | Pools & wellness |
+| `dining` | Dining |
+| `services` | Services |
+| `accessibility` | Accessibility |
+| `parking` | Parking |
+| `sport` | Sport & activities |
+| `children` | For children |
 
-…and more — further categories (e.g. `pets`, `families`, `sustainability`) and codes
-are added as the catalog evolves. Resolve a `code` against `GET /api/v2/amenities`
-rather than hard-coding this list.
+### Detail kinds
 
-## Amenity values on hotels and room types
+`detailKinds` tells clients which parts of an [Amenity value](/api/objects/amenity-value)
+are relevant:
 
-Hotels and room types carry an `amenities` array — the amenities that hotel or room
-**has**. Each item references a dictionary `code`, optionally with a `quantity` or a
-`condition` — see the [Amenity value](/api/objects/amenity-value) object for the full
-field reference.
+| Kind | Value field |
+| --- | --- |
+| `proximity` | `proximity`, and `proximityMeters` when `nearby` |
+| `access` | `access` |
+| `fee` | `fee` |
+| `accessibility_level` | `accessibilityLevel` |
+| `parking_types` | `parkingTypes` |
+| `sauna_types` | `saunaTypes` |
+| `dietary_options` | `dietaryOptions` |
+| `opening_hours` | `openingHours` |
+| `note` | localized `note` |
 
-The array lists the amenities a hotel or room **offers** — a `code`'s presence means
-it has that amenity. A `code` that is absent means it is not offered (or not yet
-advertised).
+## Selected amenities on a hotel
 
-```json Hotel with amenities
+Every v2 [Hotel](/api/objects/hotel) response contains an `amenities` array. An
+absent code means the amenity is not offered or has not been advertised.
+
+```json Hotel amenity values
 {
-  "id": "66f16191f739705faa020001",
-  "name": { "cs-CZ": "Pawlik", "de": "Pawlik-Aquaforum" },
-  "stars": 4,
   "amenities": [
-    { "code": "wellness.sauna" },
-    { "code": "connectivity.wifi" },
-    { "code": "parking.parking", "quantity": 40 },
-    { "code": "pools.indoor_pool", "condition": "seasonal" }
+    {
+      "code": "sauna",
+      "proximity": "in-hotel",
+      "proximityMeters": null,
+      "access": "included",
+      "fee": null,
+      "accessibilityLevel": null,
+      "parkingTypes": [],
+      "saunaTypes": ["finnish", "steam"],
+      "dietaryOptions": [],
+      "openingHours": {
+        "continuous": false,
+        "blocks": [
+          {
+            "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            "from": "09:00",
+            "to": "21:00"
+          }
+        ]
+      },
+      "note": { "cs-CZ": null, "en": null }
+    }
   ]
 }
 ```
 
-To display these, resolve each `code` against the dictionary you fetched from
-`GET /api/v2/amenities` — that is where the localized `label` and `category` live.
+Structured details use the following enums:
 
-### Scope: hotel vs. room type
+- `proximity`: `in-hotel`, `connecting`, `nearby`
+- `access`: `included`, `conditional`, `paid`
+- `fee`: `free`, `conditional`, `paid`
+- `accessibilityLevel`: `full`, `partial`
+- `parkingTypes`: `outdoor`, `covered`, `guarded`
+- `saunaTypes`: `finnish`, `infrared`, `steam`
+- `dietaryOptions`: `diet`, `reduction`, `gluten-free`, `diabetic`,
+  `lactose-free`
+- opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
+  `saturday`, `sunday`
 
-Each dictionary entry has a `scope` — an **array** of the levels where the amenity
-applies:
+All scalar detail fields may be `null` when they are not applicable or not filled
+in. Localized note values are also `null` when the amenity does not support a
+note. Arrays are returned as empty arrays and opening hours as
+`{ "continuous": false, "blocks": [] }` when unset.
 
-- `hotel` — property-level facilities (parking, an outdoor pool, 24h reception).
-- `roomType` — in-room features (air conditioning, balcony, minibar).
+## Filtering hotels
 
-An amenity that applies at both levels (e.g. Wi-Fi) has `["hotel", "roomType"]`. An
-amenity whose `scope` contains `hotel` can appear in a hotel's `amenities`; one whose
-`scope` contains `roomType` can appear in a room type's.
+[`GET /api/v2/hotels`](/api/v2/reference/hotels/list-hotels) accepts:
 
-```json Room type with amenities
-{
-  "id": "66f16191f739705faa020003",
-  "hotelId": "66f16191f739705faa020001",
-  "code": "SUPERIOR-DBL",
-  "beds": 2,
-  "amenities": [
-    { "code": "comfort.air_conditioning" },
-    { "code": "connectivity.wifi" }
-  ]
-}
-```
-
-## Filtering by amenity
-
-Both [`GET /api/v2/hotels`](/api/v2/reference/hotels/list-hotels) and
-[`GET /api/v2/room-types`](/api/v2/reference/room-types/list-room-types) accept two amenity filters:
-
-- `amenities` — comma-separated `code`s; returns only results that have **all** of
-  them (AND semantics).
-- `amenityCategory` — returns results that have **any** amenity in that category.
+- `amenities`: comma-separated amenity codes. A hotel must have **all** listed
+  codes (AND semantics).
+- `amenityCategory`: a category code. A hotel must have at least one amenity in
+  that category.
 
 ```bash
-# Hotels with BOTH a sauna AND parking
-GET /api/v2/hotels?amenities=wellness.sauna,parking.parking
+# Hotels with both a sauna and parking
+GET /api/v2/hotels?amenities=sauna,parking
 
-# Hotels with any wellness amenity
+# Hotels with any pool or wellness amenity
 GET /api/v2/hotels?amenityCategory=wellness
-
-# Room types with air conditioning
-GET /api/v2/room-types?amenities=comfort.air_conditioning
 ```
 
 <Note>
-  `stars` and `beds` have their own query parameters — don't pass them as amenity
-  `code`s.
+  Amenity filters apply to hotels. Room types do not carry structured amenities
+  — a room type lists its equipment in the free-text `facilities` field.
 </Note>
-
-## Putting it together
-
-1. **Fetch the dictionary once:** `GET /api/v2/amenities`. Cache it — it changes rarely.
-2. **Filter the catalog:** `GET /api/v2/hotels?amenities=wellness.sauna&amenityCategory=wellness`.
-3. **Render each result:** for every `amenities[].code`, look up the localized `label`
-   and `category` in the cached dictionary, and show any `quantity` or `condition`.
-
-The dictionary is the single source of truth for labels and grouping; hotel and room
-payloads stay lean by carrying only `code` + state.

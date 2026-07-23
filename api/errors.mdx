@@ -9,7 +9,7 @@ SpaPortal API uses a single `error` object:
 {
   "error": {
     "code": "invalid_request",
-    "message": "Invalid request body.",
+    "message": "Invalid request.",
     "requestId": "req_6b4c6b6f-0d34-47f1-bf3b-8a3f9d8d2e1f",
     "details": [
       {
@@ -22,7 +22,9 @@ SpaPortal API uses a single `error` object:
 }
 ```
 
-Common API error codes are `invalid_request`, `missing_authentication`, `invalid_authentication`, `insufficient_scope`, `not_found`, `conflict`, `rate_limited`, and `internal_error`.
+Public endpoints currently return `invalid_request`, `missing_authentication`,
+`invalid_authentication`, `not_found`, and `internal_error`. Each endpoint lists
+the HTTP statuses it can return.
 
 API error responses also include `X-Request-Id`. If you send `X-Request-Id` with the request, SpaPortal echoes that value. Otherwise, SpaPortal generates a new one.
 
@@ -30,6 +32,6 @@ API error responses also include `X-Request-Id`. If you send `X-Request-Id` with
 
 Read both the HTTP status and the JSON error code or message.
 
-Treat `400`, `401`, `404`, and `422` as client-correctable errors. Retry only after you change the request.
+Treat `400`, `401`, and `404` as client-correctable errors. Retry only after you change the request.
 
 Treat `500` as a temporary server error. Retry with backoff if the operation is safe to repeat.

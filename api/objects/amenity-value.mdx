@@ -1,14 +1,63 @@
 ---
 title: "Amenity value"
-description: "An amenity offered by a hotel or room type."
+description: "A structured amenity selected for a hotel."
 openapi-schema: "/api/v2/openapi.yaml AmenityValue"
 ---
 
-<Warning>
-  **Draft — not yet available.** This is a work-in-progress contract. It may change
-  before release; do not build against it.
-</Warning>
+An amenity offered by a hotel. Its `code` references the
+[amenity dictionary](/api/amenities); the remaining properties describe access,
+distance, types, opening hours, and a localized guest note.
 
-An amenity that a hotel or room type offers — a dictionary `code` with an optional
-`quantity` or `condition`. Resolve the `code` against the
-[amenity dictionary](/api/amenities) for its label, category, and scope.
+The dictionary entry's `detailKinds` determines which properties are meaningful
+for a particular code. Properties that are not applicable or not filled are
+returned as `null` or empty arrays, so clients do not need to infer missing keys.
+
+`detailKinds` itself is returned by `GET /api/v2/amenities`, not inside each
+hotel's amenity value. Amenity values use a stable response shape so you can
+deserialize all codes with one model.
+
+Each localized `note` value is limited to 200 characters.
+
+| Dictionary detail kind | Meaningful amenity value field |
+| --- | --- |
+| `proximity` | `proximity`; `proximityMeters` is meaningful when `proximity` is `nearby` |
+| `access` | `access` |
+| `fee` | `fee` |
+| `accessibility_level` | `accessibilityLevel` |
+| `parking_types` | `parkingTypes` |
+| `sauna_types` | `saunaTypes` |
+| `dietary_options` | `dietaryOptions` |
+| `opening_hours` | `openingHours` |
+| `note` | localized `note` |
+
+For a sauna with
+`detailKinds: [proximity, access, sauna_types, opening_hours]`, a hotel response
+can contain:
+
+```json
+{
+  "code": "sauna",
+  "proximity": "in-hotel",
+  "proximityMeters": null,
+  "access": "included",
+  "fee": null,
+  "accessibilityLevel": null,
+  "parkingTypes": [],
+  "saunaTypes": ["finnish", "steam"],
+  "dietaryOptions": [],
+  "openingHours": {
+    "continuous": false,
+    "blocks": [
+      {
+        "days": ["monday", "tuesday", "wednesday"],
+        "from": "09:00",
+        "to": "21:00"
+      }
+    ]
+  },
+  "note": { "cs-CZ": null, "en": null }
+}
+```
+
+The unsupported fields remain present with neutral values. Requested localized
+keys follow [`Accept-Language`](/api/localization).

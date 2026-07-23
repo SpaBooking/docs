@@ -6,10 +6,11 @@ icon: "key"
 The API uses a dedicated public key header:
 
 ```http
-X-SpaPortal-Public-Key: pk_live_...
+X-SpaPortal-Public-Key: <your_public_key>
 ```
 
-Public keys identify the channel and scope all requests to it.
+Public keys are 32-character alphanumeric strings. They identify the channel
+and scope all requests to it.
 
 ## Getting your public key
 
@@ -17,7 +18,10 @@ Every distribution channel in SpaPortal has its own public key. To find yours: `
 
 ## Authentication errors
 
-| Status | Cause |
-| --: | --- |
-| `400` | The key is missing. |
-| `401` | The key is invalid. |
+| Status | Error code | Cause |
+| --: | --- | --- |
+| `400` | `missing_authentication` | The key is missing. |
+| `401` | `invalid_authentication` | The key is invalid. |
+
+Authentication runs before input validation. A request with both a missing key
+and invalid parameters returns the authentication error.
