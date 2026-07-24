@@ -5,17 +5,18 @@ openapi-schema: "/api/v2/openapi.yaml AmenityValue"
 ---
 
 An amenity assigned to a hotel and returned under
-`hotel.amenities[].amenities[]` by both hotel endpoints. Hotel amenities are
-grouped by category, and categories without assigned amenities are omitted. Its
-`code` references an amenity nested in one of the category groups returned by
-the [amenity dictionary](/api/amenities). The remaining properties describe
-access, distance, types, opening hours, and a localized guest note.
+`hotel.amenityCategories[].amenities[]` by both hotel endpoints. Hotel
+amenities are grouped by category, and categories without assigned amenities
+are omitted. Its `code` references an amenity nested in one of the category
+groups returned by the [amenity dictionary](/api/amenities). The remaining
+properties describe access, distance, options, opening hours, and a localized
+guest note.
 
 To interpret the value, find the matching `code` in
-`GET /api/v2/amenities` under `data[].amenities[]`. The parent `category`
-provides the amenity's category and the matching entry's `detailKinds`
-determines which properties are included. Properties that are not supported by
-that amenity are omitted.
+`GET /api/v2/amenity-categories` under `data[].amenities[]`. The parent
+`category` provides the amenity's category and the matching entry's
+`detailKinds` determines which properties are included. Properties that are
+not supported by that amenity are omitted.
 
 `category` is returned once on the parent hotel amenity group. The amenity's
 `label` and `detailKinds` remain dictionary metadata and are not repeated inside
@@ -35,7 +36,7 @@ When the dictionary returns `detailKinds: []`, the amenity is presence-only and
 its value contains only `code`.
 
 For an aquapark with
-`detailKinds: [proximity, access, opening_hours, note]`, a hotel response can
+`detailKinds: [proximity, access, opening_hours]`, a hotel response can
 contain:
 
 ```json
@@ -53,16 +54,13 @@ contain:
         "to": "21:00"
       }
     ]
-  },
-  "note": {
-    "cs-CZ": "Akvapark je vzdálený 250 metrů od hotelu.",
-    "en": "The aquapark is 250 metres from the hotel."
   }
 }
 ```
 
-For an amenity with `detailKinds: [options]`, the dictionary lists every
-available option, while the hotel value contains only selected options:
+For an amenity whose `detailKinds` include `options`, request
+`GET /api/v2/amenity-categories?expand=options` to list every available option.
+The hotel value contains only selected options:
 
 ```json
 {

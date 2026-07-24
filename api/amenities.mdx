@@ -12,31 +12,67 @@ There are two related resources:
    It is grouped by category. Each category has a stable `code`, a localized
    label, and an `amenities` array whose entries contain a stable `code`,
    localized `label`, and supported detail fields.
-2. **Hotel amenity values** are grouped by category in `hotel.amenities`.
+2. **Hotel amenity values** are grouped by category in
+   `hotel.amenityCategories`.
    Categories without assigned amenities are omitted. Values inside each
    group's `amenities` array store the amenity's structured details and a
    localized guest note when the dictionary includes the `note` detail kind.
 
 <Note>
-  These responses serve different purposes. `GET /api/v2/amenities` always
-  returns the complete system dictionary. `GET /api/v2/hotels` and
+  These responses serve different purposes. `GET /api/v2/amenity-categories`
+  always returns every system category and amenity. `GET /api/v2/hotels` and
   `GET /api/v2/hotels/{hotelId}` return only the amenity values assigned to each
   hotel.
 </Note>
 
 ## Amenity dictionary
 
-<Card title="GET /api/v2/amenities" icon="square-terminal" href="/api/v2/reference/amenities/list-the-amenity-dictionary" horizontal>
+<Card title="GET /api/v2/amenity-categories" icon="square-terminal" href="/api/v2/reference/amenity-categories/list-the-amenity-dictionary" horizontal>
   Fetch the full amenity dictionary.
 </Card>
 
-`GET /api/v2/amenities` returns every category and amenity available in
-SpaPortal, whether or not a particular hotel uses it. The complete dictionary is
+`GET /api/v2/amenity-categories` returns every category and amenity available
+in SpaPortal, whether or not a particular hotel uses it. The complete list is
 returned in one response and is not paginated. Use
 [`Accept-Language`](/api/localization) to select the locale keys returned in
 localized fields.
 
-```json Response
+Amenity-specific choices are omitted by default. Add `expand=options` when you
+need every supported option and its localized label:
+
+```bash
+GET /api/v2/amenity-categories?expand=options
+```
+
+<CodeGroup>
+
+```json Default response
+{
+  "data": [
+    {
+      "category": {
+        "code": "wellness",
+        "label": {
+          "cs-CZ": "Bazény a wellness",
+          "en": "Pools & wellness"
+        }
+      },
+      "amenities": [
+        {
+          "code": "sauna",
+          "label": {
+            "cs-CZ": "Sauna",
+            "en": "Sauna"
+          },
+          "detailKinds": ["proximity", "access", "options", "opening_hours"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+```json Response with expand=options
 {
   "data": [
     {
@@ -127,9 +163,11 @@ localized fields.
 }
 ```
 
-Resolve hotel `amenities[].amenities[].code` values against the entries nested
-in each dictionary category instead of hard-coding display labels. Category and
-amenity codes are stable.
+</CodeGroup>
+
+Resolve hotel `amenityCategories[].amenities[].code` values against the entries
+nested in each dictionary category instead of hard-coding display labels.
+Category and amenity codes are stable.
 
 ### Categories
 
@@ -153,7 +191,7 @@ are included:
 | --- | --- |
 | `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
 | `access` | `access` |
-| `options` | localized amenity-specific `options` |
+| `options` | amenity-specific choices; add `expand=options` to include all valid choices and their localized labels |
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
@@ -168,7 +206,7 @@ An absent code means the amenity is not offered or has not been advertised.
 
 ```json Hotel amenity values
 {
-  "amenities": [
+  "amenityCategories": [
     {
       "category": {
         "code": "wellness",
@@ -192,10 +230,6 @@ An absent code means the amenity is not offered or has not been advertised.
                 "to": "21:00"
               }
             ]
-          },
-          "note": {
-            "cs-CZ": "Akvapark je vzdálený 250 metrů od hotelu.",
-            "en": "The aquapark is 250 metres from the hotel."
           }
         },
         {
@@ -235,7 +269,8 @@ Structured details use the following enums:
 - `proximity`: `in-hotel`, `connecting`, `nearby`
 - `access`: `included`, `conditional`, `paid`
 - `options`: localized amenity-specific choices. The dictionary returns every
-  available choice; hotel responses return only the selected choices.
+  available choice with `expand=options`; hotel responses return only the
+  selected choices.
 - opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
   `saturday`, `sunday`
 
@@ -248,6 +283,9 @@ are `null`.
 `access` also represents whether an amenity carries an additional charge:
 `included` means no additional charge, `conditional` means inclusion depends on
 the stated conditions, and `paid` means an additional charge applies.
+
+The dictionary's `expand=options` affects only dictionary metadata. Selected
+`options` on hotel amenity values remain part of hotel responses.
 
 ## Filtering hotels
 

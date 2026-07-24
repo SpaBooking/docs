@@ -11,13 +11,20 @@ security:
 tags:
   - name: Hotels
   - name: Room types
-  - name: Amenities
+  - name: Amenity categories
 paths:
-  /amenities:
+  /amenity-categories:
     get:
-      tags: [Amenities]
+      tags: [Amenity categories]
       summary: List the amenity dictionary
-      operationId: getAmenities
+      operationId: getAmenityCategories
+      x-mint:
+        content: |
+          <Info>
+            Amenity-specific choices are omitted by default. Use
+            `expand=options` to include every supported choice and its
+            localized label.
+          </Info>
       description: |
         Returns the full hotel amenity dictionary grouped by category. Each
         item in `data` contains a stable category code, its localized label,
@@ -27,11 +34,22 @@ paths:
         This endpoint returns every amenity available in the system, independent
         of which amenities are assigned to a particular hotel. Fetch it to build
         amenity filters and resolve the codes returned in
-        `hotel.amenities[].amenities[]`. This small reference list is not
-        paginated.
+        `hotel.amenityCategories[].amenities[]`. This small reference list is
+        not paginated.
+
+        Entries whose `detailKinds` include `options` support a fixed list of
+        amenity-specific choices. Add `expand=options` to include those choices;
+        they are omitted by default.
 
         See the [Amenity](/api/objects/amenity) object for the full field reference.
       parameters:
+        - name: expand
+          in: query
+          required: false
+          description: Include every amenity-specific option and its localized label.
+          schema:
+            type: string
+            enum: [options]
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
       responses:
@@ -43,7 +61,52 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AmenitiesList"
+                $ref: "#/components/schemas/AmenityCategoriesList"
+              examples:
+                default:
+                  summary: Default response
+                  value:
+                    data:
+                      - category:
+                          code: wellness
+                          label:
+                            cs-CZ: Bazény a wellness
+                            de: Pools & Wellness
+                            en: Pools & wellness
+                        amenities:
+                          - code: sauna
+                            label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
+                            detailKinds: [proximity, access, options, opening_hours]
+                expandedOptions:
+                  summary: Response with expand=options
+                  value:
+                    data:
+                      - category:
+                          code: wellness
+                          label:
+                            cs-CZ: Bazény a wellness
+                            de: Pools & Wellness
+                            en: Pools & wellness
+                        amenities:
+                          - code: sauna
+                            label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
+                            detailKinds: [proximity, access, options, opening_hours]
+                            options:
+                              - code: finnish
+                                label:
+                                  cs-CZ: Finská sauna
+                                  de: Finnische Sauna
+                                  en: Finnish sauna
+                              - code: infrared
+                                label:
+                                  cs-CZ: Infra sauna
+                                  de: Infrarotsauna
+                                  en: Infrared sauna
+                              - code: steam
+                                label:
+                                  cs-CZ: Parní lázeň
+                                  de: Dampfbad
+                                  en: Steam bath
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -124,7 +187,10 @@ paths:
         the locale keys selected by `Accept-Language`. `name` falls back to the
         default locale (cs-CZ); other untranslated values are returned as null.
 
-        `priceFrom` is null when no indicative price is available.
+        `priceFrom` contains the cheapest available current or future room
+        price for the room's standard occupancy. It is null when no usable
+        price is available. Applicable public-channel promotions are reflected
+        in the price.
 
         See the [Hotel](/api/objects/hotel) object for the full field reference.
       parameters:
@@ -1033,7 +1099,7 @@ components:
         - mealServices
         - indications
         - staffLanguages
-        - amenities
+        - amenityCategories
         - priceFrom
       properties:
         id:
@@ -1105,14 +1171,14 @@ components:
           items:
             type: string
             enum: [cs, en, de, ru]
-        amenities:
+        amenityCategories:
           type: array
           description: >-
             Structured amenities assigned to this hotel, grouped by category.
             Categories without assigned amenities are omitted. Resolve each
             nested amenity `code` against the entries under the
-            `GET /amenities` response `data[].amenities[]` for its localized
-            label and supported detail kinds.
+            `GET /amenity-categories` response `data[].amenities[]` for its
+            localized label and supported detail kinds.
           items:
             $ref: "#/components/schemas/HotelAmenityCategoryGroup"
           example:
@@ -1134,17 +1200,14 @@ components:
                       - days: [monday, tuesday, wednesday]
                         from: "09:00"
                         to: "21:00"
-                  note:
-                    cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
-                    de: Der Aquapark ist 250 Meter vom Hotel entfernt.
-                    en: The aquapark is 250 metres from the hotel.
-                    ru: Аквапарк находится в 250 метрах от отеля.
         priceFrom:
           allOf:
             - $ref: "#/components/schemas/PriceFrom"
           nullable: true
           description: >-
-            Indicative cheapest price, or null when no price is available.
+            Cheapest available current or future room price for the room's
+            standard occupancy, including an applicable public-channel
+            promotion, or null when no usable price is available.
         roomTypes:
           type: array
           description: |
@@ -1236,7 +1299,7 @@ components:
               ru: Напитки оплачиваются отдельно.
         indications: [musculoskeletal, cardiovascular, diabetes]
         staffLanguages: [cs, de, en]
-        amenities:
+        amenityCategories:
           - category:
               code: wellness
               label:
@@ -1255,11 +1318,6 @@ components:
                     - days: [monday, tuesday, wednesday, thursday, friday]
                       from: "09:00"
                       to: "21:00"
-                note:
-                  cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
-                  de: Der Aquapark ist 250 Meter vom Hotel entfernt.
-                  en: The aquapark is 250 metres from the hotel.
-                  ru: Аквапарк находится в 250 метрах от отеля.
               - code: sauna
                 proximity: in-hotel
                 proximityMeters: null
@@ -1313,16 +1371,16 @@ components:
                   ru: Охраняемая парковка находится рядом с отелем.
         priceFrom:
           CZK:
-            perNight: { amountMinor: 284000, currency: CZK, currencyExponent: 2 }
+            perNight: { amountMinor: 288000, currency: CZK, currencyExponent: 2 }
             perNightOriginal: { amountMinor: 320000, currency: CZK, currencyExponent: 2 }
-            minimumStay: { amountMinor: 568000, currency: CZK, currencyExponent: 2 }
+            minimumStay: { amountMinor: 576000, currency: CZK, currencyExponent: 2 }
             minimumStayOriginal: { amountMinor: 640000, currency: CZK, currencyExponent: 2 }
             guests: 2
             minimumNights: 2
           EUR:
-            perNight: { amountMinor: 11200, currency: EUR, currencyExponent: 2 }
+            perNight: { amountMinor: 11340, currency: EUR, currencyExponent: 2 }
             perNightOriginal: { amountMinor: 12600, currency: EUR, currencyExponent: 2 }
-            minimumStay: { amountMinor: 22400, currency: EUR, currencyExponent: 2 }
+            minimumStay: { amountMinor: 22680, currency: EUR, currencyExponent: 2 }
             minimumStayOriginal: { amountMinor: 25200, currency: EUR, currencyExponent: 2 }
             guests: 2
             minimumNights: 2
@@ -1366,41 +1424,42 @@ components:
             discount.
         guests:
           type: integer
+          minimum: 1
           description: >-
             Number of guests this "from" price is for (the occupancy with the
             cheapest offer).
           example: 2
         minimumNights:
           type: integer
+          minimum: 1
           description: Minimum number of nights the offer requires.
           example: 2
     PriceFrom:
       type: object
       description: >-
-        Indicative cheapest ("from") price for a hotel, keyed by currency. It is the
-        lowest offer and is not affected by query parameters. A currency key is
-        present only when the hotel has a price in that currency.
+        Cheapest available current or future room price for a hotel, keyed by
+        currency. Prices are room totals for the room's standard occupancy and
+        include an applicable public-channel promotion. They are not affected
+        by query parameters. The cheapest room may differ by currency. A
+        currency key is present only when the hotel has a usable price in that
+        currency.
       properties:
         CZK:
-          allOf:
-            - $ref: "#/components/schemas/PriceFromCurrency"
-          nullable: true
+          $ref: "#/components/schemas/PriceFromCurrency"
         EUR:
-          allOf:
-            - $ref: "#/components/schemas/PriceFromCurrency"
-          nullable: true
+          $ref: "#/components/schemas/PriceFromCurrency"
       example:
         CZK:
-          perNight: { amountMinor: 284000, currency: CZK, currencyExponent: 2 }
+          perNight: { amountMinor: 288000, currency: CZK, currencyExponent: 2 }
           perNightOriginal: { amountMinor: 320000, currency: CZK, currencyExponent: 2 }
-          minimumStay: { amountMinor: 568000, currency: CZK, currencyExponent: 2 }
+          minimumStay: { amountMinor: 576000, currency: CZK, currencyExponent: 2 }
           minimumStayOriginal: { amountMinor: 640000, currency: CZK, currencyExponent: 2 }
           guests: 2
           minimumNights: 2
         EUR:
-          perNight: { amountMinor: 11200, currency: EUR, currencyExponent: 2 }
+          perNight: { amountMinor: 11340, currency: EUR, currencyExponent: 2 }
           perNightOriginal: { amountMinor: 12600, currency: EUR, currencyExponent: 2 }
-          minimumStay: { amountMinor: 22400, currency: EUR, currencyExponent: 2 }
+          minimumStay: { amountMinor: 22680, currency: EUR, currencyExponent: 2 }
           minimumStayOriginal: { amountMinor: 25200, currency: EUR, currencyExponent: 2 }
           guests: 2
           minimumNights: 2
@@ -1453,7 +1512,7 @@ components:
       required: [code, label, detailKinds]
       description: >-
         One amenity dictionary entry nested under its category in the response
-        from `GET /amenities`.
+        from `GET /amenity-categories`.
       properties:
         code:
           type: string
@@ -1485,8 +1544,8 @@ components:
         options:
           type: array
           description: >-
-            All choices supported by this amenity. Present when `detailKinds`
-            includes `options`.
+            All choices supported by this amenity. Present only when
+            `expand=options` is requested and `detailKinds` includes `options`.
           items:
             $ref: "#/components/schemas/AmenityOption"
         notePlaceholder:
@@ -1623,11 +1682,6 @@ components:
             - days: [monday, tuesday, wednesday]
               from: "09:00"
               to: "21:00"
-        note:
-          cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
-          de: Der Aquapark ist 250 Meter vom Hotel entfernt.
-          en: The aquapark is 250 metres from the hotel.
-          ru: Аквапарк находится в 250 метрах от отеля.
     HotelAmenityCategoryGroup:
       type: object
       required: [category, amenities]
@@ -1642,13 +1696,15 @@ components:
           minItems: 1
           items:
             $ref: "#/components/schemas/AmenityValue"
-    AmenitiesList:
+    AmenityCategoriesList:
       type: object
       required: [data]
       description: >-
         The complete hotel amenity dictionary grouped by category and returned
-        in one response (small, not paginated). It includes every system amenity,
-        independent of assignments to individual hotels.
+        in one response (small, not paginated). It includes every system
+        amenity, independent of assignments to individual hotels. Supported
+        option lists are included only when `expand=options` is requested. The
+        schema example below represents an expanded response.
       properties:
         data:
           type: array
@@ -1662,7 +1718,7 @@ components:
             amenities:
               - code: aquapark
                 label: { cs-CZ: Akvapark, de: Aquapark, en: Aquapark }
-                detailKinds: [proximity, access, opening_hours, note]
+                detailKinds: [proximity, access, opening_hours]
               - code: sauna
                 label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
                 detailKinds: [proximity, access, options, opening_hours]

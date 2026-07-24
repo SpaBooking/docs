@@ -2,12 +2,22 @@
 
 ## 2026-07-24
 
+### Hotels
+
+- `priceFrom` now returns the cheapest available current or future room price
+  for the room's standard occupancy. It includes nightly and minimum-stay
+  totals, occupancy, and minimum nights for each available currency. Hotels
+  without a usable price return `null`. Applicable public-channel promotions
+  are included together with their original prices.
+
 ### Amenities
 
-- `GET /amenities` now groups dictionary entries by category. Each item in
-  `data` contains `category` and an `amenities` array.
-- Hotel responses now group assigned amenity values by category. Categories
-  without assigned amenities are omitted.
+- The amenity dictionary is available from `GET /amenity-categories`. Each item
+  in `data` contains `category` and an `amenities` array.
+- Hotel responses expose assigned amenity values under `amenityCategories`.
+  Categories without assigned amenities are omitted.
+- Amenity option definitions are omitted from the dictionary by default. Use
+  `expand=options` to include every supported choice and its localized label.
 - Amenity-specific choices use the generic `options` detail kind and localized
   `options` objects. This replaces the public `parking_types`, `sauna_types`,
   and `dietary_options` detail kinds and their corresponding value fields.
@@ -19,9 +29,8 @@
   requested note translations are `null`.
 - Amenity charge information is returned exclusively through `access` using
   `included`, `conditional`, or `paid`.
-- `wheelchair_access` and `ev_charging` are presence-only amenities. Their
-  dictionary entries return an empty `detailKinds` array and their hotel values
-  contain only `code`.
+- Dictionary entries with an empty `detailKinds` array are presence-only. Their
+  hotel values contain only `code`.
 
 ## 2026-07-23
 
@@ -29,7 +38,7 @@
 
 - Added `GET /hotels`.
 - Added `GET /hotels/{hotelId}`.
-- Added `GET /amenities`.
+- Added `GET /amenity-categories`.
 - Hotel responses include localized `shortDescription` and
   `channelContent.tagline`, structured accommodation rules and meal services,
   ordered indication codes, staff language codes, and structured amenities.

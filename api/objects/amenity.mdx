@@ -5,7 +5,7 @@ openapi-schema: "/api/v2/openapi.yaml Amenity"
 ---
 
 An entry nested in a category returned by
-[`GET /api/v2/amenities`](/api/v2/reference/amenities/list-the-amenity-dictionary).
+[`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
 Its stable `code` identifies the amenity in hotel responses. The parent
 category object contains the stable category code and localized category label.
 `detailKinds` declares which structured fields can be populated on the
@@ -26,7 +26,7 @@ value. The corresponding hotel amenity contains only its `code`.
 
 For example:
 
-```json
+```json Response with expand=options
 {
   "code": "sauna",
   "detailKinds": ["proximity", "access", "options", "opening_hours"],
@@ -50,6 +50,8 @@ For example:
 ```
 
 This sauna can populate `proximity` (and conditionally `proximityMeters`),
-`access`, `options`, and `openingHours`. The dictionary's `options` array lists
-all valid sauna choices. It does not support `note`, so the `note` property is
-omitted from its [Amenity value](/api/objects/amenity-value).
+`access`, `options`, and `openingHours`. Request `expand=options` to include the
+dictionary's `options` array with all valid sauna choices. Without that expand,
+the `options` property is omitted while `detailKinds` still includes `options`.
+The sauna does not support `note`, so the `note` property is omitted from its
+[Amenity value](/api/objects/amenity-value).
