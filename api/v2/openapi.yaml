@@ -103,6 +103,13 @@ paths:
       tags: [Hotels]
       summary: List hotels
       operationId: getHotels
+      x-mint:
+        content: |
+          <Warning>
+            **Draft:** The `roomTypes` response field and `expand=roomTypes`
+            behavior are still in progress. Their response shape may change
+            before they are finalized.
+          </Warning>
       description: |
         Returns active hotels across the companies your public key is scoped to.
         A hotel includes its localized short description and sales-channel
@@ -112,10 +119,6 @@ paths:
         default locale (cs-CZ); other untranslated values are returned as null.
 
         `priceFrom` is null when no indicative price is available.
-
-        > **Draft:** The `roomTypes` field and `expand=roomTypes` behavior are
-        > still in progress. Their response shape may change before they are
-        > finalized.
 
         See the [Hotel](/api/objects/hotel) object for the full field reference.
       parameters:
@@ -197,13 +200,16 @@ paths:
       tags: [Hotels]
       summary: Get a hotel
       operationId: getHotel
+      x-mint:
+        content: |
+          <Warning>
+            **Draft:** The `roomTypes` response field and `expand=roomTypes`
+            behavior are still in progress. Their response shape may change
+            before they are finalized.
+          </Warning>
       description: |
         Returns a single hotel with its localized content, complete structured
         profile, and amenities by id.
-
-        > **Draft:** The `roomTypes` field and `expand=roomTypes` behavior are
-        > still in progress. Their response shape may change before they are
-        > finalized.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -247,10 +253,13 @@ paths:
       tags: [Room types]
       summary: List room types
       operationId: getRoomTypes
+      x-mint:
+        content: |
+          <Warning>
+            **Draft:** This endpoint is still in progress. Its parameters and
+            response shape may change before it is finalized.
+          </Warning>
       description: |
-        > **Draft endpoint:** This endpoint is still in progress. Its
-        > parameters and response shape may change before it is finalized.
-
         Returns room types of active hotels across the companies your public
         key is scoped to. Localized fields (`category`, `description`) return
         the locale keys selected by `Accept-Language`.
@@ -335,10 +344,13 @@ paths:
       tags: [Room types]
       summary: Get a room type
       operationId: getRoomType
+      x-mint:
+        content: |
+          <Warning>
+            **Draft:** This endpoint is still in progress. Its parameters and
+            response shape may change before it is finalized.
+          </Warning>
       description: |
-        > **Draft endpoint:** This endpoint is still in progress. Its
-        > parameters and response shape may change before it is finalized.
-
         Returns a single room type by id.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
