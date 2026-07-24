@@ -113,6 +113,10 @@ paths:
 
         `priceFrom` is null when no indicative price is available.
 
+        > **Draft:** The `roomTypes` field and `expand=roomTypes` behavior are
+        > still in progress. Their response shape may change before they are
+        > finalized.
+
         See the [Hotel](/api/objects/hotel) object for the full field reference.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -168,9 +172,10 @@ paths:
             type: string
             enum: [roomTypes]
           description: >-
-            Expand related resources inline. Set to `roomTypes` to embed each
-            hotel's room types in the response (otherwise fetch them separately
-            via `GET /room-types?hotelId={hotelId}`).
+            **Draft:** This expansion is still in progress. Set to `roomTypes`
+            to embed each hotel's room types in the response (otherwise fetch
+            them separately via `GET /room-types?hotelId={hotelId}`). Its
+            response shape may change before it is finalized.
       responses:
         "200":
           description: A paginated list of hotels.
@@ -192,9 +197,13 @@ paths:
       tags: [Hotels]
       summary: Get a hotel
       operationId: getHotel
-      description: >-
+      description: |
         Returns a single hotel with its localized content, complete structured
         profile, and amenities by id.
+
+        > **Draft:** The `roomTypes` field and `expand=roomTypes` behavior are
+        > still in progress. Their response shape may change before they are
+        > finalized.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -211,9 +220,10 @@ paths:
             type: string
             enum: [roomTypes]
           description: >-
-            Expand related resources inline. Set to `roomTypes` to embed the
-            hotel's room types in the response (otherwise fetch them separately
-            via `GET /room-types?hotelId={hotelId}`).
+            **Draft:** This expansion is still in progress. Set to `roomTypes`
+            to embed the hotel's room types in the response (otherwise fetch
+            them separately via `GET /room-types?hotelId={hotelId}`). Its
+            response shape may change before it is finalized.
       responses:
         "200":
           description: The hotel.
@@ -238,6 +248,9 @@ paths:
       summary: List room types
       operationId: getRoomTypes
       description: |
+        > **Draft endpoint:** This endpoint is still in progress. Its
+        > parameters and response shape may change before it is finalized.
+
         Returns room types of active hotels across the companies your public
         key is scoped to. Localized fields (`category`, `description`) return
         the locale keys selected by `Accept-Language`.
@@ -322,7 +335,11 @@ paths:
       tags: [Room types]
       summary: Get a room type
       operationId: getRoomType
-      description: Returns a single room type by id.
+      description: |
+        > **Draft endpoint:** This endpoint is still in progress. Its
+        > parameters and response shape may change before it is finalized.
+
+        Returns a single room type by id.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -693,6 +710,9 @@ components:
           description: Generated preview image URL, or null when unavailable.
     RoomType:
       type: object
+      description: >-
+        **Draft:** The room-type resource is still in progress. Its response
+        shape may change before it is finalized.
       required:
         - id
         - hotelId
@@ -1104,7 +1124,10 @@ components:
             Indicative cheapest price, or null when no price is available.
         roomTypes:
           type: array
-          description: >-
+          description: |
+            **Draft:** This field and its response shape are still in progress
+            and may change before they are finalized.
+
             Embedded only when `expand=roomTypes`;
             otherwise fetch them via `GET /room-types?hotelId={hotelId}`. Each
             item omits the nested `hotel` block (it is this hotel).

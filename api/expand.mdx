@@ -9,6 +9,12 @@ instead of fetching it with a second request. Depending on the endpoint this is
 either a referenced object (a room type's `hotel`, expanded from its `hotelId`)
 or a related collection (a hotel's `roomTypes`). Nothing is expanded by default.
 
+<Note>
+  **Draft:** Room-type endpoints and both room-type expansions
+  (`expand=roomTypes` on hotels and `expand=hotel` on room types) are still in
+  progress. Their response shapes may change before they are finalized.
+</Note>
+
 ```bash
 # Embed each hotel's room types
 GET /api/v2/hotels?expand=roomTypes
