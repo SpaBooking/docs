@@ -4,9 +4,9 @@ description: "A spa or wellness property and its structured guest profile."
 openapi-schema: "/api/v2/openapi.yaml Hotel"
 ---
 
-A hotel contains identity, destination, contact details, images, localized
-content, structured accommodation rules, meal services, medical indications,
-staff languages, and hotel-level [amenities](/api/amenities).
+A hotel contains identity, contact details, images, localized content,
+structured accommodation rules, meal services, medical indications, staff
+languages, and hotel-level [amenities](/api/amenities).
 
 Localized values return only the keys selected by
 [`Accept-Language`](/api/localization). `name` falls back to the Czech value when
@@ -55,5 +55,5 @@ to resolve labels, categories, and supported detail fields. See
 [Amenity value](/api/objects/amenity-value) for the exact `detailKinds` to
 response-field mapping and the neutral values returned for unsupported fields.
 
-`priceFrom` is reserved for an indicative lowest price and currently returns
-`null`.
+`priceFrom` contains the indicative lowest price when one is available and is
+`null` otherwise.

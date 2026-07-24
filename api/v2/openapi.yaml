@@ -111,7 +111,7 @@ paths:
         the locale keys selected by `Accept-Language`. `name` falls back to the
         default locale (cs-CZ); other untranslated values are returned as null.
 
-        `priceFrom` is currently null.
+        `priceFrom` is null when no indicative price is available.
 
         See the [Hotel](/api/objects/hotel) object for the full field reference.
       parameters:
@@ -655,8 +655,8 @@ components:
         Localized field keyed by supported response locale (`cs-CZ`, `de`, `en`,
         `ru`). When `Accept-Language` is set, only the matched keys are returned.
       example:
-        cs-CZ: Superior dvouluzkovy pokoj
-        de: Superior Doppelzimmer
+        cs-CZ: Český text
+        de: Deutscher Text
     HotelNameLocalizedString:
       type: object
       additionalProperties: false
@@ -759,6 +759,25 @@ components:
               minimum: 1
               maximum: 5
               example: 4
+      example:
+        id: 66f16191f739705faa020003
+        hotelId: 66f16191f739705faa020001
+        code: SUPERIOR-DBL
+        category:
+          cs-CZ: Superior dvoulůžkový pokoj
+          de: Superior Doppelzimmer
+          en: Superior double room
+          ru: Улучшенный двухместный номер
+        beds: 2
+        facilities: [shower, toilet]
+        images:
+          - url: https://cdn.example.com/rooms/superior.jpg
+            thumbnailUrl: https://cdn.example.com/rooms/superior-thumbnail.jpg
+        description:
+          cs-CZ: Prostorný pokoj s vlastní koupelnou.
+          de: Geräumiges Zimmer mit eigenem Bad.
+          en: Spacious room with a private bathroom.
+          ru: Просторный номер с собственной ванной комнатой.
     Pagination:
       type: object
       required: [limit, nextCursor, hasMore, total]
@@ -804,15 +823,6 @@ components:
           pattern: "^[a-z]{3}$"
           description: Lowercase ISO 3166-1 alpha-3 country code.
           example: cze
-    HotelDestination:
-      type: object
-      required: [id, name]
-      properties:
-        id:
-          type: string
-          pattern: "^[0-9a-fA-F]{24}$"
-        name:
-          $ref: "#/components/schemas/LocalizedString"
     HotelTimeRange:
       type: object
       required: [from, to]
@@ -917,6 +927,16 @@ components:
           description: >-
             Localized note about included drinks. Each locale value is at
             most 200 characters.
+      example:
+        enabled: true
+        servingTime: { from: "07:00", to: "10:00" }
+        serviceMethod: buffet
+        drinksIncluded: true
+        drinksNote:
+          cs-CZ: Nealkoholické nápoje jsou v ceně.
+          de: Alkoholfreie Getränke sind inklusive.
+          en: Soft drinks are included.
+          ru: Безалкогольные напитки включены в стоимость.
     HotelMealServices:
       type: object
       required: [breakfast, lunch, dinner]
@@ -927,6 +947,37 @@ components:
           $ref: "#/components/schemas/HotelMealService"
         dinner:
           $ref: "#/components/schemas/HotelMealService"
+      example:
+        breakfast:
+          enabled: true
+          servingTime: { from: "07:00", to: "10:00" }
+          serviceMethod: buffet
+          drinksIncluded: true
+          drinksNote:
+            cs-CZ: Nealkoholické nápoje jsou v ceně.
+            de: Alkoholfreie Getränke sind inklusive.
+            en: Soft drinks are included.
+            ru: Безалкогольные напитки включены в стоимость.
+        lunch:
+          enabled: true
+          servingTime: { from: "11:30", to: "14:30" }
+          serviceMethod: buffet
+          drinksIncluded: true
+          drinksNote:
+            cs-CZ: Voda je zahrnuta v ceně oběda.
+            de: Wasser ist im Mittagessen inbegriffen.
+            en: Water is included with lunch.
+            ru: Вода включена в стоимость обеда.
+        dinner:
+          enabled: true
+          servingTime: { from: "18:00", to: "21:00" }
+          serviceMethod: served
+          drinksIncluded: false
+          drinksNote:
+            cs-CZ: Nápoje se hradí samostatně.
+            de: Getränke werden separat berechnet.
+            en: Drinks are charged separately.
+            ru: Напитки оплачиваются отдельно.
     Hotel:
       type: object
       required:
@@ -935,7 +986,6 @@ components:
         - shortDescription
         - channelContent
         - stars
-        - destination
         - address
         - email
         - phoneNumber
@@ -975,10 +1025,6 @@ components:
           minimum: 1
           maximum: 5
           example: 4
-        destination:
-          allOf:
-            - $ref: "#/components/schemas/HotelDestination"
-          nullable: true
         address:
           $ref: "#/components/schemas/HotelAddress"
         email:
@@ -1030,14 +1076,14 @@ components:
           items:
             $ref: "#/components/schemas/AmenityValue"
           example:
-            - code: sauna
-              proximity: in-hotel
-              proximityMeters: null
+            - code: aquapark
+              proximity: nearby
+              proximityMeters: 250
               access: included
               fee: null
               accessibilityLevel: null
               parkingTypes: []
-              saunaTypes: [finnish, steam]
+              saunaTypes: []
               dietaryOptions: []
               openingHours:
                 continuous: false
@@ -1046,16 +1092,16 @@ components:
                     from: "09:00"
                     to: "21:00"
               note:
-                cs-CZ: null
-                de: null
-                en: null
+                cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
+                de: Der Aquapark ist 250 Meter vom Hotel entfernt.
+                en: The aquapark is 250 metres from the hotel.
+                ru: Аквапарк находится в 250 метрах от отеля.
         priceFrom:
           allOf:
             - $ref: "#/components/schemas/PriceFrom"
           nullable: true
           description: >-
-            Reserved for an indicative cheapest price. The current
-            implementation returns null.
+            Indicative cheapest price, or null when no price is available.
         roomTypes:
           type: array
           description: >-
@@ -1075,21 +1121,14 @@ components:
           cs-CZ: Lázeňský hotel s přímým vstupem do aquaparku.
           de: Kurhotel mit direktem Zugang zum Aquapark.
           en: Spa hotel with direct access to the aquapark.
-          ru: null
+          ru: Спа-отель с прямым доступом в аквапарк.
         channelContent:
           tagline:
             cs-CZ: Lázeňská péče pod jednou střechou
             de: Kurbehandlungen unter einem Dach
             en: Spa care under one roof
-            ru: null
+            ru: Санаторно-курортное лечение под одной крышей
         stars: 4
-        destination:
-          id: 66f16191f739705faa020002
-          name:
-            cs-CZ: Františkovy Lázně
-            de: Franzensbad
-            en: Frantiskovy Lazne
-            ru: null
         address:
           addressLine: Národní 25
           city: Františkovy Lázně
@@ -1117,7 +1156,7 @@ components:
               cs-CZ: Mazlíčci jsou povoleni ve vybraných pokojích.
               de: Haustiere sind in ausgewählten Zimmern erlaubt.
               en: Pets are allowed in selected rooms.
-              ru: null
+              ru: Размещение с домашними животными разрешено в отдельных номерах.
         mealServices:
           breakfast:
             enabled: true
@@ -1128,22 +1167,50 @@ components:
               cs-CZ: Nealkoholické nápoje jsou v ceně.
               de: Alkoholfreie Getränke sind inklusive.
               en: Soft drinks are included.
-              ru: null
+              ru: Безалкогольные напитки включены в стоимость.
           lunch:
-            enabled: false
-            servingTime: { from: null, to: null }
-            serviceMethod: null
-            drinksIncluded: false
-            drinksNote: { cs-CZ: null, de: null, en: null, ru: null }
+            enabled: true
+            servingTime: { from: "11:30", to: "14:30" }
+            serviceMethod: buffet
+            drinksIncluded: true
+            drinksNote:
+              cs-CZ: Voda je zahrnuta v ceně oběda.
+              de: Wasser ist im Mittagessen inbegriffen.
+              en: Water is included with lunch.
+              ru: Вода включена в стоимость обеда.
           dinner:
             enabled: true
             servingTime: { from: "18:00", to: "21:00" }
             serviceMethod: served
             drinksIncluded: false
-            drinksNote: { cs-CZ: null, de: null, en: null, ru: null }
+            drinksNote:
+              cs-CZ: Nápoje se hradí samostatně.
+              de: Getränke werden separat berechnet.
+              en: Drinks are charged separately.
+              ru: Напитки оплачиваются отдельно.
         indications: [musculoskeletal, cardiovascular, diabetes]
         staffLanguages: [cs, de, en]
         amenities:
+          - code: aquapark
+            proximity: nearby
+            proximityMeters: 250
+            access: included
+            fee: null
+            accessibilityLevel: null
+            parkingTypes: []
+            saunaTypes: []
+            dietaryOptions: []
+            openingHours:
+              continuous: false
+              blocks:
+                - days: [monday, tuesday, wednesday, thursday, friday]
+                  from: "09:00"
+                  to: "21:00"
+            note:
+              cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
+              de: Der Aquapark ist 250 Meter vom Hotel entfernt.
+              en: The aquapark is 250 metres from the hotel.
+              ru: Аквапарк находится в 250 метрах от отеля.
           - code: sauna
             proximity: in-hotel
             proximityMeters: null
@@ -1160,7 +1227,38 @@ components:
                   from: "09:00"
                   to: "21:00"
             note: { cs-CZ: null, de: null, en: null, ru: null }
-        priceFrom: null
+          - code: parking
+            proximity: null
+            proximityMeters: null
+            access: null
+            fee: paid
+            accessibilityLevel: null
+            parkingTypes: [covered, guarded]
+            saunaTypes: []
+            dietaryOptions: []
+            openingHours:
+              continuous: false
+              blocks: []
+            note:
+              cs-CZ: Hlídané parkoviště je přímo u hotelu.
+              de: Der bewachte Parkplatz befindet sich direkt am Hotel.
+              en: Guarded parking is available next to the hotel.
+              ru: Охраняемая парковка находится рядом с отелем.
+        priceFrom:
+          CZK:
+            perNight: { amountMinor: 284000, currency: CZK, currencyExponent: 2 }
+            perNightOriginal: { amountMinor: 320000, currency: CZK, currencyExponent: 2 }
+            minimumStay: { amountMinor: 568000, currency: CZK, currencyExponent: 2 }
+            minimumStayOriginal: { amountMinor: 640000, currency: CZK, currencyExponent: 2 }
+            guests: 2
+            minimumNights: 2
+          EUR:
+            perNight: { amountMinor: 11200, currency: EUR, currencyExponent: 2 }
+            perNightOriginal: { amountMinor: 12600, currency: EUR, currencyExponent: 2 }
+            minimumStay: { amountMinor: 22400, currency: EUR, currencyExponent: 2 }
+            minimumStayOriginal: { amountMinor: 25200, currency: EUR, currencyExponent: 2 }
+            guests: 2
+            minimumNights: 2
     HotelsList:
       type: object
       required: [data, pagination]
@@ -1224,6 +1322,21 @@ components:
           allOf:
             - $ref: "#/components/schemas/PriceFromCurrency"
           nullable: true
+      example:
+        CZK:
+          perNight: { amountMinor: 284000, currency: CZK, currencyExponent: 2 }
+          perNightOriginal: { amountMinor: 320000, currency: CZK, currencyExponent: 2 }
+          minimumStay: { amountMinor: 568000, currency: CZK, currencyExponent: 2 }
+          minimumStayOriginal: { amountMinor: 640000, currency: CZK, currencyExponent: 2 }
+          guests: 2
+          minimumNights: 2
+        EUR:
+          perNight: { amountMinor: 11200, currency: EUR, currencyExponent: 2 }
+          perNightOriginal: { amountMinor: 12600, currency: EUR, currencyExponent: 2 }
+          minimumStay: { amountMinor: 22400, currency: EUR, currencyExponent: 2 }
+          minimumStayOriginal: { amountMinor: 25200, currency: EUR, currencyExponent: 2 }
+          guests: 2
+          minimumNights: 2
     AmenityCategory:
       type: object
       required: [code, label]
@@ -1286,6 +1399,21 @@ components:
           description: >-
             Optional localized helper text for the amenity note. Omitted when
             the amenity does not define one.
+      example:
+        code: sauna
+        category:
+          code: wellness
+          label:
+            cs-CZ: Bazény a wellness
+            de: Pools & Wellness
+            en: Pools & wellness
+            ru: Бассейны и велнес
+        label:
+          cs-CZ: Sauna
+          de: Sauna
+          en: Sauna
+          ru: Сауна
+        detailKinds: [proximity, access, sauna_types, opening_hours]
     AmenityOpeningHoursBlock:
       type: object
       required: [days, from, to]
@@ -1390,6 +1518,27 @@ components:
             Localized supplementary information for guests. Locale values are
             at most 200 characters and are null when the amenity does not
             support a note or the translation is not filled.
+      example:
+        code: aquapark
+        proximity: nearby
+        proximityMeters: 250
+        access: included
+        fee: null
+        accessibilityLevel: null
+        parkingTypes: []
+        saunaTypes: []
+        dietaryOptions: []
+        openingHours:
+          continuous: false
+          blocks:
+            - days: [monday, tuesday, wednesday]
+              from: "09:00"
+              to: "21:00"
+        note:
+          cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
+          de: Der Aquapark ist 250 Meter vom Hotel entfernt.
+          en: The aquapark is 250 metres from the hotel.
+          ru: Аквапарк находится в 250 метрах от отеля.
     AmenitiesList:
       type: object
       required: [data]
