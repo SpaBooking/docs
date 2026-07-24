@@ -9,11 +9,20 @@ Hotel services and amenities are exposed as structured, filterable data in API v
 There are two related resources:
 
 1. **The amenity dictionary** lists every amenity SpaPortal can assign to a hotel.
-   Each entry has a stable `code`, a localized label, a localized category, and
-   the detail fields supported by that amenity.
-2. **Hotel amenity values** appear in `hotel.amenities`. Presence of an item means
-   that the hotel offers the amenity. The item stores its structured details and
-   a localized guest note when the dictionary includes the `note` detail kind.
+   It is grouped by category. Each category has a stable `code`, a localized
+   label, and an `amenities` array whose entries contain a stable `code`,
+   localized `label`, and supported detail fields.
+2. **Hotel amenity values** are grouped by category in `hotel.amenities`.
+   Categories without assigned amenities are omitted. Values inside each
+   group's `amenities` array store the amenity's structured details and a
+   localized guest note when the dictionary includes the `note` detail kind.
+
+<Note>
+  These responses serve different purposes. `GET /api/v2/amenities` always
+  returns the complete system dictionary. `GET /api/v2/hotels` and
+  `GET /api/v2/hotels/{hotelId}` return only the amenity values assigned to each
+  hotel.
+</Note>
 
 ## Amenity dictionary
 
@@ -21,15 +30,16 @@ There are two related resources:
   Fetch the full amenity dictionary.
 </Card>
 
-`GET /api/v2/amenities` returns the complete dictionary in one response. It is
-small and not paginated. Use [`Accept-Language`](/api/localization) to select the
-locale keys returned in localized fields.
+`GET /api/v2/amenities` returns every category and amenity available in
+SpaPortal, whether or not a particular hotel uses it. The complete dictionary is
+returned in one response and is not paginated. Use
+[`Accept-Language`](/api/localization) to select the locale keys returned in
+localized fields.
 
 ```json Response
 {
   "data": [
     {
-      "code": "sauna",
       "category": {
         "code": "wellness",
         "label": {
@@ -37,14 +47,41 @@ locale keys returned in localized fields.
           "en": "Pools & wellness"
         }
       },
-      "label": {
-        "cs-CZ": "Sauna",
-        "en": "Sauna"
-      },
-      "detailKinds": ["proximity", "access", "sauna_types", "opening_hours"]
+      "amenities": [
+        {
+          "code": "sauna",
+          "label": {
+            "cs-CZ": "Sauna",
+            "en": "Sauna"
+          },
+          "detailKinds": ["proximity", "access", "options", "opening_hours"],
+          "options": [
+            {
+              "code": "finnish",
+              "label": {
+                "cs-CZ": "Finská sauna",
+                "en": "Finnish sauna"
+              }
+            },
+            {
+              "code": "infrared",
+              "label": {
+                "cs-CZ": "Infra sauna",
+                "en": "Infrared sauna"
+              }
+            },
+            {
+              "code": "steam",
+              "label": {
+                "cs-CZ": "Parní lázeň",
+                "en": "Steam bath"
+              }
+            }
+          ]
+        }
+      ]
     },
     {
-      "code": "parking",
       "category": {
         "code": "parking",
         "label": {
@@ -52,18 +89,47 @@ locale keys returned in localized fields.
           "en": "Parking"
         }
       },
-      "label": {
-        "cs-CZ": "Parkoviště",
-        "en": "Parking"
-      },
-      "detailKinds": ["parking_types", "fee", "note"]
+      "amenities": [
+        {
+          "code": "parking",
+          "label": {
+            "cs-CZ": "Parkoviště",
+            "en": "Parking"
+          },
+          "detailKinds": ["options", "access", "note"],
+          "options": [
+            {
+              "code": "outdoor",
+              "label": {
+                "cs-CZ": "Venkovní",
+                "en": "Outdoor"
+              }
+            },
+            {
+              "code": "covered",
+              "label": {
+                "cs-CZ": "Kryté",
+                "en": "Covered"
+              }
+            },
+            {
+              "code": "guarded",
+              "label": {
+                "cs-CZ": "Hlídané",
+                "en": "Guarded"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }
 ```
 
-Resolve hotel `amenities[].code` values against this dictionary instead of
-hard-coding display labels. Dictionary codes are stable.
+Resolve hotel `amenities[].amenities[].code` values against the entries nested
+in each dictionary category instead of hard-coding display labels. Category and
+amenity codes are stable.
 
 ### Categories
 
@@ -81,49 +147,84 @@ hard-coding display labels. Dictionary codes are stable.
 ### Detail kinds
 
 `detailKinds` tells clients which parts of an [Amenity value](/api/objects/amenity-value)
-are relevant:
+are included:
 
 | Kind | Value field |
 | --- | --- |
-| `proximity` | `proximity`, and `proximityMeters` when `nearby` |
+| `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
 | `access` | `access` |
-| `fee` | `fee` |
-| `accessibility_level` | `accessibilityLevel` |
-| `parking_types` | `parkingTypes` |
-| `sauna_types` | `saunaTypes` |
-| `dietary_options` | `dietaryOptions` |
+| `options` | localized amenity-specific `options` |
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
+An empty `detailKinds` array identifies a presence-only amenity. Its hotel value
+contains only `code`; for example, `{ "code": "wheelchair_access" }`.
+
 ## Selected amenities on a hotel
 
-Every v2 [Hotel](/api/objects/hotel) response contains an `amenities` array. An
-absent code means the amenity is not offered or has not been advertised.
+Every v2 [Hotel](/api/objects/hotel) response groups assigned amenities by
+category. Only categories containing at least one assigned amenity are returned.
+An absent code means the amenity is not offered or has not been advertised.
 
 ```json Hotel amenity values
 {
   "amenities": [
     {
-      "code": "sauna",
-      "proximity": "in-hotel",
-      "proximityMeters": null,
-      "access": "included",
-      "fee": null,
-      "accessibilityLevel": null,
-      "parkingTypes": [],
-      "saunaTypes": ["finnish", "steam"],
-      "dietaryOptions": [],
-      "openingHours": {
-        "continuous": false,
-        "blocks": [
-          {
-            "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
-            "from": "09:00",
-            "to": "21:00"
-          }
-        ]
+      "category": {
+        "code": "wellness",
+        "label": {
+          "cs-CZ": "Bazény a wellness",
+          "en": "Pools & wellness"
+        }
       },
-      "note": { "cs-CZ": null, "en": null }
+      "amenities": [
+        {
+          "code": "aquapark",
+          "proximity": "nearby",
+          "proximityMeters": 250,
+          "access": "included",
+          "openingHours": {
+            "continuous": false,
+            "blocks": [
+              {
+                "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+                "from": "09:00",
+                "to": "21:00"
+              }
+            ]
+          },
+          "note": {
+            "cs-CZ": "Akvapark je vzdálený 250 metrů od hotelu.",
+            "en": "The aquapark is 250 metres from the hotel."
+          }
+        },
+        {
+          "code": "sauna",
+          "proximity": "in-hotel",
+          "proximityMeters": null,
+          "access": "included",
+          "options": [
+            {
+              "code": "finnish",
+              "label": {
+                "cs-CZ": "Finská sauna",
+                "en": "Finnish sauna"
+              }
+            },
+            {
+              "code": "steam",
+              "label": {
+                "cs-CZ": "Parní lázeň",
+                "en": "Steam bath"
+              }
+            }
+          ],
+          "openingHours": {
+            "continuous": false,
+            "blocks": []
+          }
+        }
+      ]
     }
   ]
 }
@@ -133,19 +234,20 @@ Structured details use the following enums:
 
 - `proximity`: `in-hotel`, `connecting`, `nearby`
 - `access`: `included`, `conditional`, `paid`
-- `fee`: `free`, `conditional`, `paid`
-- `accessibilityLevel`: `full`, `partial`
-- `parkingTypes`: `outdoor`, `covered`, `guarded`
-- `saunaTypes`: `finnish`, `infrared`, `steam`
-- `dietaryOptions`: `diet`, `reduction`, `gluten-free`, `diabetic`,
-  `lactose-free`
+- `options`: localized amenity-specific choices. The dictionary returns every
+  available choice; hotel responses return only the selected choices.
 - opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
   `saturday`, `sunday`
 
-All scalar detail fields may be `null` when they are not applicable or not filled
-in. Localized note values are also `null` when the amenity does not support a
-note. Arrays are returned as empty arrays and opening hours as
-`{ "continuous": false, "blocks": [] }` when unset.
+Apart from `code`, an amenity value includes only the fields mapped from its
+entry's `detailKinds` under `data[].amenities[]`. When a declared field is not
+filled, scalar fields are `null`, arrays are empty, opening hours are
+`{ "continuous": false, "blocks": [] }`, and requested localized note values
+are `null`.
+
+`access` also represents whether an amenity carries an additional charge:
+`included` means no additional charge, `conditional` means inclusion depends on
+the stated conditions, and `paid` means an additional charge applies.
 
 ## Filtering hotels
 

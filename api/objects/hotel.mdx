@@ -46,14 +46,17 @@ nervous_system, prevention, gynecology, oncology_aftercare, diabetes
 
 ## Amenities
 
-`amenities` contains the hotel's selected structured amenities. Each item's
-`code` references the [amenity dictionary](/api/amenities). The value also carries
-applicable access, fee, distance, type, opening-hour, and localized note details.
+`amenities` groups the hotel's assigned structured amenities by category.
+Categories without assigned amenities are omitted, and the response does not
+contain the complete system dictionary. Each nested value's `code` references
+the [amenity dictionary](/api/amenities) and carries applicable access,
+distance, type, opening-hour, and localized note details.
 
 Fetch [`GET /api/v2/amenities`](/api/v2/reference/amenities/list-the-amenity-dictionary)
-to resolve labels, categories, and supported detail fields. See
+and find the matching code under `data[].amenities[]` to resolve its label,
+parent category, and supported detail fields. See
 [Amenity value](/api/objects/amenity-value) for the exact `detailKinds` to
-response-field mapping and the neutral values returned for unsupported fields.
+response-field mapping. Fields not supported by an amenity are omitted.
 
 `priceFrom` contains the indicative lowest price when one is available and is
 `null` otherwise.

@@ -4,47 +4,46 @@ description: "A structured amenity selected for a hotel."
 openapi-schema: "/api/v2/openapi.yaml AmenityValue"
 ---
 
-An amenity offered by a hotel. Its `code` references the
-[amenity dictionary](/api/amenities); the remaining properties describe access,
-distance, types, opening hours, and a localized guest note.
+An amenity assigned to a hotel and returned under
+`hotel.amenities[].amenities[]` by both hotel endpoints. Hotel amenities are
+grouped by category, and categories without assigned amenities are omitted. Its
+`code` references an amenity nested in one of the category groups returned by
+the [amenity dictionary](/api/amenities). The remaining properties describe
+access, distance, types, opening hours, and a localized guest note.
 
-The dictionary entry's `detailKinds` determines which properties are meaningful
-for a particular code. Properties that are not applicable or not filled are
-returned as `null` or empty arrays, so clients do not need to infer missing keys.
+To interpret the value, find the matching `code` in
+`GET /api/v2/amenities` under `data[].amenities[]`. The parent `category`
+provides the amenity's category and the matching entry's `detailKinds`
+determines which properties are included. Properties that are not supported by
+that amenity are omitted.
 
-`detailKinds` itself is returned by `GET /api/v2/amenities`, not inside each
-hotel's amenity value. Amenity values use a stable response shape so you can
-deserialize all codes with one model.
+`category` is returned once on the parent hotel amenity group. The amenity's
+`label` and `detailKinds` remain dictionary metadata and are not repeated inside
+each hotel's amenity value.
 
 Each localized `note` value is limited to 200 characters.
 
 | Dictionary detail kind | Meaningful amenity value field |
 | --- | --- |
-| `proximity` | `proximity`; `proximityMeters` is meaningful when `proximity` is `nearby` |
+| `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
 | `access` | `access` |
-| `fee` | `fee` |
-| `accessibility_level` | `accessibilityLevel` |
-| `parking_types` | `parkingTypes` |
-| `sauna_types` | `saunaTypes` |
-| `dietary_options` | `dietaryOptions` |
+| `options` | localized amenity-specific `options` selected for the hotel |
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
-For a sauna with
-`detailKinds: [proximity, access, sauna_types, opening_hours]`, a hotel response
-can contain:
+When the dictionary returns `detailKinds: []`, the amenity is presence-only and
+its value contains only `code`.
+
+For an aquapark with
+`detailKinds: [proximity, access, opening_hours, note]`, a hotel response can
+contain:
 
 ```json
 {
-  "code": "sauna",
-  "proximity": "in-hotel",
-  "proximityMeters": null,
+  "code": "aquapark",
+  "proximity": "nearby",
+  "proximityMeters": 250,
   "access": "included",
-  "fee": null,
-  "accessibilityLevel": null,
-  "parkingTypes": [],
-  "saunaTypes": ["finnish", "steam"],
-  "dietaryOptions": [],
   "openingHours": {
     "continuous": false,
     "blocks": [
@@ -55,9 +54,35 @@ can contain:
       }
     ]
   },
-  "note": { "cs-CZ": null, "en": null }
+  "note": {
+    "cs-CZ": "Akvapark je vzdálený 250 metrů od hotelu.",
+    "en": "The aquapark is 250 metres from the hotel."
+  }
 }
 ```
 
-The unsupported fields remain present with neutral values. Requested localized
-keys follow [`Accept-Language`](/api/localization).
+For an amenity with `detailKinds: [options]`, the dictionary lists every
+available option, while the hotel value contains only selected options:
+
+```json
+{
+  "code": "sauna",
+  "options": [
+    {
+      "code": "finnish",
+      "label": {
+        "cs-CZ": "Finská sauna",
+        "en": "Finnish sauna"
+      }
+    }
+  ]
+}
+```
+
+Fields mapped from `detailKinds` remain present even when they are not filled:
+scalars are `null`, arrays are empty, opening hours use
+`{ "continuous": false, "blocks": [] }`, and requested localized note values are
+`null`. Requested localized keys follow [`Accept-Language`](/api/localization).
+
+`access` uses `included`, `conditional`, or `paid` and also communicates whether
+the amenity carries an additional charge.

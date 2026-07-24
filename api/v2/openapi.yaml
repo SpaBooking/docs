@@ -19,10 +19,16 @@ paths:
       summary: List the amenity dictionary
       operationId: getAmenities
       description: |
-        Returns the full hotel amenity dictionary. Each item has a stable `code`,
-        localized label and category, and the detail kinds supported by that
-        amenity. Fetch it to build amenity filters and resolve the codes returned
-        in `hotel.amenities`. This small reference list is not paginated.
+        Returns the full hotel amenity dictionary grouped by category. Each
+        item in `data` contains a stable category code, its localized label,
+        and the amenities in that category. Each nested amenity has a stable
+        `code`, localized `label`, and supported `detailKinds`.
+
+        This endpoint returns every amenity available in the system, independent
+        of which amenities are assigned to a particular hotel. Fetch it to build
+        amenity filters and resolve the codes returned in
+        `hotel.amenities[].amenities[]`. This small reference list is not
+        paginated.
 
         See the [Amenity](/api/objects/amenity) object for the full field reference.
       parameters:
@@ -1102,32 +1108,37 @@ components:
         amenities:
           type: array
           description: >-
-            Selected structured hotel amenities. Resolve `code` against
-            `GET /amenities` for its localized label, category and supported
-            detail kinds.
+            Structured amenities assigned to this hotel, grouped by category.
+            Categories without assigned amenities are omitted. Resolve each
+            nested amenity `code` against the entries under the
+            `GET /amenities` response `data[].amenities[]` for its localized
+            label and supported detail kinds.
           items:
-            $ref: "#/components/schemas/AmenityValue"
+            $ref: "#/components/schemas/HotelAmenityCategoryGroup"
           example:
-            - code: aquapark
-              proximity: nearby
-              proximityMeters: 250
-              access: included
-              fee: null
-              accessibilityLevel: null
-              parkingTypes: []
-              saunaTypes: []
-              dietaryOptions: []
-              openingHours:
-                continuous: false
-                blocks:
-                  - days: [monday, tuesday, wednesday]
-                    from: "09:00"
-                    to: "21:00"
-              note:
-                cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
-                de: Der Aquapark ist 250 Meter vom Hotel entfernt.
-                en: The aquapark is 250 metres from the hotel.
-                ru: Аквапарк находится в 250 метрах от отеля.
+            - category:
+                code: wellness
+                label:
+                  cs-CZ: Bazény a wellness
+                  de: Pools & Wellness
+                  en: Pools & wellness
+                  ru: Бассейны и велнес
+              amenities:
+                - code: aquapark
+                  proximity: nearby
+                  proximityMeters: 250
+                  access: included
+                  openingHours:
+                    continuous: false
+                    blocks:
+                      - days: [monday, tuesday, wednesday]
+                        from: "09:00"
+                        to: "21:00"
+                  note:
+                    cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
+                    de: Der Aquapark ist 250 Meter vom Hotel entfernt.
+                    en: The aquapark is 250 metres from the hotel.
+                    ru: Аквапарк находится в 250 метрах от отеля.
         priceFrom:
           allOf:
             - $ref: "#/components/schemas/PriceFrom"
@@ -1226,59 +1237,80 @@ components:
         indications: [musculoskeletal, cardiovascular, diabetes]
         staffLanguages: [cs, de, en]
         amenities:
-          - code: aquapark
-            proximity: nearby
-            proximityMeters: 250
-            access: included
-            fee: null
-            accessibilityLevel: null
-            parkingTypes: []
-            saunaTypes: []
-            dietaryOptions: []
-            openingHours:
-              continuous: false
-              blocks:
-                - days: [monday, tuesday, wednesday, thursday, friday]
-                  from: "09:00"
-                  to: "21:00"
-            note:
-              cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
-              de: Der Aquapark ist 250 Meter vom Hotel entfernt.
-              en: The aquapark is 250 metres from the hotel.
-              ru: Аквапарк находится в 250 метрах от отеля.
-          - code: sauna
-            proximity: in-hotel
-            proximityMeters: null
-            access: included
-            fee: null
-            accessibilityLevel: null
-            parkingTypes: []
-            saunaTypes: [finnish, steam]
-            dietaryOptions: []
-            openingHours:
-              continuous: false
-              blocks:
-                - days: [monday, tuesday, wednesday, thursday, friday]
-                  from: "09:00"
-                  to: "21:00"
-            note: { cs-CZ: null, de: null, en: null, ru: null }
-          - code: parking
-            proximity: null
-            proximityMeters: null
-            access: null
-            fee: paid
-            accessibilityLevel: null
-            parkingTypes: [covered, guarded]
-            saunaTypes: []
-            dietaryOptions: []
-            openingHours:
-              continuous: false
-              blocks: []
-            note:
-              cs-CZ: Hlídané parkoviště je přímo u hotelu.
-              de: Der bewachte Parkplatz befindet sich direkt am Hotel.
-              en: Guarded parking is available next to the hotel.
-              ru: Охраняемая парковка находится рядом с отелем.
+          - category:
+              code: wellness
+              label:
+                cs-CZ: Bazény a wellness
+                de: Pools & Wellness
+                en: Pools & wellness
+                ru: Бассейны и велнес
+            amenities:
+              - code: aquapark
+                proximity: nearby
+                proximityMeters: 250
+                access: included
+                openingHours:
+                  continuous: false
+                  blocks:
+                    - days: [monday, tuesday, wednesday, thursday, friday]
+                      from: "09:00"
+                      to: "21:00"
+                note:
+                  cs-CZ: Aquapark je vzdálený 250 metrů od hotelu.
+                  de: Der Aquapark ist 250 Meter vom Hotel entfernt.
+                  en: The aquapark is 250 metres from the hotel.
+                  ru: Аквапарк находится в 250 метрах от отеля.
+              - code: sauna
+                proximity: in-hotel
+                proximityMeters: null
+                access: included
+                options:
+                  - code: finnish
+                    label:
+                      cs-CZ: Finská sauna
+                      de: Finnische Sauna
+                      en: Finnish sauna
+                      ru: Финская сауна
+                  - code: steam
+                    label:
+                      cs-CZ: Parní lázeň
+                      de: Dampfbad
+                      en: Steam bath
+                      ru: Паровая баня
+                openingHours:
+                  continuous: false
+                  blocks:
+                    - days: [monday, tuesday, wednesday, thursday, friday]
+                      from: "09:00"
+                      to: "21:00"
+          - category:
+              code: parking
+              label:
+                cs-CZ: Parkování
+                de: Parken
+                en: Parking
+                ru: Парковка
+            amenities:
+              - code: parking
+                access: paid
+                options:
+                  - code: covered
+                    label:
+                      cs-CZ: Kryté
+                      de: Überdacht
+                      en: Covered
+                      ru: Крытая
+                  - code: guarded
+                    label:
+                      cs-CZ: Hlídané
+                      de: Bewacht
+                      en: Guarded
+                      ru: Охраняемая
+                note:
+                  cs-CZ: Hlídané parkoviště je přímo u hotelu.
+                  de: Der bewachte Parkplatz befindet sich direkt am Hotel.
+                  en: Guarded parking is available next to the hotel.
+                  ru: Охраняемая парковка находится рядом с отелем.
         priceFrom:
           CZK:
             perNight: { amountMinor: 284000, currency: CZK, currencyExponent: 2 }
@@ -1389,19 +1421,44 @@ components:
             - children
         label:
           $ref: "#/components/schemas/LocalizedString"
+    AmenityCategoryGroup:
+      type: object
+      required: [category, amenities]
+      description: >-
+        One amenity category and the amenity dictionary entries assigned to it.
+      properties:
+        category:
+          $ref: "#/components/schemas/AmenityCategory"
+        amenities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Amenity"
+    AmenityOption:
+      type: object
+      required: [code, label]
+      description: >-
+        One localized amenity-specific option. Its meaning is scoped by the
+        parent amenity code.
+      properties:
+        code:
+          type: string
+          description: Stable option code.
+          example: finnish
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized option label.
     Amenity:
       type: object
-      required: [code, category, label, detailKinds]
+      required: [code, label, detailKinds]
       description: >-
-        One entry in the hotel amenity dictionary returned by
-        `GET /amenities`.
+        One amenity dictionary entry nested under its category in the response
+        from `GET /amenities`.
       properties:
         code:
           type: string
           description: Stable code stored on hotels and used for filtering.
           example: sauna
-        category:
-          $ref: "#/components/schemas/AmenityCategory"
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -1415,19 +1472,23 @@ components:
           description: >-
             Structured detail field groups supported by this amenity. Resolve
             these snake-case values to AmenityValue properties as documented in
-            the Amenity value object reference.
+            the Amenity value object reference. An empty array means the
+            amenity is presence-only.
           items:
             type: string
             enum:
               - proximity
               - access
-              - fee
-              - accessibility_level
-              - parking_types
-              - sauna_types
-              - dietary_options
+              - options
               - opening_hours
               - note
+        options:
+          type: array
+          description: >-
+            All choices supported by this amenity. Present when `detailKinds`
+            includes `options`.
+          items:
+            $ref: "#/components/schemas/AmenityOption"
         notePlaceholder:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -1436,19 +1497,25 @@ components:
             the amenity does not define one.
       example:
         code: sauna
-        category:
-          code: wellness
-          label:
-            cs-CZ: Bazény a wellness
-            de: Pools & Wellness
-            en: Pools & wellness
-            ru: Бассейны и велнес
         label:
           cs-CZ: Sauna
           de: Sauna
           en: Sauna
           ru: Сауна
-        detailKinds: [proximity, access, sauna_types, opening_hours]
+        detailKinds: [proximity, access, options, opening_hours]
+        options:
+          - code: finnish
+            label:
+              cs-CZ: Finská sauna
+              de: Finnische Sauna
+              en: Finnish sauna
+              ru: Финская сауна
+          - code: steam
+            label:
+              cs-CZ: Parní lázeň
+              de: Dampfbad
+              en: Steam bath
+              ru: Паровая баня
     AmenityOpeningHoursBlock:
       type: object
       required: [days, from, to]
@@ -1488,21 +1555,12 @@ components:
             $ref: "#/components/schemas/AmenityOpeningHoursBlock"
     AmenityValue:
       type: object
-      required:
-        - code
-        - proximity
-        - proximityMeters
-        - access
-        - fee
-        - accessibilityLevel
-        - parkingTypes
-        - saunaTypes
-        - dietaryOptions
-        - openingHours
-        - note
+      required: [code]
       description: >-
-        A structured amenity selected for a hotel. Unsupported details are
-        returned as null or empty arrays.
+        A structured amenity assigned to a hotel. Hotel responses contain only
+        assigned amenities. Apart from `code`, only the fields mapped from the
+        corresponding entry under the amenity dictionary response
+        `data[].amenities[]` are present.
       properties:
         code:
           type: string
@@ -1512,57 +1570,53 @@ components:
           type: string
           nullable: true
           enum: [in-hotel, connecting, nearby]
+          description: >-
+            Present when `detailKinds` includes `proximity`. Null when supported
+            but not filled.
         proximityMeters:
           type: number
           minimum: 0
           maximum: 1000000
           nullable: true
+          description: >-
+            Present with `proximity`. Contains a distance when `proximity` is
+            `nearby`; otherwise null.
         access:
           type: string
           nullable: true
           enum: [included, conditional, paid]
-        fee:
-          type: string
-          nullable: true
-          enum: [free, conditional, paid]
-        accessibilityLevel:
-          type: string
-          nullable: true
-          enum: [full, partial]
-        parkingTypes:
+          description: >-
+            Present when `detailKinds` includes `access`. Null when supported
+            but not filled. `included` means no additional charge,
+            `conditional` means inclusion depends on stated conditions, and
+            `paid` means an additional charge applies.
+        options:
           type: array
+          description: >-
+            Amenity-specific choices selected for this hotel. Present when
+            `detailKinds` includes `options`. Empty when the amenity supports
+            choices but none are selected.
           items:
-            type: string
-            enum: [outdoor, covered, guarded]
-        saunaTypes:
-          type: array
-          items:
-            type: string
-            enum: [finnish, infrared, steam]
-        dietaryOptions:
-          type: array
-          items:
-            type: string
-            enum: [diet, reduction, gluten-free, diabetic, lactose-free]
+            $ref: "#/components/schemas/AmenityOption"
         openingHours:
-          $ref: "#/components/schemas/AmenityOpeningHours"
+          allOf:
+            - $ref: "#/components/schemas/AmenityOpeningHours"
+          description: >-
+            Present when `detailKinds` includes `opening_hours`. When supported
+            but not filled, returns `continuous: false` with an empty `blocks`
+            array.
         note:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
-            Localized supplementary information for guests. Locale values are
-            at most 200 characters and are null when the amenity does not
-            support a note or the translation is not filled.
+            Present when `detailKinds` includes `note`. Localized supplementary
+            information for guests. Locale values are at most 200 characters
+            and are null when the requested translation is not filled.
       example:
         code: aquapark
         proximity: nearby
         proximityMeters: 250
         access: included
-        fee: null
-        accessibilityLevel: null
-        parkingTypes: []
-        saunaTypes: []
-        dietaryOptions: []
         openingHours:
           continuous: false
           blocks:
@@ -1574,22 +1628,48 @@ components:
           de: Der Aquapark ist 250 Meter vom Hotel entfernt.
           en: The aquapark is 250 metres from the hotel.
           ru: Аквапарк находится в 250 метрах от отеля.
+    HotelAmenityCategoryGroup:
+      type: object
+      required: [category, amenities]
+      description: >-
+        One amenity category containing the values assigned to a hotel.
+        Categories without assigned amenities are omitted from hotel responses.
+      properties:
+        category:
+          $ref: "#/components/schemas/AmenityCategory"
+        amenities:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AmenityValue"
     AmenitiesList:
       type: object
       required: [data]
       description: >-
-        The complete hotel amenity dictionary, returned in one response
-        (small, not paginated).
+        The complete hotel amenity dictionary grouped by category and returned
+        in one response (small, not paginated). It includes every system amenity,
+        independent of assignments to individual hotels.
       properties:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Amenity"
+            $ref: "#/components/schemas/AmenityCategoryGroup"
       example:
         data:
-          - code: sauna
-            category:
+          - category:
               code: wellness
               label: { cs-CZ: Bazény a wellness, de: Pools & Wellness, en: "Pools & wellness" }
-            label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
-            detailKinds: [proximity, access, sauna_types, opening_hours]
+            amenities:
+              - code: aquapark
+                label: { cs-CZ: Akvapark, de: Aquapark, en: Aquapark }
+                detailKinds: [proximity, access, opening_hours, note]
+              - code: sauna
+                label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
+                detailKinds: [proximity, access, options, opening_hours]
+                options:
+                  - code: finnish
+                    label: { cs-CZ: Finská sauna, de: Finnische Sauna, en: "Finnish sauna" }
+                  - code: infrared
+                    label: { cs-CZ: Infra sauna, de: Infrarotsauna, en: "Infrared sauna" }
+                  - code: steam
+                    label: { cs-CZ: Parní lázeň, de: Dampfbad, en: "Steam bath" }
