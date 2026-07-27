@@ -198,6 +198,31 @@ are included:
 An empty `detailKinds` array identifies a presence-only amenity. Its hotel value
 contains only `code`; for example, `{ "code": "wheelchair_access" }`.
 
+## Caching
+
+The dictionary changes only when SpaPortal releases new amenities, categories,
+options, or labels. Codes are only ever added, never renamed or removed, so a
+cached dictionary stays safe to use.
+
+Recommended flow:
+
+1. Fetch `GET /api/v2/amenity-categories` once without `Accept-Language`, so
+   your cache holds every locale key. Store the response together with its
+   `ETag` and `X-SpaPortal-Amenities-Version` headers.
+2. Hotel responses return the current dictionary version in the
+   `X-SpaPortal-Amenities-Version` header. When the value differs from the one
+   you cached, refetch the dictionary.
+3. To revalidate directly, repeat the request with
+   `If-None-Match: <cached ETag>`. The API returns `304` with no body while
+   your copy is current.
+4. When a hotel response contains an amenity code that is missing from your
+   cached dictionary, skip it in display and refresh the dictionary.
+
+Responses also carry `Cache-Control: private, max-age=3600`, so a plain HTTP
+cache can reuse the dictionary for an hour before revalidating. The `ETag`
+differs per requested locale set and `expand=options`; the version header does
+not.
+
 ## Selected amenities on a hotel
 
 Every v2 [Hotel](/api/objects/hotel) response groups assigned amenities by

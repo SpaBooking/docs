@@ -1,5 +1,17 @@
 # API v2 changelog
 
+## 2026-07-27
+
+### Amenities
+
+- `GET /amenity-categories` supports conditional revalidation: responses carry
+  an `ETag` and `Cache-Control: private, max-age=3600`, and a request with a
+  matching `If-None-Match` returns `304` without a body.
+- `GET /amenity-categories`, `GET /hotels`, and `GET /hotels/{hotelId}` return
+  the `X-SpaPortal-Amenities-Version` header. The value changes only when the
+  dictionary content changes; refetch the dictionary when it differs from the
+  cached version.
+
 ## 2026-07-24
 
 ### Hotels

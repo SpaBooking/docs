@@ -41,6 +41,12 @@ paths:
         amenity-specific choices. Add `expand=options` to include those choices;
         they are omitted by default.
 
+        The response is cacheable. Revalidate it with `If-None-Match` to get
+        `304` while your copy is current, and compare the
+        `X-SpaPortal-Amenities-Version` header returned by hotel endpoints with
+        your cached version to detect dictionary updates. See
+        [Amenities](/api/amenities) for the recommended caching flow.
+
         See the [Amenity](/api/objects/amenity) object for the full field reference.
       parameters:
         - name: expand
@@ -50,6 +56,15 @@ paths:
           schema:
             type: string
             enum: [options]
+        - name: If-None-Match
+          in: header
+          required: false
+          schema:
+            type: string
+          description: >-
+            ETag from a previous response. When the dictionary variant is
+            unchanged, the API returns `304` with no body. See
+            [Amenities](/api/amenities) for the caching flow.
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
       responses:
@@ -58,6 +73,10 @@ paths:
           headers:
             Content-Language:
               $ref: "#/components/headers/ContentLanguage"
+            ETag:
+              $ref: "#/components/headers/ETag"
+            X-SpaPortal-Amenities-Version:
+              $ref: "#/components/headers/AmenitiesVersion"
           content:
             application/json:
               schema:
@@ -107,6 +126,15 @@ paths:
                                   cs-CZ: Parní lázeň
                                   de: Dampfbad
                                   en: Steam bath
+        "304":
+          description: >-
+            The cached dictionary variant matched by `If-None-Match` is still
+            current. The response has no body.
+          headers:
+            ETag:
+              $ref: "#/components/headers/ETag"
+            X-SpaPortal-Amenities-Version:
+              $ref: "#/components/headers/AmenitiesVersion"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -257,6 +285,8 @@ paths:
           headers:
             Content-Language:
               $ref: "#/components/headers/ContentLanguage"
+            X-SpaPortal-Amenities-Version:
+              $ref: "#/components/headers/AmenitiesVersion"
           content:
             application/json:
               schema:
@@ -308,6 +338,8 @@ paths:
           headers:
             Content-Language:
               $ref: "#/components/headers/ContentLanguage"
+            X-SpaPortal-Amenities-Version:
+              $ref: "#/components/headers/AmenitiesVersion"
           content:
             application/json:
               schema:
@@ -545,6 +577,21 @@ components:
       schema:
         type: string
         example: cs-CZ,de
+    ETag:
+      description: >-
+        Entity tag of this amenity-dictionary variant. Send it back in
+        `If-None-Match` to revalidate a cached copy.
+      schema:
+        type: string
+        example: '"9f3c2a7d81b04e55-cs-CZ_de"'
+    AmenitiesVersion:
+      description: >-
+        Current amenity dictionary version. The value changes only when the
+        dictionary content changes. Refetch `GET /amenity-categories` when it
+        differs from the version you cached.
+      schema:
+        type: string
+        example: 9f3c2a7d81b04e55
     RequestId:
       description: Request identifier for support and debugging.
       schema:
