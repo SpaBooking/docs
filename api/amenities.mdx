@@ -152,17 +152,21 @@ Every v2 [Hotel](/api/objects/hotel) response groups assigned amenities by
 category. Only categories containing at least one assigned amenity are returned.
 An absent code means the amenity is not offered or has not been advertised.
 
+By default hotel responses carry **codes only** — the category, amenity, and
+each selected option are identified by `code`. Fetch the dictionary once (it is
+small and cacheable) and look up every localized label there. This keeps hotel
+responses small and the labels in one place.
+
+If you would rather have a self-contained response, add
+[`expand=amenityLabels`](/api/expand) to the hotel request. It inlines the
+localized `label` on each category, amenity, and option, so no dictionary lookup
+is needed.
+
 ```json Hotel amenity values
 {
   "amenityCategories": [
     {
-      "category": {
-        "code": "wellness",
-        "label": {
-          "cs-CZ": "Bazény a wellness",
-          "en": "Pools & wellness"
-        }
-      },
+      "category": { "code": "wellness" },
       "amenities": [
         {
           "code": "aquapark",
@@ -185,22 +189,7 @@ An absent code means the amenity is not offered or has not been advertised.
           "proximity": "in-hotel",
           "proximityMeters": null,
           "access": "included",
-          "options": [
-            {
-              "code": "finnish",
-              "label": {
-                "cs-CZ": "Finská sauna",
-                "en": "Finnish sauna"
-              }
-            },
-            {
-              "code": "steam",
-              "label": {
-                "cs-CZ": "Parní lázeň",
-                "en": "Steam bath"
-              }
-            }
-          ],
+          "options": [{ "code": "finnish" }, { "code": "steam" }],
           "openingHours": {
             "continuous": false,
             "blocks": []
@@ -211,6 +200,13 @@ An absent code means the amenity is not offered or has not been advertised.
   ]
 }
 ```
+
+To display this hotel's amenities, join each code to the dictionary:
+`category.code` → `data[].category`, `amenities[].code` →
+`data[].amenities[]`, and each `options[].code` → that amenity's `options` in
+the dictionary. All three carry the localized labels. Or request
+`expand=amenityLabels` to receive those labels inline on the hotel and skip the
+join.
 
 Structured details use the following enums:
 
@@ -223,8 +219,9 @@ Structured details use the following enums:
   - `included` — covered by the stay price.
   - `conditional` — included subject to stated conditions.
   - `paid` — available for an additional charge.
-- `options`: localized amenity-specific choices. The dictionary lists every
-  available choice; hotel responses return only the selected choices.
+- `options`: amenity-specific choices selected for the hotel, by `code` only.
+  The dictionary lists every available choice with its label; hotel responses
+  return only the selected codes.
 - opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
   `saturday`, `sunday`
 

@@ -18,9 +18,11 @@ To interpret the value, find the matching `code` in
 `detailKinds` determines which properties are included. Properties that are
 not supported by that amenity are omitted.
 
-`category` is returned once on the parent hotel amenity group. The amenity's
-`label` and `detailKinds` remain dictionary metadata and are not repeated inside
-each hotel's amenity value.
+`category` is returned once on the parent hotel amenity group, by `code`. The
+amenity's `label` and `detailKinds` are dictionary metadata and are not repeated
+inside each hotel's amenity value by default. Request
+[`expand=amenityLabels`](/api/expand) to inline the localized `label` on the
+category, the amenity, and each selected option.
 
 Each localized `note` value is limited to 200 characters.
 
@@ -28,7 +30,7 @@ Each localized `note` value is limited to 200 characters.
 | --- | --- |
 | `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
 | `access` | `access` |
-| `options` | localized amenity-specific `options` selected for the hotel |
+| `options` | amenity-specific `options` selected for the hotel, by `code` |
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
@@ -60,19 +62,24 @@ contain:
 
 For an amenity whose `detailKinds` include `options`, the
 [amenity dictionary](/api/amenities) lists every available option. The hotel
-value contains only the selected options:
+value contains only the selected options, by `code`:
+
+```json
+{
+  "code": "sauna",
+  "options": [{ "code": "finnish" }, { "code": "steam" }]
+}
+```
+
+With [`expand=amenityLabels`](/api/expand) each selected option also carries its
+localized `label`:
 
 ```json
 {
   "code": "sauna",
   "options": [
-    {
-      "code": "finnish",
-      "label": {
-        "cs-CZ": "Finská sauna",
-        "en": "Finnish sauna"
-      }
-    }
+    { "code": "finnish", "label": { "cs-CZ": "Finská sauna", "en": "Finnish sauna" } },
+    { "code": "steam", "label": { "cs-CZ": "Parní lázeň", "en": "Steam bath" } }
   ]
 }
 ```

@@ -7,6 +7,13 @@
 - `GET /amenity-categories` always includes each amenity's `options` list. The
   `expand=options` query parameter is removed; option definitions are returned
   by default.
+- Hotel amenity values now return the category, the amenity, and each selected
+  option by `code` only; localized labels come from the dictionary. This drops
+  the inline `category.label` and per-option `label` that hotel responses
+  previously carried.
+- `GET /hotels` and `GET /hotels/{hotelId}` accept `expand=amenityLabels`, which
+  inlines the localized `label` on each amenity category, amenity, and selected
+  option for a self-contained response. `expand` accepts a comma-separated list.
 
 ## 2026-07-27
 

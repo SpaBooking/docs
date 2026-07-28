@@ -56,9 +56,9 @@ staff: `cs` (Czech), `en` (English), `de` (German), and `ru` (Russian).
 
 `amenityCategories` groups the hotel's assigned structured amenities by
 category. Categories without assigned amenities are omitted, and the response
-does not contain the complete system dictionary. Each nested value's `code`
-references the [amenity dictionary](/api/amenities) and carries applicable
-access, distance, options, opening-hour, and localized note details.
+does not contain the complete system dictionary. The category, amenity, and each
+selected option are returned by `code` only; each amenity also carries its
+applicable access, distance, options, opening-hour, and localized note details.
 
 Fetch [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary)
 and find the matching code under `data[].amenities[]` to resolve its label,
@@ -66,6 +66,9 @@ parent category, supported detail fields, and every allowed amenity-specific
 option. See [Amenity value](/api/objects/amenity-value) for the exact
 `detailKinds` to response-field mapping. Fields not supported by an amenity are
 omitted.
+
+Add [`expand=amenityLabels`](/api/expand) to inline the localized category,
+amenity, and option labels instead of resolving them against the dictionary.
 
 `priceFrom` contains the cheapest available current or future room price for
 the room's standard occupancy. Each currency reports the nightly room total,

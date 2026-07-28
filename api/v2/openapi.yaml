@@ -241,14 +241,21 @@ paths:
             (e.g. `wellness`).
         - name: expand
           in: query
+          style: form
+          explode: false
           schema:
-            type: string
-            enum: [roomTypes]
+            type: array
+            items:
+              type: string
+              enum: [roomTypes, amenityLabels]
           description: >-
-            **Draft:** This expansion is still in progress. Set to `roomTypes`
-            to embed each hotel's room types in the response (otherwise fetch
-            them separately via `GET /room-types?hotelId={hotelId}`). Its
-            response shape may change before it is finalized.
+            Comma-separated list of expansions (for example
+            `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
+            `amenityLabels` inlines the localized category, amenity, and option
+            labels in `amenityCategories`, so no dictionary lookup is needed.
+            `roomTypes` (**draft**, response shape may change) embeds each
+            hotel's room types (otherwise fetch them via
+            `GET /room-types?hotelId={hotelId}`).
       responses:
         "200":
           description: A paginated list of hotels.
@@ -298,14 +305,21 @@ paths:
           description: Hotel id.
         - name: expand
           in: query
+          style: form
+          explode: false
           schema:
-            type: string
-            enum: [roomTypes]
+            type: array
+            items:
+              type: string
+              enum: [roomTypes, amenityLabels]
           description: >-
-            **Draft:** This expansion is still in progress. Set to `roomTypes`
-            to embed the hotel's room types in the response (otherwise fetch
-            them separately via `GET /room-types?hotelId={hotelId}`). Its
-            response shape may change before it is finalized.
+            Comma-separated list of expansions (for example
+            `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
+            `amenityLabels` inlines the localized category, amenity, and option
+            labels in `amenityCategories`, so no dictionary lookup is needed.
+            `roomTypes` (**draft**, response shape may change) embeds the hotel's
+            room types (otherwise fetch them via
+            `GET /room-types?hotelId={hotelId}`).
       responses:
         "200":
           description: The hotel.
@@ -1196,20 +1210,16 @@ components:
           type: array
           description: >-
             Structured amenities assigned to this hotel, grouped by category.
-            Categories without assigned amenities are omitted. Resolve each
-            nested amenity `code` against the entries under the
-            `GET /amenity-categories` response `data[].amenities[]` for its
-            localized label and supported detail kinds.
+            Categories without assigned amenities are omitted. Category, amenity,
+            and option are returned by `code` only — resolve their localized
+            labels and supported detail kinds against the
+            [amenity dictionary](/api/amenities)
+            (`GET /amenity-categories`).
           items:
             $ref: "#/components/schemas/HotelAmenityCategoryGroup"
           example:
             - category:
                 code: wellness
-                label:
-                  cs-CZ: Bazény a wellness
-                  de: Pools & Wellness
-                  en: Pools & wellness
-                  ru: Бассейны и велнес
               amenities:
                 - code: aquapark
                   proximity: nearby
@@ -1323,11 +1333,6 @@ components:
         amenityCategories:
           - category:
               code: wellness
-              label:
-                cs-CZ: Bazény a wellness
-                de: Pools & Wellness
-                en: Pools & wellness
-                ru: Бассейны и велнес
             amenities:
               - code: aquapark
                 proximity: nearby
@@ -1345,17 +1350,7 @@ components:
                 access: included
                 options:
                   - code: finnish
-                    label:
-                      cs-CZ: Finská sauna
-                      de: Finnische Sauna
-                      en: Finnish sauna
-                      ru: Финская сауна
                   - code: steam
-                    label:
-                      cs-CZ: Parní lázeň
-                      de: Dampfbad
-                      en: Steam bath
-                      ru: Паровая баня
                 openingHours:
                   continuous: false
                   blocks:
@@ -1508,6 +1503,30 @@ components:
             - children
         label:
           $ref: "#/components/schemas/LocalizedString"
+    AmenityCategoryRef:
+      type: object
+      required: [code]
+      description: >-
+        A category on a hotel response. Identified by `code`; its localized
+        `label` is included only with `expand=amenityLabels`. Otherwise resolve
+        the label against the [amenity dictionary](/api/amenities)
+        (`GET /amenity-categories` `data[].category`).
+      properties:
+        code:
+          type: string
+          enum:
+            - health
+            - wellness
+            - dining
+            - services
+            - accessibility
+            - parking
+            - sport
+            - children
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized category label. Present only with `expand=amenityLabels`.
     AmenityCategoryGroup:
       type: object
       required: [category, amenities]
@@ -1535,6 +1554,23 @@ components:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: Localized option label.
+    AmenityOptionRef:
+      type: object
+      required: [code]
+      description: >-
+        A selected amenity option on a hotel response. Identified by `code`; its
+        localized `label` is included only with `expand=amenityLabels`.
+        Otherwise resolve the label against the amenity's `options` in the
+        [amenity dictionary](/api/amenities).
+      properties:
+        code:
+          type: string
+          description: References an option `code` from the dictionary.
+          example: finnish
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized option label. Present only with `expand=amenityLabels`.
     Amenity:
       type: object
       required: [code, label, detailKinds]
@@ -1645,14 +1681,19 @@ components:
       required: [code]
       description: >-
         A structured amenity assigned to a hotel. Hotel responses contain only
-        assigned amenities. Apart from `code`, only the fields mapped from the
-        corresponding entry under the amenity dictionary response
-        `data[].amenities[]` are present.
+        assigned amenities. Apart from `code` (and `label` with
+        `expand=amenityLabels`), only the fields mapped from the corresponding
+        entry under the amenity dictionary response `data[].amenities[]` are
+        present.
       properties:
         code:
           type: string
           description: References an `Amenity.code`.
           example: sauna
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized amenity label. Present only with `expand=amenityLabels`.
         proximity:
           type: string
           nullable: true
@@ -1683,11 +1724,12 @@ components:
         options:
           type: array
           description: >-
-            Amenity-specific choices selected for this hotel. Present when
-            `detailKinds` includes `options`. Empty when the amenity supports
-            choices but none are selected.
+            Amenity-specific choices selected for this hotel, by `code` only.
+            Present when `detailKinds` includes `options`. Empty when the
+            amenity supports choices but none are selected. Resolve labels
+            against the dictionary.
           items:
-            $ref: "#/components/schemas/AmenityOption"
+            $ref: "#/components/schemas/AmenityOptionRef"
         openingHours:
           allOf:
             - $ref: "#/components/schemas/AmenityOpeningHours"
@@ -1721,7 +1763,7 @@ components:
         Categories without assigned amenities are omitted from hotel responses.
       properties:
         category:
-          $ref: "#/components/schemas/AmenityCategory"
+          $ref: "#/components/schemas/AmenityCategoryRef"
         amenities:
           type: array
           minItems: 1
