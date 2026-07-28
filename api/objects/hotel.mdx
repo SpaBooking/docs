@@ -54,10 +54,10 @@ access, distance, options, opening-hour, and localized note details.
 
 Fetch [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary)
 and find the matching code under `data[].amenities[]` to resolve its label,
-parent category, and supported detail fields. Add `expand=options` when you
-also need every allowed amenity-specific option. See
-[Amenity value](/api/objects/amenity-value) for the exact `detailKinds` to
-response-field mapping. Fields not supported by an amenity are omitted.
+parent category, supported detail fields, and every allowed amenity-specific
+option. See [Amenity value](/api/objects/amenity-value) for the exact
+`detailKinds` to response-field mapping. Fields not supported by an amenity are
+omitted.
 
 `priceFrom` contains the cheapest available current or future room price for
 the room's standard occupancy. Each currency reports the nightly room total,

@@ -26,7 +26,7 @@ value. The corresponding hotel amenity contains only its `code`.
 
 For example:
 
-```json Response with expand=options
+```json
 {
   "code": "sauna",
   "detailKinds": ["proximity", "access", "options", "opening_hours"],
@@ -50,8 +50,7 @@ For example:
 ```
 
 This sauna can populate `proximity` (and conditionally `proximityMeters`),
-`access`, `options`, and `openingHours`. Request `expand=options` to include the
-dictionary's `options` array with all valid sauna choices. Without that expand,
-the `options` property is omitted while `detailKinds` still includes `options`.
+`access`, `options`, and `openingHours`. Because `detailKinds` includes
+`options`, the entry carries an `options` array with every valid sauna choice.
 The sauna does not support `note`, so the `note` property is omitted from its
 [Amenity value](/api/objects/amenity-value).

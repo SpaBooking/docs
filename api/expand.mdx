@@ -21,9 +21,6 @@ GET /api/v2/hotels?expand=roomTypes
 
 # Embed each room type's hotel
 GET /api/v2/room-types?expand=hotel
-
-# Include every amenity-specific choice in the dictionary
-GET /api/v2/amenity-categories?expand=options
 ```
 
 ## With and without expand
@@ -102,10 +99,5 @@ schema. `priceFrom` may be `null` when no usable price is available.
 The same pattern applies in the other direction: `GET /api/v2/room-types?expand=hotel`
 embeds each room type's `hotel`. For a paginated, filterable list of a single
 hotel's room types, use `GET /api/v2/room-types?hotelId=<id>` instead of expanding.
-
-For the amenity dictionary, `expand=options` adds the complete localized
-`options` array to entries whose `detailKinds` include `options`. The option
-list is omitted without the expand. `detailKinds` itself is always returned, so
-clients can see whether an amenity supports options before requesting them.
 
 Each endpoint lists the `expand` values it supports and what each adds.

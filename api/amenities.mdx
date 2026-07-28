@@ -37,42 +37,10 @@ returned in one response and is not paginated. Use
 [`Accept-Language`](/api/localization) to select the locale keys returned in
 localized fields.
 
-Amenity-specific choices are omitted by default. Add `expand=options` when you
-need every supported option and its localized label:
+Amenities whose `detailKinds` include `options` also carry an `options` array
+with every supported choice and its localized label.
 
-```bash
-GET /api/v2/amenity-categories?expand=options
-```
-
-<CodeGroup>
-
-```json Default response
-{
-  "data": [
-    {
-      "category": {
-        "code": "wellness",
-        "label": {
-          "cs-CZ": "Bazény a wellness",
-          "en": "Pools & wellness"
-        }
-      },
-      "amenities": [
-        {
-          "code": "sauna",
-          "label": {
-            "cs-CZ": "Sauna",
-            "en": "Sauna"
-          },
-          "detailKinds": ["proximity", "access", "options", "opening_hours"]
-        }
-      ]
-    }
-  ]
-}
-```
-
-```json Response with expand=options
+```json Response
 {
   "data": [
     {
@@ -116,54 +84,10 @@ GET /api/v2/amenity-categories?expand=options
           ]
         }
       ]
-    },
-    {
-      "category": {
-        "code": "parking",
-        "label": {
-          "cs-CZ": "Parkování",
-          "en": "Parking"
-        }
-      },
-      "amenities": [
-        {
-          "code": "parking",
-          "label": {
-            "cs-CZ": "Parkoviště",
-            "en": "Parking"
-          },
-          "detailKinds": ["options", "access", "note"],
-          "options": [
-            {
-              "code": "outdoor",
-              "label": {
-                "cs-CZ": "Venkovní",
-                "en": "Outdoor"
-              }
-            },
-            {
-              "code": "covered",
-              "label": {
-                "cs-CZ": "Kryté",
-                "en": "Covered"
-              }
-            },
-            {
-              "code": "guarded",
-              "label": {
-                "cs-CZ": "Hlídané",
-                "en": "Guarded"
-              }
-            }
-          ]
-        }
-      ]
     }
   ]
 }
 ```
-
-</CodeGroup>
 
 Resolve hotel `amenityCategories[].amenities[].code` values against the entries
 nested in each dictionary category instead of hard-coding display labels.
@@ -191,7 +115,7 @@ are included:
 | --- | --- |
 | `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
 | `access` | `access` |
-| `options` | amenity-specific choices; add `expand=options` to include all valid choices and their localized labels |
+| `options` | amenity-specific choices; the entry carries an `options` array of every valid choice with its localized label |
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
@@ -213,15 +137,14 @@ Recommended flow:
    `X-SpaPortal-Amenities-Version` header. When the value differs from the one
    you cached, refetch the dictionary.
 3. To revalidate directly, repeat the same request — with the same
-   `Accept-Language` and `expand` — and add `If-None-Match: <cached ETag>`. The
-   API returns `304` with no body while your copy is current.
+   `Accept-Language` — and add `If-None-Match: <cached ETag>`. The API returns
+   `304` with no body while your copy is current.
 4. When a hotel response contains an amenity code that is missing from your
    cached dictionary, skip it in display and refresh the dictionary.
 
 Responses also carry `Cache-Control: private, max-age=3600`, so a plain HTTP
 cache can reuse the dictionary for an hour before revalidating. The `ETag`
-differs per requested locale set and `expand=options`; the version header does
-not.
+differs per requested locale set; the version header does not.
 
 ## Selected amenities on a hotel
 
@@ -293,9 +216,8 @@ Structured details use the following enums:
 
 - `proximity`: `in-hotel`, `connecting`, `nearby`
 - `access`: `included`, `conditional`, `paid`
-- `options`: localized amenity-specific choices. The dictionary returns every
-  available choice with `expand=options`; hotel responses return only the
-  selected choices.
+- `options`: localized amenity-specific choices. The dictionary lists every
+  available choice; hotel responses return only the selected choices.
 - opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
   `saturday`, `sunday`
 
@@ -308,9 +230,6 @@ are `null`.
 `access` also represents whether an amenity carries an additional charge:
 `included` means no additional charge, `conditional` means inclusion depends on
 the stated conditions, and `paid` means an additional charge applies.
-
-The dictionary's `expand=options` affects only dictionary metadata. Selected
-`options` on hotel amenity values remain part of hotel responses.
 
 ## Filtering hotels
 

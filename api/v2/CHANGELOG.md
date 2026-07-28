@@ -1,5 +1,13 @@
 # API v2 changelog
 
+## 2026-07-28
+
+### Amenities
+
+- `GET /amenity-categories` always includes each amenity's `options` list. The
+  `expand=options` query parameter is removed; option definitions are returned
+  by default.
+
 ## 2026-07-27
 
 ### Amenities
