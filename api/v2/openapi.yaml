@@ -1426,16 +1426,23 @@ components:
         - minimumNights
       properties:
         perNight:
-          $ref: "#/components/schemas/Money"
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          description: >-
+            Current nightly room price for the standard occupancy, after any
+            active promotion.
         perNightOriginal:
           allOf:
             - $ref: "#/components/schemas/Money"
           nullable: true
-          description: Pre-discount nightly price, or null when there is no discount.
+          description: >-
+            Pre-discount nightly price (the original price before a promotion),
+            or null when the offer has no active discount.
         minimumStay:
           allOf:
             - $ref: "#/components/schemas/Money"
-          description: Total price for `minimumNights` nights.
+          description: >-
+            Current total for the required stay (`perNight` × `minimumNights`).
         minimumStayOriginal:
           allOf:
             - $ref: "#/components/schemas/Money"

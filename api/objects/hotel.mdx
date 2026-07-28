@@ -70,7 +70,8 @@ omitted.
 `priceFrom` contains the cheapest available current or future room price for
 the room's standard occupancy. Each currency reports the nightly room total,
 the total for the required minimum stay, the occupancy, and the minimum number
-of nights. Applicable public-channel promotions are reflected in these totals;
-the corresponding `*Original` value is present when a promotion lowers the
-price. The cheapest room can differ by currency. `priceFrom` is `null` when the
-hotel has no usable price; an unavailable currency key is omitted.
+of nights. The `perNight` and `minimumStay` totals already include any active
+public-channel promotion. When a promotion lowers the price, `perNightOriginal`
+and `minimumStayOriginal` carry the pre-discount ("was") price; they are `null`
+otherwise. The cheapest room can differ by currency. `priceFrom` is `null` when
+the hotel has no usable price; an unavailable currency key is omitted.
