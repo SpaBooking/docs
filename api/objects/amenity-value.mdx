@@ -82,5 +82,10 @@ scalars are `null`, arrays are empty, opening hours use
 `{ "continuous": false, "blocks": [] }`, and requested localized note values are
 `null`. Requested localized keys follow [`Accept-Language`](/api/localization).
 
-`access` uses `included`, `conditional`, or `paid` and also communicates whether
-the amenity carries an additional charge.
+`proximity` says where the amenity is: `in-hotel` (inside the hotel building),
+`connecting` (an adjacent building linked by an internal passage), or `nearby`
+(a short distance away, with `proximityMeters` giving the approximate distance).
+
+`access` says whether using the amenity costs extra: `included` (covered by the
+stay price), `conditional` (included subject to stated conditions), or `paid`
+(available for an additional charge).

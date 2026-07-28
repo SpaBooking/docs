@@ -34,15 +34,23 @@ reports whether it is enabled, its optional serving time, its service method
 (`buffet` or `served`), whether drinks are included, and a localized drinks note
 (up to 200 characters per locale).
 
-`indications` is an ordered array of medical indication codes:
+`indications` is an ordered array of medical indication codes. The hotel
+specializes in treating the listed areas:
 
-```text
-musculoskeletal, cardiovascular, dermatology, digestion_metabolism,
-nervous_system, prevention, gynecology, oncology_aftercare, diabetes
-```
+| Code | Meaning |
+| --- | --- |
+| `musculoskeletal` | Musculoskeletal system |
+| `cardiovascular` | Heart and blood vessels |
+| `dermatology` | Skin conditions |
+| `digestion_metabolism` | Digestion and metabolism |
+| `nervous_system` | Nervous system |
+| `prevention` | Prevention |
+| `gynecology` | Gynecological indications |
+| `oncology_aftercare` | Oncology aftercare |
+| `diabetes` | Diabetes |
 
-`staffLanguages` contains the language codes spoken by hotel staff: `cs`, `en`,
-`de`, and `ru`.
+`staffLanguages` contains the ISO 639-1 codes of the languages spoken by hotel
+staff: `cs` (Czech), `en` (English), `de` (German), and `ru` (Russian).
 
 ## Amenities
 

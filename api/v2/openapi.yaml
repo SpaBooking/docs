@@ -1651,8 +1651,11 @@ components:
           nullable: true
           enum: [in-hotel, connecting, nearby]
           description: >-
-            Present when `detailKinds` includes `proximity`. Null when supported
-            but not filled.
+            Where the amenity is located relative to the hotel. Present when
+            `detailKinds` includes `proximity`; null when supported but not
+            filled. `in-hotel` is inside the hotel building, `connecting` is an
+            adjacent building linked by an internal passage, and `nearby` is a
+            short distance away (see `proximityMeters`).
         proximityMeters:
           type: number
           minimum: 0

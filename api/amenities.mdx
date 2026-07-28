@@ -214,8 +214,15 @@ An absent code means the amenity is not offered or has not been advertised.
 
 Structured details use the following enums:
 
-- `proximity`: `in-hotel`, `connecting`, `nearby`
-- `access`: `included`, `conditional`, `paid`
+- `proximity` — where the amenity is located relative to the hotel:
+  - `in-hotel` — inside the hotel building.
+  - `connecting` — in an adjacent building linked by an internal passage.
+  - `nearby` — a short distance away; `proximityMeters` gives the approximate
+    distance.
+- `access` — whether using the amenity costs extra:
+  - `included` — covered by the stay price.
+  - `conditional` — included subject to stated conditions.
+  - `paid` — available for an additional charge.
 - `options`: localized amenity-specific choices. The dictionary lists every
   available choice; hotel responses return only the selected choices.
 - opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
