@@ -12,5 +12,8 @@ GET /api/v2/room-types?sort=createdAt:desc
 ```
 
 - Each endpoint documents its sortable fields and default order.
-- Sorting is stable: ties are broken by `id`, so cursor pagination never skips
-  or repeats a record.
+- Ordering is total and stable: the record `id` is always the final ordering
+  key, so no two records tie. Because `id` increases with creation time,
+  `createdAt:desc` returns the newest records first. This stable order is what
+  lets cursor pagination page through results without skipping or repeating a
+  record.

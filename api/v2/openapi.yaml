@@ -222,7 +222,11 @@ paths:
             type: string
             enum: ["createdAt:desc", "createdAt:asc"]
             default: "createdAt:desc"
-          description: Sort order. Ties are broken by `id`.
+          description: >-
+            Sort order by creation time: `createdAt:desc` returns the newest
+            records first, `createdAt:asc` the oldest. Records are ordered by
+            their `id`, which increases with creation time, giving a stable
+            total order that keeps cursor pagination exact.
         - name: amenities
           in: query
           schema:
@@ -414,7 +418,11 @@ paths:
             type: string
             enum: ["createdAt:desc", "createdAt:asc"]
             default: "createdAt:desc"
-          description: Sort order. Ties are broken by `id`.
+          description: >-
+            Sort order by creation time: `createdAt:desc` returns the newest
+            records first, `createdAt:asc` the oldest. Records are ordered by
+            their `id`, which increases with creation time, giving a stable
+            total order that keeps cursor pagination exact.
       responses:
         "200":
           description: A paginated list of room types.
