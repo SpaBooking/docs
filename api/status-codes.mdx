@@ -10,6 +10,7 @@ All responses use standard HTTP status codes.
 | Status | Meaning |
 | --: | --- |
 | `200` | Request succeeded. The response body contains the result. |
+| `304` | Sent for a conditional `GET` when your cached copy is still current. The response has no body. See [Amenities](/api/amenities) for the caching flow. |
 
 ## Errors
 
