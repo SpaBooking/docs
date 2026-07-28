@@ -188,7 +188,9 @@ paths:
         price is available. Applicable public-channel promotions are reflected
         in the price.
 
-        See the [Hotel](/api/objects/hotel) object for the full field reference.
+        See the [Hotel](/api/objects/hotel) object for the full field
+        reference, including the allowed values for `serviceMethod`,
+        `indications`, and `staffLanguages`.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -280,6 +282,10 @@ paths:
       description: |
         Returns a single hotel with its localized content, complete structured
         profile, and amenities by id.
+
+        See the [Hotel](/api/objects/hotel) object for the full field
+        reference, including the allowed values for `serviceMethod`,
+        `indications`, and `staffLanguages`.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
