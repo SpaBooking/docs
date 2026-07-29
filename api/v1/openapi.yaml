@@ -422,6 +422,24 @@ paths:
         Returns calendar dates with availability and price data. Per-night prices include any active discount promotions.
 
         `selectable` indicates whether the user can start a booking on the date. `price` is `null` when the date is not available or when the query is not specific enough to calculate a final price.
+
+        ### Default month when you omit the date range
+
+        Omit both `date_from` and `date_to` and the response starts at the first month that contains a stay you can actually book, rather than at the current month. Use this for the initial calendar load, when you do not yet know which month to show.
+
+        A month qualifies when it contains a check-in date where all of the following hold for the visit type's minimum stay length:
+
+        - every occupied night has remaining capacity,
+        - every occupied night has a price, and the check-out date is priced as well,
+        - the date is an allowed starting day for the visit type.
+
+        The check-in date counts as an occupied night; the check-out date does not consume capacity.
+
+        The response then covers that month and the following one, as it always does. The search looks up to 24 months ahead.
+
+        Months that are closer but only bookable on request are skipped, because no stay in them can be confirmed from recorded availability. If no bookable stay exists at all, the response falls back to the nearest month that has pricing — those dates can still be `ON_DEMAND`.
+
+        This applies only when `hotel_id`, `room_type_id`, and `visit_type_id` are all set, the visit type is not on request, and `guests` matches the room type's capacity. Pass `date_from` or `date_to` to pin the range yourself — explicit dates are never moved.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: visit_type_id

@@ -136,6 +136,14 @@ paths:
 
         If any item fails, the whole request fails (no partial results); the
         error details name the failing item index and `key`.
+
+        An item that resolves to no `dateFrom` and no `dateTo` starts at the
+        first month that contains a stay you can actually book, exactly as `GET
+        /calendar/dates` does in API v1. For the visit type's minimum stay
+        length, every occupied night must have remaining capacity and a price,
+        the check-out date must be priced, and the check-in date must be an
+        allowed starting day. Nearer months that are only bookable on request
+        are skipped. Set `dateFrom` or `dateTo` to pin the range yourself.
       parameters:
         - $ref: "#/components/parameters/RequestId"
       requestBody:

@@ -22,6 +22,12 @@ For exact parameters and response schemas, use the [API reference](/api).
   Browse the current production endpoint reference.
 </Card>
 
+## Opening the calendar
+
+On the first calendar load, call `GET /calendar/dates` with a hotel, room type, and visit type but without `date_from` and `date_to`. The response starts at the first month that contains a stay you can actually book — one where every night of the minimum stay has both remaining availability and a price — instead of at the current month.
+
+That way you do not have to page through empty months to find the first date a guest can pick. Once the guest navigates the calendar, send `date_from` and `date_to` for the month you want; explicit dates are never moved.
+
 ## Booking configuration
 
 Use `GET /booking` when you need SpaPortal to match a partial selection by names.
