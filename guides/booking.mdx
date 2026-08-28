@@ -24,9 +24,15 @@ For exact parameters and response schemas, use the [API reference](/api).
 
 ## Opening the calendar
 
-On the first calendar load, call `GET /calendar/dates` with a hotel, room type, and visit type but without `date_from` and `date_to`. The response starts at the first month that contains a stay you can actually book — one where every night of the minimum stay has both remaining availability and a price — instead of at the current month.
+On the first calendar load, call `GET /calendar/dates` with a hotel, visit type, and `guests`, but without `date_from` and `date_to`. A room type is optional. The response starts at the first month that contains a stay you can actually book — one where every occupied night of the minimum stay has both remaining capacity and a price, and the check-out date has a price — instead of at the current month.
 
-That way you do not have to page through empty months to find the first date a guest can pick. Once the guest navigates the calendar, send `date_from` and `date_to` for the month you want; explicit dates are never moved.
+Without a room type, SpaPortal checks the hotel's room types that match `guests`. The complete stay must fit into one room type. SpaPortal never combines capacity from different room types to construct a stay. Always send `guests` on this request so the search uses the intended room occupancy.
+
+If no fully bookable stay is found in the 24-month search horizon, the endpoint keeps its normal non-empty fallback calendar. A priced date that meets the visit type's starting-day and date-range rules remains `selectable`, even when the complete stay will be `ON_DEMAND`. Disable the check-in action only when `selectable` is `false`; use the booking configuration response to distinguish confirmable stays from requests.
+
+That way you do not have to page through empty months to find the first date a guest can pick. Once the guest navigates the calendar, send `date_from` and `date_to` for the range you want. Sending either date disables the automatic first-bookable-month search. A `date_from` in the past is clamped to the current date.
+
+After the guest chooses a selectable check-in date, call `GET /calendar/checkouts` with the hotel, room type, and visit type. The endpoint returns check-out dates that satisfy the visit type rules and have continuous pricing. Capacity does not remove checkout choices because a valid priced stay can continue as an `ON_DEMAND` request. The check-out date is not charged and does not consume capacity, but it must be covered by the continuous pricing range.
 
 ## Booking configuration
 

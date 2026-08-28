@@ -421,7 +421,7 @@ paths:
       description: |
         Returns calendar dates with availability and price data. Per-night prices include any active discount promotions.
 
-        `selectable` indicates whether the user can start a booking on the date. `price` is `null` when the date is not available or when the query is not specific enough to calculate a final price.
+        `selectable` indicates whether the user can continue the booking flow from the date. It follows the visit type's date-range and starting-day rules and requires a price for that date, but it does not require recorded capacity for the complete stay. A selectable date can therefore produce an `ON_DEMAND` booking configuration. Use the booking configuration response to distinguish a stay that can be confirmed from one that can only be requested. `price` is `null` when the date is not available or when the query is not specific enough to calculate a final price.
 
         ### Default month when you omit the date range
 
@@ -437,9 +437,11 @@ paths:
 
         The response then covers that month and the following one, as it always does. The search looks up to 24 months ahead.
 
-        Months that are closer but only bookable on request are skipped, because no stay in them can be confirmed from recorded availability. If no bookable stay exists at all, the response falls back to the nearest month that has pricing — those dates can still be `ON_DEMAND`.
+        Months that are closer but only bookable on request are skipped, because no stay in them can be confirmed from recorded availability. If no bookable stay is found, the response keeps the normal fallback calendar instead of returning an empty array. Priced dates that satisfy the visit type's starting-day and date-range rules remain `selectable`, including dates whose resulting stay is `ON_DEMAND`.
 
-        This applies only when `hotel_id`, `room_type_id`, and `visit_type_id` are all set, the visit type is not on request, and `guests` matches the room type's capacity. Pass `date_from` or `date_to` to pin the range yourself — explicit dates are never moved.
+        This applies when `hotel_id` and `visit_type_id` are set and the visit type is not on request. `room_type_id` is optional. Without it, the API searches the hotel's room types that match `guests`; every night of the stay must fit into the same room type, and capacity from different room types is never combined. Send `guests` on the initial request so the API searches the correct room occupancy. If you omit it, all room occupancies are considered.
+
+        Pass `date_from` or `date_to` to disable the automatic first-bookable-month search and control the range yourself. A `date_from` in the past is clamped to the current date.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: visit_type_id
@@ -503,7 +505,7 @@ paths:
       description: |
         Returns possible checkout dates for a selected check-in date.
 
-        When `room_type_id` or `hotel_id` is supplied, the response contains only checkout dates with available prices.
+        The response contains only checkout dates with continuous prices from the selected check-in date through the check-out date and respects the visit type's allowed stay lengths and date ranges. Capacity does not filter these choices: a valid priced stay can continue as an `ON_DEMAND` request. Use the booking configuration response to determine final availability. The check-out date is not charged and does not consume capacity, but it must be covered by the continuous pricing range.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: start_date
@@ -567,7 +569,13 @@ paths:
         Returns the final price for a concrete visit type, room type, arrival date,
         and departure date. Loyalty program IDs can apply guest-level discounts.
         The returned `amount` includes any active discount promotions, itemized in
-        `price_breakdown.promotions`.
+        `price_breakdown.promotions`. Every occupied night in the half-open
+        `[date_from, date_to)` range must have a price for the requested room type
+        in at least one supported currency. The checkout day (`date_to`) is not
+        charged. If no single currency covers the complete stay, the endpoint
+        returns `422` instead of a partial price. Coverage is required for
+        per-visit price lists too: a package season must span every occupied
+        night of the stay, not only its check-in date.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: visit_type_id
@@ -1969,6 +1977,7 @@ components:
         selectable:
           type: boolean
           nullable: true
+          description: Whether the booking flow can start on this date. This follows price, date-range, and starting-day rules; it does not guarantee capacity for the complete stay. A selectable date may result in an ON_DEMAND booking configuration.
         availability:
           type: string
           enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]

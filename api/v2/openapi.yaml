@@ -143,7 +143,15 @@ paths:
         length, every occupied night must have remaining capacity and a price,
         the check-out date must be priced, and the check-in date must be an
         allowed starting day. Nearer months that are only bookable on request
-        are skipped. Set `dateFrom` or `dateTo` to pin the range yourself.
+        are skipped. `hotelId` and `visitTypeId` are required for this lookup;
+        `roomTypeId` is optional. Without it, the API searches room types that
+        match `guests`, but the whole stay must fit into one room type. Capacity
+        from different room types is never combined. Send `guests` so the API
+        searches the intended occupancy. If no bookable stay is found, the
+        normal non-empty fallback calendar is returned. Priced dates that meet
+        the visit type's starting-day and date-range rules remain selectable,
+        including dates whose resulting stay is on request. Set `dateFrom` or
+        `dateTo` to disable the automatic first-bookable-month lookup.
       parameters:
         - $ref: "#/components/parameters/RequestId"
       requestBody:
@@ -720,6 +728,7 @@ components:
         selectable:
           type: boolean
           nullable: true
+          description: Whether the booking flow can start on this date. This follows price, date-range, and starting-day rules; it does not guarantee capacity for the complete stay. A selectable date may result in an ON_DEMAND booking configuration.
         availability:
           type: string
           enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]
