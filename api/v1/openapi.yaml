@@ -829,6 +829,8 @@ paths:
 
         When `binding_booking` is `false`, SpaPortal creates a non-binding request and an operator can contact the customer later. When `binding_booking` is `true`, the billed contact must include an address.
 
+        The price is always calculated server-side from the current price list; any price sent in the request body is ignored. The stay costs the requested room type's configured price whatever share of its beds is occupied, so `guests` must hold at least one guest and no more than the room type has beds.
+
         The first `Accept-Language` value determines the customer communication language for automated emails.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -867,7 +869,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
         "422":
-          $ref: "#/components/responses/UnprocessableEntity"
+          description: |
+            The request is well formed but the booking cannot be made. The most
+            common causes are no price defined for the requested stay, room type or
+            currency, more guests than the room type has beds, no capacity left for
+            the requested dates, and dates that do not fit the visit type.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
 components:
   securitySchemes:
@@ -2094,6 +2104,15 @@ components:
         guests:
           type: array
           minItems: 1
+          description: |
+            The people staying in the room. At least one guest is required, and there
+            cannot be more guests than the requested room type has beds — a request
+            that exceeds the room's capacity is rejected with `422`.
+
+            Occupancy does not change the price: the stay always costs the room's
+            configured price, so one guest in a double pays the double-room rate.
+            This holds for price lists quoted per person too, because the per-person
+            rate is multiplied by the room's bed count.
           items:
             $ref: "#/components/schemas/BookingGuest"
 
