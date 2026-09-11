@@ -6,8 +6,7 @@ icon: "tag"
 
 Hotels carry `priceFrom`: the lowest prices the hotel currently sells, computed
 from its active visit types and price lists. Use it for teasers and sorting,
-not as a quote. A bookable price for concrete dates comes from API v1
-[`GET /price`](/api/v1/reference/get-price).
+not as a quote for concrete dates.
 
 ## Shape
 
@@ -83,9 +82,6 @@ currency is. When you need a category and it is absent, fall back to `all`.
 
 In the example, the Weekend stay has no category yet and the hotel sells no
 wellness stay, so only `all` and `health` appear.
-
-The category of a visit type is `stay_category` in API v1
-[`GET /visit-types`](/api/v1/reference/get-visit-types).
 
 ## Two independent minima
 

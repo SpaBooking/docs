@@ -1559,9 +1559,7 @@ components:
       properties:
         id:
           type: string
-          description: >-
-            Visit type id. Matches `_id` of the visit type in API v1, where
-            `stay_category` tells whether it is a health or a wellness stay.
+          description: Id of the visit type the price comes from.
           example: 66f16191f739705faa020031
         name:
           $ref: "#/components/schemas/VisitTypeNameLocalizedString"
