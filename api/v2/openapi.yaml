@@ -199,10 +199,11 @@ paths:
         the locale keys selected by `Accept-Language`. `name` falls back to the
         default locale (cs-CZ); other untranslated values are returned as null.
 
-        `priceFrom` contains the cheapest available current or future room
-        price for the room's standard occupancy. It is null when no usable
-        price is available. Applicable public-channel promotions are reflected
-        in the price.
+        `priceFrom` holds the lowest prices the hotel currently sells, per
+        currency, for all stays (`all`) and per category (`health`,
+        `wellness`), each with two independent minima: `perPersonPerNight`
+        and `perStay`. It is null when no usable price is available. See
+        [Prices](/api/prices).
 
         See the [Hotel](/api/objects/hotel) object for the full field
         reference, including the allowed values for `serviceMethod`,
@@ -309,6 +310,9 @@ paths:
       description: |
         Returns a single hotel with its localized content, complete structured
         profile, and amenities by id.
+
+        `priceFrom` has the same shape as in the hotel list; see
+        [Prices](/api/prices).
 
         See the [Hotel](/api/objects/hotel) object for the full field
         reference, including the allowed values for `serviceMethod`,
@@ -1261,9 +1265,9 @@ components:
             - $ref: "#/components/schemas/PriceFrom"
           nullable: true
           description: >-
-            Cheapest available current or future room price for the room's
-            standard occupancy, including an applicable public-channel
-            promotion, or null when no usable price is available.
+            Lowest prices the hotel currently sells, per currency, for all
+            stays and per category, each with two independent minima, or null
+            when no usable price is available. See [Prices](/api/prices).
         roomTypes:
           type: array
           description: |
@@ -1412,19 +1416,133 @@ components:
                   ru: Охраняемая парковка находится рядом с отелем.
         priceFrom:
           CZK:
-            perNight: { amountMinor: 288000, currency: CZK, currencyExponent: 2 }
-            perNightOriginal: { amountMinor: 320000, currency: CZK, currencyExponent: 2 }
-            minimumStay: { amountMinor: 576000, currency: CZK, currencyExponent: 2 }
-            minimumStayOriginal: { amountMinor: 640000, currency: CZK, currencyExponent: 2 }
-            guests: 2
-            minimumNights: 2
+            all:
+              perPersonPerNight:
+                amount: { amountMinor: 152500, currency: CZK, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
+              perStay:
+                amount: { amountMinor: 610000, currency: CZK, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
+            health:
+              perPersonPerNight:
+                amount: { amountMinor: 247500, currency: CZK, currencyExponent: 2 }
+                original: { amountMinor: 275000, currency: CZK, currencyExponent: 2 }
+                nights: 7
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020004
+                  name:
+                    cs-CZ: Františkolázeňská léčebná kúra
+                    de: Franzensbader Heilkur
+              perStay:
+                amount: { amountMinor: 3465000, currency: CZK, currencyExponent: 2 }
+                original: { amountMinor: 3850000, currency: CZK, currencyExponent: 2 }
+                nights: 7
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020004
+                  name:
+                    cs-CZ: Františkolázeňská léčebná kúra
+                    de: Franzensbader Heilkur
+            wellness:
+              perPersonPerNight:
+                amount: { amountMinor: 152500, currency: CZK, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
+              perStay:
+                amount: { amountMinor: 610000, currency: CZK, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
           EUR:
-            perNight: { amountMinor: 11340, currency: EUR, currencyExponent: 2 }
-            perNightOriginal: { amountMinor: 12600, currency: EUR, currencyExponent: 2 }
-            minimumStay: { amountMinor: 22680, currency: EUR, currencyExponent: 2 }
-            minimumStayOriginal: { amountMinor: 25200, currency: EUR, currencyExponent: 2 }
-            guests: 2
-            minimumNights: 2
+            all:
+              perPersonPerNight:
+                amount: { amountMinor: 6100, currency: EUR, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
+              perStay:
+                amount: { amountMinor: 24400, currency: EUR, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
+            health:
+              perPersonPerNight:
+                amount: { amountMinor: 9900, currency: EUR, currencyExponent: 2 }
+                original: { amountMinor: 11000, currency: EUR, currencyExponent: 2 }
+                nights: 7
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020004
+                  name:
+                    cs-CZ: Františkolázeňská léčebná kúra
+                    de: Franzensbader Heilkur
+              perStay:
+                amount: { amountMinor: 138600, currency: EUR, currencyExponent: 2 }
+                original: { amountMinor: 154000, currency: EUR, currencyExponent: 2 }
+                nights: 7
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020004
+                  name:
+                    cs-CZ: Františkolázeňská léčebná kúra
+                    de: Franzensbader Heilkur
+            wellness:
+              perPersonPerNight:
+                amount: { amountMinor: 6100, currency: EUR, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
+              perStay:
+                amount: { amountMinor: 24400, currency: EUR, currencyExponent: 2 }
+                original: null
+                nights: 2
+                occupancy: 2
+                visitType:
+                  id: 66f16191f739705faa020031
+                  name:
+                    cs-CZ: Krátkodobý pobyt Weekend
+                    de: Kurzaufenthalt Weekend
     HotelsList:
       type: object
       required: [data, pagination]
@@ -1435,82 +1553,187 @@ components:
             $ref: "#/components/schemas/Hotel"
         pagination:
           $ref: "#/components/schemas/Pagination"
+    PriceFromVisitType:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          description: >-
+            Visit type id. Matches `_id` of the visit type in API v1, where
+            `stay_category` tells whether it is a health or a wellness stay.
+          example: 66f16191f739705faa020031
+        name:
+          $ref: "#/components/schemas/VisitTypeNameLocalizedString"
+    VisitTypeNameLocalizedString:
+      type: object
+      additionalProperties: false
+      properties:
+        cs-CZ:
+          type: string
+          minLength: 1
+        de:
+          type: string
+          minLength: 1
+        en:
+          type: string
+          minLength: 1
+        ru:
+          type: string
+          minLength: 1
+      description: >-
+        Localized visit type name keyed by supported response locale (`cs-CZ`,
+        `de`, `en`, `ru`). Missing requested translations fall back to the
+        Czech name, like the hotel `name`.
+      example:
+        cs-CZ: Krátkodobý pobyt Weekend
+        de: Kurzaufenthalt Weekend
+    PriceFromMinimum:
+      type: object
+      required: [amount, original, nights, occupancy, visitType]
+      properties:
+        amount:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          description: >-
+            Price after an active promotion that covers the whole stay.
+        original:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          nullable: true
+          description: >-
+            The same price before the promotion, or null when no promotion
+            applies.
+        nights:
+          type: integer
+          minimum: 1
+          description: Shortest stay the visit type allows, in nights.
+          example: 2
+        occupancy:
+          type: integer
+          minimum: 1
+          description: Standard occupancy of the room type the price applies to.
+          example: 2
+        visitType:
+          $ref: "#/components/schemas/PriceFromVisitType"
+    PriceFromScope:
+      type: object
+      required: [perPersonPerNight, perStay]
+      properties:
+        perPersonPerNight:
+          allOf:
+            - $ref: "#/components/schemas/PriceFromMinimum"
+          description: >-
+            Lowest price for one guest for one night at the reported
+            occupancy.
+        perStay:
+          allOf:
+            - $ref: "#/components/schemas/PriceFromMinimum"
+          description: >-
+            Lowest total for `occupancy` guests for `nights` nights, chosen by
+            the price per guest. Not derived from `perPersonPerNight`; the two
+            minima can name different visit types.
     PriceFromCurrency:
       type: object
-      required:
-        - perNight
-        - perNightOriginal
-        - minimumStay
-        - minimumStayOriginal
-        - guests
-        - minimumNights
+      required: [all]
       properties:
-        perNight:
+        all:
           allOf:
-            - $ref: "#/components/schemas/Money"
+            - $ref: "#/components/schemas/PriceFromScope"
           description: >-
-            Current nightly room price for the standard occupancy, after any
-            active promotion.
-        perNightOriginal:
+            Lowest prices across everything the hotel sells, including stays
+            without a category.
+        health:
           allOf:
-            - $ref: "#/components/schemas/Money"
-          nullable: true
+            - $ref: "#/components/schemas/PriceFromScope"
           description: >-
-            Pre-discount nightly price (the original price before a promotion),
-            or null when the offer has no active discount.
-        minimumStay:
+            Lowest prices across health stays (spa cures) only. Omitted when
+            the hotel sells none.
+        wellness:
           allOf:
-            - $ref: "#/components/schemas/Money"
+            - $ref: "#/components/schemas/PriceFromScope"
           description: >-
-            Current total for the required stay (`perNight` × `minimumNights`).
-        minimumStayOriginal:
-          allOf:
-            - $ref: "#/components/schemas/Money"
-          nullable: true
-          description: >-
-            Pre-discount total for the minimum stay, or null when there is no
-            discount.
-        guests:
-          type: integer
-          minimum: 1
-          description: >-
-            Number of guests this "from" price is for (the occupancy with the
-            cheapest offer).
-          example: 2
-        minimumNights:
-          type: integer
-          minimum: 1
-          description: Minimum number of nights the offer requires.
-          example: 2
+            Lowest prices across wellness stays only. Omitted when the hotel
+            sells none.
     PriceFrom:
       type: object
       description: >-
-        Cheapest available current or future room price for a hotel, keyed by
-        currency. Prices are room totals for the room's standard occupancy and
-        include an applicable public-channel promotion. They are not affected
-        by query parameters. The cheapest room may differ by currency. A
-        currency key is present only when the hotel has a usable price in that
-        currency.
+        Lowest prices the hotel currently sells, keyed by currency. Each
+        currency holds the hotel-wide price `all` and the categories `health`
+        and `wellness`, each with two independent minima. Prices are not
+        affected by query parameters
+        and can differ by currency. A currency key is present only when the
+        hotel has a usable price in that currency. See [Prices](/api/prices).
       properties:
         CZK:
           $ref: "#/components/schemas/PriceFromCurrency"
         EUR:
           $ref: "#/components/schemas/PriceFromCurrency"
       example:
-        CZK:
-          perNight: { amountMinor: 288000, currency: CZK, currencyExponent: 2 }
-          perNightOriginal: { amountMinor: 320000, currency: CZK, currencyExponent: 2 }
-          minimumStay: { amountMinor: 576000, currency: CZK, currencyExponent: 2 }
-          minimumStayOriginal: { amountMinor: 640000, currency: CZK, currencyExponent: 2 }
-          guests: 2
-          minimumNights: 2
         EUR:
-          perNight: { amountMinor: 11340, currency: EUR, currencyExponent: 2 }
-          perNightOriginal: { amountMinor: 12600, currency: EUR, currencyExponent: 2 }
-          minimumStay: { amountMinor: 22680, currency: EUR, currencyExponent: 2 }
-          minimumStayOriginal: { amountMinor: 25200, currency: EUR, currencyExponent: 2 }
-          guests: 2
-          minimumNights: 2
+          all:
+            perPersonPerNight:
+              amount: { amountMinor: 6100, currency: EUR, currencyExponent: 2 }
+              original: null
+              nights: 2
+              occupancy: 2
+              visitType:
+                id: 66f16191f739705faa020031
+                name:
+                  cs-CZ: Krátkodobý pobyt Weekend
+                  de: Kurzaufenthalt Weekend
+            perStay:
+              amount: { amountMinor: 24400, currency: EUR, currencyExponent: 2 }
+              original: null
+              nights: 2
+              occupancy: 2
+              visitType:
+                id: 66f16191f739705faa020031
+                name:
+                  cs-CZ: Krátkodobý pobyt Weekend
+                  de: Kurzaufenthalt Weekend
+          health:
+            perPersonPerNight:
+              amount: { amountMinor: 9900, currency: EUR, currencyExponent: 2 }
+              original: { amountMinor: 11000, currency: EUR, currencyExponent: 2 }
+              nights: 7
+              occupancy: 2
+              visitType:
+                id: 66f16191f739705faa020004
+                name:
+                  cs-CZ: Františkolázeňská léčebná kúra
+                  de: Franzensbader Heilkur
+            perStay:
+              amount: { amountMinor: 138600, currency: EUR, currencyExponent: 2 }
+              original: { amountMinor: 154000, currency: EUR, currencyExponent: 2 }
+              nights: 7
+              occupancy: 2
+              visitType:
+                id: 66f16191f739705faa020004
+                name:
+                  cs-CZ: Františkolázeňská léčebná kúra
+                  de: Franzensbader Heilkur
+          wellness:
+            perPersonPerNight:
+              amount: { amountMinor: 6100, currency: EUR, currencyExponent: 2 }
+              original: null
+              nights: 2
+              occupancy: 2
+              visitType:
+                id: 66f16191f739705faa020031
+                name:
+                  cs-CZ: Krátkodobý pobyt Weekend
+                  de: Kurzaufenthalt Weekend
+            perStay:
+              amount: { amountMinor: 24400, currency: EUR, currencyExponent: 2 }
+              original: null
+              nights: 2
+              occupancy: 2
+              visitType:
+                id: 66f16191f739705faa020031
+                name:
+                  cs-CZ: Krátkodobý pobyt Weekend
+                  de: Kurzaufenthalt Weekend
     AmenityCategory:
       type: object
       required: [code, label]

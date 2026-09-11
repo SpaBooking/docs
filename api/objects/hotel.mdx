@@ -70,11 +70,15 @@ omitted.
 Add [`expand=amenityLabels`](/api/expand) to inline the localized category,
 amenity, and option labels instead of resolving them against the dictionary.
 
-`priceFrom` contains the cheapest available current or future room price for
-the room's standard occupancy. Each currency reports the nightly room total,
-the total for the required minimum stay, the occupancy, and the minimum number
-of nights. The `perNight` and `minimumStay` totals already include any active
-public-channel promotion. When a promotion lowers the price, `perNightOriginal`
-and `minimumStayOriginal` carry the pre-discount ("was") price; they are `null`
-otherwise. The cheapest room can differ by currency. `priceFrom` is `null` when
-the hotel has no usable price; an unavailable currency key is omitted.
+## Prices
+
+`priceFrom` holds the lowest prices the hotel currently sells, keyed by currency
+(`CZK`, `EUR`). Under each currency you get the hotel-wide price `all` and,
+when the hotel sells such stays, the categories `health` (spa cures) and
+`wellness`. Each of them reports two independent minima, `perPersonPerNight`
+and `perStay`, each with its own `amount`, `original`, `nights`, `occupancy`,
+and `visitType`. `all` is always present when the currency is; a category is
+omitted when the hotel sells nothing in it. `priceFrom` is `null` when the hotel
+has no usable price, and a currency without a usable price is omitted. The
+`visitType.name` falls back to the Czech value like the hotel `name`. See
+[Prices](/api/prices) for the selection rules and an example.

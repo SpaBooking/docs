@@ -1,0 +1,125 @@
+---
+title: "Prices"
+description: "Read the hotel \"from\" prices returned by the SpaPortal API."
+icon: "tag"
+---
+
+Hotels carry `priceFrom`: the lowest prices the hotel currently sells, computed
+from its active visit types and price lists. Use it for teasers and sorting,
+not as a quote. A bookable price for concrete dates comes from API v1
+[`GET /price`](/api/v1/reference/get-price).
+
+## Shape
+
+`priceFrom` is keyed by currency (`CZK`, `EUR`). Under each currency the same
+"from" price appears up to three times:
+
+| Key | What it covers |
+| --- | --- |
+| `all` | Everything the hotel sells. This is the hotel-wide "from" price. |
+| `health` | Only health stays (spa cures). |
+| `wellness` | Only wellness stays. |
+
+Each of them holds two minima, `perPersonPerNight` and `perStay`, with the same
+fields:
+
+| Field | Meaning |
+| --- | --- |
+| `amount` | The price as a [`Money`](/api/currencies) object, after any promotion. |
+| `original` | The same price before the promotion, or `null` when none applies. |
+| `nights` | Shortest stay the visit type allows. |
+| `occupancy` | Standard occupancy of the room type the price applies to. |
+| `visitType` | `id` and localized `name` of the visit type the price comes from. |
+
+Example for a hotel priced in EUR, requested with `Accept-Language: de`:
+
+```json
+{
+  "EUR": {
+    "all": {
+      "perPersonPerNight": {
+        "amount": { "amountMinor": 6100, "currency": "EUR", "currencyExponent": 2 },
+        "original": null,
+        "nights": 2,
+        "occupancy": 2,
+        "visitType": { "id": "66f16191f739705faa020031", "name": { "de": "Kurzaufenthalt Weekend" } }
+      },
+      "perStay": {
+        "amount": { "amountMinor": 24400, "currency": "EUR", "currencyExponent": 2 },
+        "original": null,
+        "nights": 2,
+        "occupancy": 2,
+        "visitType": { "id": "66f16191f739705faa020031", "name": { "de": "Kurzaufenthalt Weekend" } }
+      }
+    },
+    "health": {
+      "perPersonPerNight": {
+        "amount": { "amountMinor": 9900, "currency": "EUR", "currencyExponent": 2 },
+        "original": { "amountMinor": 11000, "currency": "EUR", "currencyExponent": 2 },
+        "nights": 7,
+        "occupancy": 2,
+        "visitType": { "id": "66f16191f739705faa020004", "name": { "de": "Franzensbader Heilkur" } }
+      },
+      "perStay": {
+        "amount": { "amountMinor": 138600, "currency": "EUR", "currencyExponent": 2 },
+        "original": { "amountMinor": 154000, "currency": "EUR", "currencyExponent": 2 },
+        "nights": 7,
+        "occupancy": 2,
+        "visitType": { "id": "66f16191f739705faa020004", "name": { "de": "Franzensbader Heilkur" } }
+      }
+    }
+  }
+}
+```
+
+## All stays and the two categories
+
+`all` looks at every visit type the hotel sells, including visit types that
+have no category yet. `health` and `wellness` are the same calculation limited
+to one category, so they are never cheaper than `all`, and `all` can be cheaper
+than both when the cheapest offer is a stay without a category. A category is
+omitted when the hotel sells nothing in it; `all` is present whenever the
+currency is. When you need a category and it is absent, fall back to `all`.
+
+In the example, the Weekend stay has no category yet and the hotel sells no
+wellness stay, so only `all` and `health` appear.
+
+The category of a visit type is `stay_category` in API v1
+[`GET /visit-types`](/api/v1/reference/get-visit-types).
+
+## Two independent minima
+
+`perPersonPerNight.amount` is the price for one guest for one night at
+`occupancy` guests per room. `perStay.amount` is the total for `occupancy`
+guests for `nights` nights. Each minimum is chosen on its own and carries its
+own `visitType`, `nights`, and `occupancy`, so the two can name different visit
+types and room types.
+
+Do not derive one from the other. `perStay.amount` is not
+`perPersonPerNight.amount × occupancy × nights`, because every amount is rounded
+on its own.
+
+## Selection rules
+
+- `perPersonPerNight` is the offer with the lowest price per guest per night.
+- `perStay` is the offer with the lowest price per guest for the whole stay
+  (`amount ÷ occupancy`); the response carries the full total. A single room
+  with a lower total does not win when a double room is cheaper per guest.
+- Ties go to the shorter stay, then the lower occupancy, then the lower
+  `visitType.id`.
+- A promotion counts only when it covers every night of the stay.
+- Visit types whose selling period has ended are ignored.
+- Query parameters do not affect the values, and the cheapest offer can differ
+  by currency.
+
+## Rounding
+
+The API returns full precision in minor units. Rounding to whole currency units
+for display is up to you.
+
+## Payload size
+
+Every minimum embeds the visit type name in the requested locales. Send
+`Accept-Language` to receive one locale instead of all four. A missing
+translation falls back to Czech, like the hotel `name`; see
+[Localization](/api/localization).

@@ -46,6 +46,7 @@
               "api/authentication",
               "api/dates",
               "api/currencies",
+              "api/prices",
               "api/localization",
               "api/pagination",
               "api/search",
@@ -159,6 +160,10 @@
       "source": "/api/conventions",
       "destination": "/api",
       "permanent": true
+    },
+    {
+      "source": "/api/v1/reference/catalog/get-visit-types",
+      "destination": "/api/v1/reference/get-visit-types"
     }
   ],
   "footer": {

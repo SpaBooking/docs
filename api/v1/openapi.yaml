@@ -177,6 +177,8 @@ paths:
       tags: [Catalog]
       summary: Get visit types
       operationId: getVisitTypes
+      x-mint:
+        href: /api/v1/reference/get-visit-types
       description: |
         Returns visit types matching the supplied filters.
 
@@ -1109,6 +1111,7 @@ components:
           id: 1
           priority_position: 1
           on_demand: false
+          stay_category: health
           name:
             cs_CZ: Frantiskolazenska lecebna kura
             de: Franzensbader Heilkur
@@ -1208,6 +1211,7 @@ components:
               id: 1
               priority_position: 1
               on_demand: false
+              stay_category: health
               name:
                 cs_CZ: Frantiskolazenska lecebna kura
                 de: Franzensbader Heilkur
@@ -1228,6 +1232,7 @@ components:
             id: 1
             priority_position: 1
             on_demand: false
+            stay_category: health
             name:
               cs_CZ: Frantiskolazenska lecebna kura
               de: Franzensbader Heilkur
@@ -1358,6 +1363,7 @@ components:
               cs_CZ: Frantiskolazenska lecebna kura
               de: Franzensbader Heilkur
             on_demand: false
+            stay_category: health
           seasons:
             - date_from: "2026-04-28"
               date_to: "2027-01-01"
@@ -1405,6 +1411,7 @@ components:
           id: 1
           priority_position: 1
           on_demand: false
+          stay_category: health
           name:
             cs_CZ: Frantiskolazenska lecebna kura
             de: Franzensbader Heilkur
@@ -1841,6 +1848,13 @@ components:
           type: integer
         on_demand:
           type: boolean
+        stay_category:
+          type: string
+          nullable: true
+          enum: [health, wellness]
+          description: >-
+            Whether the visit type is a health stay (spa cure) or a wellness
+            stay. `null` when the property has not classified it yet.
         name:
           $ref: "#/components/schemas/LocalizedString"
         nights_min:
@@ -1902,6 +1916,13 @@ components:
           type: integer
         on_demand:
           type: boolean
+        stay_category:
+          type: string
+          nullable: true
+          enum: [health, wellness]
+          description: >-
+            Whether the visit type is a health stay (spa cure) or a wellness
+            stay. `null` when the property has not classified it yet.
         name:
           $ref: "#/components/schemas/LocalizedString"
         visit_type_categories:
@@ -2014,6 +2035,13 @@ components:
               $ref: "#/components/schemas/LocalizedString"
             on_demand:
               type: boolean
+            stay_category:
+              type: string
+              nullable: true
+              enum: [health, wellness]
+              description: >-
+                Whether the visit type is a health stay (spa cure) or a wellness
+                stay. `null` when the property has not classified it yet.
         seasons:
           type: array
           items:

@@ -1,5 +1,27 @@
 # API v2 changelog
 
+## 2026-09-10
+
+### Hotels
+
+- **Breaking:** `priceFrom` replaces `perNight`, `perNightOriginal`,
+  `minimumStay`, `minimumStayOriginal`, `guests`, and `minimumNights`. Under
+  each currency there is now the hotel-wide price `all` and the categories
+  `health` and `wellness`, each carrying two independent minima:
+  `perPersonPerNight` and `perStay`. Every minimum reports
+  its own `amount`, `original`, `nights`, `occupancy`, and `visitType`. See
+  [Prices](/api/prices).
+- A category is omitted when the hotel sells nothing in it. `all` includes
+  visit types that have no category yet, so it can be lower than both
+  categories.
+- A promotion lowers a "from" price only when it covers the whole stay.
+- Visit types whose selling period has ended no longer contribute a "from"
+  price.
+- Send `Accept-Language`: `priceFrom` embeds visit type names, and without the
+  header every name is returned in all four locales.
+- The category behind `health` and `wellness` is exposed in API v1 as
+  `stay_category` on every visit type object.
+
 ## 2026-07-28
 
 ### Amenities

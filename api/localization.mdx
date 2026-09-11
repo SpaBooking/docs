@@ -56,5 +56,6 @@ that field. When the header contains only unsupported languages, the API returns
 A requested key is always present in a localized field. When a translation is
 missing or empty, its value is `null` — the API never returns an empty string.
 
-The hotel `name` is the one exception: a missing translation falls back to the
-Czech value, so `name` values are never `null`.
+Two fields are exceptions: the hotel `name` and the `visitType.name` inside
+[`priceFrom`](/api/prices). A missing translation falls back to the Czech
+value, so these values are never `null`.

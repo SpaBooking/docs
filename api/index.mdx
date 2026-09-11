@@ -41,6 +41,14 @@ Fields that use the `Money` object return `CZK` and `EUR` as integer minor units
 (`amountMinor`). Hotel pet fees use major-unit numbers instead. There is no
 currency request parameter.
 
+## Prices
+
+[Read the prices guide](/api/prices).
+
+Hotels carry `priceFrom`: the lowest prices the hotel currently sells, keyed by
+currency, for all stays (`all`) and per category (`health`, `wellness`), each
+with two independent minima, `perPersonPerNight` and `perStay`.
+
 ## Images and thumbnails
 
 Hotels and room types can include images as `{ url, thumbnailUrl }` objects — `thumbnailUrl` is a smaller generated preview, or `null` when unavailable.
