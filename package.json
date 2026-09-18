@@ -1,0 +1,14 @@
+{
+  "name": "spaportal-api-docs",
+  "private": true,
+  "scripts": {
+    "lint:openapi": "redocly lint api/v2/openapi.yaml",
+    "bundle:openapi": "redocly bundle api/v2/openapi.yaml --output .artifacts/openapi.yaml",
+    "validate:docs": "mint validate",
+    "validate": "npm run lint:openapi && npm run bundle:openapi && npm run validate:docs"
+  },
+  "devDependencies": {
+    "@redocly/cli": "2.53.3",
+    "mint": "4.2.901"
+  }
+}

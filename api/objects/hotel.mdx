@@ -11,7 +11,29 @@ languages, and hotel-level [amenities](/api/amenities).
 Localized values return only the keys selected by
 [`Accept-Language`](/api/localization). `name` falls back to the Czech value when
 a requested translation is missing. Other localized fields preserve the requested
-key and return `null` when its translation is missing.
+key and return `null` when its translation is missing, except image `alt`,
+which falls back to the localized hotel name.
+
+## Images
+
+Every image contains `url`, `thumbnailUrl`, `width`, `height`, `alt`, and
+`variants`. Use `url` for the original or lightbox. `thumbnailUrl` is deprecated
+and remains available throughout API v2.
+
+Build `srcset` from the returned `variants` entries: `w480` means `480w`, and
+likewise for `w960`, `w1440`, and `w1920`. Set `sizes` for your layout and choose
+an available variant for `src`, falling back to `url`. Use the returned URLs
+directly; do not construct URLs for missing widths. Images are never enlarged,
+so an 1100-pixel original has only `w480` and `w960`.
+
+Use non-null `width` and `height` as intrinsic HTML dimensions to reserve the
+correct aspect ratio. They describe the original after orientation. When
+dimensions are unavailable, both are `null` and `variants` is `{}`. An original
+narrower than 480 pixels also has `{}`, but retains its known dimensions.
+
+`alt` follows [`Accept-Language`](/api/localization). Missing or null image
+translations fall back to the localized hotel name. Preserve an explicit empty
+string: it marks a decorative image. A non-empty value is trimmed.
 
 ## Structured profile
 

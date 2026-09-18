@@ -51,7 +51,10 @@ with two independent minima, `perPersonPerNight` and `perStay`.
 
 ## Images and thumbnails
 
-Hotels and room types can include images as `{ url, thumbnailUrl }` objects — `thumbnailUrl` is a smaller generated preview, or `null` when unavailable.
+Hotels and room types include images with `url`, `thumbnailUrl`, `width`,
+`height`, localized `alt`, and `variants`. Use available variants for responsive
+images and `url` as the fallback. The legacy `thumbnailUrl` remains available
+throughout API v2. See [Hotel images](/api/objects/hotel#images).
 
 ## Localization
 
