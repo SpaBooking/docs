@@ -47,6 +47,7 @@
               "api/dates",
               "api/currencies",
               "api/prices",
+              "api/images",
               "api/localization",
               "api/pagination",
               "api/search",
@@ -55,7 +56,8 @@
               "api/amenities",
               "api/status-codes",
               "api/errors",
-              "api/versioning"
+              "api/versioning",
+              "api/changelog"
             ]
           },
           {
@@ -159,6 +161,16 @@
     {
       "source": "/api/conventions",
       "destination": "/api",
+      "permanent": true
+    },
+    {
+      "source": "/api/v2/CHANGELOG",
+      "destination": "/api/changelog",
+      "permanent": true
+    },
+    {
+      "source": "/api/v2/changelog",
+      "destination": "/api/changelog",
       "permanent": true
     },
     {

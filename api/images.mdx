@@ -1,0 +1,125 @@
+---
+title: "Images"
+description: "Render responsive hotel and room type images from API v2."
+icon: "image"
+---
+
+Hotel and room type responses include responsive image metadata. Room types
+embedded in hotel responses use the same image shape.
+
+## Response shape
+
+Every image contains all six fields:
+
+```json
+{
+  "url": "https://files.example.com/production/hotels/example/photo.jpg",
+  "thumbnailUrl": "https://files.example.com/production/thumbnails/hotels/example/photo.webp",
+  "width": 2400,
+  "height": 1600,
+  "alt": {
+    "en": "Spa hotel exterior"
+  },
+  "variants": {
+    "w480": "https://files.example.com/production/thumbnails/v2/hotels/example/generation/w480.webp",
+    "w960": "https://files.example.com/production/thumbnails/v2/hotels/example/generation/w960.webp",
+    "w1440": "https://files.example.com/production/thumbnails/v2/hotels/example/generation/w1440.webp",
+    "w1920": "https://files.example.com/production/thumbnails/v2/hotels/example/generation/w1920.webp"
+  }
+}
+```
+
+| Field             | Meaning                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `url`             | Original image URL. Use it for a full-size view and as the final fallback.               |
+| `thumbnailUrl`    | Deprecated legacy preview URL. It remains available throughout API v2 and can be `null`. |
+| `width`, `height` | Intrinsic dimensions of the oriented original, or `null` when unavailable.               |
+| `alt`             | Localized alternative text selected by `Accept-Language`.                                |
+| `variants`        | Available WebP URLs keyed by target width.                                               |
+
+## Build a responsive image
+
+Use only the variant URLs returned by the API. Do not construct a URL for a
+missing width. Images are never enlarged, so an 1100-pixel original has
+`w480` and `w960`, but no larger variants.
+
+```js
+const widths = [480, 960, 1440, 1920];
+
+const srcset = widths
+  .flatMap((width) => {
+    const url = image.variants[`w${width}`];
+    return url ? [`${url} ${width}w`] : [];
+  })
+  .join(", ");
+
+const src =
+  image.variants.w960 ?? image.variants.w480 ?? image.thumbnailUrl ?? image.url;
+```
+
+Set `srcset` only when the resulting string is non-empty. Set `sizes` to the
+actual layout slot, for example `(max-width: 768px) 100vw, 50vw`. The browser
+then selects the best available variant for the viewport and device pixel
+density.
+
+Use non-null `width` and `height` as the HTML intrinsic dimensions. They reserve
+the correct aspect ratio before the image loads. Do not replace them with the
+CSS slot size.
+
+```html
+<img
+  src="<selected src>"
+  srcset="<generated srcset>"
+  sizes="(max-width: 768px) 100vw, 50vw"
+  width="2400"
+  height="1600"
+  alt="Spa hotel exterior"
+  loading="lazy"
+/>
+```
+
+Use `loading="eager"` and `fetchpriority="high"` only for the single image that
+is the page's likely largest contentful paint (LCP). Lazy-load images outside
+the initial viewport.
+
+## Empty variants and fallbacks
+
+An empty `variants` object means that no responsive variant is available. It
+does not mean that processing is still pending. Omit `srcset` and use
+`thumbnailUrl ?? url` as `src`.
+
+There are two possible cases:
+
+- A small original can have known `width` and `height` but no variant because
+  its width is below 480 pixels.
+- An unavailable legacy image has `width: null`, `height: null`, and
+  `variants: {}`.
+
+As a final error fallback, remove `srcset` and switch `src` to
+`thumbnailUrl ?? url`. This is useful if a cached client encounters a missing
+variant, but it does not replace normal HTTP error monitoring.
+
+## Alternative text
+
+`alt` follows [`Accept-Language`](/api/localization). The response contains the
+requested locale keys:
+
+- A missing or `null` hotel image translation falls back to the localized
+  hotel name.
+- A missing or `null` room image translation falls back to the localized room
+  category, or `null` when that category translation is unavailable.
+- An explicit empty string remains `""`. Preserve it when the image is
+  decorative.
+- A non-empty stored value is trimmed.
+
+The API provides recommended alternative text. Your client can still use
+`alt=""` when the image is decorative or redundant in its rendered context.
+
+## Compatibility
+
+The image fields are additive in API v2. Existing `url` and `thumbnailUrl`
+values retain their behavior, and `thumbnailUrl` remains present as a nullable
+field throughout API v2. API v1 image responses are unchanged.
+
+See the [Hotel](/api/objects/hotel) and [Room type](/api/objects/room-type)
+object references for entity-specific behavior.

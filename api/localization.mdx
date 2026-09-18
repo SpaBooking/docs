@@ -53,9 +53,13 @@ that field. When the header contains only unsupported languages, the API returns
 
 ## Missing translations
 
-A requested key is always present in a localized field. When a translation is
-missing or empty, its value is `null` — the API never returns an empty string.
+A requested key is always present in a localized field. For most fields, a
+missing or empty translation is returned as `null`.
 
-Two fields are exceptions: the hotel `name` and the `visitType.name` inside
-[`priceFrom`](/api/prices). A missing translation falls back to the Czech
-value, so these values are never `null`.
+The following fields have explicit fallback behavior:
+
+- Hotel `name` and `visitType.name` inside [`priceFrom`](/api/prices) fall back
+  to the Czech value, so they are never `null`.
+- Image `alt` falls back to the localized hotel name or room category. Unlike
+  other localized fields, an explicitly stored empty `alt` remains `""` to
+  represent a decorative image. See [Images](/api/images#alternative-text).

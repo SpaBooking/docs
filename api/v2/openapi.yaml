@@ -857,12 +857,17 @@ components:
       properties:
         url:
           type: string
-          description: Original image URL.
+          description: >-
+            Original image URL. Use it for a full-size view and as the final
+            fallback.
         thumbnailUrl:
           type: string
           nullable: true
           deprecated: true
-          description: Legacy preview URL, or null when unavailable. Use variants for responsive images. Retained throughout API v2.
+          description: >-
+            Deprecated legacy preview URL, or null when unavailable. Use
+            variants for responsive images, then this preview before the
+            original as a fallback. Retained throughout API v2.
         width:
           type: integer
           nullable: true
@@ -889,7 +894,8 @@ components:
         Available WebP images by pixel width. No image is enlarged, so larger
         sizes can be absent. An original narrower than 480 pixels has no
         variants. Unavailable variants are represented by an empty object;
-        in that case dimensions can also be null. Use the returned URLs as-is.
+        in that case dimensions can also be null. Use the returned URLs as-is
+        and omit srcset when the object is empty.
       properties:
         w480:
           type: string
