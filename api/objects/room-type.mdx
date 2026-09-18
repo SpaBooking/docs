@@ -14,3 +14,19 @@ free-text facilities, and images. Localized fields (`category`, `description`)
 return the locale keys selected by [`Accept-Language`](/api/localization).
 
 `hotel` is embedded only when the request sets `expand=hotel`.
+
+## Images
+
+Images use the same [responsive image fields](/api/objects/hotel#images) as
+hotels, including when a hotel response embeds room types. Build `srcset` from
+the available `variants`, set `sizes` for your layout, and use an available
+variant as `src` with `url` as the fallback. Do not construct missing URLs.
+
+Set intrinsic HTML `width` and `height` when both values are non-null. If
+dimensions are unavailable, both are `null` and `variants` is `{}`. Small
+originals can retain dimensions with no variants.
+
+`alt` uses the requested locale keys. Missing or null translations fall back
+to the room type's localized `category`, or `null` if the category translation
+is unavailable. Preserve `""` for decorative images. The deprecated
+`thumbnailUrl` remains available throughout API v2.

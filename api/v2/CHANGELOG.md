@@ -1,5 +1,19 @@
 # API v2 changelog
 
+## 2026-09-18
+
+### Hotel and room type images
+
+- Added `width`, `height`, localized `alt`, and `variants` to every image,
+  including room types embedded in a hotel response. Existing `url` and
+  `thumbnailUrl` fields retain their behavior.
+- `variants` contains available WebP URLs at widths 480, 960, 1440, and 1920.
+  Sizes larger than the original are omitted. Use `url` when no variants exist.
+- Unavailable dimensions are explicitly `null`; unavailable variants are `{}`.
+- `alt` follows `Accept-Language`. Missing translations fall back to the hotel
+  name or room category. Preserve an explicit empty string for decorative images.
+- `thumbnailUrl` is deprecated and remains available throughout API v2.
+
 ## 2026-09-10
 
 ### Hotels

@@ -737,9 +737,11 @@ components:
           type: string
           enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]
         price:
-          allOf:
+          anyOf:
             - $ref: "#/components/schemas/CalendarDatePrice"
-          nullable: true
+            - type: object
+              nullable: true
+              enum: [null]
     CalendarDatePrice:
       type: object
       required: [isFinal, amounts]
@@ -750,13 +752,17 @@ components:
           type: object
           properties:
             CZK:
-              allOf:
+              anyOf:
                 - $ref: "#/components/schemas/Money"
-              nullable: true
+                - type: object
+                  nullable: true
+                  enum: [null]
             EUR:
-              allOf:
+              anyOf:
                 - $ref: "#/components/schemas/Money"
-              nullable: true
+                - type: object
+                  nullable: true
+                  enum: [null]
     Money:
       type: object
       required: [amountMinor, currency, currencyExponent]
@@ -847,7 +853,7 @@ components:
         de: Kurhotel Pawlik
     Image:
       type: object
-      required: [url, thumbnailUrl]
+      required: [url, thumbnailUrl, width, height, alt, variants]
       properties:
         url:
           type: string
@@ -855,7 +861,48 @@ components:
         thumbnailUrl:
           type: string
           nullable: true
-          description: Generated preview image URL, or null when unavailable.
+          deprecated: true
+          description: Legacy preview URL, or null when unavailable. Use variants for responsive images. Retained throughout API v2.
+        width:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: Original display width in pixels after orientation, or null when dimensions are unavailable.
+        height:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: Original display height in pixels after orientation, or null when dimensions are unavailable.
+        alt:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: >-
+            Localized alternative text. Missing translations fall back to the
+            localized hotel name or room category, or null if unavailable.
+            An empty string is intentional decorative text; preserve it.
+        variants:
+          $ref: "#/components/schemas/ImageVariants"
+    ImageVariants:
+      type: object
+      additionalProperties: false
+      description: >-
+        Available WebP images by pixel width. No image is enlarged, so larger
+        sizes can be absent. An original narrower than 480 pixels has no
+        variants. Unavailable variants are represented by an empty object;
+        in that case dimensions can also be null. Use the returned URLs as-is.
+      properties:
+        w480:
+          type: string
+          format: uri
+        w960:
+          type: string
+          format: uri
+        w1440:
+          type: string
+          format: uri
+        w1920:
+          type: string
+          format: uri
     RoomType:
       type: object
       description: >-
@@ -941,6 +988,14 @@ components:
         images:
           - url: https://cdn.example.com/rooms/superior.jpg
             thumbnailUrl: https://cdn.example.com/rooms/superior-thumbnail.jpg
+            width: 1100
+            height: 733
+            alt:
+              cs-CZ: Superior dvoulůžkový pokoj
+              en: Superior double room
+            variants:
+              w480: https://cdn.example.com/rooms/superior/generation-1/w480.webp
+              w960: https://cdn.example.com/rooms/superior/generation-1/w960.webp
         description:
           cs-CZ: Prostorný pokoj s vlastní koupelnou.
           de: Geräumiges Zimmer mit eigenem Bad.
@@ -1261,9 +1316,11 @@ components:
                         from: "09:00"
                         to: "21:00"
         priceFrom:
-          allOf:
+          anyOf:
             - $ref: "#/components/schemas/PriceFrom"
-          nullable: true
+            - type: object
+              nullable: true
+              enum: [null]
           description: >-
             Lowest prices the hotel currently sells, per currency, for all
             stays and per category, each with two independent minima, or null
@@ -1309,6 +1366,16 @@ components:
         images:
           - url: https://files.example.com/hotel.jpg
             thumbnailUrl: https://files.example.com/hotel-thumbnail.webp
+            width: 2400
+            height: 1600
+            alt:
+              cs-CZ: Pohled na hotel
+              de: Außenansicht des Hotels
+            variants:
+              w480: https://files.example.com/hotel/generation-1/w480.webp
+              w960: https://files.example.com/hotel/generation-1/w960.webp
+              w1440: https://files.example.com/hotel/generation-1/w1440.webp
+              w1920: https://files.example.com/hotel/generation-1/w1920.webp
         accommodationRules:
           checkIn: { from: "14:00", to: "20:00" }
           checkOut: { from: "07:00", to: "10:00" }
@@ -1596,9 +1663,11 @@ components:
           description: >-
             Price after an active promotion that covers the whole stay.
         original:
-          allOf:
+          anyOf:
             - $ref: "#/components/schemas/Money"
-          nullable: true
+            - type: object
+              nullable: true
+              enum: [null]
           description: >-
             The same price before the promotion, or null when no promotion
             applies.
