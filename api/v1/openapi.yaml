@@ -73,7 +73,7 @@ paths:
 
         `lowest_price.<lang>.amount_per_night` includes any active discount promotions. `original_amount_per_night` is the price before any discount — equal to `amount_per_night` when no promotion applies.
 
-        `stars`, `image`, and `thumbnail` can be `null`. Set `include_room_types=false` when you do not need nested room type data.
+        `stars`, `image`, and `thumbnail` can be `null`. `image`, `thumbnail`, `width`, `height`, `alt`, and `variants` describe the first image; see the [responsive image guide](/api/images). Set `include_room_types=false` when you do not need nested room type data.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
@@ -135,6 +135,8 @@ paths:
         Returns one hotel by ID.
 
         The `lowest_price` semantics match `GET /hotels`: the value is a per-night, per-guest display price for the cheapest matching room.
+
+        Hotel and nested room type image fields describe the first image. See the [responsive image guide](/api/images) for `srcset` construction and fallbacks.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: hotelId
@@ -187,6 +189,8 @@ paths:
         Each visit type can include applicable loyalty programs and hotel-level lowest prices. The visit-type `lowest_price` and each per-hotel `lowest_price` include any active discount promotions; `original_amount_per_night` is the price before any discount.
 
         A `promotions` array is returned at the visit-type level and per nested hotel: the active promotions running now OR starting in the future (expired ones omitted), scoped to the caller's channel, each with its localized `name`, `percentage` and validity (`valid_from`/`valid_to`). The promotion `name` is not needed to render the strike-through price (use `lowest_price`), but lets you label a badge (e.g. "-15% Eröffnungsrabatt").
+
+        `image`, `thumbnail`, `width`, `height`, `alt`, and `variants` describe the visit type's first image. See the [responsive image guide](/api/images).
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
@@ -990,6 +994,16 @@ components:
             de: ""
           image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/hotels/example/pawlik.jpg
           thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/hotels/example/pawlik.webp
+          width: 2400
+          height: 1600
+          alt:
+            cs_CZ: Hotel Pawlik v lázeňském parku
+            de: Hotel Pawlik im Kurpark
+          variants:
+            w480: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w480.webp
+            w960: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w960.webp
+            w1440: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w1440.webp
+            w1920: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w1920.webp
           booking_url:
             cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik
             de: https://reservierung.franzensbad.cz?hotel=Pawlik
@@ -1014,6 +1028,15 @@ components:
               beds: 2
               image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example/room.jpg
               thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example/room.webp
+              width: 1800
+              height: 1200
+              alt:
+                cs_CZ: Prezidentské apartmá
+                de: Appartement Aquaforum
+              variants:
+                w480: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/rooms/example/generation/w480.webp
+                w960: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/rooms/example/generation/w960.webp
+                w1440: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/rooms/example/generation/w1440.webp
               booking_url:
                 cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik&roomType=APPARTEMENT
                 de: https://reservierung.franzensbad.cz?hotel=Pawlik&roomType=APPARTEMENT
@@ -1064,6 +1087,16 @@ components:
           de: ""
         image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/hotels/example/pawlik.jpg
         thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/hotels/example/pawlik.webp
+        width: 2400
+        height: 1600
+        alt:
+          cs_CZ: Hotel Pawlik v lázeňském parku
+          de: Hotel Pawlik im Kurpark
+        variants:
+          w480: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w480.webp
+          w960: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w960.webp
+          w1440: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w1440.webp
+          w1920: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/hotels/example/generation/w1920.webp
         booking_url:
           cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik
           de: https://reservierung.franzensbad.cz?hotel=Pawlik
@@ -1088,6 +1121,15 @@ components:
             beds: 2
             image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/rooms/example/room.jpg
             thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/rooms/example/room.webp
+            width: 1800
+            height: 1200
+            alt:
+              cs_CZ: Prezidentské apartmá
+              de: Appartement Aquaforum
+            variants:
+              w480: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/rooms/example/generation/w480.webp
+              w960: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/rooms/example/generation/w960.webp
+              w1440: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/rooms/example/generation/w1440.webp
             booking_url:
               cs_CZ: https://rezervace.frantiskovylazne.cz?hotel=Pawlik&roomType=APPARTEMENT
               de: https://reservierung.franzensbad.cz?hotel=Pawlik&roomType=APPARTEMENT
@@ -1115,6 +1157,18 @@ components:
           name:
             cs_CZ: Frantiskolazenska lecebna kura
             de: Franzensbader Heilkur
+          image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/visit-types/example/cure.jpg
+          thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/visit-types/example/cure.webp
+          width: 2400
+          height: 1600
+          alt:
+            cs_CZ: Františkolázeňská léčebná kúra
+            de: Franzensbader Heilkur
+          variants:
+            w480: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w480.webp
+            w960: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w960.webp
+            w1440: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w1440.webp
+            w1920: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w1920.webp
           visit_type_categories:
             - _id: 66f16191f739705faa020005
               id: 1
@@ -1215,6 +1269,18 @@ components:
               name:
                 cs_CZ: Frantiskolazenska lecebna kura
                 de: Franzensbader Heilkur
+              image: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/visit-types/example/cure.jpg
+              thumbnail: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/visit-types/example/cure.webp
+              width: 2400
+              height: 1600
+              alt:
+                cs_CZ: Františkolázeňská léčebná kúra
+                de: Franzensbader Heilkur
+              variants:
+                w480: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w480.webp
+                w960: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w960.webp
+                w1440: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w1440.webp
+                w1920: https://spaportal-files.s3.eu-central-1.amazonaws.com/production/thumbnails/v2/visit-types/example/generation/w1920.webp
               nights_min: 1
               nights_max: 3
               reservation_time_span: DAYS
@@ -1578,6 +1644,27 @@ components:
         cs_CZ: Frantiskovy Lazne
         de: Franzensbad
 
+    ImageVariants:
+      type: object
+      description: >-
+        Available WebP renditions of the entity's first image. Keys are target
+        widths in pixels. A key is omitted when that rendition is unavailable;
+        clients must not construct missing URLs.
+      additionalProperties: false
+      properties:
+        w480:
+          type: string
+          format: uri
+        w960:
+          type: string
+          format: uri
+        w1440:
+          type: string
+          format: uri
+        w1920:
+          type: string
+          format: uri
+
     ObjectId:
       type: string
       pattern: "^[0-9a-fA-F]{24}$"
@@ -1753,9 +1840,27 @@ components:
         image:
           type: string
           nullable: true
+          description: Original URL of the first room image.
         thumbnail:
           type: string
           nullable: true
+          description: Legacy preview URL of the first room image.
+        width:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic width of the oriented original, or null when unavailable.
+        height:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic height of the oriented original, or null when unavailable.
+        alt:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized alternative text for the first room image.
+        variants:
+          $ref: "#/components/schemas/ImageVariants"
         booking_url:
           $ref: "#/components/schemas/LocalizedString"
         description:
@@ -1807,9 +1912,27 @@ components:
         image:
           type: string
           nullable: true
+          description: Original URL of the first hotel image.
         thumbnail:
           type: string
           nullable: true
+          description: Legacy preview URL of the first hotel image.
+        width:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic width of the oriented original, or null when unavailable.
+        height:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic height of the oriented original, or null when unavailable.
+        alt:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized alternative text for the first hotel image.
+        variants:
+          $ref: "#/components/schemas/ImageVariants"
         booking_url:
           $ref: "#/components/schemas/LocalizedString"
         destination:
@@ -1857,6 +1980,30 @@ components:
             stay. `null` when the property has not classified it yet.
         name:
           $ref: "#/components/schemas/LocalizedString"
+        image:
+          type: string
+          nullable: true
+          description: Original URL of the first visit type image.
+        thumbnail:
+          type: string
+          nullable: true
+          description: Legacy preview URL of the first visit type image.
+        width:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic width of the oriented original, or null when unavailable.
+        height:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic height of the oriented original, or null when unavailable.
+        alt:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized alternative text for the first visit type image.
+        variants:
+          $ref: "#/components/schemas/ImageVariants"
         nights_min:
           type: integer
         nights_max:
@@ -1925,6 +2072,30 @@ components:
             stay. `null` when the property has not classified it yet.
         name:
           $ref: "#/components/schemas/LocalizedString"
+        image:
+          type: string
+          nullable: true
+          description: Original URL of the first visit type image.
+        thumbnail:
+          type: string
+          nullable: true
+          description: Legacy preview URL of the first visit type image.
+        width:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic width of the oriented original, or null when unavailable.
+        height:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: Intrinsic height of the oriented original, or null when unavailable.
+        alt:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized alternative text for the first visit type image.
+        variants:
+          $ref: "#/components/schemas/ImageVariants"
         visit_type_categories:
           type: array
           items:
