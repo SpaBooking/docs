@@ -20,7 +20,9 @@ return the locale keys selected by [`Accept-Language`](/api/localization).
 Images use the same [responsive image fields](/api/objects/hotel#images) as
 hotels, including when a hotel response embeds room types. Build `srcset` from
 the available `variants`, set `sizes` for your layout, and use an available
-variant as `src` with `url` as the fallback. Do not construct missing URLs.
+variant as `src`, followed by `thumbnailUrl` and then `url` as fallbacks. Do not
+construct missing URLs. See the [images guide](/api/images) for a complete
+rendering example.
 
 Set intrinsic HTML `width` and `height` when both values are non-null. If
 dimensions are unavailable, both are `null` and `variants` is `{}`. Small

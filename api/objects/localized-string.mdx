@@ -7,3 +7,6 @@ openapi-schema: "/api/v2/openapi.yaml LocalizedString"
 A text value keyed by response locale (`cs-CZ`, `de`, `en`, `ru`). When
 [`Accept-Language`](/api/localization) is set, only the matched keys are returned.
 A missing translation is returned as `null` under its requested key.
+
+Image `alt` uses this object shape with additional fallback semantics and
+preserves an explicitly empty string. See [Images](/api/images#alternative-text).
