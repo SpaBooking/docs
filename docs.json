@@ -82,6 +82,18 @@
             "pages": [
               "api/v1",
               {
+                "group": "API v1 conventions",
+                "pages": [
+                  "api/v1/authentication",
+                  "api/v1/dates",
+                  "api/v1/currencies",
+                  "api/v1/images",
+                  "api/v1/localization",
+                  "api/v1/pagination",
+                  "api/v1/errors"
+                ]
+              },
+              {
                 "group": "API v1 endpoints",
                 "openapi": {
                   "source": "/api/v1/openapi.yaml",

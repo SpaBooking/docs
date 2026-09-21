@@ -1,24 +1,26 @@
 ---
-title: "Images"
-description: "Render responsive hotel and room type images from API v2."
+title: "API v1 images"
+description: "Render responsive hotel, room type, and visit type images from API v1."
 icon: "image"
 ---
 
-Hotel and room type responses include responsive image metadata. Embedded room
-types use the same fields as top-level room type responses.
+Hotel, room type, and visit type responses expose the first image directly on
+each object. Embedded room types and visit types use the same image fields as
+their top-level responses.
 
 ## Response shape
 
-Every image contains all six fields:
+Where `image` and `thumbnail` already exist, their values remain unchanged.
+The responsive metadata is additive:
 
 ```json
 {
-  "url": "https://files.example.com/production/hotels/example/photo.jpg",
-  "thumbnailUrl": "https://files.example.com/production/thumbnails/hotels/example/photo.webp",
+  "image": "https://files.example.com/production/hotels/example/photo.jpg",
+  "thumbnail": "https://files.example.com/production/thumbnails/hotels/example/photo.webp",
   "width": 2400,
   "height": 1600,
   "alt": {
-    "en": "Spa hotel exterior"
+    "cs_CZ": "Průčelí lázeňského hotelu"
   },
   "variants": {
     "w480": "https://files.example.com/production/thumbnails/v2/hotels/example/generation/w480.webp",
@@ -29,20 +31,24 @@ Every image contains all six fields:
 }
 ```
 
-| Field             | Meaning                                                                                  |
-| ----------------- | ---------------------------------------------------------------------------------------- |
-| `url`             | Original image URL. Use it for a full-size view and as the final fallback.               |
-| `thumbnailUrl`    | Deprecated legacy preview URL. It remains available throughout API v2 and can be `null`. |
-| `width`, `height` | Intrinsic dimensions of the oriented original, or `null` when unavailable.               |
-| `alt`             | Localized alternative text selected by `Accept-Language`.                                |
-| `variants`        | Available WebP URLs keyed by target width.                                               |
+| Field | Meaning |
+| --- | --- |
+| `image` | Original image URL. Use it for a full-size view and as the final fallback. |
+| `thumbnail` | Legacy preview URL. It can be `null`. |
+| `width`, `height` | Intrinsic dimensions of the oriented original, or `null` when unavailable. |
+| `alt` | Localized alternative text selected by `Accept-Language`. |
+| `variants` | Available WebP URLs keyed by target width. |
+
+All six fields describe only the first image. When the object has no image,
+`image`, `thumbnail`, `width`, and `height` are `null`, `variants` is an empty
+object, and `alt` contains the requested locale keys with `null` values.
 
 ## Build a responsive image
 
 Use only the variant URLs returned by the API. Do not construct a URL for a
-missing width. Images are never enlarged, so an 1100-pixel original has
-`w480` and `w960`, but no larger variants. Pass one item from the `images`
-array as `image`.
+missing width. Images are never enlarged, so an 1100-pixel original has `w480`
+and `w960`, but no larger variants. Pass a hotel, room type, or visit type
+object as `image`.
 
 ```js
 const widths = [480, 960, 1440, 1920];
@@ -55,7 +61,7 @@ const srcset = widths
   .join(", ");
 
 const src =
-  image.variants.w960 ?? image.variants.w480 ?? image.thumbnailUrl ?? image.url;
+  image.variants.w960 ?? image.variants.w480 ?? image.thumbnail ?? image.image;
 ```
 
 Set `srcset` only when the resulting string is non-empty. Set `sizes` to the
@@ -87,7 +93,7 @@ the initial viewport.
 
 An empty `variants` object means that no responsive variant is available. It
 does not mean that processing is still pending. Omit `srcset` and use
-`thumbnailUrl ?? url` as `src`.
+`thumbnail ?? image` as `src`.
 
 There are two possible cases:
 
@@ -96,19 +102,21 @@ There are two possible cases:
 - An unavailable legacy image has `width: null`, `height: null`, and
   `variants: {}`.
 
-As a final error fallback, remove `srcset` and try `thumbnailUrl`, then `url`.
+As a final error fallback, remove `srcset` and try `thumbnail`, then `image`.
 This is useful if a cached client encounters a missing variant, but it does not
 replace normal HTTP error monitoring.
 
 ## Alternative text
 
-`alt` follows [`Accept-Language`](/api/localization). The response contains the
-requested locale keys:
+`alt` follows [`Accept-Language`](/api/v1/localization). The response contains
+the requested language keys:
 
 - A missing or `null` hotel image translation falls back to the localized
   hotel name.
 - A missing or `null` room image translation falls back to the localized room
   category, or `null` when that category translation is unavailable.
+- A missing or `null` visit type image translation falls back to the localized
+  visit type name.
 - An explicit empty string remains `""`. Preserve it when the image is
   decorative.
 - A non-empty stored value is trimmed.
@@ -118,8 +126,10 @@ The API provides recommended alternative text. Your client can still use
 
 ## Compatibility
 
-The responsive fields are additive. Existing `url` and `thumbnailUrl` values
-retain their behavior, and `thumbnailUrl` remains present as a nullable field.
+The responsive fields are additive. Existing hotel and room type `image` and
+`thumbnail` values retain their behavior. Visit types expose the same
+first-image fields.
 
-See the [Hotel](/api/objects/hotel) and [Room type](/api/objects/room-type)
-object references.
+See the [Hotels endpoint](/api/v1/reference/catalog/get-hotels), [Hotel
+endpoint](/api/v1/reference/catalog/get-hotel), and [Visit types
+endpoint](/api/v1/reference/get-visit-types).

@@ -73,7 +73,7 @@ paths:
 
         `lowest_price.<lang>.amount_per_night` includes any active discount promotions. `original_amount_per_night` is the price before any discount — equal to `amount_per_night` when no promotion applies.
 
-        `stars`, `image`, and `thumbnail` can be `null`. `image`, `thumbnail`, `width`, `height`, `alt`, and `variants` describe the first image; see the [responsive image guide](/api/images). Set `include_room_types=false` when you do not need nested room type data.
+        `stars`, `image`, and `thumbnail` can be `null`. `image`, `thumbnail`, `width`, `height`, `alt`, and `variants` describe the first image; see the [responsive image guide](/api/v1/images). Set `include_room_types=false` when you do not need nested room type data.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
@@ -136,7 +136,7 @@ paths:
 
         The `lowest_price` semantics match `GET /hotels`: the value is a per-night, per-guest display price for the cheapest matching room.
 
-        Hotel and nested room type image fields describe the first image. See the [responsive image guide](/api/images) for `srcset` construction and fallbacks.
+        Hotel and nested room type image fields describe the first image. See the [responsive image guide](/api/v1/images) for `srcset` construction and fallbacks.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - name: hotelId
@@ -190,7 +190,7 @@ paths:
 
         A `promotions` array is returned at the visit-type level and per nested hotel: the active promotions running now OR starting in the future (expired ones omitted), scoped to the caller's channel, each with its localized `name`, `percentage` and validity (`valid_from`/`valid_to`). The promotion `name` is not needed to render the strike-through price (use `lowest_price`), but lets you label a badge (e.g. "-15% Eröffnungsrabatt").
 
-        `image`, `thumbnail`, `width`, `height`, `alt`, and `variants` describe the visit type's first image. See the [responsive image guide](/api/images).
+        `image`, `thumbnail`, `width`, `height`, `alt`, and `variants` describe the visit type's first image. See the [responsive image guide](/api/v1/images).
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
