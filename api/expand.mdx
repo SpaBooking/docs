@@ -28,6 +28,9 @@ GET /api/v2/hotels?expand=roomTypes,amenityLabels
 
 # Embed each room type's hotel
 GET /api/v2/room-types?expand=hotel
+
+# Include the hotel and localized amenity labels
+GET /api/v2/room-types?expand=hotel,amenityLabels
 ```
 
 ## With and without expand
@@ -59,23 +62,110 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
 ```json Relevant fields with expand=roomTypes
 {
   "id": "66f16191f739705faa020001",
-  "name": { "cs-CZ": "Pawlik", "de": "Pawlik-Aquaforum" },
-  "address": {
-    "addressLine": "Americká 384/26",
-    "city": "Františkovy Lázně",
-    "postalCode": "351 01",
-    "country": "cze"
+  "name": {
+    "cs-CZ": "Pawlik",
+    "de": "Pawlik-Aquaforum"
   },
   "roomTypes": [
     {
       "id": "66f16191f739705faa020003",
       "hotelId": "66f16191f739705faa020001",
-      "code": "SUPERIOR-DBL",
-      "category": { "cs-CZ": "Superior dvoulůžkový pokoj", "de": "Superior Doppelzimmer" },
-      "beds": 2,
-      "facilities": ["shower", "toilet"],
-      "images": [],
-      "description": { "cs-CZ": "Pokoj s koupelnou.", "de": "Zimmer mit Bad." }
+      "code": "2_APARTMA",
+      "name": {
+        "cs-CZ": "Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna",
+        "de": "Komfort Zweibettzimmer mit Balkon · Villa Anna",
+        "en": "Komfort Twin room · Villa Anna",
+        "ru": "Komfort Двухместный номер с раздельными кроватями · Villa Anna"
+      },
+      "description": {
+        "cs-CZ": "**Světlý pokoj** v prvním patře.\n\n- výhled do parku",
+        "de": null,
+        "en": null,
+        "ru": null
+      },
+      "unitType": {
+        "code": "double_twin",
+        "label": {
+          "cs-CZ": "Dvoulůžkový pokoj s oddělenými postelemi",
+          "de": "Zweibettzimmer",
+          "en": "Twin room",
+          "ru": "Двухместный номер с раздельными кроватями"
+        }
+      },
+      "tier": {
+        "code": "komfort",
+        "label": {
+          "cs-CZ": "Komfort",
+          "de": "Komfort",
+          "en": "Komfort",
+          "ru": "Komfort"
+        }
+      },
+      "occupancy": {
+        "standard": 2
+      },
+      "bedConfiguration": [
+        {
+          "code": "single",
+          "count": 2,
+          "label": {
+            "cs-CZ": "Samostatná postel",
+            "de": "Einzelbett",
+            "en": "Single bed",
+            "ru": "Односпальная кровать"
+          }
+        }
+      ],
+      "size": {
+        "min": 26,
+        "max": 30
+      },
+      "renovationYear": 2023,
+      "rules": {
+        "smokingAllowed": false,
+        "petsAllowed": true
+      },
+      "building": {
+        "id": "66f16191f739705faa0200b2",
+        "name": {
+          "cs-CZ": "Villa Anna",
+          "de": "Villa Anna",
+          "en": null,
+          "ru": null
+        },
+        "label": {
+          "cs-CZ": "Villa Anna — krytou chodbou, 60 m",
+          "de": null,
+          "en": null,
+          "ru": null
+        }
+      },
+      "amenityCategories": [
+        {
+          "category": {
+            "code": "room_bathroom"
+          },
+          "amenities": [
+            {
+              "code": "toilet"
+            },
+            {
+              "code": "shower"
+            }
+          ]
+        },
+        {
+          "category": {
+            "code": "room_view"
+          },
+          "amenities": [
+            {
+              "code": "balcony"
+            }
+          ]
+        }
+      ],
+      "images": []
     }
   ]
 }
@@ -87,13 +177,23 @@ The same pattern applies in the other direction: `GET /api/v2/room-types?expand=
 embeds each room type's `hotel`. For a paginated, filterable list of a single
 hotel's room types, use `GET /api/v2/room-types?hotelId=<id>` instead of expanding.
 
+Embedded room types are ordered by building, tier, and name, with the
+id as the final tie-breaker. Building names use Czech for ordering, so changing
+`Accept-Language` does not change the order. Rooms without a building come last.
+The paginated `/room-types` endpoint keeps its requested `createdAt` order.
+
 ## Amenity labels
 
-By default a hotel's `amenityCategories` carry codes only, and you resolve
+By default hotel and room type `amenityCategories` carry codes only, and you resolve
 labels against the [amenity dictionary](/api/amenities). `expand=amenityLabels`
 inlines the localized `label` on each category, amenity, and option so the
 response is self-contained — useful when you would rather not fetch and join the
 dictionary. For apps that render many hotels, caching the dictionary once is
 usually leaner than expanding labels on every request.
+
+On `/room-types` and `/room-types/{roomTypeId}`, use `expand=amenityLabels`,
+optionally together with `hotel`. On hotels, `expand=roomTypes,amenityLabels`
+includes labels for both hotel amenities and embedded room type amenities.
+Cache the dictionary for each scope if you resolve labels yourself.
 
 Each endpoint lists the `expand` values it supports and what each adds.

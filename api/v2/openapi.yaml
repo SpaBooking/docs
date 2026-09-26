@@ -15,41 +15,69 @@ tags:
 paths:
   /amenity-categories:
     get:
-      tags: [Amenity categories]
+      tags:
+        - Amenity categories
       summary: List the amenity dictionary
       operationId: getAmenityCategories
-      description: |
-        Returns the full hotel amenity dictionary grouped by category. Each
+      description: >
+        Returns the full amenity dictionary for the requested scope grouped by category.
+        Each
+
         item in `data` contains a stable category code, its localized label,
+
         and the amenities in that category. Each nested amenity has a stable
+
         `code`, localized `label`, and supported `detailKinds`.
 
-        This endpoint returns every amenity available in the system, independent
-        of which amenities are assigned to a particular hotel. Fetch it to build
+
+        This endpoint returns every amenity in the requested scope, independent
+
+        of assignments to hotels or room types. Fetch it to build
+
         amenity filters and resolve the codes returned in
-        `hotel.amenityCategories[].amenities[]`. This small reference list is
+
+        `amenityCategories[].amenities[]`. This small reference list is
+
         not paginated.
 
+
         Amenities whose `detailKinds` include `options` also carry an `options`
+
         array listing every supported choice with its localized label.
 
+
         The response is cacheable. Revalidate it with `If-None-Match` to get
+
         `304` while your copy is current, and compare the
-        `X-SpaPortal-Amenities-Version` header returned by hotel endpoints with
+
+        `X-SpaPortal-Amenities-Version` header returned by hotel and room type endpoints
+        with
+
         your cached version to detect dictionary updates. See
+
         [Amenities](/api/amenities) for the recommended caching flow.
+
 
         See the [Amenity](/api/objects/amenity) object for the full field reference.
       parameters:
+        - name: scope
+          in: query
+          schema:
+            type: string
+            enum:
+              - hotel
+              - roomType
+            default: hotel
+          description: Dictionary scope. The default hotel response is unchanged. Unknown scopes
+            return 400.
         - name: If-None-Match
           in: header
           required: false
           schema:
             type: string
-          description: >-
-            ETag from a previous response. When the dictionary variant is
-            unchanged, the API returns `304` with no body. See
-            [Amenities](/api/amenities) for the caching flow.
+          description: ETag from a previous response. When the dictionary variant is unchanged, the
+            API returns `304` with no body. See [Amenities](/api/amenities) for the caching
+            flow.
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
       responses:
@@ -76,8 +104,15 @@ paths:
                         en: Pools & wellness
                     amenities:
                       - code: sauna
-                        label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
-                        detailKinds: [proximity, access, options, opening_hours]
+                        label:
+                          cs-CZ: Sauna
+                          de: Sauna
+                          en: Sauna
+                        detailKinds:
+                          - proximity
+                          - access
+                          - options
+                          - opening_hours
                         options:
                           - code: finnish
                             label:
@@ -95,9 +130,8 @@ paths:
                               de: Dampfbad
                               en: Steam bath
         "304":
-          description: >-
-            The cached dictionary variant matched by `If-None-Match` is still
-            current. The response has no body.
+          description: The cached dictionary variant matched by `If-None-Match` is still current.
+            The response has no body.
           headers:
             ETag:
               $ref: "#/components/headers/ETag"
@@ -273,7 +307,7 @@ paths:
             Comma-separated list of expansions (for example
             `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
             `amenityLabels` inlines the localized category, amenity, and option
-            labels in `amenityCategories`, so no dictionary lookup is needed.
+            labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
             `roomTypes` (**draft**, response shape may change) embeds each
             hotel's room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
@@ -340,7 +374,7 @@ paths:
             Comma-separated list of expansions (for example
             `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
             `amenityLabels` inlines the localized category, amenity, and option
-            labels in `amenityCategories`, so no dictionary lookup is needed.
+            labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
             `roomTypes` (**draft**, response shape may change) embeds the hotel's
             room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
@@ -366,7 +400,8 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /room-types:
     get:
-      tags: [Room types]
+      tags:
+        - Room types
       summary: List room types
       operationId: getRoomTypes
       x-mint:
@@ -377,7 +412,7 @@ paths:
           </Warning>
       description: |
         Returns room types of active hotels across the companies your public
-        key is scoped to. Localized fields (`category`, `description`) return
+        key is scoped to. Localized fields (`name`, `description`) return
         the locale keys selected by `Accept-Language`.
 
         See the [Room type](/api/objects/room-type) object for the full field reference.
@@ -397,20 +432,22 @@ paths:
           schema:
             type: string
             maxLength: 2000
-          description: Cursor from the previous page's `pagination.nextCursor`. See [Pagination](/api/pagination).
+          description: Cursor from the previous page's `pagination.nextCursor`. See
+            [Pagination](/api/pagination).
         - name: hotelId
           in: query
           schema:
             type: string
-            pattern: "^[0-9a-fA-F]{24}$"
+            pattern: ^[0-9a-fA-F]{24}$
           description: Filter by hotel id.
-        - name: beds
+        - name: occupancy
           in: query
           schema:
             type: integer
             minimum: 1
             maximum: 10
-          description: Filter by number of beds.
+          description: Exact standard guest count (occupancy.standard). The removed beds filter
+            returns 400; use occupancy.
         - name: code
           in: query
           schema:
@@ -422,33 +459,102 @@ paths:
           schema:
             type: string
             maxLength: 200
-          description: >-
-            Full-text search of the localized category name across all supported
-            languages (case- and diacritics-insensitive). To match a code, use
-            `code`.
+          description: Search saved localized names across all supported languages (case- and
+            diacritics-insensitive). Generated English/Russian names are not searchable; use
+            unitType. To match a code, use code.
         - name: expand
           in: query
           schema:
-            type: string
-            enum: [hotel]
-          description: Set to `hotel` to embed the hotel in each room type.
+            type: array
+            items:
+              type: string
+              enum:
+                - hotel
+                - amenityLabels
+          description: "Comma-separated expansions: hotel embeds the hotel; amenityLabels inlines
+            amenity category and amenity labels. You can request both."
+          style: form
+          explode: false
         - name: sort
           in: query
           schema:
             type: string
-            enum: ["createdAt:desc", "createdAt:asc"]
-            default: "createdAt:desc"
-          description: >-
-            Sort order by creation time: `createdAt:desc` returns the newest
-            records first, `createdAt:asc` the oldest. Records are ordered by
-            their `id`, which increases with creation time, giving a stable
-            total order that keeps cursor pagination exact.
+            enum:
+              - createdAt:desc
+              - createdAt:asc
+            default: createdAt:desc
+          description: "Sort order by creation time: `createdAt:desc` returns the newest records
+            first, `createdAt:asc` the oldest. Records are ordered by their `id`, which
+            increases with creation time, giving a stable total order that keeps cursor
+            pagination exact."
+        - name: unitType
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - single
+                - double_double
+                - double_twin
+                - double_either
+                - triple
+                - quad
+                - family
+                - suite
+                - studio
+                - apartment
+          description: Match any of the comma-separated unit type codes.
+        - name: tier
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - economy
+                - economy_plus
+                - standard
+                - standard_plus
+                - komfort
+                - komfort_plus
+                - superior
+                - deluxe
+          description: Match any of the comma-separated tier codes.
+        - name: amenities
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: Require all comma-separated room type amenity codes (AND). Unknown codes
+            return 400.
+        - name: amenityCategory
+          in: query
+          schema:
+            type: string
+            enum:
+              - room_bathroom
+              - room_equipment
+              - room_accessibility
+              - room_view
+              - room_kitchen
+          description: Require at least one amenity from this room type category. Unknown categories
+            return 400.
       responses:
         "200":
           description: A paginated list of room types.
           headers:
             Content-Language:
               $ref: "#/components/headers/ContentLanguage"
+            X-SpaPortal-Amenities-Version:
+              $ref: "#/components/headers/AmenitiesVersion"
           content:
             application/json:
               schema:
@@ -461,7 +567,8 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /room-types/{roomTypeId}:
     get:
-      tags: [Room types]
+      tags:
+        - Room types
       summary: Get a room type
       operationId: getRoomType
       x-mint:
@@ -480,20 +587,29 @@ paths:
           required: true
           schema:
             type: string
-            pattern: "^[0-9a-fA-F]{24}$"
+            pattern: ^[0-9a-fA-F]{24}$
           description: Room type id.
         - name: expand
           in: query
           schema:
-            type: string
-            enum: [hotel]
-          description: Set to `hotel` to embed the hotel.
+            type: array
+            items:
+              type: string
+              enum:
+                - hotel
+                - amenityLabels
+          description: "Comma-separated expansions: hotel embeds the hotel; amenityLabels inlines
+            amenity category and amenity labels. You can request both."
+          style: form
+          explode: false
       responses:
         "200":
           description: The room type.
           headers:
             Content-Language:
               $ref: "#/components/headers/ContentLanguage"
+            X-SpaPortal-Amenities-Version:
+              $ref: "#/components/headers/AmenitiesVersion"
           content:
             application/json:
               schema:
@@ -599,15 +715,16 @@ components:
         `If-None-Match` to revalidate a cached copy.
       schema:
         type: string
-        example: '"9f3c2a7d81b04e55-cs-CZ_de"'
+        example: '"ea2208d1075506f2-hotel-cs-CZ_de"'
     AmenitiesVersion:
       description: >-
         Current amenity dictionary version. The value changes only when the
-        dictionary content changes. Refetch `GET /amenity-categories` when it
+        dictionary content changes. One version covers both scopes. Refetch
+        `GET /amenity-categories?scope=hotel` and `?scope=roomType` when it
         differs from the version you cached.
       schema:
         type: string
-        example: 9f3c2a7d81b04e55
+        example: ea2208d1075506f2
     RequestId:
       description: Request identifier for support and debugging.
       schema:
@@ -883,7 +1000,7 @@ components:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
             Localized alternative text. Missing translations fall back to the
-            localized hotel name or room category, or null if unavailable.
+            localized hotel or room type name, including generated English/Russian room names, or null if unavailable.
             An empty string is intentional decorative text; preserve it.
         variants:
           $ref: "#/components/schemas/ImageVariants"
@@ -911,66 +1028,95 @@ components:
           format: uri
     RoomType:
       type: object
-      description: >-
-        **Draft:** The room-type resource is still in progress. Its response
-        shape may change before it is finalized.
+      description: "**Draft:** The room-type resource is still in progress. Its response shape
+        may change before it is finalized."
       required:
         - id
         - hotelId
         - code
-        - category
-        - beds
-        - facilities
-        - images
+        - name
         - description
+        - unitType
+        - tier
+        - occupancy
+        - bedConfiguration
+        - size
+        - renovationYear
+        - rules
+        - building
+        - amenityCategories
+        - images
       properties:
         id:
           type: string
-          pattern: "^[0-9a-fA-F]{24}$"
+          pattern: ^[0-9a-fA-F]{24}$
           example: 66f16191f739705faa020003
         hotelId:
           type: string
-          pattern: "^[0-9a-fA-F]{24}$"
+          pattern: ^[0-9a-fA-F]{24}$
           example: 66f16191f739705faa020001
         code:
           type: string
           nullable: true
           example: SUPERIOR-DBL
-        category:
+        name:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
-          description: Localized category name (plain text).
-        beds:
-          type: integer
-          example: 2
-        facilities:
-          type: array
-          items:
-            type: string
-          example: [shower, toilet]
-        images:
-          type: array
-          items:
-            $ref: "#/components/schemas/Image"
+          description: Localized guest-facing name. Missing generated English/Russian names combine
+            tier, unit type and, for hotels with several buildings, the building name. Custom
+            and legacy names keep saved translations. Generated names are not searchable.
         description:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: Localized description (Markdown).
+        unitType:
+          $ref: "#/components/schemas/RoomTypeUnitType"
+        tier:
+          $ref: "#/components/schemas/RoomTypeTier"
+        occupancy:
+          $ref: "#/components/schemas/RoomTypeOccupancy"
+        bedConfiguration:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoomTypeBed"
+          description: Positive bed counts in dictionary order. Empty when unspecified.
+        size:
+          $ref: "#/components/schemas/RoomTypeSize"
+        renovationYear:
+          type: integer
+          nullable: true
+          minimum: 1800
+          description: Renovation year, or null when missing or invalid (including more than five
+            years in the future).
+        rules:
+          $ref: "#/components/schemas/RoomTypeRules"
+        building:
+          $ref: "#/components/schemas/RoomTypeBuilding"
+        amenityCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoomTypeAmenityCategoryGroup"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
         hotel:
           type: object
           description: Embedded only when `expand=hotel`.
-          required: [id, name, stars]
+          required:
+            - id
+            - name
+            - stars
           properties:
             id:
               type: string
-              pattern: "^[0-9a-fA-F]{24}$"
+              pattern: ^[0-9a-fA-F]{24}$
               example: 66f16191f739705faa020001
             name:
               allOf:
                 - $ref: "#/components/schemas/HotelNameLocalizedString"
-              description: >-
-                Localized hotel name. Falls back to the default locale (cs-CZ),
-                so it is never null.
+              description: Localized hotel name. Falls back to the default locale (cs-CZ), so it is
+                never null.
               example:
                 cs-CZ: Pawlik
                 de: Pawlik-Aquaforum
@@ -983,30 +1129,224 @@ components:
       example:
         id: 66f16191f739705faa020003
         hotelId: 66f16191f739705faa020001
-        code: SUPERIOR-DBL
-        category:
-          cs-CZ: Superior dvoulůžkový pokoj
-          de: Superior Doppelzimmer
-          en: Superior double room
-          ru: Улучшенный двухместный номер
-        beds: 2
-        facilities: [shower, toilet]
+        code: 2_APARTMA
+        name:
+          cs-CZ: Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna
+          de: Komfort Zweibettzimmer mit Balkon · Villa Anna
+          en: Komfort Twin room · Villa Anna
+          ru: Komfort Двухместный номер с раздельными кроватями · Villa Anna
+        description:
+          cs-CZ: |-
+            **Světlý pokoj** v prvním patře.
+
+            - výhled do parku
+          de: null
+          en: null
+          ru: null
+        unitType:
+          code: double_twin
+          label:
+            cs-CZ: Dvoulůžkový pokoj s oddělenými postelemi
+            de: Zweibettzimmer
+            en: Twin room
+            ru: Двухместный номер с раздельными кроватями
+        tier:
+          code: komfort
+          label:
+            cs-CZ: Komfort
+            de: Komfort
+            en: Komfort
+            ru: Komfort
+        occupancy:
+          standard: 2
+        bedConfiguration:
+          - code: single
+            count: 2
+            label:
+              cs-CZ: Samostatná postel
+              de: Einzelbett
+              en: Single bed
+              ru: Односпальная кровать
+        size:
+          min: 26
+          max: 30
+        renovationYear: 2023
+        rules:
+          smokingAllowed: false
+          petsAllowed: true
+        building:
+          id: 66f16191f739705faa0200b2
+          name:
+            cs-CZ: Villa Anna
+            de: Villa Anna
+            en: null
+            ru: null
+          label:
+            cs-CZ: Villa Anna — krytou chodbou, 60 m
+            de: null
+            en: null
+            ru: null
+        amenityCategories:
+          - category:
+              code: room_bathroom
+            amenities:
+              - code: toilet
+              - code: shower
+          - category:
+              code: room_view
+            amenities:
+              - code: balcony
         images:
           - url: https://cdn.example.com/rooms/superior.jpg
             thumbnailUrl: https://cdn.example.com/rooms/superior-thumbnail.jpg
             width: 1100
             height: 733
             alt:
-              cs-CZ: Superior dvoulůžkový pokoj
-              en: Superior double room
+              cs-CZ: Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna
+              en: Komfort Twin room · Villa Anna
             variants:
               w480: https://cdn.example.com/rooms/superior/generation-1/w480.webp
               w960: https://cdn.example.com/rooms/superior/generation-1/w960.webp
-        description:
-          cs-CZ: Prostorný pokoj s vlastní koupelnou.
-          de: Geräumiges Zimmer mit eigenem Bad.
-          en: Spacious room with a private bathroom.
-          ru: Просторный номер с собственной ванной комнатой.
+    RoomTypeUnitType:
+      type: object
+      nullable: true
+      required:
+        - code
+        - label
+      properties:
+        code:
+          type: string
+          enum:
+            - single
+            - double_double
+            - double_twin
+            - double_either
+            - triple
+            - quad
+            - family
+            - suite
+            - studio
+            - apartment
+        label:
+          $ref: "#/components/schemas/LocalizedString"
+    RoomTypeTier:
+      type: object
+      nullable: true
+      required:
+        - code
+        - label
+      properties:
+        code:
+          type: string
+          enum:
+            - economy
+            - economy_plus
+            - standard
+            - standard_plus
+            - komfort
+            - komfort_plus
+            - superior
+            - deluxe
+        label:
+          $ref: "#/components/schemas/LocalizedString"
+    RoomTypeOccupancy:
+      type: object
+      required:
+        - standard
+      properties:
+        standard:
+          type: integer
+          description: Standard guest count used for booking and pricing.
+          example: 2
+    RoomTypeBed:
+      type: object
+      required:
+        - code
+        - count
+        - label
+      properties:
+        code:
+          type: string
+          enum:
+            - single
+            - double
+            - king
+            - superking
+            - sofa
+            - futon
+        count:
+          type: integer
+          minimum: 1
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Singular localized bed label.
+    RoomTypeSize:
+      type: object
+      nullable: true
+      description: Floor area in square metres. A fixed area has equal min and max.
+      required:
+        - min
+        - max
+      properties:
+        min:
+          type: number
+          exclusiveMinimum: true
+          minimum: 0
+        max:
+          type: number
+          exclusiveMinimum: true
+          minimum: 0
+    RoomTypeRules:
+      type: object
+      required:
+        - smokingAllowed
+        - petsAllowed
+      properties:
+        smokingAllowed:
+          type: boolean
+          nullable: true
+          description: Null when unspecified.
+        petsAllowed:
+          type: boolean
+          nullable: true
+          description: Effective pet rule. False unless the hotel allows pets; then the room rule
+            applies, with null for an unspecified room rule.
+    RoomTypeBuilding:
+      type: object
+      nullable: true
+      description: Assigned building, even for a hotel with one building. Null if unassigned or removed.
+      required:
+        - id
+        - name
+        - label
+      properties:
+        id:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+        name:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Short building name.
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Descriptive building label.
+    RoomTypeAmenityCategoryGroup:
+      type: object
+      description: Room type amenities in dictionary order. Category codes use the room_ prefix;
+        empty groups are omitted.
+      required:
+        - category
+        - amenities
+      properties:
+        category:
+          $ref: "#/components/schemas/AmenityCategoryRef"
+        amenities:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AmenityValue"
     Pagination:
       type: object
       required: [limit, nextCursor, hasMore, total]
@@ -1822,13 +2162,19 @@ components:
             - parking
             - sport
             - children
+            - room_bathroom
+            - room_equipment
+            - room_accessibility
+            - room_view
+            - room_kitchen
+          description: Codes prefixed with room_ belong to scope roomType; all others belong to scope hotel.
         label:
           $ref: "#/components/schemas/LocalizedString"
     AmenityCategoryRef:
       type: object
       required: [code]
       description: >-
-        A category on a hotel response. Identified by `code`; its localized
+        A category on a hotel or room type response. Identified by `code`; its localized
         `label` is included only with `expand=amenityLabels`. Otherwise resolve
         the label against the [amenity dictionary](/api/amenities)
         (`GET /amenity-categories` `data[].category`).
@@ -1844,6 +2190,12 @@ components:
             - parking
             - sport
             - children
+            - room_bathroom
+            - room_equipment
+            - room_accessibility
+            - room_view
+            - room_kitchen
+          description: Codes prefixed with room_ belong to scope roomType; all others belong to scope hotel.
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -1879,7 +2231,7 @@ components:
       type: object
       required: [code]
       description: >-
-        A selected amenity option on a hotel response. Identified by `code`; its
+        A selected amenity option on a hotel or room type response. Identified by `code`; its
         localized `label` is included only with `expand=amenityLabels`.
         Otherwise resolve the label against the amenity's `options` in the
         [amenity dictionary](/api/amenities).
@@ -1901,7 +2253,7 @@ components:
       properties:
         code:
           type: string
-          description: Stable code stored on hotels and used for filtering.
+          description: Stable code assigned to hotels or room types and used for filtering.
           example: sauna
         label:
           allOf:
@@ -2001,7 +2353,7 @@ components:
       type: object
       required: [code]
       description: >-
-        A structured amenity assigned to a hotel. Hotel responses contain only
+        A structured amenity assigned to a hotel or room type. Responses contain only
         assigned amenities. Apart from `code` (and `label` with
         `expand=amenityLabels`), only the fields mapped from the corresponding
         entry under the amenity dictionary response `data[].amenities[]` are
@@ -2045,7 +2397,7 @@ components:
         options:
           type: array
           description: >-
-            Amenity-specific choices selected for this hotel, by `code` only.
+            Amenity-specific choices selected for this hotel or room type, by `code` only.
             Present when `detailKinds` includes `options`. Empty when the
             amenity supports choices but none are selected. Resolve labels
             against the dictionary.
@@ -2094,9 +2446,9 @@ components:
       type: object
       required: [data]
       description: >-
-        The complete hotel amenity dictionary grouped by category and returned
+        The complete amenity dictionary for the requested scope, grouped by category and returned
         in one response (small, not paginated). It includes every system
-        amenity, independent of assignments to individual hotels. Amenities that
+        amenity in that scope, independent of assignments to hotels or room types. Amenities that
         support choices carry their full `options` list.
       properties:
         data:

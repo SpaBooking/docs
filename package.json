@@ -5,10 +5,12 @@
     "lint:openapi": "redocly lint api/v2/openapi.yaml",
     "bundle:openapi": "redocly bundle api/v2/openapi.yaml --output .artifacts/openapi.yaml",
     "validate:docs": "mint validate",
-    "validate": "npm run lint:openapi && npm run bundle:openapi && npm run validate:docs"
+    "validate": "npm run validate:frontmatter && npm run lint:openapi && npm run bundle:openapi && npm run validate:docs",
+    "validate:frontmatter": "node scripts/validate-frontmatter.mjs"
   },
   "devDependencies": {
     "@redocly/cli": "2.53.3",
-    "mint": "4.2.901"
+    "mint": "4.2.901",
+    "yaml": "2.9.1"
   }
 }
