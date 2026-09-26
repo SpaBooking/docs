@@ -1,6 +1,15 @@
 ---
 title: "Room type"
-description: "A room type describes accommodation within a hotel. It includes its localized
+description: "A category of accommodation within a hotel, with occupancy, beds, rules, and amenities."
+openapi-schema: "/api/v2/openapi.yaml RoomType"
+---
+
+<Warning>
+  **Draft:** The room-type resource and its endpoints are still in progress.
+  Their parameters and response shapes may change before they are finalized.
+</Warning>
+
+A room type describes accommodation within a hotel. It includes its localized
 `name`, unit type, tier, occupancy, bed configuration, floor area, building,
 rules, amenities, and images. Localized fields return only the locale keys you
 select with [`Accept-Language`](/api/localization).
