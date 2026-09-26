@@ -1,28 +1,28 @@
 ---
 title: "Amenities"
-description: "The hotel amenity dictionary, selected values, detail fields, and filters."
+description: "Hotel and room type amenity dictionaries, values, and filters."
 icon: "list-check"
 ---
 
-Hotel services and amenities are exposed as structured, filterable data in API v2.
+Hotel and room type amenities use the same structured contract in API v2.
+Choose `scope=hotel` (the default) or `scope=roomType` when you fetch the dictionary.
 
 There are two related resources:
 
-1. **The amenity dictionary** lists every amenity SpaPortal can assign to a hotel.
+1. **The amenity dictionary** lists every amenity SpaPortal can assign within the requested scope.
    It is grouped by category. Each category has a stable `code`, a localized
    label, and an `amenities` array whose entries contain a stable `code`,
    localized `label`, and supported detail fields.
-2. **Hotel amenity values** are grouped by category in
-   `hotel.amenityCategories`.
+2. **Selected amenity values** are grouped by category in
+   `hotel.amenityCategories` or `roomType.amenityCategories`.
    Categories without assigned amenities are omitted. Values inside each
    group's `amenities` array store the amenity's structured details and a
    localized guest note when the dictionary includes the `note` detail kind.
 
 <Note>
   These responses serve different purposes. `GET /api/v2/amenity-categories`
-  always returns every system category and amenity. `GET /api/v2/hotels` and
-  `GET /api/v2/hotels/{hotelId}` return only the amenity values assigned to each
-  hotel.
+  returns every category and amenity in the requested scope. Hotel and room
+  type endpoints return only assigned amenity values.
 </Note>
 
 ## Amenity dictionary
@@ -32,7 +32,7 @@ There are two related resources:
 </Card>
 
 `GET /api/v2/amenity-categories` returns every category and amenity available
-in SpaPortal, whether or not a particular hotel uses it. The complete list is
+in the requested scope, whether or not a particular hotel or room type uses it. The complete list is
 returned in one response and is not paginated. Use
 [`Accept-Language`](/api/localization) to select the locale keys returned in
 localized fields.
@@ -89,7 +89,7 @@ with every supported choice and its localized label.
 }
 ```
 
-Resolve hotel `amenityCategories[].amenities[].code` values against the entries
+Resolve `amenityCategories[].amenities[].code` values against the entries
 nested in each dictionary category instead of hard-coding display labels.
 Category and amenity codes are stable.
 
@@ -119,8 +119,39 @@ are included:
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
-An empty `detailKinds` array identifies a presence-only amenity. Its hotel value
+An empty `detailKinds` array identifies a presence-only amenity. Its selected value
 contains only `code`; for example, `{ "code": "wheelchair_access" }`.
+
+## Room type amenities
+
+Fetch `GET /api/v2/amenity-categories?scope=roomType` for the room type dictionary.
+It contains 38 presence-only amenities in five categories. Each entry has
+`detailKinds: []` and has no `options` or `notePlaceholder`.
+
+| Code | English label |
+| --- | --- |
+| `room_bathroom` | Bathroom |
+| `room_equipment` | Room |
+| `room_accessibility` | Accessibility |
+| `room_view` | View |
+| `room_kitchen` | Food and drink |
+
+Room type values use the same category groups as hotels. Empty categories are
+omitted, and categories and amenities follow dictionary order.
+
+```json Room type amenity values
+{
+  "amenityCategories": [
+    {
+      "category": { "code": "room_view" },
+      "amenities": [{ "code": "balcony" }]
+    }
+  ]
+}
+```
+
+Request `expand=amenityLabels` on room types to inline localized labels. On
+hotels, `expand=roomTypes,amenityLabels` also includes labels on embedded rooms.
 
 ## Caching
 
@@ -130,21 +161,21 @@ cached dictionary stays safe to use.
 
 Recommended flow:
 
-1. Fetch `GET /api/v2/amenity-categories` once without `Accept-Language`, so
-   your cache holds every locale key. Store the response together with its
-   `ETag` and `X-SpaPortal-Amenities-Version` headers.
-2. Hotel responses return the current dictionary version in the
-   `X-SpaPortal-Amenities-Version` header. When the value differs from the one
-   you cached, refetch the dictionary.
-3. To revalidate directly, repeat the same request — with the same
-   `Accept-Language` — and add `If-None-Match: <cached ETag>`. The API returns
+1. Fetch each scope once without `Accept-Language`, so your cache holds every
+   locale key. Store each response with its `ETag` and
+   `X-SpaPortal-Amenities-Version` headers.
+2. Hotel and room type responses return the current version in
+   `X-SpaPortal-Amenities-Version`. One version covers both dictionaries.
+   When it changes, refetch both scopes.
+3. To revalidate, repeat the request with the same `scope` and
+   `Accept-Language`, and add `If-None-Match: <cached ETag>`. The API returns
    `304` with no body while your copy is current.
-4. When a hotel response contains an amenity code that is missing from your
-   cached dictionary, skip it in display and refresh the dictionary.
+4. If a response contains an unknown amenity code, skip it in display and
+   refresh the dictionary for that scope.
 
-Responses also carry `Cache-Control: private, max-age=3600`, so a plain HTTP
-cache can reuse the dictionary for an hour before revalidating. The `ETag`
-differs per requested locale set; the version header does not.
+Responses carry `Cache-Control: private, max-age=3600`. The `ETag` differs by
+scope and requested locale set; the version header covers both scopes and all
+locales.
 
 ## Selected amenities on a hotel
 
@@ -252,7 +283,13 @@ GET /api/v2/hotels?amenities=sauna,parking
 GET /api/v2/hotels?amenityCategory=wellness
 ```
 
-<Note>
-  Amenity filters apply to hotels. Room types do not carry structured amenities
-  — a room type lists its equipment in the free-text `facilities` field.
-</Note>
+## Filtering room types
+
+`GET /api/v2/room-types` accepts the same filters against the room type dictionary:
+
+- `amenities=balcony,bathtub` requires both amenities.
+- `amenityCategory=room_view` requires at least one amenity from that category.
+
+Unknown amenity or category codes return `400`. Hotel filters use only the hotel
+dictionary. To find hotels through room amenities, filter room types and collect
+their `hotelId` values.

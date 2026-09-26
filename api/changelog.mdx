@@ -4,6 +4,29 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
+## Deployment date — to be added
+
+### Room types and amenities
+
+- **Breaking (Draft room types):** `name` replaces `category`,
+  `occupancy.standard` replaces `beds`, and `amenityCategories` replaces
+  `facilities`. These changes also apply to room types embedded in hotels.
+- **Breaking:** Replace the `beds` query filter with `occupancy`. Requests
+  using `beds` now return `400`.
+- Added `unitType`, `tier`, `bedConfiguration`, `size`, `renovationYear`,
+  `rules`, and `building`. Enum labels are inline. Missing English and Russian
+  generated names are composed in the response. Custom names keep their saved
+  translations. The pet rule includes the hotel's policy.
+- Added `unitType`, `tier`, `amenities`, and `amenityCategory` filters on room
+  types. `expand` accepts `hotel` and `amenityLabels` together.
+- Added `scope=roomType` to the amenity dictionary. The default `scope=hotel`
+  response body is unchanged. `expand=roomTypes,amenityLabels` includes labels
+  on embedded room amenities.
+- The amenity version now covers both scopes and is also returned on room type
+  endpoints. Its value changes once with this release; refresh both cached
+  dictionaries. ETags now include the scope.
+- Room types remain **Draft** until client integration is complete.
+
 ## 2026-09-18
 
 ### Hotel and room type images

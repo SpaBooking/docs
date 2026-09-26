@@ -1,19 +1,60 @@
 ---
 title: "Room type"
-description: "A category of room within a hotel."
-openapi-schema: "/api/v2/openapi.yaml RoomType"
----
+description: "A room type describes accommodation within a hotel. It includes its localized
+`name`, unit type, tier, occupancy, bed configuration, floor area, building,
+rules, amenities, and images. Localized fields return only the locale keys you
+select with [`Accept-Language`](/api/localization).
 
-<Warning>
-  **Draft:** The room-type resource and its endpoints are still in progress.
-  Their parameters and response shapes may change before they are finalized.
-</Warning>
+`hotel` is embedded only when you request `expand=hotel`.
 
-A category of room within a hotel — its localized category name, bed count,
-free-text facilities, and images. Localized fields (`category`, `description`)
-return the locale keys selected by [`Accept-Language`](/api/localization).
+## Occupancy and beds
 
-`hotel` is embedded only when the request sets `expand=hotel`.
+Use `occupancy.standard` for booking and prices. It is the room type's standard
+guest count. `bedConfiguration` describes the physical beds separately. It lists
+positive counts in dictionary order with a singular localized label for each bed.
+An empty array means the bed configuration has not been described.
+
+`size` gives the minimum and maximum floor area in square metres. Both values
+are equal for a fixed area. Unknown or invalid sizes are `null`.
+
+## Names and labels
+
+`name` contains the saved Czech and German names. For generated names, the API
+fills missing English and Russian values from the tier and unit type labels.
+When the hotel has several buildings, it also appends the room's building name.
+A missing building translation falls back to the Czech building name.
+
+Custom names and legacy names keep their saved translations. Missing custom
+translations remain `null`. The `search` filter searches saved names only, so it
+does not match generated English or Russian names. Use `unitType` to filter by
+unit type.
+
+`unitType`, `tier`, and each `bedConfiguration` entry include localized labels.
+Unspecified unit types and tiers are `null`. Amenity labels come from the
+[room type amenity dictionary](/api/amenities#room-type-amenities), or you can
+request `expand=amenityLabels` to include them in the response.
+
+`description` is Markdown.
+
+## Buildings and rules
+
+`building` contains the assigned building's id, short name, and descriptive
+label. It is returned even when the hotel has only one building. Unassigned or
+removed buildings are `null`. The hotel object does not expose a building list.
+
+`rules.petsAllowed` already includes the hotel's pet policy. It is `false` when
+the hotel does not permit pets or has not provided a policy. When the hotel
+permits pets, the room's rule applies; an unspecified room rule is `null`.
+`rules.smokingAllowed` is `null` when the room's smoking rule is unspecified.
+
+## Filtering
+
+Use `occupancy` for an exact standard guest count. `unitType` and `tier` accept
+comma-separated codes; each matches any listed code. `amenities` requires all
+listed amenity codes, while `amenityCategory` requires any amenity in that
+category. Unknown codes return `400`.
+
+The removed `beds` filter returns `400`. Replace it with `occupancy`.
 
 ## Images
 
@@ -29,6 +70,6 @@ dimensions are unavailable, both are `null` and `variants` is `{}`. Small
 originals can retain dimensions with no variants.
 
 `alt` uses the requested locale keys. Missing or null translations fall back
-to the room type's localized `category`, or `null` if the category translation
+to the room type's localized `name`, including a generated English or Russian name, or `null` if the name translation
 is unavailable. Preserve `""` for decorative images. The deprecated
 `thumbnailUrl` remains available throughout API v2.

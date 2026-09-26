@@ -1,12 +1,12 @@
 ---
 title: "Amenity"
-description: "An amenity entry nested in a category of the hotel amenity dictionary."
+description: "An amenity entry nested in a category of the amenity dictionary for a hotel or room type."
 openapi-schema: "/api/v2/openapi.yaml Amenity"
 ---
 
 An entry nested in a category returned by
 [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
-Its stable `code` identifies the amenity in hotel responses. The parent
+Its stable `code` identifies the amenity in hotel or room type responses. The parent
 category object contains the stable category code and localized category label.
 `detailKinds` declares which structured fields can be populated on the
 corresponding [Amenity value](/api/objects/amenity-value).
@@ -17,12 +17,12 @@ amenities omit it.
 ## Detail kinds
 
 `detailKinds` is metadata from the dictionary. Use it to decide which controls
-to display and which fields on the corresponding hotel amenity value carry
+to display and which fields on the corresponding hotel or room type amenity value carry
 meaningful data. The values use snake case because they identify field groups,
 not response property names.
 
 An empty `detailKinds` array means that selecting the amenity is the complete
-value. The corresponding hotel amenity contains only its `code`.
+value. The corresponding hotel or room type amenity contains only its `code`.
 
 For example:
 
@@ -54,3 +54,12 @@ This sauna can populate `proximity` (and conditionally `proximityMeters`),
 `options`, the entry carries an `options` array with every valid sauna choice.
 The sauna does not support `note`, so the `note` property is omitted from its
 [Amenity value](/api/objects/amenity-value).
+
+## Room type example
+
+A selected balcony is a presence-only value. Resolve its label against the
+`scope=roomType` dictionary, or request `expand=amenityLabels`.
+
+```json
+{ "code": "balcony" }
+```
