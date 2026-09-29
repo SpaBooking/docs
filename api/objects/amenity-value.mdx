@@ -62,9 +62,10 @@ contain:
 
 For an amenity whose `detailKinds` include `options`, the
 [amenity dictionary](/api/amenities) lists every available option. The hotel
-value contains only the selected options, by `code`:
+value contains only the selected options, by `code`. These excerpts show the
+option fields; the other sauna fields are omitted for brevity:
 
-```json
+```json Option fields (excerpt)
 {
   "code": "sauna",
   "options": [{ "code": "finnish" }, { "code": "steam" }]
@@ -74,7 +75,7 @@ value contains only the selected options, by `code`:
 With [`expand=amenityLabels`](/api/expand) each selected option also carries its
 localized `label`:
 
-```json
+```json Option fields with labels (excerpt)
 {
   "code": "sauna",
   "options": [

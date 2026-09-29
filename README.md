@@ -22,8 +22,11 @@ npm run validate
 ./node_modules/.bin/mint broken-links
 ```
 
-`validate` checks MDX frontmatter, lints both v1 and v2 OpenAPI files, validates
-examples against their schemas, bundles v2, and validates the Mintlify build.
+`validate` checks MDX frontmatter, lints both v1 and v2 OpenAPI files, checks
+amenity contract cases, validates examples against their schemas, bundles v2,
+and validates the Mintlify build. Amenity checks cover null details, label
+expansion, category scopes, and empty groups using native OpenAPI nullability
+validation.
 
 `scripts/validate-examples.mjs` validates OpenAPI schema and request/response
 examples, and parses every JSON fence in tracked MDX pages. The bindings in

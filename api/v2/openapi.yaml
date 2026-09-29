@@ -2407,7 +2407,7 @@ components:
         proximity:
           type: string
           nullable: true
-          enum: [in-hotel, connecting, nearby]
+          enum: [in-hotel, connecting, nearby, null]
           description: >-
             Where the amenity is located relative to the hotel. Present when
             `detailKinds` includes `proximity`; null when supported but not
@@ -2425,7 +2425,7 @@ components:
         access:
           type: string
           nullable: true
-          enum: [included, conditional, paid]
+          enum: [included, conditional, paid, null]
           description: >-
             Present when `detailKinds` includes `access`. Null when supported
             but not filled. `included` means no additional charge,
@@ -2434,10 +2434,11 @@ components:
         options:
           type: array
           description: >-
-            Amenity-specific choices selected for this hotel or room type, by `code` only.
-            Present when `detailKinds` includes `options`. Empty when the
-            amenity supports choices but none are selected. Resolve labels
-            against the dictionary.
+            Amenity-specific choices selected for this hotel or room type. Each
+            option contains `code` by default and also `label` with
+            `expand=amenityLabels`. Present when `detailKinds` includes `options`.
+            Empty when the amenity supports choices but none are selected.
+            Labels are also available in the dictionary.
           items:
             $ref: "#/components/schemas/AmenityOptionRef"
         openingHours:
