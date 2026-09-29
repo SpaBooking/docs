@@ -175,11 +175,13 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
 </CodeGroup>
 
 The same pattern applies in the other direction: `GET /api/v2/room-types?expand=hotel`
-embeds each room type's `hotel`. For a paginated, filterable list of a single
+embeds a hotel summary containing only `id`, `name`, and `stars`. Fetch
+`GET /api/v2/hotels/{hotelId}` for the full hotel. For a paginated, filterable list of a single
 hotel's room types, use `GET /api/v2/room-types?hotelId=<id>` instead of expanding.
 
-Embedded room types are ordered by building, tier, and name, with the
-id as the final tie-breaker. Building names use Czech for ordering, so changing
+Embedded room types use a fixed presentation order: building, tier, internal
+room name, then id. This is not a sort on the translated public `name`.
+Building and internal room names use Czech ordering, so changing
 `Accept-Language` does not change the order. Rooms without a building come last.
 The paginated `/room-types` endpoint keeps its requested `createdAt` order.
 

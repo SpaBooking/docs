@@ -4,25 +4,39 @@ This repository contains the public SpaPortal documentation site built with Mint
 
 ## Development
 
-Run the local preview from the repository root:
+Use Node.js 22, matching CI, and install the locked dependencies:
 
 ```bash
-PATH=/Users/janbouchner/.nvm/versions/node/v22.20.0/bin:$PATH npx --yes mint dev --port 3001 --no-open
+npm ci
+./node_modules/.bin/mint dev --port 3001 --no-open
 ```
 
-View the preview at `http://localhost:3001`.
-
-Use another port, such as `--port 3002`, if `3001` is already in use.
+View the preview at `http://localhost:3001`. Choose another port if it is busy.
 
 ## Validation
 
-Check the documentation before publishing:
+Run these checks before publishing:
 
 ```bash
-PATH=/Users/janbouchner/.nvm/versions/node/v22.20.0/bin:$PATH npx --yes mint validate
-PATH=/Users/janbouchner/.nvm/versions/node/v22.20.0/bin:$PATH npx --yes mint broken-links
+npm run validate
+./node_modules/.bin/mint broken-links
 ```
+
+`validate` checks MDX frontmatter, lints both v1 and v2 OpenAPI files, validates
+examples against their schemas, bundles v2, and validates the Mintlify build.
+
+`scripts/validate-examples.mjs` validates OpenAPI schema and request/response
+examples, and parses every JSON fence in tracked MDX pages. The bindings in
+`scripts/example-schemas.json` associate MDX JSON fences (in page order) with
+schemas. Each binding can select a JSON pointer with `at` so deliberately
+abridged responses can validate a complete nested object. Schema references use
+`v1#/definitions/Name` or `v2#/definitions/Name`, after the script converts
+OpenAPI 3.0 schemas to JSON Schema. Update the bindings when adding or changing
+examples. These checks verify shape, not business meaning or deployment state;
+compare those with the application implementation and tests.
 
 ## Publishing
 
-Mintlify deploys changes from the connected GitHub repository after commits are pushed to the configured production branch.
+Mintlify deploys changes merged into `main`. Publishing documentation does not
+deploy the API application. Keep Draft notices and release-date placeholders
+until the corresponding release has been confirmed.

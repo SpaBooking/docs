@@ -46,7 +46,7 @@ localized fields.
 Amenities whose `detailKinds` include `options` also carry an `options` array
 with every supported choice and its localized label.
 
-```json Response
+```json Response excerpt
 {
   "data": [
     {
@@ -100,7 +100,7 @@ nested in each dictionary category instead of hard-coding display labels.
 Published hotel category and amenity codes are stable. Room-type codes remain
 part of the draft contract.
 
-### Categories
+### Hotel categories
 
 | Code | English label |
 | --- | --- |
@@ -185,6 +185,14 @@ Recommended flow:
    `304` with no body while your copy is current.
 4. If a response contains an unknown amenity code, skip it in display and
    refresh the dictionary for that scope.
+
+<Warning>
+  Manual `If-None-Match` revalidation currently works for server-side clients.
+  The API CORS allow-list does not yet include this request header, so a
+  cross-origin browser request that sets it fails preflight. In browser code,
+  omit that header and fetch the dictionary again when its version changes.
+  Use `fetch(url, { cache: "reload" })` to bypass a still-fresh browser cache.
+</Warning>
 
 Responses carry `Cache-Control: private, max-age=3600`. The `ETag` differs by
 scope and requested locale set; the version header covers both scopes and all

@@ -60,9 +60,9 @@ icon: "clock-rotate-left"
   `perPersonPerNight` and `perStay`. Every minimum reports
   its own `amount`, `original`, `nights`, `occupancy`, and `visitType`. See
   [Prices](/api/prices).
-- A category is omitted when the hotel sells nothing in it. `all` includes
-  visit types that have no category yet, so it can be lower than both
-  categories.
+- A category is omitted when it has no usable price in the currency. `all`
+  also includes visit types without a category. Compare minima using their
+  per-guest selection metric; raw stay totals can refer to different occupancies.
 - A promotion lowers a "from" price only when it covers the whole stay.
 - Visit types whose selling period has ended no longer contribute a "from"
   price.

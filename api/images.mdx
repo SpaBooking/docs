@@ -114,7 +114,7 @@ requested locale keys:
 - A missing or `null` hotel image translation falls back to the localized
   hotel name.
 - A missing or `null` room image translation falls back to the localized room
-  category, or `null` when that category translation is unavailable.
+  `name`, including generated English and Russian names, or `null` when unavailable.
 - An explicit empty string remains `""`. Preserve it when the image is
   decorative.
 - A non-empty stored value is trimmed.

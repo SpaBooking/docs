@@ -4,7 +4,8 @@ description: "Page through SpaPortal API list responses."
 icon: "list-ol"
 ---
 
-List endpoints return a limited set of records, using cursor pagination.
+Hotel and room-type lists use cursor pagination. The amenity dictionary is
+returned in one response and has no pagination parameters or metadata.
 
 Send these query parameters:
 
@@ -13,16 +14,16 @@ Send these query parameters:
 | `limit` | `25` | `100` | Number of records to return. |
 | `cursor` | - | - | Opaque cursor from the previous page's `nextCursor`. |
 
-Responses include pagination metadata:
+An empty result includes this pagination metadata:
 
 ```json
 {
   "data": [],
   "pagination": {
     "limit": 25,
-    "nextCursor": "eyJyZXNvdXJjZSI6ImhvdGVscyIsInNvcnQiOiJjcmVhdGVkQXQ6ZGVzYyIsImxhc3RJZCI6IjY2ZjE2MTkxZjczOTcwNWZhYTAyMDc2OCJ9",
-    "hasMore": true,
-    "total": 42
+    "nextCursor": null,
+    "hasMore": false,
+    "total": 0
   }
 }
 ```

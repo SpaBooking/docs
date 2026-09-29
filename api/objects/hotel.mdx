@@ -113,7 +113,7 @@ when the hotel sells such stays, the categories `health` (spa cures) and
 `wellness`. Each of them reports two independent minima, `perPersonPerNight`
 and `perStay`, each with its own `amount`, `original`, `nights`, `occupancy`,
 and `visitType`. `all` is always present when the currency is; a category is
-omitted when the hotel sells nothing in it. `priceFrom` is `null` when the hotel
+omitted when it has no usable price in that currency. `priceFrom` is `null` when the hotel
 has no usable price, and a currency without a usable price is omitted. The
 `visitType.name` falls back to the Czech value like the hotel `name`. See
 [Prices](/api/prices) for the selection rules and an example.

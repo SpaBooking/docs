@@ -69,7 +69,7 @@ paths:
       description: |
         Returns hotels matching the supplied filters.
 
-        `lowest_price` is the cheapest matching room price per night per guest. When a two-bed room is priced per room, the API returns the per-guest display price.
+        `lowest_price` is a per-night price. Without `number_of_beds`, it is per guest. With `number_of_beds`, it is the total for the matching room occupancy, including for hotels priced per guest. For example, `number_of_beds=2` returns the nightly total for two guests; do not present that amount as a per-guest price.
 
         `lowest_price.<lang>.amount_per_night` includes any active discount promotions. `original_amount_per_night` is the price before any discount — equal to `amount_per_night` when no promotion applies.
 
@@ -1587,9 +1587,24 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
+            anyOf:
               - $ref: "#/components/schemas/ErrorResponse"
               - $ref: "#/components/schemas/ValidationErrorResponse"
+          examples:
+            missingKey:
+              value:
+                success: false
+                message: Missing access token.
+            validation:
+              value:
+                success: false
+                message: Invalid data in the request payload
+                errors:
+                  - code: invalid_type
+                    expected: number
+                    received: string
+                    path: [hotel_id]
+                    message: Expected number, received string
     Unauthorized:
       description: Invalid API key.
       content:
@@ -1689,8 +1704,9 @@ components:
           type: number
           nullable: true
           description: >-
-            Lowest per-night, per-guest price, including any active discount
-            promotions.
+            Lowest per-night amount, including active discount promotions.
+            Whether it is per guest or for the room depends on the endpoint
+            and occupancy filter; see the operation description.
         original_amount_per_night:
           type: number
           nullable: true

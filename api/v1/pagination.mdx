@@ -4,7 +4,9 @@ description: "Page through API v1 list responses."
 icon: "list-ol"
 ---
 
-API v1 uses offset pagination on list endpoints.
+Paginated API v1 endpoints use offset pagination. Check each endpoint for
+supported parameters; some catalog lists, such as destinations, return all
+results without pagination.
 
 | Parameter | Default | Maximum | Description |
 | --- | ---: | ---: | --- |
@@ -22,3 +24,9 @@ records.
 
 Some nested list responses also support `max_nested`. Its default is `10` and
 maximum is `100`.
+
+<Warning>
+  Cross-origin browser clients currently cannot read `X-Total-Count` because it
+  is not exposed by the API CORS headers. Server-side clients can read it. If
+  your browser UI needs the total, forward it through your application backend.
+</Warning>

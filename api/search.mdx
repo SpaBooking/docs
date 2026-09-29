@@ -1,10 +1,10 @@
 ---
 title: "Search"
-description: "Full-text search across localized fields."
+description: "Substring search across localized fields."
 icon: "magnifying-glass"
 ---
 
-List endpoints accept a `search` query parameter for free-text filtering.
+Hotel and room-type lists accept a `search` query parameter for text filtering.
 
 <Note>
   **Draft — room types:** The room-type examples on this page use the
@@ -17,7 +17,8 @@ GET /api/v2/room-types?search=superior
 
 How `search` matches:
 
-- **Full-text** — matches anywhere in the value, not just the start.
+- **Literal substring** — matches the supplied text anywhere in a value. There
+  are no search operators, word stemming, or relevance ranking.
 - **Case-insensitive** — `superior` matches `Superior`.
 - **Diacritics-insensitive** — `lazne` matches `Lázně`.
 - **All languages** — matched against every locale (`cs-CZ`, `de`, `en`, `ru`)

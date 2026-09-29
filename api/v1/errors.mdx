@@ -9,7 +9,7 @@ API v1 keeps the legacy error response shape:
 ```json
 {
   "success": false,
-  "message": "Missing API key"
+  "message": "Missing access token."
 }
 ```
 
@@ -20,11 +20,11 @@ Read both the HTTP status and the `message` field.
 | Status | Meaning |
 | ---: | --- |
 | `400` | The request is malformed, a required parameter is missing, or validation failed. |
-| `401` | The API key is missing or invalid. |
+| `401` | The API key is invalid. A missing key returns `400`. |
 | `404` | The requested resource was not found. |
 | `409` | The request matched more than one company. |
 | `422` | The resource exists but cannot be used for the requested operation. |
 | `500` | An unexpected server error occurred. Retry with backoff if the operation is safe to repeat. |
 
-Treat `400`, `401`, `404`, and `422` as client-correctable errors. Retry only
+Treat `400`, `401`, `404`, `409`, and `422` as client-correctable errors. Retry only
 after you change the request.

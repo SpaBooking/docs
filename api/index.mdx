@@ -7,7 +7,10 @@ Learn the conventions, authentication, and pagination patterns used across the S
 
 ## Conventions
 
-The base URL for API v2 is `https://spaportal.cz/api/v2`. The SpaPortal API follows RESTful conventions: resources are read with `GET` requests, filtered by query parameters. Response bodies are encoded as JSON.
+The base URL for API v2 is `https://spaportal.cz/api/v2`. Catalog resources are
+read with `GET` requests and filtered by query parameters. Response bodies are
+encoded as JSON. Use [API v1](/api/v1) for the complete booking flow, including
+final pricing and booking creation; see [API coverage](/api/versioning).
 
 - HTTPS only
 - Query parameters for `GET` filters
@@ -45,7 +48,7 @@ or time zone.
 
 Fields that use the `Money` object return `CZK` and `EUR` as integer minor units
 (`amountMinor`). Hotel pet fees use major-unit numbers instead. There is no
-currency request parameter.
+currency selector for these catalog endpoints.
 
 ## Prices
 
@@ -73,13 +76,15 @@ Set the `Accept-Language` header (BCP 47 tags) to choose which locale keys local
 
 [Read the pagination guide](/api/pagination).
 
-List responses are `{ data, pagination }`; pass the previous response's `nextCursor` back as `cursor` to fetch the next page.
+Hotel and room-type list responses are `{ data, pagination }`; pass the previous
+response's `nextCursor` back as `cursor` to fetch the next page. The amenity
+dictionary returns `{ data }` in one response without pagination.
 
 ## Search
 
 [Read the search guide](/api/search).
 
-List endpoints accept `search` for free-text filtering — case- and
+Hotel and room-type lists accept `search` for free-text filtering — case- and
 diacritics-insensitive, matched across all supported languages (`cs-CZ`, `de`,
 `en`, `ru`) at once, so a term in any language matches. Each endpoint documents
 which field(s) it searches.
@@ -88,7 +93,7 @@ which field(s) it searches.
 
 [Read the sorting guide](/api/sorting).
 
-List endpoints accept `sort` as `<field>:<direction>` (`asc` or `desc`), for
+Hotel and room-type lists accept `sort` as `<field>:<direction>` (`asc` or `desc`), for
 example `createdAt:desc`. Each endpoint documents its sortable fields and
 default order.
 
