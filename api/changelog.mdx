@@ -4,7 +4,7 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
-## Deployment date — to be added
+## Unreleased
 
 ### Amenity category scopes
 
@@ -20,6 +20,8 @@ icon: "clock-rotate-left"
   Individual amenity codes and labels are unchanged.
 - The dictionary version changes for this contract. Refresh cached dictionaries.
   Combined and filtered responses have distinct ETags.
+
+## Deployment date — to be added
 
 ### Room types and amenities
 
@@ -41,8 +43,9 @@ icon: "clock-rotate-left"
   translations. The pet rule includes the hotel's policy.
 - Added `unitType`, `tier`, `amenities`, and `amenityCategory` filters on room
   types. `expand` accepts `hotel` and `amenityLabels` together.
-- Added the room type amenity dictionary (see the scope changes above).
-  `expand=roomTypes,amenityLabels` includes labels on embedded room amenities.
+- Added `scope=roomType` to the amenity dictionary. The default `scope=hotel`
+  response body is unchanged. `expand=roomTypes,amenityLabels` includes labels
+  on embedded room amenities.
 - The amenity version now covers both scopes and is also returned on room type
   endpoints. Its value changes once with this release; refresh both cached
   dictionaries. ETags now include the scope.
