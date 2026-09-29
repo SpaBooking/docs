@@ -174,9 +174,10 @@ when the version changes.
 
 Recommended flow:
 
-1. Fetch each scope once without `Accept-Language`, so your cache holds every
-   locale key. Store each response with its `ETag` and
-   `X-SpaPortal-Amenities-Version` headers.
+1. Fetch each scope once without `Accept-Language`, or with
+   `Accept-Language: *`, so your cache holds every locale key. Node.js `fetch`
+   sends `*` when you do not set the header. Store each response with its
+   `ETag` and `X-SpaPortal-Amenities-Version` headers.
 2. Hotel and room type responses return the current version in
    `X-SpaPortal-Amenities-Version`. One version covers both dictionaries.
    When it changes, refetch both scopes.
