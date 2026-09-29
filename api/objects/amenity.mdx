@@ -6,9 +6,10 @@ openapi-schema: "/api/v2/openapi.yaml Amenity"
 
 An entry nested in a category returned by
 [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
-Its stable `code` identifies the amenity in hotel or room type responses. The parent
-[category object](/api/objects/amenity-category) contains `scope` (`hotel` or `roomType`), the category code,
-and its localized label. Identify a category by both `scope` and `code`.
+Its stable `code` identifies the amenity in hotel or room type responses. Each
+dictionary group also contains a [category](/api/objects/amenity-category) with
+`scope`, `code`, and a localized `label`. Match categories by both `scope` and
+`code`.
 `detailKinds` declares which structured fields can be populated on the
 corresponding [Amenity value](/api/objects/amenity-value).
 
@@ -23,7 +24,8 @@ meaningful data. The values use snake case because they identify field groups,
 not response property names.
 
 An empty `detailKinds` array means that selecting the amenity is the complete
-value. The corresponding hotel or room type amenity contains only its `code`.
+value. The corresponding hotel or room type amenity contains only its `code`
+by default; `expand=amenityLabels` also includes its `label`.
 
 For example:
 
