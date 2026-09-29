@@ -3,7 +3,7 @@ title: "Versioning"
 icon: "code-branch"
 ---
 
-API v2 provides the hotel catalog, amenities, and the draft room-type contract.
+API v2 provides hotels, room types, and amenity dictionaries.
 It does not yet replace the complete API v1 booking flow. Use the v2 reference
 for endpoints available in v2, and [API v1](/api/v1) for visit types, final
 pricing, and booking creation.
@@ -18,5 +18,6 @@ The two versions use different authentication headers, ID conventions, and
 response shapes. A v2 `id` is not interchangeable with a numeric v1 request ID.
 See the [booking flow](/guides/booking) for the v1 endpoint sequence.
 
-Room-type features marked **Draft** can change within v2 until client
-integration is complete. This exception applies only to the marked features.
+Hotels, room types, and amenities follow the same
+[versioning policy](/guides/versioning#breaking-changes). Breaking changes
+require a new major API version.

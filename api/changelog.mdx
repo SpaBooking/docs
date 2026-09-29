@@ -4,6 +4,14 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
+## 2026-09-29 (documentation)
+
+### Room type contract
+
+Room-type endpoints, the `scope=roomType` amenity dictionary, and room-type
+expansions now follow the same [versioning policy](/api/versioning) as hotels.
+Breaking changes require a new major API version.
+
 ## 2026-09-29 (v3.2.20)
 
 ### Amenity category scopes
@@ -14,7 +22,7 @@ icon: "clock-rotate-left"
 - Categories now always include `scope: "hotel"` or `scope: "roomType"`, in
   the dictionary, assigned values, and label expansions. Match categories by
   `scope` and `code`; both scopes contain `accessibility`.
-- **Breaking (Draft room types):** Category codes no longer use the `room_`
+- **Breaking (room types):** Category codes no longer use the `room_`
   prefix: `bathroom`, `equipment`, `accessibility`, `view`, and `kitchen`.
   Existing prefixed category filters remain accepted as deprecated aliases.
   Individual amenity codes and labels are unchanged.
@@ -25,13 +33,7 @@ icon: "clock-rotate-left"
 
 ### Room types and amenities
 
-<Warning>
-  **Draft — room types:** These room-type changes are live in production. The
-  room-type contract remains draft until client integration is complete, so its
-  parameters and response shapes may still change.
-</Warning>
-
-- **Breaking (Draft room types):** `name` replaces `category`,
+- **Breaking (room types):** `name` replaces `category`,
   `occupancy.standard` replaces `beds`, and `amenityCategories` replaces
   `facilities`. These changes also apply to room types embedded in hotels.
 - **Breaking:** Replace the `beds` query filter with `occupancy`. Requests
@@ -48,7 +50,6 @@ icon: "clock-rotate-left"
 - The amenity version now covers both scopes and is also returned on room type
   endpoints. Its value changes once with this release; refresh both cached
   dictionaries. ETags now include the scope.
-- Room types remain **Draft** until client integration is complete.
 
 ### Localization
 

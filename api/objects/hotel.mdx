@@ -16,11 +16,8 @@ requested key and return `null` when its translation is missing, except image
 
 ## Embedded room types
 
-<Warning>
-  **Draft — room types:** The optional `roomTypes` field returned with
-  `expand=roomTypes` follows the draft [room-type contract](/api/objects/room-type).
-  Its response shape may change until client integration is complete.
-</Warning>
+Use `expand=roomTypes` to include the hotel's
+[room types](/api/objects/room-type).
 
 Without this expansion, the hotel response does not include room types.
 See [Expand](/api/expand) for examples.
