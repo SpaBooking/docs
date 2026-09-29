@@ -11,18 +11,15 @@ groups returned by the [amenity dictionary](/api/amenities). The remaining
 properties describe access, distance, options, opening hours, and a localized
 guest note.
 
-To interpret the value, find the matching `code` in
-`GET /api/v2/amenity-categories` under the category with the same `scope` and
-`code`, then in its `amenities` array. You can optionally filter the dictionary
-using `?scope=hotel` or `?scope=roomType`. The parent
-`category` provides the amenity's category and the matching entry's
-`detailKinds` determines which properties are included. Properties that are
-not supported by that amenity are omitted.
+To look up a value in the dictionary, match the group's `category.scope` and
+`category.code` to `data[].category`. Then match the value's `code` to an entry
+in that group's `amenities` array. You can filter the dictionary with
+`?scope=hotel` or `?scope=roomType`. The matched amenity's `detailKinds`
+determines which value fields are returned. Unsupported fields are omitted.
 
 The [category](/api/objects/amenity-category) is returned once on the parent
-amenity group, by `scope` and `code`. The
-amenity's `label` and `detailKinds` are dictionary metadata and are not repeated
-inside each selected amenity value by default. Request
+amenity group, by `scope` and `code`. `detailKinds` appears only in the
+dictionary. Labels are omitted from selected values by default. Request
 [`expand=amenityLabels`](/api/expand) to inline the localized `label` on the
 category, the amenity, and each selected option.
 
@@ -36,8 +33,9 @@ Each localized `note` value is limited to 200 characters.
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
-When the dictionary returns `detailKinds: []`, the amenity is presence-only and
-its value contains only `code`.
+When the dictionary returns `detailKinds: []`, the amenity is presence-only.
+Its value contains only `code` by default, or `code` and `label` with
+`expand=amenityLabels`.
 
 For an aquapark with
 `detailKinds: [proximity, access, opening_hours]`, a hotel response can
