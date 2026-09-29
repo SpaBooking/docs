@@ -6,6 +6,11 @@ icon: "magnifying-glass"
 
 List endpoints accept a `search` query parameter for free-text filtering.
 
+<Note>
+  **Draft — room types:** The room-type examples on this page use the
+  draft [room-type contract](/api/objects/room-type).
+</Note>
+
 ```bash
 GET /api/v2/room-types?search=superior
 ```
@@ -20,4 +25,6 @@ How `search` matches:
 
 To match an exact value such as a room type code, use that field's own filter.
 
-Each endpoint lists the field(s) its `search` covers.
+Each endpoint lists the field(s) its `search` covers. Room-type search matches
+saved names only; it does not match English or Russian names generated in the
+response. See [Room type names and labels](/api/objects/room-type#names-and-labels).

@@ -19,6 +19,13 @@ paths:
         - Amenity categories
       summary: List the amenity dictionary
       operationId: getAmenityCategories
+      x-mint:
+        content: |
+          <Warning>
+            **Draft — room types:** The `scope=roomType` dictionary may change
+            until client integration is complete. The default `scope=hotel`
+            keeps its existing contract.
+          </Warning>
       description: >
         Returns the full amenity dictionary for the requested scope grouped by category.
         Each
@@ -68,8 +75,10 @@ paths:
               - hotel
               - roomType
             default: hotel
-          description: Dictionary scope. The default hotel response is unchanged. Unknown scopes
-            return 400.
+          description: >-
+            Dictionary scope. **Draft:** The roomType scope may change until client
+            integration is complete. The default hotel response is unchanged.
+            Unknown scopes return 400.
         - name: If-None-Match
           in: header
           required: false
@@ -221,9 +230,9 @@ paths:
       x-mint:
         content: |
           <Warning>
-            **Draft:** The `roomTypes` response field and `expand=roomTypes`
-            behavior are still in progress. Their response shape may change
-            before they are finalized.
+            **Draft — room types:** The `roomTypes` response field and
+            `expand=roomTypes` may change until client integration is complete.
+            This status applies to the room-type expansion only.
           </Warning>
       description: |
         Returns active hotels across the companies your public key is scoped to.
@@ -337,9 +346,9 @@ paths:
       x-mint:
         content: |
           <Warning>
-            **Draft:** The `roomTypes` response field and `expand=roomTypes`
-            behavior are still in progress. Their response shape may change
-            before they are finalized.
+            **Draft — room types:** The `roomTypes` response field and
+            `expand=roomTypes` may change until client integration is complete.
+            This status applies to the room-type expansion only.
           </Warning>
       description: |
         Returns a single hotel with its localized content, complete structured
@@ -407,8 +416,8 @@ paths:
       x-mint:
         content: |
           <Warning>
-            **Draft:** This endpoint is still in progress. Its parameters and
-            response shape may change before it is finalized.
+            **Draft — room types:** This endpoint's parameters and response
+            shape may change until client integration is complete.
           </Warning>
       description: |
         Returns room types of active hotels across the companies your public
@@ -574,8 +583,8 @@ paths:
       x-mint:
         content: |
           <Warning>
-            **Draft:** This endpoint is still in progress. Its parameters and
-            response shape may change before it is finalized.
+            **Draft — room types:** This endpoint's parameters and response
+            shape may change until client integration is complete.
           </Warning>
       description: |
         Returns a single room type by id.
@@ -1028,8 +1037,8 @@ components:
           format: uri
     RoomType:
       type: object
-      description: "**Draft:** The room-type resource is still in progress. Its response shape
-        may change before it is finalized."
+      description: "**Draft:** The room-type resource and its response shape may change
+        until client integration is complete."
       required:
         - id
         - hotelId
@@ -1674,8 +1683,8 @@ components:
         roomTypes:
           type: array
           description: |
-            **Draft:** This field and its response shape are still in progress
-            and may change before they are finalized.
+            **Draft:** This room-type field and its response shape may change
+            until client integration is complete.
 
             Embedded only when `expand=roomTypes`;
             otherwise fetch them via `GET /room-types?hotelId={hotelId}`. Each

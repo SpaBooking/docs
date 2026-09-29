@@ -11,9 +11,10 @@ expanded by default. Pass a comma-separated list to expand more than one thing
 in a single request.
 
 <Warning>
-  **Draft:** Room-type endpoints and both room-type expansions
-  (`expand=roomTypes` on hotels and `expand=hotel` on room types) are still in
-  progress. Their response shapes may change before they are finalized.
+  **Draft — room types:** `expand=roomTypes` on hotels and all expansions on
+  room-type endpoints (`hotel` and `amenityLabels`) may change until client
+  integration is complete. Hotel-only `expand=amenityLabels` keeps its existing
+  contract.
 </Warning>
 
 ```bash
@@ -190,6 +191,11 @@ inlines the localized `label` on each category, amenity, and option so the
 response is self-contained — useful when you would rather not fetch and join the
 dictionary. For apps that render many hotels, caching the dictionary once is
 usually leaner than expanding labels on every request.
+
+<Note>
+  **Draft — room types:** The room-type label expansion described below
+  follows the draft [room-type contract](/api/objects/room-type).
+</Note>
 
 On `/room-types` and `/room-types/{roomTypeId}`, use `expand=amenityLabels`,
 optionally together with `hotel`. On hotels, `expand=roomTypes,amenityLabels`

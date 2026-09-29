@@ -7,6 +7,12 @@ icon: "list-check"
 Hotel and room type amenities use the same structured contract in API v2.
 Choose `scope=hotel` (the default) or `scope=roomType` when you fetch the dictionary.
 
+<Warning>
+  **Draft — room types:** The `scope=roomType` dictionary, assigned room
+  amenities, and room-type filters may change until client integration is
+  complete. This status applies to the room-type scope only.
+</Warning>
+
 There are two related resources:
 
 1. **The amenity dictionary** lists every amenity SpaPortal can assign within the requested scope.
@@ -91,7 +97,8 @@ with every supported choice and its localized label.
 
 Resolve `amenityCategories[].amenities[].code` values against the entries
 nested in each dictionary category instead of hard-coding display labels.
-Category and amenity codes are stable.
+Published hotel category and amenity codes are stable. Room-type codes remain
+part of the draft contract.
 
 ### Categories
 
@@ -123,6 +130,11 @@ An empty `detailKinds` array identifies a presence-only amenity. Its selected va
 contains only `code`; for example, `{ "code": "wheelchair_access" }`.
 
 ## Room type amenities
+
+<Warning>
+  **Draft — room types:** This room-type contract may change until client
+  integration is complete.
+</Warning>
 
 Fetch `GET /api/v2/amenity-categories?scope=roomType` for the room type dictionary.
 It contains 38 presence-only amenities in five categories. Each entry has
@@ -156,8 +168,9 @@ hotels, `expand=roomTypes,amenityLabels` also includes labels on embedded rooms.
 ## Caching
 
 The dictionary changes only when SpaPortal releases new amenities, categories,
-options, or labels. Codes are only ever added, never renamed or removed, so a
-cached dictionary stays safe to use.
+options, or labels. Published hotel codes are only ever added, never renamed
+or removed. The room-type scope remains draft; refresh its cached dictionary
+when the version changes.
 
 Recommended flow:
 
@@ -284,6 +297,11 @@ GET /api/v2/hotels?amenityCategory=wellness
 ```
 
 ## Filtering room types
+
+<Warning>
+  **Draft — room types:** This room-type contract may change until client
+  integration is complete.
+</Warning>
 
 `GET /api/v2/room-types` accepts the same filters against the room type dictionary:
 
