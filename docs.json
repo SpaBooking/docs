@@ -65,6 +65,7 @@
             "pages": [
               "api/objects/hotel",
               "api/objects/room-type",
+              "api/objects/amenity-category",
               "api/objects/amenity",
               "api/objects/amenity-value",
               "api/objects/localized-string"

@@ -18,9 +18,9 @@ Omit the `scope` query parameter to fetch both dictionaries, or send
 There are two related resources:
 
 1. **The amenity dictionary** lists every amenity SpaPortal can assign within the requested scope.
-   It is grouped by category. Each category has a `scope`, a stable `code` within that scope, a localized
-   label, and an `amenities` array whose entries contain a stable `code`,
-   localized `label`, and supported detail fields.
+   Each group contains a [category](/api/objects/amenity-category) with `scope`,
+   `code`, and a localized `label`, alongside an `amenities` array whose entries
+   contain a stable `code`, localized `label`, and supported detail fields.
 2. **Selected amenity values** are grouped by category in
    `hotel.amenityCategories` or `roomType.amenityCategories`.
    Categories without assigned amenities are omitted. Values inside each
