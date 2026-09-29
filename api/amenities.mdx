@@ -5,7 +5,9 @@ icon: "list-check"
 ---
 
 Hotel and room type amenities use the same structured contract in API v2.
-Choose `scope=hotel` (the default) or `scope=roomType` when you fetch the dictionary.
+Each category identifies its resource with `scope: "hotel"` or `scope: "roomType"`.
+Omit the `scope` query parameter to fetch both dictionaries, or send
+`scope=hotel` or `scope=roomType` to fetch just one.
 
 <Warning>
   **Draft — room types:** The `scope=roomType` dictionary, assigned room
@@ -16,7 +18,7 @@ Choose `scope=hotel` (the default) or `scope=roomType` when you fetch the dictio
 There are two related resources:
 
 1. **The amenity dictionary** lists every amenity SpaPortal can assign within the requested scope.
-   It is grouped by category. Each category has a stable `code`, a localized
+   It is grouped by category. Each category has a `scope`, a stable `code` within that scope, a localized
    label, and an `amenities` array whose entries contain a stable `code`,
    localized `label`, and supported detail fields.
 2. **Selected amenity values** are grouped by category in
@@ -46,20 +48,102 @@ localized fields.
 Amenities whose `detailKinds` include `options` also carry an `options` array
 with every supported choice and its localized label.
 
+### Scope and category identity
+
+| Request | Result |
+| --- | --- |
+| `GET /api/v2/amenity-categories` | Both scopes: hotel categories, then room type categories |
+| `GET /api/v2/amenity-categories?scope=hotel` | Hotel categories only |
+| `GET /api/v2/amenity-categories?scope=roomType` | Room type categories only (Draft) |
+
+The pair `category.scope` + `category.code` identifies a category. Codes have no
+resource prefix: for example, a room type uses `{ "scope": "roomType", "code": "view" }`.
+Both scopes have a category named `accessibility`; keep them separate when
+indexing categories or joining selected values to the dictionary.
+
+`scope` is always present on categories, including assigned values and responses
+with `expand=amenityLabels`. The query parameter only filters the dictionary;
+it does not change the shape of its entries. An empty or unknown scope returns
+`400`; to fetch everything, omit the parameter instead of sending `scope=all`.
+
 ### Examples by scope
 
-Fetch each scope separately. Each request returns one dictionary; use the hotel
-dictionary with hotel values and the room type dictionary with room type values.
+Fetch both scopes together, or filter the dictionary to the resource you need.
+Match selected values to dictionary categories using both `scope` and `code`.
 The examples request Czech and English labels. Dictionary responses below are
 excerpts; the API returns the complete dictionary for the requested scope.
 Resource excerpts show only `amenityCategories`.
 
 Both scopes follow the same label rules: dictionary entries always include
-labels, assigned values include codes by default, and `expand=amenityLabels`
+labels, assigned categories include `scope` and `code` by default, and `expand=amenityLabels`
 adds labels to categories, amenities, and any selected options. Replace
 `{hotelId}` and `{roomTypeId}` with the resource IDs returned by the API.
 
 <Tabs>
+
+<Tab title="Both scopes — no query parameter">
+
+```bash
+curl --request GET \
+  --header "X-SpaPortal-Public-Key: YOUR_PUBLIC_KEY" \
+  --header "Accept-Language: cs-CZ,en" \
+  "https://spaportal.cz/api/v2/amenity-categories"
+```
+
+This excerpt shows the two distinct `accessibility` categories. The full response
+contains all 13 category groups; it never merges groups with the same code.
+
+```json Dictionary excerpt — both scopes
+{
+  "data": [
+    {
+      "category": {
+        "scope": "hotel",
+        "code": "accessibility",
+        "label": {
+          "cs-CZ": "Bezbariérovost",
+          "en": "Accessibility"
+        }
+      },
+      "amenities": [
+        {
+          "code": "wheelchair_access",
+          "label": {
+            "cs-CZ": "Bezbariérový přístup",
+            "en": "Wheelchair access"
+          },
+          "detailKinds": []
+        }
+      ]
+    },
+    {
+      "category": {
+        "scope": "roomType",
+        "code": "accessibility",
+        "label": {
+          "cs-CZ": "Přístupnost",
+          "en": "Accessibility"
+        }
+      },
+      "amenities": [
+        {
+          "code": "elevator_access",
+          "label": {
+            "cs-CZ": "Dostupné výtahem",
+            "en": "Lift access"
+          },
+          "detailKinds": []
+        }
+      ]
+    }
+  ]
+}
+```
+
+Use `category.scope` to choose hotel or room type filters and values. The room
+type portion remains Draft.
+
+</Tab>
 
 <Tab title="Hotel — scope=hotel">
 
@@ -77,6 +161,7 @@ curl \
   "data": [
     {
       "category": {
+        "scope": "hotel",
         "code": "wellness",
         "label": {
           "cs-CZ": "Bazény a wellness",
@@ -139,6 +224,7 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
+        "scope": "hotel",
         "code": "wellness"
       },
       "amenities": [
@@ -188,6 +274,7 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
+        "scope": "hotel",
         "code": "wellness",
         "label": {
           "cs-CZ": "Bazény a wellness",
@@ -249,7 +336,8 @@ curl \
   "data": [
     {
       "category": {
-        "code": "room_view",
+        "scope": "roomType",
+        "code": "view",
         "label": {
           "cs-CZ": "Výhled",
           "en": "View"
@@ -291,7 +379,8 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
-        "code": "room_view"
+        "scope": "roomType",
+        "code": "view"
       },
       "amenities": [
         {
@@ -304,7 +393,7 @@ Accept-Language: cs-CZ,en
 ```
 
 The dictionary lists balcony and terrace as available choices. This room type
-selects only `balcony`. Resolve `room_view` and `balcony` against the room type
+selects only `balcony`. Resolve `view` and `balcony` against the room type
 dictionary. Both amenities have `detailKinds: []`, so the assigned value
 contains only its `code`, without proximity, access, or opening hours.
 
@@ -325,7 +414,8 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
-        "code": "room_view",
+        "scope": "roomType",
+        "code": "view",
         "label": {
           "cs-CZ": "Výhled",
           "en": "View"
@@ -350,7 +440,7 @@ Accept-Language: cs-CZ,en
 </Tabs>
 
 Resolve `amenityCategories[].amenities[].code` values against the entries
-nested in each dictionary category instead of hard-coding display labels.
+nested in the matching dictionary category (`scope` and `code`) instead of hard-coding display labels.
 Published hotel category and amenity codes are stable. Room-type codes remain
 part of the draft contract.
 
@@ -396,16 +486,16 @@ It contains 38 presence-only amenities in five categories. Each entry has
 
 | Code | English label |
 | --- | --- |
-| `room_bathroom` | Bathroom |
-| `room_equipment` | Room |
-| `room_accessibility` | Accessibility |
-| `room_view` | View |
-| `room_kitchen` | Food and drink |
+| `bathroom` | Bathroom |
+| `equipment` | Room |
+| `accessibility` | Accessibility |
+| `view` | View |
+| `kitchen` | Food and drink |
 
 Room type and hotel amenity values use the same response structure, but each
 scope has its own categories and dictionary. A room type response includes only
 categories with at least one amenity assigned to that room type. For example,
-a room type without kitchen amenities omits `room_kitchen` from its
+a room type without kitchen amenities omits `kitchen` from its
 `amenityCategories`; the complete `scope=roomType` dictionary still lists that
 category. Returned categories and amenities follow dictionary order.
 
@@ -416,21 +506,22 @@ hotels, `expand=roomTypes,amenityLabels` also includes labels on embedded rooms.
 
 ## Caching
 
-The dictionary changes only when SpaPortal releases new amenities, categories,
-options, or labels. Published hotel codes are only ever added, never renamed
+The dictionary version changes when SpaPortal releases new amenities, categories,
+options, labels, or a new response shape. Published hotel codes are only ever added, never renamed
 or removed. The room-type scope remains draft; refresh its cached dictionary
 when the version changes.
 
 Recommended flow:
 
-1. Fetch each scope once without `Accept-Language`, or with
-   `Accept-Language: *`, so your cache holds every locale key. Node.js `fetch`
-   sends `*` when you do not set the header. Store each response with its
-   `ETag` and `X-SpaPortal-Amenities-Version` headers.
+1. Fetch `GET /api/v2/amenity-categories` once without `scope` to cache both
+   dictionaries. Omit `Accept-Language`, or send `Accept-Language: *`, to cache
+   every locale key. Node.js `fetch` sends `*` when you do not set the header.
+   Store the response with its `ETag` and `X-SpaPortal-Amenities-Version` headers.
+   You can also cache each scope separately using the query parameter.
 2. Hotel and room type responses return the current version in
    `X-SpaPortal-Amenities-Version`. One version covers both dictionaries.
-   When it changes, refetch both scopes.
-3. To revalidate, repeat the request with the same `scope` and
+   When it changes, refetch the combined dictionary or each separately cached scope.
+3. To revalidate, repeat the request with the same `scope` selection (including omission) and
    `Accept-Language`, and add `If-None-Match: <cached ETag>`. The API returns
    `304` with no body while your copy is current.
 4. If a response contains an unknown amenity code, skip it in display and
@@ -440,7 +531,7 @@ Browser clients on allowed origins can send `If-None-Match` and read the
 `ETag` and `X-SpaPortal-Amenities-Version` response headers directly.
 
 Responses carry `Cache-Control: private, max-age=3600`. The `ETag` differs by
-scope and requested locale set; the version header covers both scopes and all
+scope selection (combined, hotel, or room type) and requested locale set; the version header covers both scopes and all
 locales.
 
 ## Selected amenities on a hotel
@@ -449,8 +540,8 @@ Every v2 [Hotel](/api/objects/hotel) response groups assigned amenities by
 category. Only categories containing at least one assigned amenity are returned.
 An absent code means the amenity is not offered or has not been advertised.
 
-By default hotel responses carry **codes only** — the category, amenity, and
-each selected option are identified by `code`. Fetch the dictionary once (it is
+By default hotel categories carry `scope: "hotel"` and `code`; amenities and
+selected options carry `code`. Labels are omitted. Fetch the dictionary once (it is
 small and cacheable) and look up every localized label there. This keeps hotel
 responses small and the labels in one place.
 
@@ -463,7 +554,7 @@ is needed.
 {
   "amenityCategories": [
     {
-      "category": { "code": "wellness" },
+      "category": { "scope": "hotel", "code": "wellness" },
       "amenities": [
         {
           "code": "aquapark",
@@ -499,7 +590,7 @@ is needed.
 ```
 
 To display this hotel's amenities, join each code to the dictionary:
-`category.code` → `data[].category`, `amenities[].code` →
+`category.scope` + `category.code` → `data[].category`, `amenities[].code` →
 `data[].amenities[]`, and each `options[].code` → that amenity's `options` in
 the dictionary. All three carry the localized labels. Or request
 `expand=amenityLabels` to receive those labels inline on the hotel and skip the
@@ -559,7 +650,14 @@ GET /api/v2/hotels?amenityCategory=wellness
 `GET /api/v2/room-types` accepts the same filters against the room type dictionary:
 
 - `amenities=balcony,bathtub` requires both amenities.
-- `amenityCategory=room_view` requires at least one amenity from that category.
+- `amenityCategory=view` requires at least one amenity from that category.
+
+Legacy room category filters (`room_bathroom`, `room_equipment`,
+`room_accessibility`, `room_view`, `room_kitchen`) remain accepted as deprecated
+aliases. Use the unprefixed codes for new requests. Responses always use
+unprefixed category codes. The resource endpoint determines the filter scope;
+for example, `amenityCategory=accessibility` on `/room-types` searches room
+accessibility, while the same filter on `/hotels` searches hotel accessibility.
 
 Unknown amenity or category codes return `400`. Hotel filters use only the hotel
 dictionary. To find hotels through room amenities, filter room types and collect

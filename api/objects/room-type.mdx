@@ -44,6 +44,11 @@ Unspecified unit types and tiers are `null`. Amenity labels come from the
 [room type amenity dictionary](/api/amenities#room-type-amenities), or you can
 request `expand=amenityLabels` to include them in the response.
 
+`amenityCategories[].category` always contains `scope: "roomType"` and an
+unprefixed category `code` (for example, `view`). Match both fields against the
+[amenity dictionary](/api/amenities); without a `scope` query it returns both
+hotel and room type categories. Groups without assigned amenities are omitted.
+
 `description` is Markdown.
 
 ## Buildings and rules
