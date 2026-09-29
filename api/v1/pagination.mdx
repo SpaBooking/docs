@@ -20,13 +20,7 @@ curl \
 ```
 
 Read the `X-Total-Count` response header to get the total number of matching
-records.
+records. Browser clients on allowed origins can read this header directly.
 
 Some nested list responses also support `max_nested`. Its default is `10` and
 maximum is `100`.
-
-<Warning>
-  Cross-origin browser clients currently cannot read `X-Total-Count` because it
-  is not exposed by the API CORS headers. Server-side clients can read it. If
-  your browser UI needs the total, forward it through your application backend.
-</Warning>
