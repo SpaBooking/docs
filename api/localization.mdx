@@ -49,12 +49,18 @@ Use these request values to select localized fields:
 | `de`, `de-DE`, `de-AT` | German, returned as `de` |
 | `en`, `en-US`, `en-GB` | English, returned as `en` |
 | `ru`, `ru-RU` | Russian, returned as `ru` |
+| `*` | Every supported locale you do not list elsewhere in the header |
 
 Quality values (`;q=`) order the returned keys. Tags with `q=0` are ignored.
 
-When `Accept-Language` is omitted, the API returns all supported locale keys for
-that field. When the header contains only unsupported languages, the API returns
-`cs-CZ`.
+`*` takes its own quality value. For example, `de, *;q=0.5` returns `de` first,
+followed by `cs-CZ`, `en`, and `ru`. A locale you list with `q=0` is never added
+by `*`, so `en;q=0, *` returns every locale except `en`.
+
+When `Accept-Language` is omitted or is `*`, the API returns all supported locale
+keys for that field. Some HTTP clients, such as Node.js `fetch`, send
+`Accept-Language: *` when you do not set the header. When the header contains
+only unsupported languages, the API returns `cs-CZ`.
 
 ## Missing translations
 
