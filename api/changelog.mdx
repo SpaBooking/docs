@@ -34,6 +34,14 @@ icon: "clock-rotate-left"
   dictionaries. ETags now include the scope.
 - Room types remain **Draft** until client integration is complete.
 
+### Localization
+
+- `Accept-Language: *` now returns every supported locale key, like an omitted
+  header. It previously returned only `cs-CZ`. Node.js `fetch` sends `*` when
+  you do not set the header.
+- Inside a list, `*` adds the locales you do not list, at its own quality
+  value. Locales listed with `q=0` stay excluded.
+
 ## 2026-09-18
 
 ### Hotel and room type images
