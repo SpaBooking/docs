@@ -650,8 +650,9 @@ components:
         example: cs-CZ,de
       description: >-
         Comma-separated BCP 47 language tags selecting which locale keys
-        localized fields return. When omitted, all locale keys are returned.
-        See [Localization](/api/localization) for details.
+        localized fields return. When omitted or `*`, all locale keys are
+        returned. Inside a list, `*` adds the locales you do not list, at its
+        own quality value. See [Localization](/api/localization) for details.
   securitySchemes:
     spaPortalPublicKey:
       type: apiKey
