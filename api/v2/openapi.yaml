@@ -19,13 +19,6 @@ paths:
         - Amenity categories
       summary: List the amenity dictionary
       operationId: getAmenityCategories
-      x-mint:
-        content: |
-          <Warning>
-            **Draft — room types:** The `scope=roomType` dictionary may change
-            until client integration is complete. It is included when `scope`
-            is omitted; use `scope=hotel` for the hotel dictionary only.
-          </Warning>
       description: >
         Returns the full amenity dictionary grouped by category. Omit `scope` for
         both scopes (hotel categories first, then room type categories), or filter
@@ -79,8 +72,7 @@ paths:
               - roomType
           description: >-
             Optional dictionary filter. Omit it to return both scopes.
-            **Draft:** The roomType scope may change until client integration is
-            complete. Empty or unknown scopes (including all) return 400.
+            Empty or unknown scopes (including all) return 400.
         - name: If-None-Match
           in: header
           required: false
@@ -238,13 +230,6 @@ paths:
       tags: [Hotels]
       summary: List hotels
       operationId: getHotels
-      x-mint:
-        content: |
-          <Warning>
-            **Draft — room types:** The `roomTypes` response field and
-            `expand=roomTypes` may change until client integration is complete.
-            This status applies to the room-type expansion only.
-          </Warning>
       description: |
         Returns active hotels across the companies your public key is scoped to.
         A hotel includes its localized short description and sales-channel
@@ -328,7 +313,7 @@ paths:
             `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
             `amenityLabels` inlines the localized category, amenity, and option
             labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
-            `roomTypes` (**draft**, response shape may change) embeds each
+            `roomTypes` embeds each
             hotel's room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
       responses:
@@ -354,13 +339,6 @@ paths:
       tags: [Hotels]
       summary: Get a hotel
       operationId: getHotel
-      x-mint:
-        content: |
-          <Warning>
-            **Draft — room types:** The `roomTypes` response field and
-            `expand=roomTypes` may change until client integration is complete.
-            This status applies to the room-type expansion only.
-          </Warning>
       description: |
         Returns a single hotel with its localized content, complete structured
         profile, and amenities by id.
@@ -395,7 +373,7 @@ paths:
             `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
             `amenityLabels` inlines the localized category, amenity, and option
             labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
-            `roomTypes` (**draft**, response shape may change) embeds the hotel's
+            `roomTypes` embeds the hotel's
             room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
       responses:
@@ -424,12 +402,6 @@ paths:
         - Room types
       summary: List room types
       operationId: getRoomTypes
-      x-mint:
-        content: |
-          <Warning>
-            **Draft — room types:** This endpoint's parameters and response
-            shape may change until client integration is complete.
-          </Warning>
       description: |
         Returns room types of active hotels across the companies your public
         key is scoped to. Localized fields (`name`, `description`) return
@@ -599,12 +571,6 @@ paths:
         - Room types
       summary: Get a room type
       operationId: getRoomType
-      x-mint:
-        content: |
-          <Warning>
-            **Draft — room types:** This endpoint's parameters and response
-            shape may change until client integration is complete.
-          </Warning>
       description: |
         Returns a single room type by id.
       parameters:
@@ -1063,8 +1029,7 @@ components:
           format: uri
     RoomType:
       type: object
-      description: "**Draft:** The room-type resource and its response shape may change
-        until client integration is complete."
+      description: A type of accommodation within a hotel, with occupancy, amenities, rules, and images.
       required:
         - id
         - hotelId
@@ -1716,9 +1681,6 @@ components:
         roomTypes:
           type: array
           description: |
-            **Draft:** This room-type field and its response shape may change
-            until client integration is complete.
-
             Embedded only when `expand=roomTypes`;
             otherwise fetch them via `GET /room-types?hotelId={hotelId}`. Each
             item omits the nested `hotel` block (it is this hotel).

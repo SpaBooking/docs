@@ -38,5 +38,6 @@ compare those with the application implementation and tests.
 ## Publishing
 
 Mintlify deploys changes merged into `main`. Publishing documentation does not
-deploy the API application. Keep Draft notices and release-date placeholders
-until the corresponding release has been confirmed.
+deploy the API application. Confirm the API contract and release dates before
+publishing. Keep release-date placeholders until the corresponding release has
+been confirmed.

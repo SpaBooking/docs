@@ -6,11 +6,6 @@ icon: "language"
 
 SpaPortal stores selected text fields in multiple locales.
 
-<Note>
-  **Draft — room types:** The room-type examples on this page use the
-  draft [room-type contract](/api/objects/room-type).
-</Note>
-
 Send `Accept-Language` to choose the localized values you want:
 
 ```bash
@@ -72,7 +67,7 @@ The following fields have explicit fallback behavior:
 
 - Hotel `name` and `visitType.name` inside [`priceFrom`](/api/prices) fall back
   to the Czech value, so they are never `null`.
-- For the draft room-type resource, missing English and Russian names can be
+- For room types, missing English and Russian names can be
   composed from the tier, unit type, and building when automatic naming applies.
   Custom and legacy names keep their saved translations. See
   [Room type names and labels](/api/objects/room-type#names-and-labels).

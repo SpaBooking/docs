@@ -9,12 +9,6 @@ Each category identifies its resource with `scope: "hotel"` or `scope: "roomType
 Omit the `scope` query parameter to fetch both dictionaries, or send
 `scope=hotel` or `scope=roomType` to fetch just one.
 
-<Warning>
-  **Draft — room types:** The `scope=roomType` dictionary, assigned room
-  amenities, and room-type filters may change until client integration is
-  complete. This status applies to the room-type scope only.
-</Warning>
-
 There are two related resources:
 
 1. **The amenity dictionary** lists every amenity SpaPortal can assign within the requested scope.
@@ -54,7 +48,7 @@ with every supported choice and its localized label.
 | --- | --- |
 | `GET /api/v2/amenity-categories` | Both scopes: hotel categories, then room type categories |
 | `GET /api/v2/amenity-categories?scope=hotel` | Hotel categories only |
-| `GET /api/v2/amenity-categories?scope=roomType` | Room type categories only (Draft) |
+| `GET /api/v2/amenity-categories?scope=roomType` | Room type categories only |
 
 The pair `category.scope` + `category.code` identifies a category. Codes have no
 resource prefix: for example, a room type uses `{ "scope": "roomType", "code": "view" }`.
@@ -158,8 +152,7 @@ contains all 13 category groups; it never merges groups with the same code.
 }
 ```
 
-Use `category.scope` to choose hotel or room type filters and values. The room
-type portion remains Draft.
+Use `category.scope` to choose hotel or room type filters and values.
 
 </Tab>
 
@@ -338,7 +331,7 @@ Accept-Language: cs-CZ,en
 
 </Tab>
 
-<Tab title="Room type — scope=roomType (Draft)">
+<Tab title="Room type — scope=roomType">
 
 **1. Fetch the room type dictionary.**
 
@@ -459,8 +452,7 @@ Accept-Language: cs-CZ,en
 
 Resolve `amenityCategories[].amenities[].code` values against the entries
 nested in the matching dictionary category (`scope` and `code`) instead of hard-coding display labels.
-Published hotel category and amenity codes are stable. Room-type codes remain
-part of the draft contract.
+Published category and amenity codes in both scopes are stable within API v2.
 
 ### Hotel categories
 
@@ -493,11 +485,6 @@ contains only `code`; for example, `{ "code": "wheelchair_access" }`.
 
 ## Room type amenities
 
-<Warning>
-  **Draft — room types:** This room-type contract may change until client
-  integration is complete.
-</Warning>
-
 Fetch `GET /api/v2/amenity-categories?scope=roomType` for the room type dictionary.
 It contains 38 presence-only amenities in five categories. Each entry has
 `detailKinds: []` and has no `options` or `notePlaceholder`.
@@ -525,9 +512,9 @@ hotels, `expand=roomTypes,amenityLabels` also includes labels on embedded rooms.
 ## Caching
 
 The dictionary version changes when SpaPortal releases new amenities, categories,
-options, labels, or a new response shape. Published hotel codes are only ever added, never renamed
-or removed. The room-type scope remains draft; refresh its cached dictionary
-when the version changes.
+options, labels, or a new response shape. Within API v2, published hotel and room
+type codes are not renamed or removed. Refresh cached dictionaries when the
+version changes.
 
 Recommended flow:
 
@@ -659,11 +646,6 @@ GET /api/v2/hotels?amenityCategory=wellness
 ```
 
 ## Filtering room types
-
-<Warning>
-  **Draft — room types:** This room-type contract may change until client
-  integration is complete.
-</Warning>
 
 `GET /api/v2/room-types` accepts the same filters against the room type dictionary:
 
