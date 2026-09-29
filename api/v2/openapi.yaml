@@ -20,9 +20,10 @@ paths:
       summary: List the amenity dictionary
       operationId: getAmenityCategories
       description: >
-        Returns the full amenity dictionary grouped by category. Omit `scope` for
-        both scopes (hotel categories first, then room type categories), or filter
-        with `scope=hotel` or `scope=roomType`.
+        Returns the full amenity dictionary for hotels and room types, grouped
+        by category. To return only hotel or room type amenities, use `scope=hotel`
+        or `scope=roomType`. Hotel categories are listed first, followed by room
+        type categories.
         Each
 
         item in `data` contains a category with `scope`, `code`, and a localized label,
@@ -71,8 +72,8 @@ paths:
               - hotel
               - roomType
           description: >-
-            Optional dictionary filter. Omit it to return both scopes.
-            Empty or unknown scopes (including all) return 400.
+            Filter by `hotel` or `roomType`. By default, the response includes both.
+            Empty or unknown scopes (including `all`) return `400`.
         - name: If-None-Match
           in: header
           required: false

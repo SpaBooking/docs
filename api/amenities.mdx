@@ -6,8 +6,8 @@ icon: "list-check"
 
 Hotel and room type amenities use the same structured contract in API v2.
 Each category identifies its resource with `scope: "hotel"` or `scope: "roomType"`.
-Omit the `scope` query parameter to fetch both dictionaries, or send
-`scope=hotel` or `scope=roomType` to fetch just one.
+The dictionary returns both hotel and room type amenities by default.
+Use `scope=hotel` or `scope=roomType` to filter it to one resource type.
 
 There are two related resources:
 
@@ -57,8 +57,8 @@ indexing categories or joining selected values to the dictionary.
 
 `scope` is always present on categories, including assigned values and responses
 with `expand=amenityLabels`. The query parameter only filters the dictionary;
-it does not change the shape of its entries. An empty or unknown scope returns
-`400`; to fetch everything, omit the parameter instead of sending `scope=all`.
+it does not change the shape of its entries. An empty or unknown scope,
+including `all`, returns `400`.
 
 ### Updating an existing integration
 
@@ -480,8 +480,10 @@ are included:
 | `opening_hours` | `openingHours` |
 | `note` | localized `note` |
 
-An empty `detailKinds` array identifies a presence-only amenity. Its selected value
-contains only `code`; for example, `{ "code": "wheelchair_access" }`.
+An empty `detailKinds` array identifies a presence-only amenity. By default,
+its selected value contains only `code`, for example
+`{ "code": "wheelchair_access" }`. With `expand=amenityLabels`, it also
+includes its localized `label`.
 
 ## Room type amenities
 

@@ -41,8 +41,9 @@ request `expand=amenityLabels` to include them in the response.
 
 `amenityCategories[].category` always contains `scope: "roomType"` and an
 unprefixed category `code` (for example, `view`). Match both fields against the
-[amenity dictionary](/api/amenities); without a `scope` query it returns both
-hotel and room type categories. Groups without assigned amenities are omitted.
+[amenity dictionary](/api/amenities). The dictionary includes hotel and room
+type categories by default; use `scope=roomType` for room type categories only.
+Groups without assigned amenities are omitted.
 
 `description` is Markdown.
 
