@@ -25,7 +25,7 @@ X-SpaPortal-Public-Key: <your_public_key>
 
 ## Make your first request
 
-The base URL for the current API (v2) is:
+The base URL for the v2 catalog is:
 
 ```text
 https://spaportal.cz/api/v2
@@ -36,6 +36,7 @@ Fetch a list of hotels:
 ```bash
 curl \
   -H "X-SpaPortal-Public-Key: <your_public_key>" \
+  -H "Accept-Language: cs-CZ,de" \
   "https://spaportal.cz/api/v2/hotels"
 ```
 
@@ -50,13 +51,15 @@ curl \
       "stars": 4
     }
   ],
-  "pagination": { "limit": 25, "nextCursor": null, "hasMore": false, "total": 42 }
+  "pagination": { "limit": 25, "nextCursor": null, "hasMore": false, "total": 1 }
 }
 ```
 
 ## Next steps
 
-You're authenticated and making requests. Follow the API reference for all endpoints:
+Follow the v2 reference for catalog endpoints. For final pricing and booking
+creation, follow the [API v1 booking flow](/guides/booking). See
+[API coverage](/api/versioning) before combining the two versions.
 
 <Card title="API Reference" icon="square-terminal" href="/api/">
   All endpoints, parameters, and response shapes.

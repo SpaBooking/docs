@@ -2,14 +2,17 @@
   "name": "spaportal-api-docs",
   "private": true,
   "scripts": {
-    "lint:openapi": "redocly lint api/v2/openapi.yaml",
+    "lint:openapi": "redocly lint api/v1/openapi.yaml api/v2/openapi.yaml",
     "bundle:openapi": "redocly bundle api/v2/openapi.yaml --output .artifacts/openapi.yaml",
     "validate:docs": "mint validate",
-    "validate": "npm run validate:frontmatter && npm run lint:openapi && npm run bundle:openapi && npm run validate:docs",
-    "validate:frontmatter": "node scripts/validate-frontmatter.mjs"
+    "validate": "npm run validate:frontmatter && npm run lint:openapi && npm run validate:examples && npm run bundle:openapi && npm run validate:docs",
+    "validate:frontmatter": "node scripts/validate-frontmatter.mjs",
+    "validate:examples": "node scripts/validate-examples.mjs"
   },
   "devDependencies": {
     "@redocly/cli": "2.53.3",
+    "ajv": "8.20.0",
+    "ajv-formats": "2.1.1",
     "mint": "4.2.901",
     "yaml": "2.9.1"
   }

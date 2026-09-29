@@ -29,6 +29,7 @@ For example:
 ```json
 {
   "code": "sauna",
+  "label": { "cs-CZ": "Sauna", "en": "Sauna" },
   "detailKinds": ["proximity", "access", "options", "opening_hours"],
   "options": [
     {
@@ -36,6 +37,13 @@ For example:
       "label": {
         "cs-CZ": "Finská sauna",
         "en": "Finnish sauna"
+      }
+    },
+    {
+      "code": "infrared",
+      "label": {
+        "cs-CZ": "Infra sauna",
+        "en": "Infrared sauna"
       }
     },
     {
@@ -62,9 +70,16 @@ The sauna does not support `note`, so the `note` property is omitted from its
   integration is complete.
 </Warning>
 
-A selected balcony is a presence-only value. Resolve its label against the
-`scope=roomType` dictionary, or request `expand=amenityLabels`.
+The `scope=roomType` dictionary describes a balcony as a presence-only amenity:
 
 ```json
-{ "code": "balcony" }
+{
+  "code": "balcony",
+  "label": { "cs-CZ": "Balkon", "en": "Balcony" },
+  "detailKinds": []
+}
 ```
+
+The corresponding selected [Amenity value](/api/objects/amenity-value) is
+`{ "code": "balcony" }`. Use this dictionary entry to resolve its label, or
+request `expand=amenityLabels` on the room type.

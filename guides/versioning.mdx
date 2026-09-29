@@ -4,8 +4,9 @@ description: "Understand SpaPortal API versioning."
 icon: "git-branch"
 ---
 
-Use API v2 for new integrations. This documentation describes the public v2
-endpoints that are ready to use.
+Use API v2 for the resources available in its [reference](/api).
+The full booking flow still requires [API v1](/api/v1), including visit types,
+final pricing, and booking creation. See [API coverage](/api/versioning).
 
 ## Version path
 
@@ -17,7 +18,9 @@ https://spaportal.cz/api/v2
 
 ## Breaking changes
 
-Breaking changes require a new major version.
+For published, stable contracts, breaking changes require a new major version.
+Features explicitly marked **Draft**, currently the room-type contract and its
+related features, may change within v2 until client integration is complete.
 
 Examples include renamed fields, changed ID semantics, changed pagination, or
 changed authentication requirements.

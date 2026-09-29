@@ -9,8 +9,10 @@ The API uses a dedicated public key header:
 X-SpaPortal-Public-Key: <your_public_key>
 ```
 
-Public keys are 32-character alphanumeric strings. They identify the channel
-and scope all requests to it.
+Treat the public key as an opaque value. It identifies the channel and scopes
+requests to the active companies connected to that channel. A channel key can
+cover more than one company. Calendar queries must resolve one company;
+ambiguous queries return `409 conflict`.
 
 ## Getting your public key
 

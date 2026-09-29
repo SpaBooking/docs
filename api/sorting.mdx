@@ -4,7 +4,7 @@ description: "Order list results with the sort parameter."
 icon: "arrow-up-arrow-down"
 ---
 
-List endpoints accept a `sort` query parameter as `<field>:<direction>`, where
+Hotel and room-type lists accept a `sort` query parameter as `<field>:<direction>`, where
 direction is `asc` or `desc`.
 
 <Note>
@@ -16,9 +16,9 @@ direction is `asc` or `desc`.
 GET /api/v2/room-types?sort=createdAt:desc
 ```
 
-- Each endpoint documents its sortable fields and default order.
-- Ordering is total and stable: the record `id` is always the final ordering
-  key, so no two records tie. Because `id` increases with creation time,
-  `createdAt:desc` returns the newest records first. This stable order is what
-  lets cursor pagination page through results without skipping or repeating a
-  record.
+- Supported values are `createdAt:desc` (default) and `createdAt:asc`.
+- These orders use the unique record `id`, descending or ascending. IDs generally
+  follow creation order; this is not a separate sort on a timestamp field.
+- Keep the same sort and filters while paging. Cursors do not freeze a snapshot
+  of the data: additions, removals, or edits between requests can change results.
+- Server-side sorting by price, name, or relevance is not supported.

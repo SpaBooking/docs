@@ -23,7 +23,7 @@ SpaPortal API uses a single `error` object:
 ```
 
 Public endpoints currently return `invalid_request`, `missing_authentication`,
-`invalid_authentication`, `not_found`, and `internal_error`. Each endpoint lists
+`invalid_authentication`, `not_found`, `conflict`, and `internal_error`. Each endpoint lists
 the HTTP statuses it can return.
 
 API error responses also include `X-Request-Id`. If you send `X-Request-Id` with the request, SpaPortal echoes that value. Otherwise, SpaPortal generates a new one.
@@ -32,6 +32,10 @@ API error responses also include `X-Request-Id`. If you send `X-Request-Id` with
 
 Read both the HTTP status and the JSON error code or message.
 
-Treat `400`, `401`, and `404` as client-correctable errors. Retry only after you change the request.
+Treat `400`, `401`, `404`, `409`, and `422` as client-correctable errors. Retry
+only after you change the request. In calendar batches, `409 conflict` means
+the query cannot resolve one company; `422 invalid_request` means a referenced
+resource cannot be used. A failed item fails the whole batch, with its
+`itemIndex` and optional `key` in the error details.
 
 Treat `500` as a temporary server error. Retry with backoff if the operation is safe to repeat.

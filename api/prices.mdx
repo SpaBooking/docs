@@ -5,13 +5,13 @@ icon: "tag"
 ---
 
 Hotels carry `priceFrom`: the lowest prices the hotel currently sells, computed
-from its active visit types and price lists. Use it for teasers and sorting,
+from its active visit types and price lists. Use it for teasers and client-side sorting,
 not as a quote for concrete dates.
 
 ## Shape
 
-`priceFrom` is keyed by currency (`CZK`, `EUR`). Under each currency the same
-"from" price appears up to three times:
+`priceFrom` is keyed by currency (`CZK`, `EUR`). Each currency can contain
+three independently calculated price groups:
 
 | Key | What it covers |
 | --- | --- |
@@ -74,11 +74,16 @@ Example for a hotel priced in EUR, requested with `Accept-Language: de`:
 ## All stays and the two categories
 
 `all` looks at every visit type the hotel sells, including visit types that
-have no category yet. `health` and `wellness` are the same calculation limited
-to one category, so they are never cheaper than `all`, and `all` can be cheaper
-than both when the cheapest offer is a stay without a category. A category is
-omitted when the hotel sells nothing in it; `all` is present whenever the
-currency is. When you need a category and it is absent, fall back to `all`.
+have no category yet. `health` and `wellness` apply the same selection rules
+to one category. Compare their prices on the selection metric: per guest per
+night, or per guest for the whole stay. A category can have a lower raw
+`perStay.amount` than `all` when the selected offers have different occupancies.
+
+A category is omitted when it has no usable price in that currency; this does
+not prove that the hotel has no stays in the category. `all` is present whenever
+the currency is. If a category is absent, omit its price. You can display `all`
+as a clearly labeled hotel-wide price, but do not label it as a health or
+wellness offer.
 
 In the example, the Weekend stay has no category yet and the hotel sells no
 wellness stay, so only `all` and `health` appear.
@@ -91,9 +96,9 @@ guests for `nights` nights. Each minimum is chosen on its own and carries its
 own `visitType`, `nights`, and `occupancy`, so the two can name different visit
 types and room types.
 
-Do not derive one from the other. `perStay.amount` is not
-`perPersonPerNight.amount × occupancy × nights`, because every amount is rounded
-on its own.
+Do not derive one from the other: the minima can come from different offers.
+Even when they refer to the same offer, independently rounded amounts can make
+`perStay.amount` differ from `perPersonPerNight.amount × occupancy × nights`.
 
 ## Selection rules
 

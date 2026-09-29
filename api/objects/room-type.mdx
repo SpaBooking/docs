@@ -14,7 +14,8 @@ A room type describes accommodation within a hotel. It includes its localized
 rules, amenities, and images. Localized fields return only the locale keys you
 select with [`Accept-Language`](/api/localization).
 
-`hotel` is embedded only when you request `expand=hotel`.
+`expand=hotel` adds a hotel summary with `id`, `name`, and `stars`. Fetch the
+hotel detail endpoint for the full hotel object.
 
 ## Occupancy and beds
 

@@ -1,0 +1,163 @@
+{
+  "api/amenities.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/AmenityCategoriesList"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/RoomType/properties/amenityCategories",
+        "at": "/amenityCategories"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/Hotel/properties/amenityCategories",
+        "at": "/amenityCategories"
+      }
+    ]
+  ],
+  "api/currencies.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Money"
+      }
+    ]
+  ],
+  "api/errors.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/ErrorResponse"
+      }
+    ]
+  ],
+  "api/expand.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Hotel/properties/name",
+        "at": "/name"
+      },
+      {
+        "schema": "v2#/definitions/Hotel/properties/address",
+        "at": "/address"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/Hotel/properties/roomTypes",
+        "at": "/roomTypes"
+      }
+    ]
+  ],
+  "api/images.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Image"
+      }
+    ]
+  ],
+  "api/localization.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/LocalizedString",
+        "at": "/name"
+      }
+    ]
+  ],
+  "api/objects/amenity-value.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ]
+  ],
+  "api/objects/amenity.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Amenity"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/Amenity"
+      }
+    ]
+  ],
+  "api/pagination.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/HotelsList"
+      }
+    ]
+  ],
+  "api/prices.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/PriceFrom"
+      }
+    ]
+  ],
+  "api/v1/currencies.mdx": [
+    [
+      {
+        "schema": "v1#/definitions/CurrencyAmount"
+      }
+    ],
+    [
+      {
+        "schema": "v1#/definitions/LowestPriceAmount"
+      }
+    ]
+  ],
+  "api/v1/errors.mdx": [
+    [
+      {
+        "schema": "v1#/definitions/ErrorResponse"
+      }
+    ]
+  ],
+  "api/v1/images.mdx": [
+    [
+      {
+        "schema": "v1#/definitions/ImageVariants",
+        "at": "/variants"
+      }
+    ]
+  ],
+  "api/v1/localization.mdx": [
+    [
+      {
+        "schema": "v1#/definitions/LocalizedString",
+        "at": "/name"
+      }
+    ]
+  ],
+  "quickstart.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Pagination",
+        "at": "/pagination"
+      },
+      {
+        "schema": "v2#/definitions/Hotel/properties/name",
+        "at": "/data/0/name"
+      }
+    ]
+  ]
+}

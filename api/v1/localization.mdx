@@ -36,3 +36,8 @@ The response includes `Content-Language` with the languages returned.
 | `de` | German |
 | `en` | English |
 | `ru` | Russian |
+
+When the header is omitted, all four languages are returned. Send an exact
+comma-separated list of the keys above. Unlike v2, v1 does not accept regional
+tags such as `de-DE`, the Czech tag `cs-CZ`, or quality weights such as
+`de;q=0.9`; unsupported values return `400`.

@@ -274,7 +274,7 @@ paths:
             type: string
             maxLength: 200
           description: >-
-            Full-text search of the hotel name across all supported languages
+            Literal substring search of the hotel name across all supported languages
             (case- and diacritics-insensitive).
         - name: sort
           in: query
@@ -283,10 +283,10 @@ paths:
             enum: ["createdAt:desc", "createdAt:asc"]
             default: "createdAt:desc"
           description: >-
-            Sort order by creation time: `createdAt:desc` returns the newest
-            records first, `createdAt:asc` the oldest. Records are ordered by
-            their `id`, which increases with creation time, giving a stable
-            total order that keeps cursor pagination exact.
+            Orders by unique record id descending or ascending. IDs generally
+            follow creation order; this is not a separate timestamp sort.
+            Keep the sort and filters unchanged while paging. Cursors do not
+            freeze a snapshot when records change between requests.
         - name: amenities
           in: query
           schema:
@@ -480,7 +480,7 @@ paths:
               enum:
                 - hotel
                 - amenityLabels
-          description: "Comma-separated expansions: hotel embeds the hotel; amenityLabels inlines
+          description: "Comma-separated expansions: hotel embeds only id, name, and stars; amenityLabels inlines
             amenity category and amenity labels. You can request both."
           style: form
           explode: false
@@ -492,10 +492,11 @@ paths:
               - createdAt:desc
               - createdAt:asc
             default: createdAt:desc
-          description: "Sort order by creation time: `createdAt:desc` returns the newest records
-            first, `createdAt:asc` the oldest. Records are ordered by their `id`, which
-            increases with creation time, giving a stable total order that keeps cursor
-            pagination exact."
+          description: >-
+            Orders by unique record id descending or ascending. IDs generally
+            follow creation order; this is not a separate timestamp sort.
+            Keep the sort and filters unchanged while paging. Cursors do not
+            freeze a snapshot when records change between requests.
         - name: unitType
           in: query
           style: form
@@ -607,7 +608,7 @@ paths:
               enum:
                 - hotel
                 - amenityLabels
-          description: "Comma-separated expansions: hotel embeds the hotel; amenityLabels inlines
+          description: "Comma-separated expansions: hotel embeds only id, name, and stars; amenityLabels inlines
             amenity category and amenity labels. You can request both."
           style: form
           explode: false
@@ -756,6 +757,11 @@ components:
       type: object
       additionalProperties: false
       properties:
+        currency:
+          deprecated: true
+          description: >-
+            Accepted only for compatibility and ignored, regardless of value.
+            Omit it in new requests; responses include all available currencies.
         visitTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
@@ -793,6 +799,11 @@ components:
       type: object
       additionalProperties: false
       properties:
+        currency:
+          deprecated: true
+          description: >-
+            Accepted only for compatibility and ignored, regardless of value.
+            Omit it in new requests; responses include all available currencies.
         visitTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
@@ -876,19 +887,14 @@ components:
           type: boolean
         amounts:
           type: object
+          minProperties: 1
+          additionalProperties: false
+          description: Available currencies only. Missing currencies are omitted; price is null when none are available.
           properties:
             CZK:
-              anyOf:
-                - $ref: "#/components/schemas/Money"
-                - type: object
-                  nullable: true
-                  enum: [null]
+              $ref: "#/components/schemas/Money"
             EUR:
-              anyOf:
-                - $ref: "#/components/schemas/Money"
-                - type: object
-                  nullable: true
-                  enum: [null]
+              $ref: "#/components/schemas/Money"
     Money:
       type: object
       required: [amountMinor, currency, currencyExponent]
@@ -2070,13 +2076,13 @@ components:
             - $ref: "#/components/schemas/PriceFromScope"
           description: >-
             Lowest prices across health stays (spa cures) only. Omitted when
-            the hotel sells none.
+            no usable price exists for this category and currency.
         wellness:
           allOf:
             - $ref: "#/components/schemas/PriceFromScope"
           description: >-
-            Lowest prices across wellness stays only. Omitted when the hotel
-            sells none.
+            Lowest prices across wellness stays only. Omitted when no usable
+            price exists for this category and currency.
     PriceFrom:
       type: object
       description: >-
@@ -2315,6 +2321,12 @@ components:
               de: Finnische Sauna
               en: Finnish sauna
               ru: Финская сауна
+          - code: infrared
+            label:
+              cs-CZ: Infra sauna
+              de: Infrarotsauna
+              en: Infrared sauna
+              ru: Инфракрасная сауна
           - code: steam
             label:
               cs-CZ: Parní lázeň
