@@ -7,7 +7,8 @@ openapi-schema: "/api/v2/openapi.yaml Amenity"
 An entry nested in a category returned by
 [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
 Its stable `code` identifies the amenity in hotel or room type responses. The parent
-category object contains the stable category code and localized category label.
+category object contains `scope` (`hotel` or `roomType`), the category code,
+and its localized label. Identify a category by both `scope` and `code`.
 `detailKinds` declares which structured fields can be populated on the
 corresponding [Amenity value](/api/objects/amenity-value).
 

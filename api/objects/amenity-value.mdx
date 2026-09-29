@@ -12,12 +12,14 @@ properties describe access, distance, options, opening hours, and a localized
 guest note.
 
 To interpret the value, find the matching `code` in
-`GET /api/v2/amenity-categories?scope=hotel` or `?scope=roomType` under `data[].amenities[]`. The parent
+`GET /api/v2/amenity-categories` under the category with the same `scope` and
+`code`, then in its `amenities` array. You can optionally filter the dictionary
+using `?scope=hotel` or `?scope=roomType`. The parent
 `category` provides the amenity's category and the matching entry's
 `detailKinds` determines which properties are included. Properties that are
 not supported by that amenity are omitted.
 
-`category` is returned once on the parent amenity group, by `code`. The
+`category` is returned once on the parent amenity group, by `scope` and `code`. The
 amenity's `label` and `detailKinds` are dictionary metadata and are not repeated
 inside each selected amenity value by default. Request
 [`expand=amenityLabels`](/api/expand) to inline the localized `label` on the

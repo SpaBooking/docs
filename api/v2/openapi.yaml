@@ -23,16 +23,19 @@ paths:
         content: |
           <Warning>
             **Draft — room types:** The `scope=roomType` dictionary may change
-            until client integration is complete. The default `scope=hotel`
-            keeps its existing contract.
+            until client integration is complete. It is included when `scope`
+            is omitted; use `scope=hotel` for the hotel dictionary only.
           </Warning>
       description: >
-        Returns the full amenity dictionary for the requested scope grouped by category.
+        Returns the full amenity dictionary grouped by category. Omit `scope` for
+        both scopes (hotel categories first, then room type categories), or filter
+        with `scope=hotel` or `scope=roomType`.
         Each
 
-        item in `data` contains a stable category code, its localized label,
+        item in `data` contains a category with `scope`, `code`, and a localized label,
 
-        and the amenities in that category. Each nested amenity has a stable
+        and the amenities in that category. Identify categories by the pair `scope`
+        and `code`; codes such as `accessibility` occur in both scopes. Each nested amenity has a stable
 
         `code`, localized `label`, and supported `detailKinds`.
 
@@ -74,11 +77,10 @@ paths:
             enum:
               - hotel
               - roomType
-            default: hotel
           description: >-
-            Dictionary scope. **Draft:** The roomType scope may change until client
-            integration is complete. The default hotel response is unchanged.
-            Unknown scopes return 400.
+            Optional dictionary filter. Omit it to return both scopes.
+            **Draft:** The roomType scope may change until client integration is
+            complete. Empty or unknown scopes (including all) return 400.
         - name: If-None-Match
           in: header
           required: false
@@ -106,6 +108,7 @@ paths:
               example:
                 data:
                   - category:
+                      scope: hotel
                       code: wellness
                       label:
                         cs-CZ: Bazény a wellness
@@ -138,6 +141,14 @@ paths:
                               cs-CZ: Parní lázeň
                               de: Dampfbad
                               en: Steam bath
+                  - category:
+                      scope: roomType
+                      code: view
+                      label: { cs-CZ: Výhled, de: Aussicht, en: View }
+                    amenities:
+                      - code: balcony
+                        label: { cs-CZ: Balkon, de: Balkon, en: Balcony }
+                        detailKinds: []
         "304":
           description: The cached dictionary variant matched by `If-None-Match` is still current.
             The response has no body.
@@ -550,13 +561,20 @@ paths:
           schema:
             type: string
             enum:
+              - bathroom
+              - equipment
+              - accessibility
+              - view
+              - kitchen
               - room_bathroom
               - room_equipment
               - room_accessibility
               - room_view
               - room_kitchen
-          description: Require at least one amenity from this room type category. Unknown categories
-            return 400.
+          description: >-
+            Require at least one amenity from this room type category.
+            The room_ prefixed values are deprecated aliases; use the unprefixed
+            codes. The endpoint determines scope roomType. Unknown categories return 400.
       responses:
         "200":
           description: A paginated list of room types.
@@ -722,20 +740,21 @@ components:
         example: cs-CZ,de
     ETag:
       description: >-
-        Entity tag of this amenity-dictionary variant. Send it back in
+        Entity tag of this amenity-dictionary variant (combined, hotel, or roomType,
+        and the requested locales). Send it back in
         `If-None-Match` to revalidate a cached copy.
       schema:
         type: string
-        example: '"ea2208d1075506f2-hotel-cs-CZ_de"'
+        example: '"0ff7e6cb9fde95e7-hotel-cs-CZ_de"'
     AmenitiesVersion:
       description: >-
         Current amenity dictionary version. The value changes only when the
-        dictionary content changes. One version covers both scopes. Refetch
-        `GET /amenity-categories?scope=hotel` and `?scope=roomType` when it
+        dictionary content or response shape changes. One version covers both scopes.
+        Refetch `GET /amenity-categories` or each separately cached scope when it
         differs from the version you cached.
       schema:
         type: string
-        example: ea2208d1075506f2
+        example: 0ff7e6cb9fde95e7
     RequestId:
       description: Request identifier for support and debugging.
       schema:
@@ -1204,12 +1223,14 @@ components:
             ru: null
         amenityCategories:
           - category:
-              code: room_bathroom
+              scope: roomType
+              code: bathroom
             amenities:
               - code: toilet
               - code: shower
           - category:
-              code: room_view
+              scope: roomType
+              code: view
             amenities:
               - code: balcony
         images:
@@ -1350,14 +1371,18 @@ components:
           description: Descriptive building label.
     RoomTypeAmenityCategoryGroup:
       type: object
-      description: Room type amenities in dictionary order. Category codes use the room_ prefix;
-        empty groups are omitted.
+      description: Room type amenities in dictionary order. Categories carry scope roomType
+        and unprefixed codes; groups without assigned amenities are omitted.
       required:
         - category
         - amenities
       properties:
         category:
-          $ref: "#/components/schemas/AmenityCategoryRef"
+          allOf:
+            - $ref: "#/components/schemas/AmenityCategoryRef"
+            - properties:
+                scope:
+                  enum: [roomType]
         amenities:
           type: array
           minItems: 1
@@ -1656,8 +1681,8 @@ components:
           type: array
           description: >-
             Structured amenities assigned to this hotel, grouped by category.
-            Categories without assigned amenities are omitted. Category, amenity,
-            and option are returned by `code` only — resolve their localized
+            Categories without assigned amenities are omitted. Categories include
+            scope hotel and code; amenities and options include code. Resolve their localized
             labels and supported detail kinds against the
             [amenity dictionary](/api/amenities)
             (`GET /amenity-categories`).
@@ -1665,6 +1690,7 @@ components:
             $ref: "#/components/schemas/HotelAmenityCategoryGroup"
           example:
             - category:
+                scope: hotel
                 code: wellness
               amenities:
                 - code: aquapark
@@ -1790,6 +1816,7 @@ components:
         staffLanguages: [cs, de, en]
         amenityCategories:
           - category:
+              scope: hotel
               code: wellness
             amenities:
               - code: aquapark
@@ -1816,6 +1843,7 @@ components:
                       from: "09:00"
                       to: "21:00"
           - category:
+              scope: hotel
               code: parking
               label:
                 cs-CZ: Parkování
@@ -2165,8 +2193,21 @@ components:
                   de: Kurzaufenthalt Weekend
     AmenityCategory:
       type: object
-      required: [code, label]
+      required: [scope, code, label]
+      oneOf:
+        - required: [scope, code]
+          properties:
+            scope: { enum: [hotel] }
+            code: { enum: [health, wellness, dining, services, accessibility, parking, sport, children] }
+        - required: [scope, code]
+          properties:
+            scope: { enum: [roomType] }
+            code: { enum: [bathroom, equipment, accessibility, view, kitchen] }
       properties:
+        scope:
+          type: string
+          enum: [hotel, roomType]
+          description: Resource scope. Together with code, identifies the category.
         code:
           type: string
           enum:
@@ -2178,23 +2219,35 @@ components:
             - parking
             - sport
             - children
-            - room_bathroom
-            - room_equipment
-            - room_accessibility
-            - room_view
-            - room_kitchen
-          description: Codes prefixed with room_ belong to scope roomType; all others belong to scope hotel.
+            - bathroom
+            - equipment
+            - view
+            - kitchen
+          description: Category code within its scope. Accessibility exists in both scopes; room category codes have no prefix.
         label:
           $ref: "#/components/schemas/LocalizedString"
     AmenityCategoryRef:
       type: object
-      required: [code]
+      required: [scope, code]
       description: >-
-        A category on a hotel or room type response. Identified by `code`; its localized
+        A category on a hotel or room type response. Identified by `scope` and `code`; its localized
         `label` is included only with `expand=amenityLabels`. Otherwise resolve
         the label against the [amenity dictionary](/api/amenities)
         (`GET /amenity-categories` `data[].category`).
+      oneOf:
+        - required: [scope, code]
+          properties:
+            scope: { enum: [hotel] }
+            code: { enum: [health, wellness, dining, services, accessibility, parking, sport, children] }
+        - required: [scope, code]
+          properties:
+            scope: { enum: [roomType] }
+            code: { enum: [bathroom, equipment, accessibility, view, kitchen] }
       properties:
+        scope:
+          type: string
+          enum: [hotel, roomType]
+          description: Resource scope. Together with code, identifies the category.
         code:
           type: string
           enum:
@@ -2206,12 +2259,11 @@ components:
             - parking
             - sport
             - children
-            - room_bathroom
-            - room_equipment
-            - room_accessibility
-            - room_view
-            - room_kitchen
-          description: Codes prefixed with room_ belong to scope roomType; all others belong to scope hotel.
+            - bathroom
+            - equipment
+            - view
+            - kitchen
+          description: Category code within its scope. Accessibility exists in both scopes; room category codes have no prefix.
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -2454,11 +2506,15 @@ components:
       type: object
       required: [category, amenities]
       description: >-
-        One amenity category containing the values assigned to a hotel.
+        One amenity category with scope hotel containing values assigned to a hotel.
         Categories without assigned amenities are omitted from hotel responses.
       properties:
         category:
-          $ref: "#/components/schemas/AmenityCategoryRef"
+          allOf:
+            - $ref: "#/components/schemas/AmenityCategoryRef"
+            - properties:
+                scope:
+                  enum: [hotel]
         amenities:
           type: array
           minItems: 1
@@ -2468,9 +2524,9 @@ components:
       type: object
       required: [data]
       description: >-
-        The complete amenity dictionary for the requested scope, grouped by category and returned
+        The complete amenity dictionary for both scopes unless a scope filter is set, grouped by category and returned
         in one response (small, not paginated). It includes every system
-        amenity in that scope, independent of assignments to hotels or room types. Amenities that
+        amenity in the selected scopes, independent of assignments to hotels or room types. Amenities that
         support choices carry their full `options` list.
       properties:
         data:
@@ -2480,6 +2536,7 @@ components:
       example:
         data:
           - category:
+              scope: hotel
               code: wellness
               label: { cs-CZ: Bazény a wellness, de: Pools & Wellness, en: "Pools & wellness" }
             amenities:
@@ -2496,3 +2553,11 @@ components:
                     label: { cs-CZ: Infra sauna, de: Infrarotsauna, en: "Infrared sauna" }
                   - code: steam
                     label: { cs-CZ: Parní lázeň, de: Dampfbad, en: "Steam bath" }
+          - category:
+              scope: roomType
+              code: view
+              label: { cs-CZ: Výhled, de: Aussicht, en: View }
+            amenities:
+              - code: balcony
+                label: { cs-CZ: Balkon, de: Balkon, en: Balcony }
+                detailKinds: []

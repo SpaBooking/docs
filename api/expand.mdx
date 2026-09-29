@@ -144,7 +144,8 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
       "amenityCategories": [
         {
           "category": {
-            "code": "room_bathroom"
+            "scope": "roomType",
+            "code": "bathroom"
           },
           "amenities": [
             {
@@ -157,7 +158,8 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
         },
         {
           "category": {
-            "code": "room_view"
+            "scope": "roomType",
+            "code": "view"
           },
           "amenities": [
             {
@@ -187,7 +189,8 @@ The paginated `/room-types` endpoint keeps its requested `createdAt` order.
 
 ## Amenity labels
 
-By default hotel and room type `amenityCategories` carry codes only, and you resolve
+By default hotel and room type categories carry `scope` and `code`; their
+amenities and options carry `code`. You resolve
 labels against the [amenity dictionary](/api/amenities). `expand=amenityLabels`
 inlines the localized `label` on each category, amenity, and option so the
 response is self-contained — useful when you would rather not fetch and join the
@@ -202,6 +205,7 @@ usually leaner than expanding labels on every request.
 On `/room-types` and `/room-types/{roomTypeId}`, use `expand=amenityLabels`,
 optionally together with `hotel`. On hotels, `expand=roomTypes,amenityLabels`
 includes labels for both hotel amenities and embedded room type amenities.
-Cache the dictionary for each scope if you resolve labels yourself.
+Cache the combined dictionary or each scope separately if you resolve labels
+yourself. Match categories by both `scope` and `code`.
 
 Each endpoint lists the `expand` values it supports and what each adds.

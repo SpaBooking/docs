@@ -4,6 +4,23 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
+## 2026-09-29 (v3.2.20)
+
+### Amenity category scopes
+
+- **Breaking:** Omitting `scope` on `GET /amenity-categories` now returns both
+  hotel and room type dictionaries. Send `scope=hotel` to keep fetching only
+  the hotel dictionary; `scope=roomType` returns only room categories.
+- Categories now always include `scope: "hotel"` or `scope: "roomType"`, in
+  the dictionary, assigned values, and label expansions. Match categories by
+  `scope` and `code`; both scopes contain `accessibility`.
+- **Breaking (Draft room types):** Category codes no longer use the `room_`
+  prefix: `bathroom`, `equipment`, `accessibility`, `view`, and `kitchen`.
+  Existing prefixed category filters remain accepted as deprecated aliases.
+  Individual amenity codes and labels are unchanged.
+- The dictionary version changes for this contract. Refresh cached dictionaries.
+  Combined and filtered responses have distinct ETags.
+
 ## 2026-09-29
 
 ### Room types and amenities

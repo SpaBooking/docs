@@ -7,6 +7,11 @@
     ],
     [
       {
+        "schema": "v2#/definitions/AmenityCategoriesList"
+      }
+    ],
+    [
+      {
         "schema": "v2#/definitions/Hotel/properties/amenityCategories",
         "at": "/amenityCategories"
       }
