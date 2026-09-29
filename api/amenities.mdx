@@ -186,13 +186,8 @@ Recommended flow:
 4. If a response contains an unknown amenity code, skip it in display and
    refresh the dictionary for that scope.
 
-<Warning>
-  Manual `If-None-Match` revalidation currently works for server-side clients.
-  The API CORS allow-list does not yet include this request header, so a
-  cross-origin browser request that sets it fails preflight. In browser code,
-  omit that header and fetch the dictionary again when its version changes.
-  Use `fetch(url, { cache: "reload" })` to bypass a still-fresh browser cache.
-</Warning>
+Browser clients on allowed origins can send `If-None-Match` and read the
+`ETag` and `X-SpaPortal-Amenities-Version` response headers directly.
 
 Responses carry `Cache-Control: private, max-age=3600`. The `ETag` differs by
 scope and requested locale set; the version header covers both scopes and all
