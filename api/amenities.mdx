@@ -46,7 +46,33 @@ localized fields.
 Amenities whose `detailKinds` include `options` also carry an `options` array
 with every supported choice and its localized label.
 
-```json Response excerpt
+### Examples by scope
+
+Fetch each scope separately. Each request returns one dictionary; use the hotel
+dictionary with hotel values and the room type dictionary with room type values.
+The examples request Czech and English labels. Dictionary responses below are
+excerpts; the API returns the complete dictionary for the requested scope.
+Resource excerpts show only `amenityCategories`.
+
+Both scopes follow the same label rules: dictionary entries always include
+labels, assigned values include codes by default, and `expand=amenityLabels`
+adds labels to categories, amenities, and any selected options. Replace
+`{hotelId}` and `{roomTypeId}` with the resource IDs returned by the API.
+
+<Tabs>
+
+<Tab title="Hotel — scope=hotel">
+
+**1. Fetch the hotel dictionary.**
+
+```bash Request
+curl \
+  -H "X-SpaPortal-Public-Key: <your_public_key>" \
+  -H "Accept-Language: cs-CZ,en" \
+  "https://spaportal.cz/api/v2/amenity-categories?scope=hotel"
+```
+
+```json Dictionary response excerpt
 {
   "data": [
     {
@@ -64,7 +90,12 @@ with every supported choice and its localized label.
             "cs-CZ": "Sauna",
             "en": "Sauna"
           },
-          "detailKinds": ["proximity", "access", "options", "opening_hours"],
+          "detailKinds": [
+            "proximity",
+            "access",
+            "options",
+            "opening_hours"
+          ],
           "options": [
             {
               "code": "finnish",
@@ -94,6 +125,229 @@ with every supported choice and its localized label.
   ]
 }
 ```
+
+**2. Read the amenities assigned to a hotel.**
+
+```http Request
+GET /api/v2/hotels/{hotelId}
+X-SpaPortal-Public-Key: <your_public_key>
+Accept-Language: cs-CZ,en
+```
+
+```json Assigned amenity values (response excerpt)
+{
+  "amenityCategories": [
+    {
+      "category": {
+        "code": "wellness"
+      },
+      "amenities": [
+        {
+          "code": "sauna",
+          "proximity": "in-hotel",
+          "proximityMeters": null,
+          "access": "included",
+          "options": [
+            {
+              "code": "finnish"
+            },
+            {
+              "code": "steam"
+            }
+          ],
+          "openingHours": {
+            "continuous": false,
+            "blocks": []
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+The dictionary lists all three sauna options. This hotel selects only
+`finnish` and `steam`; use their labels from the hotel dictionary.
+`proximity`, `access`, and `openingHours` describe this hotel's sauna, not the
+dictionary entry. An empty opening-hours block list means no hours were supplied.
+
+**3. Include labels with `expand=amenityLabels`.**
+
+You can resolve labels from the matching dictionary yourself, or request them
+inline. With `Accept-Language: cs-CZ,en`, the same assigned amenities include
+the following labels:
+
+```http
+GET /api/v2/hotels/{hotelId}?expand=amenityLabels
+X-SpaPortal-Public-Key: <your_public_key>
+Accept-Language: cs-CZ,en
+```
+
+```json Assigned values with labels (response excerpt)
+{
+  "amenityCategories": [
+    {
+      "category": {
+        "code": "wellness",
+        "label": {
+          "cs-CZ": "Bazény a wellness",
+          "en": "Pools & wellness"
+        }
+      },
+      "amenities": [
+        {
+          "code": "sauna",
+          "proximity": "in-hotel",
+          "proximityMeters": null,
+          "access": "included",
+          "options": [
+            {
+              "code": "finnish",
+              "label": {
+                "cs-CZ": "Finská sauna",
+                "en": "Finnish sauna"
+              }
+            },
+            {
+              "code": "steam",
+              "label": {
+                "cs-CZ": "Parní lázeň",
+                "en": "Steam bath"
+              }
+            }
+          ],
+          "openingHours": {
+            "continuous": false,
+            "blocks": []
+          },
+          "label": {
+            "cs-CZ": "Sauna",
+            "en": "Sauna"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+</Tab>
+
+<Tab title="Room type — scope=roomType (Draft)">
+
+**1. Fetch the room type dictionary.**
+
+```bash Request
+curl \
+  -H "X-SpaPortal-Public-Key: <your_public_key>" \
+  -H "Accept-Language: cs-CZ,en" \
+  "https://spaportal.cz/api/v2/amenity-categories?scope=roomType"
+```
+
+```json Dictionary response excerpt
+{
+  "data": [
+    {
+      "category": {
+        "code": "room_view",
+        "label": {
+          "cs-CZ": "Výhled",
+          "en": "View"
+        }
+      },
+      "amenities": [
+        {
+          "code": "balcony",
+          "label": {
+            "cs-CZ": "Balkon",
+            "en": "Balcony"
+          },
+          "detailKinds": []
+        },
+        {
+          "code": "terrace",
+          "label": {
+            "cs-CZ": "Terasa",
+            "en": "Terrace"
+          },
+          "detailKinds": []
+        }
+      ]
+    }
+  ]
+}
+```
+
+**2. Read the amenities assigned to a room type.**
+
+```http Request
+GET /api/v2/room-types/{roomTypeId}
+X-SpaPortal-Public-Key: <your_public_key>
+Accept-Language: cs-CZ,en
+```
+
+```json Assigned amenity values (response excerpt)
+{
+  "amenityCategories": [
+    {
+      "category": {
+        "code": "room_view"
+      },
+      "amenities": [
+        {
+          "code": "balcony"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The dictionary lists balcony and terrace as available choices. This room type
+selects only `balcony`. Resolve `room_view` and `balcony` against the room type
+dictionary. Both amenities have `detailKinds: []`, so the assigned value
+contains only its `code`, without proximity, access, or opening hours.
+
+**3. Include labels with `expand=amenityLabels`.**
+
+You can resolve labels from the matching dictionary yourself, or request them
+inline. With `Accept-Language: cs-CZ,en`, the same assigned amenities include
+the following labels:
+
+```http
+GET /api/v2/room-types/{roomTypeId}?expand=amenityLabels
+X-SpaPortal-Public-Key: <your_public_key>
+Accept-Language: cs-CZ,en
+```
+
+```json Assigned values with labels (response excerpt)
+{
+  "amenityCategories": [
+    {
+      "category": {
+        "code": "room_view",
+        "label": {
+          "cs-CZ": "Výhled",
+          "en": "View"
+        }
+      },
+      "amenities": [
+        {
+          "code": "balcony",
+          "label": {
+            "cs-CZ": "Balkon",
+            "en": "Balcony"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+</Tab>
+
+</Tabs>
 
 Resolve `amenityCategories[].amenities[].code` values against the entries
 nested in each dictionary category instead of hard-coding display labels.
@@ -148,19 +402,14 @@ It contains 38 presence-only amenities in five categories. Each entry has
 | `room_view` | View |
 | `room_kitchen` | Food and drink |
 
-Room type values use the same category groups as hotels. Empty categories are
-omitted, and categories and amenities follow dictionary order.
+Room type and hotel amenity values use the same response structure, but each
+scope has its own categories and dictionary. A room type response includes only
+categories with at least one amenity assigned to that room type. For example,
+a room type without kitchen amenities omits `room_kitchen` from its
+`amenityCategories`; the complete `scope=roomType` dictionary still lists that
+category. Returned categories and amenities follow dictionary order.
 
-```json Room type amenity values
-{
-  "amenityCategories": [
-    {
-      "category": { "code": "room_view" },
-      "amenities": [{ "code": "balcony" }]
-    }
-  ]
-}
-```
+The room type tab above shows how a dictionary entry becomes an assigned value.
 
 Request `expand=amenityLabels` on room types to inline localized labels. On
 hotels, `expand=roomTypes,amenityLabels` also includes labels on embedded rooms.
