@@ -62,10 +62,10 @@ including `all`, returns `400`.
 
 ### Updating an existing integration
 
-If your integration uses the dictionary only for hotels, send
-`GET /api/v2/amenity-categories?scope=hotel` before the API upgrade. The
-previous contract already accepts this query, so the request keeps returning
-only hotel definitions across the change.
+If your integration relied on the previous hotel-only default, request
+`GET /api/v2/amenity-categories?scope=hotel` to keep that behavior. Both the
+previous and current contracts accept this filter, so it works with either
+version.
 
 Older responses do not include `category.scope`. During the transition,
 use `category.scope ?? "hotel"` for a dictionary explicitly requested with
@@ -266,7 +266,9 @@ Accept-Language: cs-CZ,en
 The dictionary lists all three sauna options. This hotel selects only
 `finnish` and `steam`; use their labels from the hotel dictionary.
 `proximity`, `access`, and `openingHours` describe this hotel's sauna, not the
-dictionary entry. An empty opening-hours block list means no hours were supplied.
+dictionary entry. With `continuous: false`, an empty opening-hours block list
+means no hours were supplied. `continuous: true` means the amenity is open 24/7
+and also uses an empty block list.
 
 **3. Include labels with `expand=amenityLabels`.**
 
@@ -406,7 +408,7 @@ Accept-Language: cs-CZ,en
 The dictionary lists balcony and terrace as available choices. This room type
 selects only `balcony`. Resolve `view` and `balcony` against the room type
 dictionary. Both amenities have `detailKinds: []`, so the assigned value
-contains only its `code`, without proximity, access, or opening hours.
+contains only its `code` by default, without proximity, access, or opening hours.
 
 **3. Include labels with `expand=amenityLabels`.**
 
@@ -614,21 +616,19 @@ Structured details use the following enums:
   - `included` — covered by the stay price.
   - `conditional` — included subject to stated conditions.
   - `paid` — available for an additional charge.
-- `options`: amenity-specific choices selected for the hotel, by `code` only.
-  The dictionary lists every available choice with its label; hotel responses
-  return only the selected codes.
+- `options`: amenity-specific choices selected for the hotel. Each option
+  contains `code` by default, plus `label` with `expand=amenityLabels`. The
+  dictionary lists every available choice; hotel responses include only the
+  selected ones.
 - opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
   `saturday`, `sunday`
 
-Apart from `code`, an amenity value includes only the fields mapped from its
-entry's `detailKinds` under `data[].amenities[]`. When a declared field is not
+Apart from `code` and the optional expanded `label`, an amenity value includes
+only the fields mapped from its entry's `detailKinds` under
+`data[].amenities[]`. When a declared field is not
 filled, scalar fields are `null`, arrays are empty, opening hours are
 `{ "continuous": false, "blocks": [] }`, and requested localized note values
 are `null`.
-
-`access` also represents whether an amenity carries an additional charge:
-`included` means no additional charge, `conditional` means inclusion depends on
-the stated conditions, and `paid` means an additional charge applies.
 
 ## Filtering hotels
 
@@ -638,6 +638,8 @@ the stated conditions, and `paid` means an additional charge applies.
   codes (AND semantics).
 - `amenityCategory`: a category code. A hotel must have at least one amenity in
   that category.
+
+If you combine the two filters, both conditions must match.
 
 ```bash
 # Hotels with both a sauna and parking
