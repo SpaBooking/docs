@@ -19,7 +19,8 @@ using `?scope=hotel` or `?scope=roomType`. The parent
 `detailKinds` determines which properties are included. Properties that are
 not supported by that amenity are omitted.
 
-`category` is returned once on the parent amenity group, by `scope` and `code`. The
+The [category](/api/objects/amenity-category) is returned once on the parent
+amenity group, by `scope` and `code`. The
 amenity's `label` and `detailKinds` are dictionary metadata and are not repeated
 inside each selected amenity value by default. Request
 [`expand=amenityLabels`](/api/expand) to inline the localized `label` on the

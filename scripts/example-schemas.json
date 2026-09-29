@@ -93,6 +93,18 @@
       }
     ]
   ],
+  "api/objects/amenity-category.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/AmenityCategory"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityCategory"
+      }
+    ]
+  ],
   "api/objects/amenity-value.mdx": [
     [
       {
