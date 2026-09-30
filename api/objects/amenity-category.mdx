@@ -8,10 +8,12 @@ A category groups related amenities. Use both `scope` and `code` to identify
 it: codes such as `accessibility` exist for both hotels and room types.
 
 You receive this object at `data[].category` in the
-[amenity dictionary](/api/v2/reference/amenity-categories/list-the-amenity-dictionary)
-and at `amenityCategories[].category` in hotel and room type responses.
-Dictionary categories always include `label`. On hotels and room types,
-`label` is included only with [`expand=amenityLabels`](/api/expand).
+[amenity dictionary](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
+Dictionary categories always include `scope`, `code`, and `label`.
+
+Hotel and room type responses reference categories at `amenityCategories[].category`
+with `code` only. Use the parent resource type to select the dictionary scope.
+[`expand=amenityLabels`](/api/expand) adds `label` to these references.
 
 See the [amenities guide](/api/amenities) for filtering, localization, and
 request and response examples.

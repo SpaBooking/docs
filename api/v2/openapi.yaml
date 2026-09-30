@@ -862,8 +862,11 @@ components:
           enum: [NOT_AVAILABLE, AVAILABLE, ON_DEMAND]
         price:
           anyOf:
-            - $ref: "#/components/schemas/CalendarDatePrice"
-            - type: object
+            - title: Price
+              allOf:
+                - $ref: "#/components/schemas/CalendarDatePrice"
+            - title: No price
+              type: object
               nullable: true
               enum: [null]
     CalendarDatePrice:
@@ -1189,13 +1192,11 @@ components:
             ru: null
         amenityCategories:
           - category:
-              scope: roomType
               code: bathroom
             amenities:
               - code: toilet
               - code: shower
           - category:
-              scope: roomType
               code: view
             amenities:
               - code: balcony
@@ -1337,18 +1338,14 @@ components:
           description: Descriptive building label.
     RoomTypeAmenityCategoryGroup:
       type: object
-      description: Room type amenities in dictionary order. Categories carry scope roomType
-        and unprefixed codes; groups without assigned amenities are omitted.
+      description: Room type amenities in dictionary order. Categories use unprefixed
+        room type codes; groups without assigned amenities are omitted.
       required:
         - category
         - amenities
       properties:
         category:
-          allOf:
-            - $ref: "#/components/schemas/AmenityCategoryRef"
-            - properties:
-                scope:
-                  enum: [roomType]
+          $ref: "#/components/schemas/RoomTypeAmenityCategoryRef"
         amenities:
           type: array
           minItems: 1
@@ -1648,7 +1645,7 @@ components:
           description: >-
             Structured amenities assigned to this hotel, grouped by category.
             Categories without assigned amenities are omitted. Categories include
-            scope hotel and code; amenities and options include code. Resolve their localized
+            code; amenities and options include code. Resolve their localized
             labels and supported detail kinds against the
             [amenity dictionary](/api/amenities)
             (`GET /amenity-categories`).
@@ -1656,7 +1653,6 @@ components:
             $ref: "#/components/schemas/HotelAmenityCategoryGroup"
           example:
             - category:
-                scope: hotel
                 code: wellness
               amenities:
                 - code: aquapark
@@ -1671,8 +1667,11 @@ components:
                         to: "21:00"
         priceFrom:
           anyOf:
-            - $ref: "#/components/schemas/PriceFrom"
-            - type: object
+            - title: Available prices
+              allOf:
+                - $ref: "#/components/schemas/PriceFrom"
+            - title: No price
+              type: object
               nullable: true
               enum: [null]
           description: >-
@@ -1779,7 +1778,6 @@ components:
         staffLanguages: [cs, de, en]
         amenityCategories:
           - category:
-              scope: hotel
               code: wellness
             amenities:
               - code: aquapark
@@ -1806,7 +1804,6 @@ components:
                       from: "09:00"
                       to: "21:00"
           - category:
-              scope: hotel
               code: parking
               label:
                 cs-CZ: Parkování
@@ -2017,8 +2014,11 @@ components:
             Price after an active promotion that covers the whole stay.
         original:
           anyOf:
-            - $ref: "#/components/schemas/Money"
-            - type: object
+            - title: Original amount
+              allOf:
+                - $ref: "#/components/schemas/Money"
+            - title: No promotion
+              type: object
               nullable: true
               enum: [null]
           description: >-
@@ -2203,36 +2203,16 @@ components:
           description: Category code within its scope. Accessibility exists in both scopes; room category codes have no prefix.
         label:
           $ref: "#/components/schemas/LocalizedString"
-    AmenityCategoryRef:
+    HotelAmenityCategoryRef:
       type: object
-      required: [scope, code]
+      title: Hotel category
+      additionalProperties: false
+      required: [code]
       description: >-
-        A category on a hotel or room type response. Identified by `scope` and `code`; its localized
-        `label` is included only with `expand=amenityLabels`. Otherwise resolve
-        the label against the [amenity dictionary](/api/amenities)
-        (`GET /amenity-categories` `data[].category`).
-      oneOf:
-        - title: Hotel category
-          required: [scope, code]
-          properties:
-            scope: { enum: [hotel] }
-            code: { enum: [health, wellness, dining, services, accessibility, parking, sport, children] }
-          example:
-            scope: hotel
-            code: wellness
-        - title: Room type category
-          required: [scope, code]
-          properties:
-            scope: { enum: [roomType] }
-            code: { enum: [bathroom, equipment, accessibility, view, kitchen] }
-          example:
-            scope: roomType
-            code: view
+        A category assigned to a hotel. Look up its code in the hotel
+        [amenity dictionary](/api/amenities), or request `expand=amenityLabels`
+        to include its localized label.
       properties:
-        scope:
-          type: string
-          enum: [hotel, roomType]
-          description: Resource scope. Together with code, identifies the category.
         code:
           type: string
           enum:
@@ -2244,15 +2224,33 @@ components:
             - parking
             - sport
             - children
-            - bathroom
-            - equipment
-            - view
-            - kitchen
-          description: Category code within its scope. Accessibility exists in both scopes; room category codes have no prefix.
+          description: Category code in the hotel amenity dictionary.
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: Localized category label. Present only with `expand=amenityLabels`.
+      example:
+        code: wellness
+    RoomTypeAmenityCategoryRef:
+      type: object
+      title: Room type category
+      additionalProperties: false
+      required: [code]
+      description: >-
+        A category assigned to a room type. Look up its code in the room type
+        [amenity dictionary](/api/amenities), or request `expand=amenityLabels`
+        to include its localized label.
+      properties:
+        code:
+          type: string
+          enum: [bathroom, equipment, accessibility, view, kitchen]
+          description: Category code in the room type amenity dictionary, without a resource prefix.
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized category label. Present only with `expand=amenityLabels`.
+      example:
+        code: view
     AmenityCategoryGroup:
       type: object
       required: [category, amenities]
@@ -2492,15 +2490,11 @@ components:
       type: object
       required: [category, amenities]
       description: >-
-        One amenity category with scope hotel containing values assigned to a hotel.
+        One hotel amenity category containing values assigned to a hotel.
         Categories without assigned amenities are omitted from hotel responses.
       properties:
         category:
-          allOf:
-            - $ref: "#/components/schemas/AmenityCategoryRef"
-            - properties:
-                scope:
-                  enum: [hotel]
+          $ref: "#/components/schemas/HotelAmenityCategoryRef"
         amenities:
           type: array
           minItems: 1
