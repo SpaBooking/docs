@@ -5,7 +5,7 @@ icon: "list-check"
 ---
 
 Hotel and room type amenities use the same structured contract in API v2.
-Each category identifies its resource with `scope: "hotel"` or `scope: "roomType"`.
+Each dictionary category identifies its resource with `scope: "hotel"` or `scope: "roomType"`.
 The dictionary returns both hotel and room type amenities by default.
 Use `scope=hotel` or `scope=roomType` to filter it to one resource type.
 
@@ -50,15 +50,19 @@ with every supported choice and its localized label.
 | `GET /api/v2/amenity-categories?scope=hotel` | Hotel categories only |
 | `GET /api/v2/amenity-categories?scope=roomType` | Room type categories only |
 
-The pair `category.scope` + `category.code` identifies a category. Codes have no
-resource prefix: for example, a room type uses `{ "scope": "roomType", "code": "view" }`.
+In the dictionary, the pair `category.scope` + `category.code` identifies a category.
+Codes have no resource prefix: for example, a room type dictionary category
+uses `{ "scope": "roomType", "code": "view" }`.
 Both scopes have a category named `accessibility`; keep them separate when
 indexing categories or joining selected values to the dictionary.
 
-`scope` is always present on categories, including assigned values and responses
-with `expand=amenityLabels`. The query parameter only filters the dictionary;
-it does not change the shape of its entries. An empty or unknown scope,
-including `all`, returns `400`.
+Assigned categories omit `scope`. Use `hotel` when reading a hotel's
+`amenityCategories`, and `roomType` when reading a room type's
+`amenityCategories`, including room types embedded in hotels. Requesting
+`expand=amenityLabels` adds labels without adding scope.
+
+The `scope` query parameter filters the dictionary without changing its entry
+shape. An empty or unknown scope, including `all`, returns `400`.
 
 ### Updating an existing integration
 
@@ -67,12 +71,10 @@ If your integration relied on the previous hotel-only default, request
 previous and current contracts accept this filter, so it works with either
 version.
 
-Older responses do not include `category.scope`. During the transition,
-use `category.scope ?? "hotel"` for a dictionary explicitly requested with
-`scope=hotel`, and for assigned categories on hotel resources. Do not apply
-that fallback to a combined dictionary or to embedded room type categories.
-Use the known resource scope for each resource, and key any shared category
-index by both scope and code.
+For assigned categories, replace reads of `category.scope` with the parent
+resource type. Use `hotel` for hotel amenities and `roomType` for room type
+amenities, including embedded rooms. Dictionary entries continue to include
+`scope`; key any shared category index by both scope and code.
 
 Refresh cached dictionaries when `X-SpaPortal-Amenities-Version` changes.
 For room type integrations, update category lookups to the unprefixed codes;
@@ -81,13 +83,13 @@ only query filters retain the old `room_*` aliases.
 ### Examples by scope
 
 Fetch both scopes together, or filter the dictionary to the resource you need.
-Match selected values to dictionary categories using both `scope` and `code`.
+Match selected values using the parent resource type and `category.code`.
 The examples request Czech and English labels. Dictionary responses below are
 excerpts; the API returns the complete dictionary for the requested scope.
 Resource excerpts show only `amenityCategories`.
 
 Both scopes follow the same label rules: dictionary entries always include
-labels, assigned categories include `scope` and `code` by default, and `expand=amenityLabels`
+labels, assigned categories include `code` by default, and `expand=amenityLabels`
 adds labels to categories, amenities, and any selected options. Replace
 `{hotelId}` and `{roomTypeId}` with the resource IDs returned by the API.
 
@@ -235,7 +237,6 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
-        "scope": "hotel",
         "code": "wellness"
       },
       "amenities": [
@@ -287,7 +288,6 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
-        "scope": "hotel",
         "code": "wellness",
         "label": {
           "cs-CZ": "Bazény a wellness",
@@ -392,7 +392,6 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
-        "scope": "roomType",
         "code": "view"
       },
       "amenities": [
@@ -427,7 +426,6 @@ Accept-Language: cs-CZ,en
   "amenityCategories": [
     {
       "category": {
-        "scope": "roomType",
         "code": "view",
         "label": {
           "cs-CZ": "Výhled",
@@ -549,7 +547,7 @@ Every v2 [Hotel](/api/objects/hotel) response groups assigned amenities by
 category. Only categories containing at least one assigned amenity are returned.
 An absent code means the amenity is not offered or has not been advertised.
 
-By default hotel categories carry `scope: "hotel"` and `code`; amenities and
+By default hotel categories carry `code`; amenities and
 selected options carry `code`. Labels are omitted. Fetch the dictionary once (it is
 small and cacheable) and look up every localized label there. This keeps hotel
 responses small and the labels in one place.
@@ -563,7 +561,7 @@ is needed.
 {
   "amenityCategories": [
     {
-      "category": { "scope": "hotel", "code": "wellness" },
+      "category": { "code": "wellness" },
       "amenities": [
         {
           "code": "aquapark",
@@ -599,7 +597,7 @@ is needed.
 ```
 
 To display this hotel's amenities, join each code to the dictionary:
-`category.scope` + `category.code` → `data[].category`, `amenities[].code` →
+`"hotel"` + `category.code` → `data[].category`, `amenities[].code` →
 `data[].amenities[]`, and each `options[].code` → that amenity's `options` in
 the dictionary. All three carry the localized labels. Or request
 `expand=amenityLabels` to receive those labels inline on the hotel and skip the

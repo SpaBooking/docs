@@ -39,9 +39,10 @@ Unspecified unit types and tiers are `null`. Amenity labels come from the
 [room type amenity dictionary](/api/amenities#room-type-amenities), or you can
 request `expand=amenityLabels` to include them in the response.
 
-`amenityCategories[].category` always contains `scope: "roomType"` and an
-unprefixed category `code` (for example, `view`). Match both fields against the
-[amenity dictionary](/api/amenities). The dictionary includes hotel and room
+`amenityCategories[].category` contains an unprefixed category `code`
+(for example, `view`). Match it against scope `roomType` in the
+[amenity dictionary](/api/amenities), also for rooms embedded in a hotel.
+The dictionary includes hotel and room
 type categories by default; use `scope=roomType` for room type categories only.
 Groups without assigned amenities are omitted.
 

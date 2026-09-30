@@ -4,6 +4,18 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
+## Unreleased
+
+### Assigned amenity categories
+
+- **Breaking:** Hotel and room type responses omit `amenityCategories[].category.scope`,
+  including embedded room types and `expand=amenityLabels`. Categories contain
+  `code` and, when expanded, `label`.
+- Use the containing resource type to choose the dictionary scope: `hotel`
+  for hotel amenities and `roomType` for room type amenities.
+- Dictionary categories retain `scope`. Dictionary contents, version, ETags,
+  and the `scope` query parameter are unchanged.
+
 ## 2026-09-29 (documentation)
 
 ### Room type contract

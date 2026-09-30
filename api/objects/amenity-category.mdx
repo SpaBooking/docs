@@ -4,64 +4,16 @@ description: "A group of related amenities for a hotel or room type."
 openapi-schema: "/api/v2/openapi.yaml AmenityCategory"
 ---
 
-A category identifies a group of related amenities. It is returned at
-`data[].category` in the
-[amenity dictionary](/api/v2/reference/amenity-categories/list-the-amenity-dictionary)
-and at `amenityCategories[].category` in hotel and room type responses.
+A category groups related amenities. Use both `scope` and `code` to identify
+it: codes such as `accessibility` exist for both hotels and room types.
 
-Each group contains a `category` object and an `amenities` array. The array
-holds [Amenity](/api/objects/amenity) definitions in the dictionary and selected
-[Amenity values](/api/objects/amenity-value) on a hotel or room type.
+You receive this object at `data[].category` in the
+[amenity dictionary](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
+Dictionary categories always include `scope`, `code`, and `label`.
 
-## Scope
+Hotel and room type responses reference categories at `amenityCategories[].category`
+with `code` only. Use the parent resource type to select the dictionary scope.
+[`expand=amenityLabels`](/api/expand) adds `label` to these references.
 
-Hotels and room types have separate sets of categories:
-
-| Scope | Describes | Category codes |
-| --- | --- | --- |
-| `hotel` | Hotel facilities and services | `health`, `wellness`, `dining`, `services`, `accessibility`, `parking`, `sport`, `children` |
-| `roomType` | Amenities of a particular room type | `bathroom`, `equipment`, `accessibility`, `view`, `kitchen` |
-
-Use both `scope` and `code` to identify a category. For example,
-`accessibility` exists in both scopes, so `code` alone is not unique.
-Category codes have no resource prefix.
-
-Room type categories keep `scope: "roomType"` when embedded in a hotel.
-Hotel amenities are not inherited by room types.
-
-`GET /api/v2/amenity-categories` returns both scopes by default. Use
-`?scope=hotel` or `?scope=roomType` to fetch one. The dictionary includes all
-categories in the selected scopes. Hotel and room type responses include only
-groups with assigned amenities, or `amenityCategories: []` when none are assigned.
-
-## Labels
-
-Dictionary categories always include a localized `label`. On a hotel or room
-type, the category contains only `scope` and `code` by default. Request
-[`expand=amenityLabels`](/api/expand) to include its `label`, or look it up
-in the dictionary using both fields.
-
-Labels follow [`Accept-Language`](/api/localization). For example, a hotel
-dictionary category with `Accept-Language: cs-CZ,en` is:
-
-```json Hotel category
-{
-  "scope": "hotel",
-  "code": "wellness",
-  "label": { "cs-CZ": "Bazény a wellness", "en": "Pools & wellness" }
-}
-```
-
-## Room type example
-
-Room type categories follow the same label rules:
-
-```json Room type category
-{
-  "scope": "roomType",
-  "code": "view",
-  "label": { "cs-CZ": "Výhled", "en": "View" }
-}
-```
-
-See the [amenities guide](/api/amenities) for full request and response examples.
+See the [amenities guide](/api/amenities) for filtering, localization, and
+request and response examples.

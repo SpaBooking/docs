@@ -15,8 +15,8 @@ const sauna = {
   code: 'sauna', proximity: null, proximityMeters: null, access: null,
   options: [], openingHours: emptyHours,
 };
-const hotel = { scope: 'hotel', code: 'wellness' };
-const room = { scope: 'roomType', code: 'view' };
+const hotel = { code: 'wellness' };
+const room = { code: 'view' };
 const group = (category, amenities) => ({ category, amenities });
 const cases = [
   ['unfilled sauna details', 'AmenityValue', sauna, true],
@@ -34,20 +34,23 @@ const cases = [
   ['invalid opening time', 'AmenityValue', {
     ...sauna, openingHours: { continuous: false, blocks: [{ days: ['monday'], from: '25:00', to: '26:00' }] },
   }, false],
-  ['dictionary category with label', 'AmenityCategory', { ...hotel, label }, true],
-  ['dictionary category without label', 'AmenityCategory', hotel, false],
-  ['assigned category without label', 'AmenityCategoryRef', hotel, true],
-  ['assigned category with label', 'AmenityCategoryRef', { ...room, label }, true],
-  ['category without scope', 'AmenityCategoryRef', { code: 'wellness' }, false],
-  ['hotel with a room category', 'AmenityCategoryRef', { scope: 'hotel', code: 'view' }, false],
-  ['room with a hotel category', 'AmenityCategoryRef', { scope: 'roomType', code: 'wellness' }, false],
-  ['legacy alias in a response', 'AmenityCategoryRef', { scope: 'roomType', code: 'room_view' }, false],
-  ['hotel accessibility', 'AmenityCategoryRef', { scope: 'hotel', code: 'accessibility' }, true],
-  ['room accessibility', 'AmenityCategoryRef', { scope: 'roomType', code: 'accessibility' }, true],
+  ['dictionary category with label', 'AmenityCategory', { scope: 'hotel', ...hotel, label }, true],
+  ['dictionary category without label', 'AmenityCategory', { scope: 'hotel', ...hotel }, false],
+  ['dictionary category without scope', 'AmenityCategory', { ...hotel, label }, false],
+  ['assigned category without label', 'HotelAmenityCategoryRef', hotel, true],
+  ['assigned category with label', 'RoomTypeAmenityCategoryRef', { ...room, label }, true],
+  ['assigned hotel category with scope', 'HotelAmenityCategoryRef', { scope: 'hotel', ...hotel }, false],
+  ['expanded room category with scope', 'RoomTypeAmenityCategoryRef', { scope: 'roomType', ...room, label }, false],
+  ['assigned category without code', 'HotelAmenityCategoryRef', { label }, false],
+  ['hotel with a room category', 'HotelAmenityCategoryRef', room, false],
+  ['room with a hotel category', 'RoomTypeAmenityCategoryRef', hotel, false],
+  ['legacy alias in a response', 'RoomTypeAmenityCategoryRef', { code: 'room_view' }, false],
+  ['hotel accessibility', 'HotelAmenityCategoryRef', { code: 'accessibility' }, true],
+  ['room accessibility', 'RoomTypeAmenityCategoryRef', { code: 'accessibility' }, true],
   ['hotel group', 'HotelAmenityCategoryGroup', group(hotel, [sauna]), true],
   ['room group', 'RoomTypeAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), true],
-  ['room scope on hotel', 'HotelAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), false],
-  ['hotel scope on room', 'RoomTypeAmenityCategoryGroup', group(hotel, [sauna]), false],
+  ['room category on hotel', 'HotelAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), false],
+  ['hotel category on room', 'RoomTypeAmenityCategoryGroup', group(hotel, [sauna]), false],
   ['empty assigned hotel group', 'HotelAmenityCategoryGroup', group(hotel, []), false],
   ['empty assigned room group', 'RoomTypeAmenityCategoryGroup', group(room, []), false],
   ['hotel without amenities', 'Hotel/properties/amenityCategories', [], true],
