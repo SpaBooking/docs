@@ -2158,14 +2158,28 @@ components:
       type: object
       required: [scope, code, label]
       oneOf:
-        - required: [scope, code]
+        - title: Hotel category
+          required: [scope, code]
           properties:
             scope: { enum: [hotel] }
             code: { enum: [health, wellness, dining, services, accessibility, parking, sport, children] }
-        - required: [scope, code]
+            label:
+              $ref: "#/components/schemas/LocalizedString"
+          example:
+            scope: hotel
+            code: wellness
+            label: { cs-CZ: Bazény a wellness, en: Pools & wellness }
+        - title: Room type category
+          required: [scope, code]
           properties:
             scope: { enum: [roomType] }
             code: { enum: [bathroom, equipment, accessibility, view, kitchen] }
+            label:
+              $ref: "#/components/schemas/LocalizedString"
+          example:
+            scope: roomType
+            code: view
+            label: { cs-CZ: Výhled, en: View }
       properties:
         scope:
           type: string
@@ -2198,14 +2212,22 @@ components:
         the label against the [amenity dictionary](/api/amenities)
         (`GET /amenity-categories` `data[].category`).
       oneOf:
-        - required: [scope, code]
+        - title: Hotel category
+          required: [scope, code]
           properties:
             scope: { enum: [hotel] }
             code: { enum: [health, wellness, dining, services, accessibility, parking, sport, children] }
-        - required: [scope, code]
+          example:
+            scope: hotel
+            code: wellness
+        - title: Room type category
+          required: [scope, code]
           properties:
             scope: { enum: [roomType] }
             code: { enum: [bathroom, equipment, accessibility, view, kitchen] }
+          example:
+            scope: roomType
+            code: view
       properties:
         scope:
           type: string
