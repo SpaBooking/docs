@@ -1307,6 +1307,28 @@ components:
           nullable: true
           description: Effective pet rule. False unless the hotel allows pets; then the room rule
             applies, with null for an unspecified room rule.
+    HotelBuilding:
+      type: object
+      description: >-
+        A physical hotel building. Name and label follow Accept-Language;
+        missing or blank translations are null, without a locale fallback.
+      required:
+        - id
+        - name
+        - label
+      properties:
+        id:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+          description: Stable building id, also returned as roomType.building.id.
+        name:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Short building name.
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Short building description; requested translations are null when unset.
     RoomTypeBuilding:
       type: object
       nullable: true
@@ -1555,6 +1577,7 @@ components:
         - phoneNumber
         - url
         - images
+        - buildings
         - accommodationRules
         - mealServices
         - indications
@@ -1606,6 +1629,15 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Image"
+        buildings:
+          type: array
+          description: >-
+            All physical buildings in stored order, including buildings with
+            no assigned room types. Always included without expand, even for
+            a single building; empty when none are configured. Match each id
+            to a room type's building.id.
+          items:
+            $ref: "#/components/schemas/HotelBuilding"
         accommodationRules:
           $ref: "#/components/schemas/HotelAccommodationRules"
         mealServices:
@@ -1704,6 +1736,18 @@ components:
         email: hotel@example.com
         phoneNumber: +420 123 456 789
         url: https://hotel.example.com
+        buildings:
+          - id: 66f16191f739705faa0200b2
+            name:
+              cs-CZ: Villa Anna
+              de: Villa Anna
+              en: null
+              ru: null
+            label:
+              cs-CZ: Villa Anna — krytou chodbou, 60 m
+              de: null
+              en: null
+              ru: null
         images:
           - url: https://files.example.com/hotel.jpg
             width: 2400

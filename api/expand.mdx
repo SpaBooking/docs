@@ -178,6 +178,9 @@ Building and internal room names use Czech ordering, so changing
 `Accept-Language` does not change the order. Rooms without a building come last.
 The paginated `/room-types` endpoint keeps its requested `createdAt` order.
 
+Hotel [`buildings`](/api/objects/hotel#buildings) are always included in hotel
+list and detail responses, independently of `expand=roomTypes`.
+
 ## Amenity labels
 
 By default hotel and room type categories carry `code`; their

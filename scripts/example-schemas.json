@@ -115,6 +115,14 @@
       }
     ]
   ],
+  "api/objects/hotel.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Hotel/properties/buildings",
+        "at": "/buildings"
+      }
+    ]
+  ],
   "api/objects/amenity.mdx": [
     [
       {

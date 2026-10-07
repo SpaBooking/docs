@@ -6,6 +6,15 @@ icon: "clock-rotate-left"
 
 ## Unreleased
 
+### Hotel buildings
+
+- Added `buildings` to hotel list and detail responses, without requiring
+  `expand`. Each item contains `id`, localized `name`, and localized `label`.
+- The array includes all configured buildings in stored order. Hotels without
+  buildings return `[]`; hotels with one building return one item.
+- Match a building's `id` to `roomType.building.id`. Texts follow
+  `Accept-Language`, with `null` for missing translations.
+
 ### Image response
 
 - **Breaking:** Removed `thumbnailUrl` from hotel and room type images,

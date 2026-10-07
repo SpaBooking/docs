@@ -52,7 +52,10 @@ Groups without assigned amenities are omitted.
 
 `building` contains the assigned building's id, short name, and descriptive
 label. It is returned even when the hotel has only one building. Unassigned or
-removed buildings are `null`. The hotel object does not expose a building list.
+removed buildings are `null`. Match `building.id` to an item in the hotel's
+[`buildings` array](/api/objects/hotel#buildings), which lists all configured
+buildings. The same building has the same `id`, `name`, and `label` in both
+responses when you request the same locales.
 
 `rules.petsAllowed` already includes the hotel's pet policy. It is `false` when
 the hotel does not permit pets or has not provided a policy. When the hotel

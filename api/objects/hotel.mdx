@@ -4,15 +4,43 @@ description: "A spa or wellness property and its structured guest profile."
 openapi-schema: "/api/v2/openapi.yaml Hotel"
 ---
 
-A hotel contains identity, contact details, images, localized content,
-structured accommodation rules, meal services, medical indications, staff
-languages, and hotel-level [amenities](/api/amenities).
+A hotel contains identity, contact details, images, buildings, localized
+content, structured accommodation rules, meal services, medical indications,
+staff languages, and hotel-level [amenities](/api/amenities).
 
 Localized values return only the keys selected by
 [`Accept-Language`](/api/localization). `name` falls back to the Czech value when
 a requested translation is missing. Other localized fields preserve the
 requested key and return `null` when its translation is missing, except image
 `alt`, which falls back to the localized hotel name.
+
+## Buildings
+
+`buildings` lists every physical building in the hotel's configured order,
+including buildings with no assigned room types. Both `GET /api/v2/hotels`
+and `GET /api/v2/hotels/{hotelId}` always include this array. You do not need
+an `expand` parameter. A hotel with one building returns one item; a hotel
+without configured buildings returns `[]`.
+
+Each item contains `id`, localized `name`, and localized `label` (a short
+description). Match `id` to a room type's `building.id`, including rooms
+embedded with `expand=roomTypes`. Both texts follow `Accept-Language`:
+missing or blank translations return `null` without falling back to Czech.
+The `label` object is present even when no description is set.
+
+For example, with `Accept-Language: cs-CZ,en`:
+
+```json
+{
+  "buildings": [
+    {
+      "id": "66f16191f739705faa0200b2",
+      "name": { "cs-CZ": "Villa Anna", "en": "Villa Anna" },
+      "label": { "cs-CZ": "Krytou chodbou, 60 m", "en": null }
+    }
+  ]
+}
+```
 
 ## Embedded room types
 
