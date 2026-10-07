@@ -4,6 +4,15 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
+## Unreleased
+
+### Image response
+
+- **Breaking:** Removed `thumbnailUrl` from hotel and room type images,
+  including room types embedded in hotels.
+- Use an available `variants` URL for previews and `url` as the fallback.
+  Images now contain `url`, `width`, `height`, `alt`, and `variants`.
+
 ## 2026-09-30 (v3.2.21)
 
 ### Assigned amenity categories
@@ -84,7 +93,7 @@ Breaking changes require a new major API version.
 - Unavailable dimensions are explicitly `null`; unavailable variants are `{}`.
 - `alt` follows `Accept-Language`. Missing translations fall back to the hotel
   name or room category. Preserve an explicit empty string for decorative images.
-- `thumbnailUrl` is deprecated and remains available throughout API v2.
+- `thumbnailUrl` was deprecated in this release. Its removal is listed above.
 
 ## 2026-09-10
 

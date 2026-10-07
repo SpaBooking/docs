@@ -24,15 +24,14 @@ See [Expand](/api/expand) for examples.
 
 ## Images
 
-Every image contains `url`, `thumbnailUrl`, `width`, `height`, `alt`, and
-`variants`. Use `url` for the original or lightbox. `thumbnailUrl` is deprecated
-and remains available throughout API v2. The [images guide](/api/images)
-provides a complete rendering example.
+Every image contains `url`, `width`, `height`, `alt`, and `variants`. Use `url`
+for the original or lightbox. The [images guide](/api/images) provides a
+complete rendering example.
 
 Build `srcset` from the returned `variants` entries: `w480` means `480w`, and
 likewise for `w960`, `w1440`, and `w1920`. Set `sizes` for your layout and choose
-an available variant for `src`, followed by `thumbnailUrl` and then `url` as
-fallbacks. Use the returned URLs directly; do not construct URLs for missing
+an available variant for `src`, with `url` as the fallback.
+Use the returned URLs directly; do not construct URLs for missing
 widths. Images are never enlarged, so an 1100-pixel original has only `w480`
 and `w960`.
 

@@ -975,21 +975,13 @@ components:
         de: Kurhotel Pawlik
     Image:
       type: object
-      required: [url, thumbnailUrl, width, height, alt, variants]
+      required: [url, width, height, alt, variants]
       properties:
         url:
           type: string
           description: >-
             Original image URL. Use it for a full-size view and as the final
             fallback.
-        thumbnailUrl:
-          type: string
-          nullable: true
-          deprecated: true
-          description: >-
-            Deprecated legacy preview URL, or null when unavailable. Use
-            variants for responsive images, then this preview before the
-            original as a fallback. Retained throughout API v2.
         width:
           type: integer
           nullable: true
@@ -1202,7 +1194,6 @@ components:
               - code: balcony
         images:
           - url: https://cdn.example.com/rooms/superior.jpg
-            thumbnailUrl: https://cdn.example.com/rooms/superior-thumbnail.jpg
             width: 1100
             height: 733
             alt:
@@ -1715,7 +1706,6 @@ components:
         url: https://hotel.example.com
         images:
           - url: https://files.example.com/hotel.jpg
-            thumbnailUrl: https://files.example.com/hotel-thumbnail.webp
             width: 2400
             height: 1600
             alt:

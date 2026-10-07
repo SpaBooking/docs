@@ -9,12 +9,11 @@ types use the same fields as top-level room type responses.
 
 ## Response shape
 
-Every image contains all six fields:
+Every image contains all five fields:
 
 ```json
 {
   "url": "https://files.example.com/production/hotels/example/photo.jpg",
-  "thumbnailUrl": "https://files.example.com/production/thumbnails/hotels/example/photo.webp",
   "width": 2400,
   "height": 1600,
   "alt": {
@@ -32,7 +31,6 @@ Every image contains all six fields:
 | Field             | Meaning                                                                                  |
 | ----------------- | ---------------------------------------------------------------------------------------- |
 | `url`             | Original image URL. Use it for a full-size view and as the final fallback.               |
-| `thumbnailUrl`    | Deprecated legacy preview URL. It remains available throughout API v2 and can be `null`. |
 | `width`, `height` | Intrinsic dimensions of the oriented original, or `null` when unavailable.               |
 | `alt`             | Localized alternative text selected by `Accept-Language`.                                |
 | `variants`        | Available WebP URLs keyed by target width.                                               |
@@ -54,8 +52,7 @@ const srcset = widths
   })
   .join(", ");
 
-const src =
-  image.variants.w960 ?? image.variants.w480 ?? image.thumbnailUrl ?? image.url;
+const src = image.variants.w960 ?? image.variants.w480 ?? image.url;
 ```
 
 Set `srcset` only when the resulting string is non-empty. Set `sizes` to the
@@ -87,7 +84,7 @@ the initial viewport.
 
 An empty `variants` object means that no responsive variant is available. It
 does not mean that processing is still pending. Omit `srcset` and use
-`thumbnailUrl ?? url` as `src`.
+`url` as `src`.
 
 There are two possible cases:
 
@@ -96,7 +93,7 @@ There are two possible cases:
 - An unavailable legacy image has `width: null`, `height: null`, and
   `variants: {}`.
 
-As a final error fallback, remove `srcset` and try `thumbnailUrl`, then `url`.
+As a final error fallback, remove `srcset` and use `url`.
 This is useful if a cached client encounters a missing variant, but it does not
 replace normal HTTP error monitoring.
 
@@ -118,8 +115,8 @@ The API provides recommended alternative text. Your client can still use
 
 ## Compatibility
 
-The responsive fields are additive. Existing `url` and `thumbnailUrl` values
-retain their behavior, and `thumbnailUrl` remains present as a nullable field.
+API v2 no longer returns `thumbnailUrl`. Use an available `variants` URL for
+previews and `url` when no variant is available.
 
 See the [Hotel](/api/objects/hotel) and [Room type](/api/objects/room-type)
 object references.
