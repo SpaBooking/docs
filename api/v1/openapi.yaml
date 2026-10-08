@@ -184,6 +184,8 @@ paths:
       description: |
         Returns visit types matching the supplied filters.
 
+        Visit types come in the company's web order: `priority_position` ascending (1 = first on the website), then `id`. Visit types without a position (`0`) follow the positioned ones. The order is applied before `max` and `offset`. With an API key that covers several companies, the companies' orders interleave by position (each company's first, then each company's second, …); within one company the order is kept.
+
         `reservation_time_span` can be `DAYS` or `WEEKS`. `procedure_frequency` can be `DAY`, `WEEK`, or `VISIT`.
 
         Each visit type can include applicable loyalty programs and hotel-level lowest prices. The visit-type `lowest_price` and each per-hotel `lowest_price` include any active discount promotions; `original_amount_per_night` is the price before any discount.
@@ -266,7 +268,7 @@ paths:
       tags: [Catalog]
       summary: Get visit type categories
       operationId: getVisitTypeCategories
-      description: Returns visit type categories. Set `include_visit_types=true` to include visit types inside each category.
+      description: Returns visit type categories. Set `include_visit_types=true` to include visit types inside each category; they come in the company's web order, like [Get visit types](/api/v1/reference/get-visit-types).
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/Max"
@@ -1987,6 +1989,10 @@ components:
             - type: string
         priority_position:
           type: integer
+          description: >-
+            Place in the company's web order, 1 = first on the website. One
+            order for all channels. `0` = no position yet; such visit types
+            follow the positioned ones, by `id`.
         on_demand:
           type: boolean
         stay_category:
@@ -2079,6 +2085,10 @@ components:
             - type: string
         priority_position:
           type: integer
+          description: >-
+            Place in the company's web order, 1 = first on the website. One
+            order for all channels. `0` = no position yet; such visit types
+            follow the positioned ones, by `id`.
         on_demand:
           type: boolean
         stay_category:
