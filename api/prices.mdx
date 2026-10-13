@@ -27,7 +27,7 @@ fields:
 | `amount` | The price as a [`Money`](/api/currencies) object, after any promotion. |
 | `original` | The same price before the promotion, or `null` when none applies. |
 | `nights` | Shortest stay the visit type allows. |
-| `occupancy` | Standard occupancy of the room type the price applies to. |
+| `occupancy` | Full standard occupancy of the room type the price applies to. |
 | `visitType` | `id` and localized `name` of the visit type the price comes from. |
 
 Example for a hotel priced in EUR, requested with `Accept-Language: de`:
@@ -75,11 +75,12 @@ Example for a hotel priced in EUR, requested with `Accept-Language: de`:
 
 `all` looks at every visit type the hotel sells, including visit types that
 have no category yet. `health` and `wellness` apply the same selection rules
-to one category. Compare their prices on the selection metric: per guest per
-night, or per guest for the whole stay. A category can have a lower raw
-`perStay.amount` than `all` when the selected offers have different occupancies.
+to one category. In the same currency, `all.perStay.amount` is less than or
+equal to `health.perStay.amount` and `wellness.perStay.amount`. The same rule
+applies to `perPersonPerNight`, even when the selected offers have different
+occupancies.
 
-A category is omitted when it has no usable price in that currency; this does
+A category is omitted when it has no available, fully priced stay in that currency; this does
 not prove that the hotel has no stays in the category. `all` is present whenever
 the currency is. If a category is absent, omit its price. You can display `all`
 as a clearly labeled hotel-wide price, but do not label it as a health or
@@ -90,11 +91,11 @@ wellness stay, so only `all` and `health` appear.
 
 ## Two independent minima
 
-`perPersonPerNight.amount` is the price for one guest for one night at
-`occupancy` guests per room. `perStay.amount` is the total for `occupancy`
-guests for `nights` nights. Each minimum is chosen on its own and carries its
-own `visitType`, `nights`, and `occupancy`, so the two can name different visit
-types and room types.
+`perPersonPerNight.amount` is the average price per guest per night for the
+selected complete stay at `occupancy` guests per room. `perStay.amount` is the
+total for `occupancy` guests for `nights` nights at full standard room occupancy. Each minimum is
+chosen on its own and carries its own `visitType`, `nights`, and `occupancy`,
+so the two can name different visit types and room types.
 
 Do not derive one from the other: the minima can come from different offers.
 Even when they refer to the same offer, independently rounded amounts can make
@@ -102,16 +103,75 @@ Even when they refer to the same offer, independently rounded amounts can make
 
 ## Selection rules
 
-- `perPersonPerNight` is the offer with the lowest price per guest per night.
-- `perStay` is the offer with the lowest price per guest for the whole stay
-  (`amount ÷ occupancy`); the response carries the full total. A single room
-  with a lower total does not win when a double room is cheaper per guest.
+- `perPersonPerNight` is the offer with the lowest average price per guest
+  per night for a complete stay.
+- `perStay` is the offer with the lowest total for the whole room and stay,
+  after applicable promotions. It considers all eligible room types at their
+  full standard occupancy. A single, double, or larger room
+  can have the lowest total.
+- Each offer uses the shortest stay its visit type allows. A longer stay can
+  still win when its total is lower than another offer's shorter stay.
 - Ties go to the shorter stay, then the lower occupancy, then the lower
   `visitType.id`.
-- A promotion counts only when it covers every night of the stay.
+- Each offer corresponds to a permitted arrival date and a complete stay in
+  one room type. Every occupied night must have a price in the same currency.
+  The same room type must have remaining capacity for every occupied night.
+  The total includes each night's applicable seasonal price.
+- Arrival weekdays, specific arrival dates, and stay date restrictions apply.
+  Offers without an available, fully priced, permitted stay are omitted.
+- Visit types offered only on demand are excluded, even when room capacity
+  is recorded.
+- Promotions apply only to the nights they cover. When multiple promotions
+  cover the same night, their percentage discounts apply successively.
 - Visit types whose selling period has ended are ignored.
 - Query parameters do not affect the values, and the cheapest offer can differ
   by currency.
+
+## Example: single room and double room
+
+For two available seven-night offers without a promotion:
+
+| Room | Occupancy | Price per guest per night | Full stay total |
+| --- | --- | --- | --- |
+| Single | 1 | CZK 2,000 | CZK 14,000 |
+| Double | 2 | CZK 1,600 | CZK 22,400 |
+
+`perPersonPerNight` selects the double room: `amountMinor: 160000`,
+`occupancy: 2`, `nights: 7`. `perStay` selects the single room:
+`amountMinor: 1400000`, `occupancy: 1`, `nights: 7`.
+
+To display the cheapest whole package, show `perStay.amount` with its
+`occupancy` and `nights`. Dividing that amount by `occupancy` gives a per-guest
+share of the selected package; it does not give the lowest per-guest stay price
+across all offers.
+
+## Example: a stay across two seasons
+
+A three-night package includes two nights at CZK 1,000 and a third night at
+CZK 2,000. Its full price is CZK 4,000. A 50% promotion covering only the third
+night reduces the total to CZK 3,000; `original` is CZK 4,000.
+
+A stay contributes a price only in currencies that cover every occupied
+night. The departure date does not need a nightly price.
+
+## Availability
+
+`priceFrom` uses the availability recorded by the API at calculation time.
+Every occupied night must have remaining capacity in the same room type;
+the departure date does not require capacity. Stays offered only on demand
+are excluded.
+
+For example, if a CZK 3,000 stay is sold out and the cheapest available stay
+costs CZK 4,500, `perStay.amount` reports CZK 4,500.
+
+A category or currency without an available, fully priced stay is omitted.
+If no such stay exists for the hotel, `priceFrom` is `null`. This does not
+rule out stays that require an availability request.
+
+The response does not hold a room. Availability can change after the price
+is calculated. Select your dates and guests to confirm availability and the
+final price through the booking flow. If you cache hotel responses, refresh
+them regularly; a cached price is not a room reservation.
 
 ## Rounding
 
