@@ -4,6 +4,20 @@ description: "Public changes to SpaPortal API v2."
 icon: "clock-rotate-left"
 ---
 
+## Unreleased
+
+### Disabled room types
+
+- Added the required boolean `disabled` to room type list, detail, and hotel
+  expansion responses.
+- Room type lists now return only enabled rooms by default. Use `disabled=true`
+  for disabled rooms or `disabled=all` for both states.
+- Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
+  Room details remain accessible by ID, including disabled rooms.
+- Use `disabled` instead of checking room type codes for `_DELETED`. Disabled
+  room types are excluded from new bookings, prices, and availability results;
+  historical bookings retain their references.
+
 ## 2026-10-07 (v3.2.24)
 
 ### Hotel buildings

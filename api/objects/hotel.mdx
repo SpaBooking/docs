@@ -44,8 +44,10 @@ For example, with `Accept-Language: cs-CZ,en`:
 
 ## Embedded room types
 
-Use `expand=roomTypes` to include the hotel's
-[room types](/api/objects/room-type).
+Use `expand=roomTypes` to include the hotel's enabled, non-draft
+[room types](/api/objects/room-type). Both the hotel list and detail exclude
+disabled rooms. Request `GET /api/v2/room-types?hotelId={hotelId}&disabled=all`
+if you need the hotel's complete non-draft catalog, including archived rooms.
 
 Without this expansion, the hotel response does not include room types.
 See [Expand](/api/expand) for examples.

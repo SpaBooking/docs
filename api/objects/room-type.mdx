@@ -12,6 +12,27 @@ select with [`Accept-Language`](/api/localization).
 `expand=hotel` adds a hotel summary with `id`, `name`, and `stars`. Fetch the
 hotel detail endpoint for the full hotel object.
 
+## Availability
+
+Every room type includes `disabled`. A value of `true` means you must exclude it
+from new room choices. Existing bookings keep their references to that room type.
+Use this flag instead of checking for `_DELETED` in `code`.
+
+The room type list returns enabled room types by default (`disabled=false`).
+Request `GET /api/v2/room-types?disabled=true` to list disabled room types, or
+`disabled=all` to include both states. These filters apply before pagination
+and result totals. Draft room types are never returned.
+
+Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
+You can still fetch a disabled room directly by its `id`; the detail response
+includes `disabled: true`. When requesting archived rooms or a detail by ID,
+check this flag before offering the room to guests. You do not need a code suffix
+check for any of these endpoints.
+
+A room type's code can change. Store its `id` for references. A room being enabled
+does not guarantee availability for a particular stay; use the calendar and price
+endpoints for dates and prices.
+
 ## Occupancy and beds
 
 Use `occupancy.standard` for booking and prices. It is the room type's standard
