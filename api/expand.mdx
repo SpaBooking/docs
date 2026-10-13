@@ -30,9 +30,9 @@ GET /api/v2/room-types?expand=hotel,amenityLabels
 ## With and without expand
 
 A hotel does not include its room types by default. Without `expand` you get the
-hotel on its own; with `expand=roomTypes` the full `roomTypes` array is embedded
-inline — no second request needed. The only difference between the two responses
-is the added `roomTypes` block.
+hotel on its own; with `expand=roomTypes` the `roomTypes` array contains the hotel's
+enabled, non-draft rooms inline — no second request needed. The only difference
+between the two responses is the added `roomTypes` block.
 
 The snippets below show only the fields relevant to expansion. The remaining
 hotel fields are unchanged and follow the complete [Hotel](/api/objects/hotel)
@@ -65,6 +65,7 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
       "id": "66f16191f739705faa020003",
       "hotelId": "66f16191f739705faa020001",
       "code": "2_APARTMA",
+      "disabled": false,
       "name": {
         "cs-CZ": "Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna",
         "de": "Komfort Zweibettzimmer mit Balkon · Villa Anna",
