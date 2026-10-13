@@ -315,7 +315,7 @@ paths:
             `amenityLabels` inlines the localized category, amenity, and option
             labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
             `roomTypes` embeds each
-            hotel's room types (otherwise fetch them via
+            hotel's enabled, non-draft room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
       responses:
         "200":
@@ -375,7 +375,7 @@ paths:
             `amenityLabels` inlines the localized category, amenity, and option
             labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
             `roomTypes` embeds the hotel's
-            room types (otherwise fetch them via
+            enabled, non-draft room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
       responses:
         "200":
@@ -408,6 +408,10 @@ paths:
         key is scoped to. Localized fields (`name`, `description`) return
         the locale keys selected by `Accept-Language`.
 
+        Only enabled room types are returned by default (`disabled=false`). Use
+        `disabled=true` for disabled room types or `disabled=all` for both states.
+        Draft room types are never returned.
+
         See the [Room type](/api/objects/room-type) object for the full field reference.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -433,6 +437,14 @@ paths:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
           description: Filter by hotel id.
+        - name: disabled
+          in: query
+          schema:
+            type: string
+            enum: ["false", "true", "all"]
+            default: "false"
+          description: Use false (the default) for enabled room types, true for disabled
+            room types, or all for both. The filter applies before pagination and totals.
         - name: occupancy
           in: query
           schema:
@@ -1030,6 +1042,7 @@ components:
         - id
         - hotelId
         - code
+        - disabled
         - name
         - description
         - unitType
@@ -1055,6 +1068,11 @@ components:
           type: string
           nullable: true
           example: SUPERIOR-DBL
+        disabled:
+          type: boolean
+          description: True when this room type is disabled for new bookings. Historical
+            references remain valid. Use this flag instead of interpreting the code.
+          example: false
         name:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -1126,6 +1144,7 @@ components:
         id: 66f16191f739705faa020003
         hotelId: 66f16191f739705faa020001
         code: 2_APARTMA
+        disabled: false
         name:
           cs-CZ: Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna
           de: Komfort Zweibettzimmer mit Balkon · Villa Anna
