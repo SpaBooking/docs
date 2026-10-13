@@ -242,7 +242,9 @@ paths:
         `priceFrom` holds the lowest prices the hotel currently sells, per
         currency, for all stays (`all`) and per category (`health`,
         `wellness`), each with two independent minima: `perPersonPerNight`
-        and `perStay`. It is null when no usable price is available. See
+        and `perStay`. Each offer requires a permitted, fully priced stay with
+        remaining room capacity for every night. On-demand stays are excluded.
+        It is null when no such stay is available. See
         [Prices](/api/prices).
 
         See the [Hotel](/api/objects/hotel) object for the full field
@@ -1719,7 +1721,8 @@ components:
           description: >-
             Lowest prices the hotel currently sells, per currency, for all
             stays and per category, each with two independent minima, or null
-            when no usable price is available. See [Prices](/api/prices).
+            when no available, fully priced stay exists. On-demand stays are
+            excluded. See [Prices](/api/prices).
         roomTypes:
           type: array
           description: |
@@ -2064,7 +2067,8 @@ components:
           allOf:
             - $ref: "#/components/schemas/Money"
           description: >-
-            Price after an active promotion that covers the whole stay.
+            Price after applicable promotions. Discounts apply only to the nights
+            they cover; overlapping percentage discounts apply successively.
         original:
           anyOf:
             - title: Original amount
@@ -2085,7 +2089,7 @@ components:
         occupancy:
           type: integer
           minimum: 1
-          description: Standard occupancy of the room type the price applies to.
+          description: Full standard occupancy of the room type the price applies to.
           example: 2
         visitType:
           $ref: "#/components/schemas/PriceFromVisitType"
@@ -2097,15 +2101,24 @@ components:
           allOf:
             - $ref: "#/components/schemas/PriceFromMinimum"
           description: >-
-            Lowest price for one guest for one night at the reported
-            occupancy.
+            Lowest average price per guest per night for a complete, permitted
+            stay with remaining room capacity for every occupied night, at
+            the reported occupancy and number of nights. On-demand stays
+            are excluded.
         perStay:
           allOf:
             - $ref: "#/components/schemas/PriceFromMinimum"
           description: >-
-            Lowest total for `occupancy` guests for `nights` nights, chosen by
-            the price per guest. Not derived from `perPersonPerNight`; the two
-            minima can name different visit types.
+            Lowest total for the whole room for `nights` nights at its full
+            standard `occupancy`, after applicable promotions.
+            The minimum is taken across all eligible room types. Each minimum
+            has its own visit type, nights, and occupancy, independently of
+            `perPersonPerNight`. The stay has a permitted arrival date and
+            a price for every occupied night in one room type and currency,
+            including stays across seasons. The same room type must have remaining
+            capacity for every occupied night at calculation time. On-demand
+            stays are excluded. The response does not hold a room; availability
+            is checked again in the booking flow.
     PriceFromCurrency:
       type: object
       required: [all]
@@ -2121,13 +2134,13 @@ components:
             - $ref: "#/components/schemas/PriceFromScope"
           description: >-
             Lowest prices across health stays (spa cures) only. Omitted when
-            no usable price exists for this category and currency.
+            no available, fully priced stay exists for this category and currency.
         wellness:
           allOf:
             - $ref: "#/components/schemas/PriceFromScope"
           description: >-
-            Lowest prices across wellness stays only. Omitted when no usable
-            price exists for this category and currency.
+            Lowest prices across wellness stays only. Omitted when no available,
+            fully priced stay exists for this category and currency.
     PriceFrom:
       type: object
       description: >-
@@ -2136,7 +2149,10 @@ components:
         and `wellness`, each with two independent minima. Prices are not
         affected by query parameters
         and can differ by currency. A currency key is present only when the
-        hotel has a usable price in that currency. See [Prices](/api/prices).
+        hotel has an available, fully priced stay in that currency. Every
+        occupied night must have remaining capacity in the same room type.
+        On-demand stays are excluded. Availability is checked at calculation
+        time and can change before booking. See [Prices](/api/prices).
       properties:
         CZK:
           $ref: "#/components/schemas/PriceFromCurrency"
