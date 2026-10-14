@@ -29,7 +29,7 @@ paths:
         item in `data` contains a category with `scope`, `code`, and a localized label,
 
         and the amenities in that category. Identify categories by the pair `scope`
-        and `code`; codes such as `accessibility` occur in both scopes. Each nested amenity has a stable
+        and `code`. Each nested amenity has a stable
 
         `code`, localized `label`, and supported `detailKinds`.
 
@@ -557,15 +557,8 @@ paths:
               - accessibility
               - view
               - kitchen
-              - room_bathroom
-              - room_equipment
-              - room_accessibility
-              - room_view
-              - room_kitchen
           description: >-
             Require at least one amenity from this room type category.
-            Use unprefixed category codes. The filter also accepts the listed
-            room_ prefixed aliases. The endpoint determines scope roomType.
             Unknown categories return 400.
       responses:
         "200":
@@ -1379,8 +1372,8 @@ components:
           description: Descriptive building label.
     RoomTypeAmenityCategoryGroup:
       type: object
-      description: Room type amenities in dictionary order. Categories use unprefixed
-        room type codes; groups without assigned amenities are omitted.
+      description: Room type amenities in dictionary order. Groups without assigned
+        amenities are omitted.
       required:
         - category
         - amenities
@@ -2261,7 +2254,7 @@ components:
             - equipment
             - view
             - kitchen
-          description: Category code within its scope. Accessibility exists in both scopes; room category codes have no prefix.
+          description: Category code, unique within its scope.
         label:
           $ref: "#/components/schemas/LocalizedString"
     HotelAmenityCategoryRef:
@@ -2305,7 +2298,7 @@ components:
         code:
           type: string
           enum: [bathroom, equipment, accessibility, view, kitchen]
-          description: Category code in the room type amenity dictionary, without a resource prefix.
+          description: Category code in the room type amenity dictionary.
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -2380,7 +2373,7 @@ components:
           description: >-
             Details that hotels and room types can specify for this amenity.
             Each kind adds specific fields to the amenity value. See
-            [Detail kinds](/api/objects/amenity-value#detail-kinds) for the
+            [Detail kinds](/api/amenities#detail-kinds) for the
             fields and values of each kind. An empty array marks a
             presence-only amenity.
           items:
@@ -2482,7 +2475,7 @@ components:
         A structured amenity assigned to a hotel or room type. Apart from
         `code` (and `label` with `expand=amenityLabels`), it contains only the
         fields of the detail kinds that the matching dictionary amenity
-        declares. See [Detail kinds](/api/objects/amenity-value#detail-kinds).
+        declares. See [Detail kinds](/api/amenities#detail-kinds).
       properties:
         code:
           type: string
@@ -2499,7 +2492,7 @@ components:
           description: >-
             Where the amenity is located relative to the hotel. Present when
             `detailKinds` includes
-            [`proximity`](/api/objects/amenity-value#proximity); null when not
+            [`proximity`](/api/amenities#proximity); null when not
             specified. `in-hotel` is inside the hotel building, `connecting` is an
             adjacent building linked by an internal passage, and `nearby` is a
             short distance away (see `proximityMeters`).
@@ -2517,7 +2510,7 @@ components:
           enum: [included, conditional, paid, null]
           description: >-
             Whether using the amenity costs extra. Present when `detailKinds`
-            includes [`pricing`](/api/objects/amenity-value#pricing). Null when
+            includes [`pricing`](/api/amenities#pricing). Null when
             not specified. `included` means no additional charge,
             `conditional` means inclusion depends on stated conditions, and
             `paid` means an additional charge applies.
@@ -2527,7 +2520,7 @@ components:
             Amenity-specific choices selected for this hotel or room type. Each
             option contains `code` by default and also `label` with
             `expand=amenityLabels`. Present when `detailKinds` includes
-            [`options`](/api/objects/amenity-value#options).
+            [`options`](/api/amenities#options).
             Empty when the amenity supports choices but none are selected.
             Labels are also available in the dictionary.
           items:
@@ -2537,7 +2530,7 @@ components:
             - $ref: "#/components/schemas/AmenityOpeningHours"
           description: >-
             Present when `detailKinds` includes
-            [`opening_hours`](/api/objects/amenity-value#opening-hours). When
+            [`opening_hours`](/api/amenities#opening-hours). When
             not specified, returns `continuous: false` with an empty `blocks`
             array.
         note:
@@ -2545,7 +2538,7 @@ components:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
             Present when `detailKinds` includes
-            [`note`](/api/objects/amenity-value#note). Localized supplementary
+            [`note`](/api/amenities#note). Localized supplementary
             information for guests. Locale values are at most 200 characters
             and are null when the requested translation is not available.
       example:

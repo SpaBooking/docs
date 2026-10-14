@@ -1,21 +1,11 @@
 ---
 title: "Amenity category"
-description: "A group of related amenities for a hotel or room type."
+description: "A category in the amenity dictionary."
 openapi-schema: "/api/v2/openapi.yaml AmenityCategory"
 ---
 
-A category groups related amenities. Use both `scope` and `code` to identify
-it: codes such as `accessibility` exist for both hotels and room types.
-
-You receive this object at `data[].category` in the
-[amenity dictionary](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).
-Dictionary categories always include `scope`, `code`, and `label`.
-
-Hotel and room type responses reference categories at `amenityCategories[].category`
-with `code` only. Use the parent resource type to select the dictionary scope.
-[`expand=amenityLabels`](/api/expand) adds `label` to these references.
-
-See the [amenities guide](/api/amenities) for filtering, localization, and
-request and response examples.
+A category in the [amenity dictionary](/api/amenities#amenity-dictionary),
+identified by `scope` and `code`. Hotel and room type responses reference it by
+`code`; see [Assigned amenities](/api/amenities#assigned-amenities).
 
 ## Fields

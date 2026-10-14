@@ -115,22 +115,9 @@ staff: `cs` (Czech), `en` (English), `de` (German), and `ru` (Russian).
 
 ## Amenities
 
-`amenityCategories` groups the hotel's assigned structured amenities by
-category. Categories without assigned amenities are omitted, and the response
-does not contain the complete system dictionary. Each category carries
-`code`. Amenities and selected options carry `code`; each
-amenity also carries its
-applicable pricing, distance, options, opening-hour, and localized note details.
-
-Fetch [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary)
-and match the category by dictionary scope `hotel` and `code`, then the amenity by `code`, to resolve its label,
-parent category, supported detail fields, and every allowed amenity-specific
-option. See [Detail kinds](/api/objects/amenity-value#detail-kinds) for the
-fields that each detail kind adds and their values. Fields not supported by an
-amenity are omitted.
-
-Add [`expand=amenityLabels`](/api/expand) to inline the localized category,
-amenity, and option labels instead of resolving them against the dictionary.
+`amenityCategories` lists the amenities assigned to the hotel, grouped by
+category. See [Assigned amenities](/api/amenities#assigned-amenities) for the
+structure and labels.
 
 ## Prices
 
