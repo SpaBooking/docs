@@ -22,6 +22,11 @@
         "schema": "v2#/definitions/RoomType/properties/amenityCategories",
         "at": "/amenityCategories"
       }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityOpeningHours"
+      }
     ]
   ],
   "api/currencies.mdx": [
@@ -71,53 +76,7 @@
       }
     ]
   ],
-  "api/objects/amenity-value.mdx": [
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/AmenityValue"
-      }
-    ]
-  ],
+  "api/objects/amenity-value.mdx": [],
   "api/objects/hotel.mdx": [
     [
       {

@@ -94,8 +94,6 @@ its scope. Each amenity has a stable `code`, a localized `label`, and
 | `view` | View |
 | `kitchen` | Food and drink |
 
-Every room type amenity is presence-only: its `detailKinds` array is empty.
-
 ## Assigned amenities
 
 Hotel and room type responses group the assigned amenities by category in
@@ -104,8 +102,7 @@ Categories, amenities, and options follow the dictionary order. An amenity that
 is not listed is not offered or not specified.
 
 Each [amenity value](/api/objects/amenity-value) contains the amenity `code`
-and the fields of its detail kinds. See
-[Detail kinds](/api/objects/amenity-value#detail-kinds) for those fields.
+and the fields of its [detail kinds](#detail-kinds).
 
 <CodeGroup>
 
@@ -205,6 +202,86 @@ them, either:
   localized `label` on each category, amenity, and option.
 
 Codes are stable within API v2.
+
+## Detail kinds
+
+An amenity's `detailKinds` lists the details that can be specified for it. Each
+detail kind adds fixed fields to the [amenity value](/api/objects/amenity-value):
+
+| Detail kind | Fields | When not specified |
+| --- | --- | --- |
+| [`proximity`](#proximity) | `proximity`, `proximityMeters` | `null` |
+| [`pricing`](#pricing) | `pricing` | `null` |
+| [`options`](#options) | `options` | `[]` |
+| [`opening_hours`](#opening-hours) | `openingHours` | `{ "continuous": false, "blocks": [] }` |
+| [`note`](#note) | `note` | `null` for each requested language |
+
+A value contains the fields of all declared detail kinds, even when a detail is
+not specified, and no other detail fields. The order of `detailKinds` has no
+meaning.
+
+### Proximity
+
+`proximity` says where the amenity is located: `in-hotel` (inside the hotel
+building), `connecting` (in an adjacent building linked by an internal
+passage), or `nearby` (a short distance from the hotel). `proximityMeters` is
+the approximate distance in metres, from 0 to 1,000,000. It is set only when
+`proximity` is `nearby`.
+
+### Pricing
+
+`pricing` says whether using the amenity costs extra: `included` (included in
+the stay price), `conditional` (included under certain conditions), or `paid`
+(charged extra).
+
+### Options
+
+`options` lists the selected choices by `code`, for example the types of sauna.
+The amenity's dictionary entry lists every choice, in the same order. With
+`expand=amenityLabels`, each option also has a localized `label`.
+
+### Opening hours
+
+`continuous: true` means the amenity is open 24 hours a day, 7 days a week, and
+`blocks` is empty. Otherwise, each block gives the opening time `from`–`to` on
+the listed `days`:
+
+- `days` contains weekdays from `monday` to `sunday`, each at most once, in week
+  order.
+- `from` and `to` are hotel local times in the 24-hour `HH:mm` format. `to` is
+  always later than `from`.
+- Blocks that share a day do not overlap.
+
+```json Opening hours of a cafe
+{
+  "continuous": false,
+  "blocks": [
+    {
+      "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+      "from": "08:00",
+      "to": "12:00"
+    },
+    {
+      "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+      "from": "13:00",
+      "to": "18:00"
+    },
+    { "days": ["saturday", "sunday"], "from": "09:00", "to": "14:00" }
+  ]
+}
+```
+
+### Note
+
+`note` is additional information for guests, up to 200 characters per
+language. It follows [`Accept-Language`](/api/localization); a missing
+translation is `null`.
+
+### Presence-only amenities
+
+An amenity with an empty `detailKinds` array has no details. Its value contains
+only `code`, plus `label` with `expand=amenityLabels`. All room type amenities
+are presence-only.
 
 ## Filtering
 

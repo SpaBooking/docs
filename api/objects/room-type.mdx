@@ -58,14 +58,11 @@ does not match generated English or Russian names. Use `unitType` to filter by
 unit type.
 
 `unitType`, `tier`, and each `bedConfiguration` entry include localized labels.
-Unspecified unit types and tiers are `null`. Amenity labels come from the
-[room type amenity dictionary](/api/amenities#room-type-categories), or you can
-request `expand=amenityLabels` to include them in the response.
+Unspecified unit types and tiers are `null`.
 
-`amenityCategories` groups the assigned amenities by category `code`, for
-example `view`. Match the codes against scope `roomType` in the
-[amenity dictionary](/api/amenities), also for rooms embedded in a hotel.
-Groups without assigned amenities are omitted.
+`amenityCategories` lists the amenities assigned to the room type, grouped by
+category. See [Assigned amenities](/api/amenities#assigned-amenities) for the
+structure and labels.
 
 `description` is Markdown.
 
