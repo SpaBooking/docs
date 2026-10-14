@@ -6,6 +6,12 @@ icon: "clock-rotate-left"
 
 ## Unreleased
 
+### Amenity pricing
+
+- **Breaking:** Renamed the `access` detail kind and amenity value field to
+  `pricing`. The values are unchanged: `included`, `conditional`, and `paid`.
+- The amenity dictionary version changes. Refresh cached dictionaries.
+
 ### Disabled room types
 
 - Added the required boolean `disabled` to room type list, detail, and hotel

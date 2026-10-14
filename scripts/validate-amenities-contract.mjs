@@ -12,7 +12,7 @@ ajv.addSchema({ components: { schemas: doc.components.schemas } }, 'v2');
 const label = { 'cs-CZ': 'Sauna', en: 'Sauna' };
 const emptyHours = { continuous: false, blocks: [] };
 const sauna = {
-  code: 'sauna', proximity: null, proximityMeters: null, access: null,
+  code: 'sauna', proximity: null, proximityMeters: null, pricing: null,
   options: [], openingHours: emptyHours,
 };
 const hotel = { code: 'wellness' };
@@ -26,10 +26,11 @@ const cases = [
   ['presence-only room amenity', 'AmenityValue', { code: 'balcony' }, true],
   ['expanded room amenity', 'AmenityValue', { code: 'balcony', label: { en: 'Balcony' } }, true],
   ['unfilled localized note', 'AmenityValue', { code: 'doctor', note: { en: null } }, true],
-  ['invalid access code', 'AmenityValue', { ...sauna, access: 'free' }, false],
+  ['invalid pricing code', 'AmenityValue', { ...sauna, pricing: 'free' }, false],
   ['invalid proximity code', 'AmenityValue', { ...sauna, proximity: 'inside' }, false],
   ['negative distance', 'AmenityValue', { ...sauna, proximityMeters: -1 }, false],
-  ['missing amenity code', 'AmenityValue', { access: null }, false],
+  ['missing amenity code', 'AmenityValue', { pricing: null }, false],
+  ['legacy access kind', 'Amenity', { code: 'sauna', label, detailKinds: ['access'] }, false],
   ['missing selected option code', 'AmenityValue', { ...sauna, options: [{}] }, false],
   ['invalid opening time', 'AmenityValue', {
     ...sauna, openingHours: { continuous: false, blocks: [{ days: ['monday'], from: '25:00', to: '26:00' }] },

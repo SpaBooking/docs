@@ -174,7 +174,7 @@ curl \
           },
           "detailKinds": [
             "proximity",
-            "access",
+            "pricing",
             "options",
             "opening_hours"
           ],
@@ -228,7 +228,7 @@ Accept-Language: cs-CZ,en
           "code": "sauna",
           "proximity": "in-hotel",
           "proximityMeters": null,
-          "access": "included",
+          "pricing": "included",
           "options": [
             {
               "code": "finnish"
@@ -250,7 +250,7 @@ Accept-Language: cs-CZ,en
 
 The dictionary lists all three sauna options. This hotel selects only
 `finnish` and `steam`; use their labels from the hotel dictionary.
-`proximity`, `access`, and `openingHours` describe this hotel's sauna, not the
+`proximity`, `pricing`, and `openingHours` describe this hotel's sauna, not the
 dictionary entry. With `continuous: false`, an empty opening-hours block list
 means no hours were supplied. `continuous: true` means the amenity is open 24/7
 and also uses an empty block list.
@@ -283,7 +283,7 @@ Accept-Language: cs-CZ,en
           "code": "sauna",
           "proximity": "in-hotel",
           "proximityMeters": null,
-          "access": "included",
+          "pricing": "included",
           "options": [
             {
               "code": "finnish",
@@ -391,7 +391,7 @@ Accept-Language: cs-CZ,en
 The dictionary lists balcony and terrace as available choices. This room type
 selects only `balcony`. Resolve `view` and `balcony` against the room type
 dictionary. Both amenities have `detailKinds: []`, so the assigned value
-contains only its `code` by default, without proximity, access, or opening hours.
+contains only its `code` by default, without proximity, pricing, or opening hours.
 
 **3. Include labels with `expand=amenityLabels`.**
 
@@ -545,7 +545,7 @@ is needed.
           "code": "aquapark",
           "proximity": "nearby",
           "proximityMeters": 250,
-          "access": "included",
+          "pricing": "included",
           "openingHours": {
             "continuous": false,
             "blocks": [
@@ -561,7 +561,7 @@ is needed.
           "code": "sauna",
           "proximity": "in-hotel",
           "proximityMeters": null,
-          "access": "included",
+          "pricing": "included",
           "options": [{ "code": "finnish" }, { "code": "steam" }],
           "openingHours": {
             "continuous": false,
