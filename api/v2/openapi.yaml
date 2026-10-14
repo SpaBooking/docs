@@ -1150,6 +1150,9 @@ components:
             ru: Komfort
         occupancy:
           standard: 2
+          max: 3
+          singleUse: true
+          infantsExcluded: true
         bedConfiguration:
           - code: single
             count: 2
@@ -1241,14 +1244,33 @@ components:
           $ref: "#/components/schemas/LocalizedString"
     RoomTypeOccupancy:
       type: object
-      description: Occupancy details returned in room type responses.
+      description: Configured room occupancy details. Booking and pricing use standard occupancy; maximum capacity, single use and infant exclusion are informational settings.
       required:
         - standard
+        - max
+        - singleUse
+        - infantsExcluded
       properties:
         standard:
           type: integer
           description: Number of guests included in the room type's base price.
           example: 2
+        max:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: Configured maximum guest count, including extra beds. At least `standard` when present. Null when unspecified. Does not change booking capacity.
+          example: 3
+        singleUse:
+          type: boolean
+          nullable: true
+          description: Whether sale to one guest is configured. Null when unspecified. Does not change booking acceptance or price.
+          example: true
+        infantsExcluded:
+          type: boolean
+          nullable: true
+          description: Whether children aged 0–2 are configured to be excluded from the guest count. Null when unspecified. Does not change booking acceptance or price.
+          example: true
     RoomTypeBed:
       type: object
       required:

@@ -7,6 +7,14 @@ hidden: true
 
 ## Unreleased
 
+### Room type occupancy settings
+
+- Added `max`, `singleUse`, and `infantsExcluded` to `occupancy` in room type
+  list, detail, and hotel expansion responses. Each value is `null` when the
+  room type has no configured value; an explicit `false` is a configured value.
+- Booking and prices still use only `occupancy.standard`. The new fields are
+  informational.
+
 ### Room type category filter
 
 - **Breaking:** `GET /room-types` no longer accepts the `room_bathroom`,

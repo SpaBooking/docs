@@ -35,8 +35,22 @@ endpoints for dates and prices.
 ## Occupancy and beds
 
 In room type responses, `occupancy` is an object. Its `standard` field is the
-number of guests included in the room type's base price. For example,
-`"occupancy": { "standard": 2 }` describes a room priced for two guests.
+number of guests included in the room type's base price. It does not define
+the minimum number of guests. A room with four physical beds can have a
+standard occupancy of two.
+
+`max` is the configured maximum guest count, including extra beds. When
+present, it is at least `standard`. `singleUse` records whether the room is
+configured for sale to one guest. `infantsExcluded` records whether children
+aged 0–2 are configured not to count towards the guest count. Each of these
+fields is `null` when the room type has no configured value. An explicit
+`false` is a configured value.
+
+Booking uses `standard` as the guest-count limit. Price calculations use it
+where occupancy affects the price. Neither uses `max`, `singleUse`, or
+`infantsExcluded`, so these settings do not confirm that a guest party can book
+the room. A `singleUse` of `false` does not reject a booking for one guest.
+`infantsExcluded` does not change how infants are counted or priced.
 
 `bedConfiguration` describes the physical beds separately. It lists
 positive counts in dictionary order with a singular localized label for each bed.
@@ -89,8 +103,8 @@ by the exact value of `occupancy.standard` in the response. For example:
 GET /api/v2/room-types?occupancy=2
 ```
 
-This request returns room types whose response contains
-`"occupancy": { "standard": 2 }`. The filter does not match maximum capacity or
+This request returns room types whose `occupancy.standard` is `2`.
+The filter does not match maximum capacity or
 check whether a room can accommodate a specific guest party.
 
 `unitType` and `tier` accept comma-separated codes; each matches any listed code.
