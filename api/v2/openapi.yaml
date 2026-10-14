@@ -19,50 +19,15 @@ paths:
         - Amenity categories
       summary: List the amenity dictionary
       operationId: getAmenityCategories
-      description: >
-        Returns the full amenity dictionary for hotels and room types, grouped
-        by category. To return only hotel or room type amenities, use `scope=hotel`
-        or `scope=roomType`. Hotel categories are listed first, followed by room
-        type categories.
-        Each
+      description: |
+        Returns the amenity dictionary: amenity categories, their amenities,
+        and localized labels. Without `scope`, it returns hotel categories
+        followed by room type categories. The dictionary is returned in one
+        response, without pagination.
 
-        item in `data` contains a category with `scope`, `code`, and a localized label,
-
-        and the amenities in that category. Identify categories by the pair `scope`
-        and `code`. Each nested amenity has a stable
-
-        `code`, localized `label`, and supported `detailKinds`.
-
-
-        This endpoint returns every amenity in the requested scope, independent
-
-        of assignments to hotels or room types. Fetch it to build
-
-        amenity filters and resolve the codes returned in
-
-        `amenityCategories[].amenities[]`. This small reference list is
-
-        not paginated.
-
-
-        Amenities whose `detailKinds` include `options` also carry an `options`
-
-        array listing every supported choice with its localized label.
-
-
-        The response is cacheable. Revalidate it with `If-None-Match` to get
-
-        `304` while your copy is current, and compare the
-
-        `X-SpaPortal-Amenities-Version` header returned by hotel and room type endpoints
-        with
-
-        your cached version to detect dictionary updates. See
-
-        [Amenities](/api/amenities) for the recommended caching flow.
-
-
-        See the [Amenity](/api/objects/amenity) object for the full field reference.
+        Use it to resolve the amenity codes in hotel and room type responses
+        and to build amenity filters. See [Amenities](/api/amenities) for the
+        structure, detail kinds, and caching.
       parameters:
         - name: scope
           in: query
@@ -80,8 +45,7 @@ paths:
           schema:
             type: string
           description: ETag from a previous response. When the dictionary variant is unchanged, the
-            API returns `304` with no body. See [Amenities](/api/amenities) for the caching
-            flow.
+            API returns `304` with no body. See [Caching](/api/amenities#caching).
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
       responses:
@@ -235,7 +199,8 @@ paths:
         Returns active hotels across the companies your public key is scoped to.
         A hotel includes its localized short description and sales-channel
         content, structured accommodation rules, meal services, indications,
-        staff languages, and hotel-level amenities. Localized fields return
+        staff languages, and hotel [amenities](/api/amenities#assigned-amenities).
+        Localized fields return
         the locale keys selected by `Accept-Language`. `name` falls back to the
         default locale (cs-CZ); other untranslated values are returned as null.
 
@@ -292,16 +257,18 @@ paths:
             type: string
             maxLength: 500
           description: >-
-            Comma-separated amenity `code`s; returns only hotels that have ALL
-            listed amenities (AND semantics). E.g. `sauna,parking`.
+            Comma-separated hotel amenity codes. Returns hotels that have all
+            listed amenities, for example `sauna,parking`. Unknown codes return
+            `400`. See [Filtering](/api/amenities#filtering).
         - name: amenityCategory
           in: query
           schema:
             type: string
             enum: [health, wellness, dining, services, accessibility, parking, sport, children]
           description: >-
-            Returns hotels that have any amenity in this category
-            (e.g. `wellness`).
+            Hotel amenity category code. Returns hotels that have at least one
+            amenity in this category, for example `wellness`. See
+            [Filtering](/api/amenities#filtering).
         - name: expand
           in: query
           style: form
@@ -312,12 +279,11 @@ paths:
               type: string
               enum: [roomTypes, amenityLabels]
           description: >-
-            Comma-separated list of expansions (for example
-            `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
-            `amenityLabels` inlines the localized category, amenity, and option
-            labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
-            `roomTypes` embeds each
-            hotel's enabled, non-draft room types (otherwise fetch them via
+            Comma-separated expansions, for example `roomTypes,amenityLabels`.
+            `amenityLabels` adds localized labels to amenity categories,
+            amenities, and options, including those of embedded room types; see
+            [Labels](/api/amenities#labels). `roomTypes` embeds each hotel's
+            enabled, non-draft room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
       responses:
         "200":
@@ -343,8 +309,8 @@ paths:
       summary: Get a hotel
       operationId: getHotel
       description: |
-        Returns a single hotel with its localized content, complete structured
-        profile, and amenities by id.
+        Returns a single hotel by id with its localized content, structured
+        profile, and [amenities](/api/amenities#assigned-amenities).
 
         `priceFrom` has the same shape as in the hotel list; see
         [Prices](/api/prices).
@@ -372,11 +338,10 @@ paths:
               type: string
               enum: [roomTypes, amenityLabels]
           description: >-
-            Comma-separated list of expansions (for example
-            `expand=amenityLabels` or `expand=roomTypes,amenityLabels`).
-            `amenityLabels` inlines the localized category, amenity, and option
-            labels, including amenity labels on embedded room types in `amenityCategories`, so no dictionary lookup is needed.
-            `roomTypes` embeds the hotel's
+            Comma-separated expansions, for example `roomTypes,amenityLabels`.
+            `amenityLabels` adds localized labels to amenity categories,
+            amenities, and options, including those of embedded room types; see
+            [Labels](/api/amenities#labels). `roomTypes` embeds the hotel's
             enabled, non-draft room types (otherwise fetch them via
             `GET /room-types?hotelId={hotelId}`).
       responses:
@@ -482,8 +447,11 @@ paths:
               enum:
                 - hotel
                 - amenityLabels
-          description: "Comma-separated expansions: hotel embeds only id, name, and stars; amenityLabels inlines
-            amenity category and amenity labels. You can request both."
+          description: >-
+            Comma-separated expansions. `hotel` embeds the hotel's `id`, `name`,
+            and `stars`. `amenityLabels` adds localized labels to amenity
+            categories and amenities; see [Labels](/api/amenities#labels). You
+            can request both.
           style: form
           explode: false
         - name: sort
@@ -545,8 +513,10 @@ paths:
             type: array
             items:
               type: string
-          description: Require all comma-separated room type amenity codes (AND). Unknown codes
-            return 400.
+          description: >-
+            Comma-separated room type amenity codes. Returns room types that
+            have all listed amenities, for example `balcony,bathtub`. Unknown
+            codes return `400`. See [Filtering](/api/amenities#filtering).
         - name: amenityCategory
           in: query
           schema:
@@ -558,8 +528,9 @@ paths:
               - view
               - kitchen
           description: >-
-            Require at least one amenity from this room type category.
-            Unknown categories return 400.
+            Room type amenity category code. Returns room types that have at
+            least one amenity in this category, for example `view`. See
+            [Filtering](/api/amenities#filtering).
       responses:
         "200":
           description: A paginated list of room types.
@@ -605,8 +576,11 @@ paths:
               enum:
                 - hotel
                 - amenityLabels
-          description: "Comma-separated expansions: hotel embeds only id, name, and stars; amenityLabels inlines
-            amenity category and amenity labels. You can request both."
+          description: >-
+            Comma-separated expansions. `hotel` embeds the hotel's `id`, `name`,
+            and `stars`. `amenityLabels` adds localized labels to amenity
+            categories and amenities; see [Labels](/api/amenities#labels). You
+            can request both.
           style: form
           explode: false
       responses:
@@ -719,18 +693,16 @@ components:
         example: cs-CZ,de
     ETag:
       description: >-
-        Entity tag of this amenity-dictionary variant (combined, hotel, or roomType,
-        and the requested locales). Send it back in
-        `If-None-Match` to revalidate a cached copy.
+        Entity tag of this dictionary response. Send it in `If-None-Match` to
+        revalidate your copy. See [Caching](/api/amenities#caching).
       schema:
         type: string
         example: '"5a9ef9cd5e0cde22-hotel-cs-CZ_de"'
     AmenitiesVersion:
       description: >-
-        Current amenity dictionary version. The value changes only when the
-        dictionary content or response shape changes. One version covers both scopes.
-        Refetch `GET /amenity-categories` or each separately cached scope when it
-        differs from the version you cached.
+        Current amenity dictionary version, the same for both scopes. When it
+        differs from the version of your cached dictionary, fetch the dictionary
+        again. See [Caching](/api/amenities#caching).
       schema:
         type: string
         example: 5a9ef9cd5e0cde22
@@ -1109,6 +1081,9 @@ components:
           $ref: "#/components/schemas/RoomTypeBuilding"
         amenityCategories:
           type: array
+          description: >-
+            Amenities assigned to the room type, grouped by category. See
+            [Assigned amenities](/api/amenities#assigned-amenities).
           items:
             $ref: "#/components/schemas/RoomTypeAmenityCategoryGroup"
         images:
@@ -1687,12 +1662,8 @@ components:
         amenityCategories:
           type: array
           description: >-
-            Structured amenities assigned to this hotel, grouped by category.
-            Categories without assigned amenities are omitted. Categories include
-            code; amenities and options include code. Resolve their localized
-            labels and supported detail kinds against the
-            [amenity dictionary](/api/amenities)
-            (`GET /amenity-categories`).
+            Amenities assigned to the hotel, grouped by category. See
+            [Assigned amenities](/api/amenities#assigned-amenities).
           items:
             $ref: "#/components/schemas/HotelAmenityCategoryGroup"
           example:
@@ -2263,9 +2234,9 @@ components:
       additionalProperties: false
       required: [code]
       description: >-
-        A category assigned to a hotel. Look up its code in the hotel
-        [amenity dictionary](/api/amenities), or request `expand=amenityLabels`
-        to include its localized label.
+        A category assigned to a hotel. Resolve its `code` in the hotel amenity
+        dictionary or request `expand=amenityLabels`; see
+        [Labels](/api/amenities#labels).
       properties:
         code:
           type: string
@@ -2291,9 +2262,9 @@ components:
       additionalProperties: false
       required: [code]
       description: >-
-        A category assigned to a room type. Look up its code in the room type
-        [amenity dictionary](/api/amenities), or request `expand=amenityLabels`
-        to include its localized label.
+        A category assigned to a room type. Resolve its `code` in the room type
+        amenity dictionary or request `expand=amenityLabels`; see
+        [Labels](/api/amenities#labels).
       properties:
         code:
           type: string
