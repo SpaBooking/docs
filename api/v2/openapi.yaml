@@ -115,7 +115,7 @@ paths:
                           en: Sauna
                         detailKinds:
                           - proximity
-                          - access
+                          - pricing
                           - options
                           - opening_hours
                         options:
@@ -1709,7 +1709,7 @@ components:
                 - code: aquapark
                   proximity: nearby
                   proximityMeters: 250
-                  access: included
+                  pricing: included
                   openingHours:
                     continuous: false
                     blocks:
@@ -1846,7 +1846,7 @@ components:
               - code: aquapark
                 proximity: nearby
                 proximityMeters: 250
-                access: included
+                pricing: included
                 openingHours:
                   continuous: false
                   blocks:
@@ -1856,7 +1856,7 @@ components:
               - code: sauna
                 proximity: in-hotel
                 proximityMeters: null
-                access: included
+                pricing: included
                 options:
                   - code: finnish
                   - code: steam
@@ -1875,7 +1875,7 @@ components:
                 ru: Парковка
             amenities:
               - code: parking
-                access: paid
+                pricing: paid
                 options:
                   - code: covered
                     label:
@@ -2402,7 +2402,7 @@ components:
             type: string
             enum:
               - proximity
-              - access
+              - pricing
               - options
               - opening_hours
               - note
@@ -2426,7 +2426,7 @@ components:
           de: Sauna
           en: Sauna
           ru: Сауна
-        detailKinds: [proximity, access, options, opening_hours]
+        detailKinds: [proximity, pricing, options, opening_hours]
         options:
           - code: finnish
             label:
@@ -2526,14 +2526,14 @@ components:
           description: >-
             Present with `proximity`. Contains a distance when `proximity` is
             `nearby`; otherwise null.
-        access:
+        pricing:
           type: string
           nullable: true
           enum: [included, conditional, paid, null]
           description: >-
-            Present when `detailKinds` includes
-            [`access`](/api/objects/amenity-value#access). Null when not
-            specified. `included` means no additional charge,
+            Whether using the amenity costs extra. Present when `detailKinds`
+            includes [`pricing`](/api/objects/amenity-value#pricing). Null when
+            not specified. `included` means no additional charge,
             `conditional` means inclusion depends on stated conditions, and
             `paid` means an additional charge applies.
         options:
@@ -2567,7 +2567,7 @@ components:
         code: aquapark
         proximity: nearby
         proximityMeters: 250
-        access: included
+        pricing: included
         openingHours:
           continuous: false
           blocks:
@@ -2610,10 +2610,10 @@ components:
             amenities:
               - code: aquapark
                 label: { cs-CZ: Akvapark, de: Aquapark, en: Aquapark }
-                detailKinds: [proximity, access, opening_hours]
+                detailKinds: [proximity, pricing, opening_hours]
               - code: sauna
                 label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
-                detailKinds: [proximity, access, options, opening_hours]
+                detailKinds: [proximity, pricing, options, opening_hours]
                 options:
                   - code: finnish
                     label: { cs-CZ: Finská sauna, de: Finnische Sauna, en: "Finnish sauna" }

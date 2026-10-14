@@ -22,7 +22,7 @@ Each detail kind adds a fixed set of fields to the amenity value:
 | Detail kind | Fields | When not specified |
 | --- | --- | --- |
 | [`proximity`](#proximity) | `proximity`, `proximityMeters` | Both `null` |
-| [`access`](#access) | `access` | `null` |
+| [`pricing`](#pricing) | `pricing` | `null` |
 | [`options`](#options) | `options` | `[]` |
 | [`opening_hours`](#opening-hours) | `openingHours` | `{ "continuous": false, "blocks": [] }` |
 | [`note`](#note) | `note` | `null` for each requested locale |
@@ -61,9 +61,9 @@ when the distance is not specified, it is `null`.
 }
 ```
 
-### Access
+### Pricing
 
-`access` says whether using the amenity costs extra:
+`pricing` says whether using the amenity costs extra:
 
 | Value | Meaning |
 | --- | --- |
@@ -74,7 +74,7 @@ when the distance is not specified, it is `null`.
 ```json Laundry
 {
   "code": "laundry",
-  "access": "paid"
+  "pricing": "paid"
 }
 ```
 
