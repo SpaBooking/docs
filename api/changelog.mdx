@@ -6,6 +6,13 @@ icon: "clock-rotate-left"
 
 ## Unreleased
 
+### Room type category filter
+
+- **Breaking:** `GET /room-types` no longer accepts the `room_bathroom`,
+  `room_equipment`, `room_accessibility`, `room_view`, and `room_kitchen`
+  aliases in `amenityCategory`. Use the room type category codes, such as
+  `view`. Prefixed codes return `400`.
+
 ### Amenity pricing
 
 - **Breaking:** Renamed the `access` detail kind and amenity value field to
