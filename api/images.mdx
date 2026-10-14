@@ -90,7 +90,7 @@ There are two possible cases:
 
 - A small original can have known `width` and `height` but no variant because
   its width is below 480 pixels.
-- An unavailable legacy image has `width: null`, `height: null`, and
+- An image with unavailable dimensions has `width: null`, `height: null`, and
   `variants: {}`.
 
 As a final error fallback, remove `srcset` and use `url`.
@@ -113,10 +113,9 @@ requested locale keys:
 The API provides recommended alternative text. Your client can still use
 `alt=""` when the image is decorative or redundant in its rendered context.
 
-## Compatibility
+## Previews
 
-API v2 no longer returns `thumbnailUrl`. Use an available `variants` URL for
-previews and `url` when no variant is available.
+Use an available `variants` URL for previews and `url` when no variant is available.
 
 See the [Hotel](/api/objects/hotel) and [Room type](/api/objects/room-type)
 object references.

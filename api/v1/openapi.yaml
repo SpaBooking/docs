@@ -1864,7 +1864,7 @@ components:
         thumbnail:
           type: string
           nullable: true
-          description: Legacy preview URL of the first room image.
+          description: Preview URL of the first room image.
         width:
           type: integer
           minimum: 1
@@ -1936,7 +1936,7 @@ components:
         thumbnail:
           type: string
           nullable: true
-          description: Legacy preview URL of the first hotel image.
+          description: Preview URL of the first hotel image.
         width:
           type: integer
           minimum: 1
@@ -2011,7 +2011,7 @@ components:
         thumbnail:
           type: string
           nullable: true
-          description: Legacy preview URL of the first visit type image.
+          description: Preview URL of the first visit type image.
         width:
           type: integer
           minimum: 1
@@ -2107,7 +2107,7 @@ components:
         thumbnail:
           type: string
           nullable: true
-          description: Legacy preview URL of the first visit type image.
+          description: Preview URL of the first visit type image.
         width:
           type: integer
           minimum: 1

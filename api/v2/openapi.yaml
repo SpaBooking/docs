@@ -453,8 +453,12 @@ paths:
             type: integer
             minimum: 1
             maximum: 10
-          description: Exact standard guest count (occupancy.standard). The removed beds filter
-            returns 400; use occupancy.
+          description: >-
+            Filter room types by their exact standard occupancy, the number of guests
+            included in the base price. Pass an integer in the query string, for example
+            `?occupancy=2`, to return room types whose response contains
+            `occupancy.standard: 2`. This filter does not match maximum capacity or
+            a specific guest party.
         - name: code
           in: query
           schema:
@@ -560,8 +564,9 @@ paths:
               - room_kitchen
           description: >-
             Require at least one amenity from this room type category.
-            The room_ prefixed values are deprecated aliases; use the unprefixed
-            codes. The endpoint determines scope roomType. Unknown categories return 400.
+            Use unprefixed category codes. The filter also accepts the listed
+            room_ prefixed aliases. The endpoint determines scope roomType.
+            Unknown categories return 400.
       responses:
         "200":
           description: A paginated list of room types.
@@ -761,8 +766,8 @@ components:
         currency:
           deprecated: true
           description: >-
-            Accepted only for compatibility and ignored, regardless of value.
-            Omit it in new requests; responses include all available currencies.
+            Ignored, regardless of value. Omit this field; responses include
+            all available currencies.
         visitTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
@@ -803,8 +808,8 @@ components:
         currency:
           deprecated: true
           description: >-
-            Accepted only for compatibility and ignored, regardless of value.
-            Omit it in new requests; responses include all available currencies.
+            Ignored, regardless of value. Omit this field; responses include
+            all available currencies.
         visitTypeId:
           type: string
           pattern: "^[0-9a-fA-F]{24}$"
@@ -1072,15 +1077,16 @@ components:
           example: SUPERIOR-DBL
         disabled:
           type: boolean
-          description: True when this room type is disabled for new bookings. Historical
-            references remain valid. Use this flag instead of interpreting the code.
+          description: True when this room type is disabled for new bookings. Existing
+            bookings keep their references to the room type. The code does not indicate availability.
           example: false
         name:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: Localized guest-facing name. Missing generated English/Russian names combine
-            tier, unit type and, for hotels with several buildings, the building name. Custom
-            and legacy names keep saved translations. Generated names are not searchable.
+            tier, unit type and, for hotels with several buildings, the building name.
+            Names without automatic generation use only saved translations.
+            Generated names are not searchable.
         description:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -1267,12 +1273,13 @@ components:
           $ref: "#/components/schemas/LocalizedString"
     RoomTypeOccupancy:
       type: object
+      description: Occupancy details returned in room type responses.
       required:
         - standard
       properties:
         standard:
           type: integer
-          description: Standard guest count used for booking and pricing.
+          description: Number of guests included in the room type's base price.
           example: 2
     RoomTypeBed:
       type: object

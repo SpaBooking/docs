@@ -64,22 +64,6 @@ Assigned categories omit `scope`. Use `hotel` when reading a hotel's
 The `scope` query parameter filters the dictionary without changing its entry
 shape. An empty or unknown scope, including `all`, returns `400`.
 
-### Updating an existing integration
-
-If your integration relied on the previous hotel-only default, request
-`GET /api/v2/amenity-categories?scope=hotel` to keep that behavior. Both the
-previous and current contracts accept this filter, so it works with either
-version.
-
-For assigned categories, replace reads of `category.scope` with the parent
-resource type. Use `hotel` for hotel amenities and `roomType` for room type
-amenities, including embedded rooms. Dictionary entries continue to include
-`scope`; key any shared category index by both scope and code.
-
-Refresh cached dictionaries when `X-SpaPortal-Amenities-Version` changes.
-For room type integrations, update category lookups to the unprefixed codes;
-only query filters retain the old `room_*` aliases.
-
 ### Examples by scope
 
 Fetch both scopes together, or filter the dictionary to the resource you need.
@@ -654,16 +638,15 @@ GET /api/v2/hotels?amenityCategory=wellness
 - `amenities=balcony,bathtub` requires both amenities.
 - `amenityCategory=view` requires at least one amenity from that category.
 
-Legacy room category filters (`room_bathroom`, `room_equipment`,
-`room_accessibility`, `room_view`, `room_kitchen`) remain accepted as deprecated
-aliases. No removal date has been announced. Use the unprefixed codes for new requests. Responses always use
-unprefixed category codes. The resource endpoint determines the filter scope;
+Use unprefixed category codes in requests. The filter also accepts aliases
+`room_bathroom`, `room_equipment`, `room_accessibility`, `room_view`, and
+`room_kitchen`. Responses always use unprefixed category codes.
+The resource endpoint determines the filter scope;
 for example, `amenityCategory=accessibility` on `/room-types` searches room
 accessibility, while the same filter on `/hotels` searches hotel accessibility.
 
 An empty `amenityCategory=` is treated as an omitted filter on both resource
-endpoints. This preserves existing filter behavior; an empty dictionary
-`scope=` is invalid and returns `400`.
+endpoints. An empty dictionary `scope=` is invalid and returns `400`.
 
 Unknown amenity or category codes return `400`. Hotel filters use only the hotel
 dictionary. To find hotels through room amenities, filter room types and collect

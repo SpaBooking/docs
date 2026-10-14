@@ -16,7 +16,7 @@ hotel detail endpoint for the full hotel object.
 
 Every room type includes `disabled`. A value of `true` means you must exclude it
 from new room choices. Existing bookings keep their references to that room type.
-Use this flag instead of checking for `_DELETED` in `code`.
+Use `disabled` to determine whether the room type is enabled for new bookings.
 
 The room type list returns enabled room types by default (`disabled=false`).
 Request `GET /api/v2/room-types?disabled=true` to list disabled room types, or
@@ -26,8 +26,7 @@ and result totals. Draft room types are never returned.
 Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
 You can still fetch a disabled room directly by its `id`; the detail response
 includes `disabled: true`. When requesting archived rooms or a detail by ID,
-check this flag before offering the room to guests. You do not need a code suffix
-check for any of these endpoints.
+check this flag before offering the room to guests.
 
 A room type's code can change. Store its `id` for references. A room being enabled
 does not guarantee availability for a particular stay; use the calendar and price
@@ -35,8 +34,11 @@ endpoints for dates and prices.
 
 ## Occupancy and beds
 
-Use `occupancy.standard` for booking and prices. It is the room type's standard
-guest count. `bedConfiguration` describes the physical beds separately. It lists
+In room type responses, `occupancy` is an object. Its `standard` field is the
+number of guests included in the room type's base price. For example,
+`"occupancy": { "standard": 2 }` describes a room priced for two guests.
+
+`bedConfiguration` describes the physical beds separately. It lists
 positive counts in dictionary order with a singular localized label for each bed.
 An empty array means the bed configuration has not been described.
 
@@ -50,8 +52,8 @@ fills missing English and Russian values from the tier and unit type labels.
 When the hotel has several buildings, it also appends the room's building name.
 A missing building translation falls back to the Czech building name.
 
-Custom names and legacy names keep their saved translations. Missing custom
-translations remain `null`. The `search` filter searches saved names only, so it
+Names without automatic generation use only saved translations; missing
+translations are `null`. The `search` filter searches saved names only, so it
 does not match generated English or Russian names. Use `unitType` to filter by
 unit type.
 
@@ -85,12 +87,20 @@ permits pets, the room's rule applies; an unspecified room rule is `null`.
 
 ## Filtering
 
-Use `occupancy` for an exact standard guest count. `unitType` and `tier` accept
-comma-separated codes; each matches any listed code. `amenities` requires all
-listed amenity codes, while `amenityCategory` requires any amenity in that
-category. Unknown codes return `400`.
+The optional `occupancy` query parameter is an integer from 1 to 10. It filters
+by the exact value of `occupancy.standard` in the response. For example:
 
-The removed `beds` filter returns `400`. Replace it with `occupancy`.
+```http
+GET /api/v2/room-types?occupancy=2
+```
+
+This request returns room types whose response contains
+`"occupancy": { "standard": 2 }`. The filter does not match maximum capacity or
+check whether a room can accommodate a specific guest party.
+
+`unitType` and `tier` accept comma-separated codes; each matches any listed code.
+`amenities` requires all listed amenity codes, while `amenityCategory` requires
+any amenity in that category. Unknown codes return `400`.
 
 ## Images
 

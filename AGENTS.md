@@ -30,6 +30,8 @@
 - Code formatting for file names, commands, paths, and code references
 - Prefer English for public developer documentation
 - Keep endpoint behavior aligned with the implementation and tests in `spaportal-3`
+- Describe current API behavior factually. Keep release history and before/after comparisons exclusively in `api/changelog.mdx`.
+- Explain supported aliases and ignored parameters by their current behavior, without recounting their history.
 - Treat `APIARY.md` as historical input, not as the final source of truth
 
 ## Content boundaries

@@ -10,8 +10,8 @@ This flow uses **API v1**, under `https://spaportal.cz/api/v1`, with
 `Authorization: Bearer <API_KEY>`. All paths below include the version. For
 parameters and response schemas, use the [API v1 reference](/api/v1).
 
-API v2 does not provide a replacement booking-creation endpoint. Use the numeric
-IDs returned by v1 for this flow; do not pass v2 hex `id` values as v1 request IDs.
+Booking creation uses `POST /api/v1/booking`. Use the numeric IDs returned by v1
+for this flow; do not pass v2 hex `id` values as v1 request IDs.
 
 ## Recommended flow
 
@@ -29,7 +29,7 @@ IDs returned by v1 for this flow; do not pass v2 hex `id` values as v1 request I
 
 ## Opening the calendar
 
-On the first calendar load, call `GET /api/v1/calendar/dates` with a hotel, visit type, and `guests`, but without `date_from` and `date_to`. A room type is optional. The response starts at the first month that contains a stay you can actually book — one where every occupied night of the minimum stay has both remaining capacity and a price, and the check-out date has a price — instead of at the current month.
+On the first calendar load, call `GET /api/v1/calendar/dates` with a hotel, visit type, and `guests`, but without `date_from` and `date_to`. A room type is optional. The response starts at the first month that contains a stay you can book. Every occupied night of that minimum-length stay must have both remaining capacity and a price, and the check-out date must have a price.
 
 Without a room type, SpaPortal checks the hotel's room types that match `guests`. The complete stay must fit into one room type. SpaPortal never combines capacity from different room types to construct a stay. Always send `guests` on this request so the search uses the intended room occupancy.
 

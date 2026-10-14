@@ -10,8 +10,8 @@ their top-level responses.
 
 ## Response shape
 
-Where `image` and `thumbnail` already exist, their values remain unchanged.
-The responsive metadata is additive:
+Each object includes the original image URL, a preview URL, dimensions,
+localized alternative text, and available responsive variants:
 
 ```json
 {
@@ -34,7 +34,7 @@ The responsive metadata is additive:
 | Field | Meaning |
 | --- | --- |
 | `image` | Original image URL. Use it for a full-size view and as the final fallback. |
-| `thumbnail` | Legacy preview URL. It can be `null`. |
+| `thumbnail` | Preview URL. It can be `null`. |
 | `width`, `height` | Intrinsic dimensions of the oriented original, or `null` when unavailable. |
 | `alt` | Localized alternative text selected by `Accept-Language`. |
 | `variants` | Available WebP URLs keyed by target width. |
@@ -99,7 +99,7 @@ There are two possible cases:
 
 - A small original can have known `width` and `height` but no variant because
   its width is below 480 pixels.
-- An unavailable legacy image has `width: null`, `height: null`, and
+- An image with unavailable dimensions has `width: null`, `height: null`, and
   `variants: {}`.
 
 As a final error fallback, remove `srcset` and try `thumbnail`, then `image`.
@@ -123,12 +123,6 @@ the requested language keys:
 
 The API provides recommended alternative text. Your client can still use
 `alt=""` when the image is decorative or redundant in its rendered context.
-
-## Compatibility
-
-The responsive fields are additive. Existing hotel and room type `image` and
-`thumbnail` values retain their behavior. Visit types expose the same
-first-image fields.
 
 See the [Hotels endpoint](/api/v1/reference/catalog/get-hotels), [Hotel
 endpoint](/api/v1/reference/catalog/get-hotel), and [Visit types
