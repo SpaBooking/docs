@@ -4,106 +4,216 @@ description: "A structured amenity selected for a hotel or room type."
 openapi-schema: "/api/v2/openapi.yaml AmenityValue"
 ---
 
-An amenity assigned to a hotel or room type, returned under
-`amenityCategories[].amenities[]`. Selected amenities are grouped by category, and categories without assigned amenities
-are omitted. Its `code` references an amenity nested in one of the category
-groups returned by the [amenity dictionary](/api/amenities). The remaining
-properties describe access, distance, options, opening hours, and a localized
-guest note.
+An amenity value is an amenity assigned to a hotel or room type. Hotel and room
+type responses return amenity values in `amenityCategories[].amenities[]`,
+grouped by [category](/api/objects/amenity-category). Categories without
+assigned amenities are omitted.
 
-To look up a value in the dictionary, match the parent resource type and
-`category.code` to `data[].category`. Then match the value's `code` to an entry
-in that group's `amenities` array. You can filter the dictionary with
-`?scope=hotel` or `?scope=roomType`. The matched amenity's `detailKinds`
-determines which value fields are returned. Unsupported fields are omitted.
+Every value contains the amenity `code`, and also its localized `label` with
+[`expand=amenityLabels`](/api/expand). Its other fields depend on the
+`detailKinds` of the matching [amenity](/api/objects/amenity) in the
+[amenity dictionary](/api/amenities). The same rules apply to hotel and room
+type values.
 
-The [category](/api/objects/amenity-category) is returned once on the parent
-amenity group, by `code`. Its scope comes from the parent hotel or room type.
-`detailKinds` appears only in the
-dictionary. Labels are omitted from selected values by default. Request
-[`expand=amenityLabels`](/api/expand) to inline the localized `label` on the
-category, the amenity, and each selected option.
+## Detail kinds
 
-Each localized `note` value is limited to 200 characters.
+Each detail kind adds a fixed set of fields to the amenity value:
 
-| Dictionary detail kind | Meaningful amenity value field |
+| Detail kind | Fields | When not specified |
+| --- | --- | --- |
+| [`proximity`](#proximity) | `proximity`, `proximityMeters` | Both `null` |
+| [`access`](#access) | `access` | `null` |
+| [`options`](#options) | `options` | `[]` |
+| [`opening_hours`](#opening-hours) | `openingHours` | `{ "continuous": false, "blocks": [] }` |
+| [`note`](#note) | `note` | `null` for each requested locale |
+
+A value contains the fields of every detail kind its amenity declares, even
+when a detail is not specified. Fields of other detail kinds are omitted. The
+order of `detailKinds` has no meaning.
+
+To find the detail kinds of a value:
+
+1. Use the scope of the parent resource: `hotel` for a hotel, and `roomType`
+   for a room type, including a room type embedded in a hotel.
+2. In the dictionary, find the category with that `scope` and the `code` of
+   the value's category.
+3. In that category's `amenities`, find the entry with the value's `code`.
+
+### Proximity
+
+`proximity` describes where the amenity is located relative to the hotel:
+
+| Value | Meaning |
 | --- | --- |
-| `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
-| `access` | `access` |
-| `options` | amenity-specific `options` selected for the hotel, by `code` |
-| `opening_hours` | `openingHours` |
-| `note` | localized `note` |
+| `in-hotel` | Inside the hotel building. |
+| `connecting` | In an adjacent building linked to the hotel by an internal passage. |
+| `nearby` | A short distance from the hotel. |
 
-When the dictionary returns `detailKinds: []`, the amenity is presence-only.
-Its value contains only `code` by default, or `code` and `label` with
-`expand=amenityLabels`.
+`proximityMeters` is the approximate distance from the hotel in metres, from 0
+to 1,000,000. It has a value only when `proximity` is `nearby`. Otherwise, or
+when the distance is not specified, it is `null`.
 
-For an aquapark with
-`detailKinds: [proximity, access, opening_hours]`, a hotel response can
-contain:
-
-```json
+```json Proximity fields (excerpt)
 {
   "code": "aquapark",
   "proximity": "nearby",
-  "proximityMeters": 250,
-  "access": "included",
+  "proximityMeters": 250
+}
+```
+
+### Access
+
+`access` says whether using the amenity costs extra:
+
+| Value | Meaning |
+| --- | --- |
+| `included` | Included in the stay price. |
+| `conditional` | Included in the stay price under certain conditions. |
+| `paid` | Available for an additional charge. |
+
+```json Laundry
+{
+  "code": "laundry",
+  "access": "paid"
+}
+```
+
+### Options
+
+`options` lists the amenity-specific choices selected for the hotel or room
+type, such as the types of sauna. The amenity's dictionary entry lists every
+available choice in its own `options` array.
+
+- Each item contains the option `code`. With
+  [`expand=amenityLabels`](/api/expand), it also contains a localized `label`.
+- Option codes are defined per amenity. Resolve them against the `options` of
+  the same dictionary entry.
+- Selected options follow the dictionary order.
+- `[]` means that no choice is specified.
+
+<CodeGroup>
+
+```json Options field (excerpt)
+{
+  "code": "sauna",
+  "options": [
+    { "code": "finnish" },
+    { "code": "steam" }
+  ]
+}
+```
+
+```json With expand=amenityLabels (excerpt)
+{
+  "code": "sauna",
+  "label": { "cs-CZ": "Sauna", "en": "Sauna" },
+  "options": [
+    {
+      "code": "finnish",
+      "label": { "cs-CZ": "Finská sauna", "en": "Finnish sauna" }
+    },
+    {
+      "code": "steam",
+      "label": { "cs-CZ": "Parní lázeň", "en": "Steam bath" }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+### Opening hours
+
+`openingHours` describes when the amenity is open:
+
+- `continuous: true` means that the amenity is open 24 hours a day, 7 days a
+  week. `blocks` is then empty.
+- Otherwise, each item in `blocks` is a weekly time range. The amenity is open
+  from `from` to `to` on each day listed in `days`.
+- `days` contains one or more of `monday`, `tuesday`, `wednesday`, `thursday`,
+  `friday`, `saturday`, and `sunday`. Each day appears at most once, in order
+  from Monday to Sunday.
+- `from` and `to` are local times at the hotel in the 24-hour `HH:mm` format.
+  `to` is always later than `from`, so a block never extends past midnight.
+- Blocks that share a day do not overlap. A day can have more than one block,
+  for example to leave a midday break.
+- `{ "continuous": false, "blocks": [] }` means that the opening hours are not
+  specified.
+
+<CodeGroup>
+
+```json Cafe
+{
+  "code": "cafe",
   "openingHours": {
     "continuous": false,
     "blocks": [
       {
-        "days": ["monday", "tuesday", "wednesday"],
+        "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        "from": "08:00",
+        "to": "12:00"
+      },
+      {
+        "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        "from": "13:00",
+        "to": "18:00"
+      },
+      {
+        "days": ["saturday", "sunday"],
         "from": "09:00",
-        "to": "21:00"
+        "to": "14:00"
       }
     ]
   }
 }
 ```
 
-For an amenity whose `detailKinds` include `options`, the
-[amenity dictionary](/api/amenities) lists every available option. The hotel
-value contains only the selected options, by `code`. These excerpts show the
-option fields; the other sauna fields are omitted for brevity:
-
-```json Option fields (excerpt)
+```json Reception
 {
-  "code": "sauna",
-  "options": [{ "code": "finnish" }, { "code": "steam" }]
+  "code": "reception",
+  "openingHours": {
+    "continuous": true,
+    "blocks": []
+  }
 }
 ```
 
-With [`expand=amenityLabels`](/api/expand) each selected option also carries its
-localized `label`:
+</CodeGroup>
 
-```json Option fields with labels (excerpt)
+### Note
+
+`note` contains additional information for guests. It is a
+[localized string](/api/objects/localized-string) with the locale keys selected
+by [`Accept-Language`](/api/localization). Each locale value has at most 200
+characters. A locale value is `null` when the note is not available in that
+language. See [Missing translations](/api/localization#missing-translations).
+
+```json Childcare
 {
-  "code": "sauna",
-  "options": [
-    { "code": "finnish", "label": { "cs-CZ": "Finská sauna", "en": "Finnish sauna" } },
-    { "code": "steam", "label": { "cs-CZ": "Parní lázeň", "en": "Steam bath" } }
-  ]
+  "code": "childcare",
+  "note": {
+    "cs-CZ": "Hlídání dětí po domluvě na recepci.",
+    "en": "Childcare is available on request at the reception."
+  }
 }
 ```
 
-Fields mapped from `detailKinds` remain present even when they are not filled:
-scalars are `null`, arrays are empty, opening hours use
-`{ "continuous": false, "blocks": [] }`, and requested localized note values are
-`null`. Requested localized keys follow [`Accept-Language`](/api/localization).
+### Presence-only amenities
 
-`proximity` says where the amenity is: `in-hotel` (inside the hotel building),
-`connecting` (an adjacent building linked by an internal passage), or `nearby`
-(a short distance away, with `proximityMeters` giving the approximate distance).
+An amenity with `detailKinds: []` has no details. Its value contains only
+`code`, and also `label` with [`expand=amenityLabels`](/api/expand). Every
+amenity in the room type dictionary is presence-only.
 
-`access` says whether using the amenity costs extra: `included` (covered by the
-stay price), `conditional` (included subject to stated conditions), or `paid`
-(available for an additional charge).
+<CodeGroup>
 
-## Room type example
+```json Hotel amenity
+{ "code": "wheelchair_access" }
+```
 
-A selected balcony is a presence-only value. Resolve its label against the
-`scope=roomType` dictionary, or request `expand=amenityLabels`.
-
-```json
+```json Room type amenity
 { "code": "balcony" }
 ```
+
+</CodeGroup>
+
+## Fields

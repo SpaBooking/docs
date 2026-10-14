@@ -453,16 +453,10 @@ Published category and amenity codes in both scopes are stable within API v2.
 
 ### Detail kinds
 
-`detailKinds` tells clients which parts of an [Amenity value](/api/objects/amenity-value)
-are included:
-
-| Kind | Value field |
-| --- | --- |
-| `proximity` | `proximity` and `proximityMeters`; the distance is non-null only when `proximity` is `nearby` |
-| `access` | `access` |
-| `options` | amenity-specific choices; the entry carries an `options` array of every valid choice with its localized label |
-| `opening_hours` | `openingHours` |
-| `note` | localized `note` |
+`detailKinds` tells you which fields an assigned
+[amenity value](/api/objects/amenity-value) contains. See
+[Detail kinds](/api/objects/amenity-value#detail-kinds) for the fields, allowed
+values, and unspecified values of each kind.
 
 An empty `detailKinds` array identifies a presence-only amenity. By default,
 its selected value contains only `code`, for example
@@ -587,30 +581,10 @@ the dictionary. All three carry the localized labels. Or request
 `expand=amenityLabels` to receive those labels inline on the hotel and skip the
 join.
 
-Structured details use the following enums:
-
-- `proximity` — where the amenity is located relative to the hotel:
-  - `in-hotel` — inside the hotel building.
-  - `connecting` — in an adjacent building linked by an internal passage.
-  - `nearby` — a short distance away; `proximityMeters` gives the approximate
-    distance.
-- `access` — whether using the amenity costs extra:
-  - `included` — covered by the stay price.
-  - `conditional` — included subject to stated conditions.
-  - `paid` — available for an additional charge.
-- `options`: amenity-specific choices selected for the hotel. Each option
-  contains `code` by default, plus `label` with `expand=amenityLabels`. The
-  dictionary lists every available choice; hotel responses include only the
-  selected ones.
-- opening-hour days: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`,
-  `saturday`, `sunday`
-
-Apart from `code` and the optional expanded `label`, an amenity value includes
-only the fields mapped from its entry's `detailKinds` under
-`data[].amenities[]`. When a declared field is not
-filled, scalar fields are `null`, arrays are empty, opening hours are
-`{ "continuous": false, "blocks": [] }`, and requested localized note values
-are `null`.
+Apart from `code` and the optional expanded `label`, an amenity value contains
+only the fields of its amenity's `detailKinds`. See
+[Detail kinds](/api/objects/amenity-value#detail-kinds) for the meaning of each
+field, its allowed values, and its value when a detail is not specified.
 
 ## Filtering hotels
 

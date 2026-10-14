@@ -125,9 +125,9 @@ applicable access, distance, options, opening-hour, and localized note details.
 Fetch [`GET /api/v2/amenity-categories`](/api/v2/reference/amenity-categories/list-the-amenity-dictionary)
 and match the category by dictionary scope `hotel` and `code`, then the amenity by `code`, to resolve its label,
 parent category, supported detail fields, and every allowed amenity-specific
-option. See [Amenity value](/api/objects/amenity-value) for the exact
-`detailKinds` to response-field mapping. Fields not supported by an amenity are
-omitted.
+option. See [Detail kinds](/api/objects/amenity-value#detail-kinds) for the
+fields that each detail kind adds and their values. Fields not supported by an
+amenity are omitted.
 
 Add [`expand=amenityLabels`](/api/expand) to inline the localized category,
 amenity, and option labels instead of resolving them against the dictionary.
@@ -154,3 +154,5 @@ omitted when it has no available, fully priced stay in that currency.
 such a stay is omitted. The
 `visitType.name` falls back to the Czech value like the hotel `name`. See
 [Prices](/api/prices) for the selection rules and an example.
+
+## Fields

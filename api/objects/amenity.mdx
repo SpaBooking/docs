@@ -10,74 +10,33 @@ Its stable `code` identifies the amenity in hotel or room type responses. Each
 dictionary group also contains a [category](/api/objects/amenity-category) with
 `scope`, `code`, and a localized `label`. Match categories by both `scope` and
 `code`.
-`detailKinds` declares which structured fields can be populated on the
-corresponding [Amenity value](/api/objects/amenity-value).
 
 `notePlaceholder` is optional localized helper text for the amenity note. Most
 amenities omit it.
 
 ## Detail kinds
 
-`detailKinds` is metadata from the dictionary. Use it to decide which controls
-to display and which fields on the corresponding hotel or room type amenity value carry
-meaningful data. The values use snake case because they identify field groups,
-not response property names.
+`detailKinds` lists the details that hotels and room types can specify for the
+amenity. Each detail kind adds specific fields to the
+[amenity value](/api/objects/amenity-value) in hotel and room type responses:
 
-An empty `detailKinds` array means that selecting the amenity is the complete
-value. The corresponding hotel or room type amenity contains only its `code`
-by default; `expand=amenityLabels` also includes its `label`.
+| Detail kind | Describes |
+| --- | --- |
+| `proximity` | Where the amenity is located relative to the hotel |
+| `access` | Whether using the amenity costs extra |
+| `options` | Which amenity-specific choices are selected |
+| `opening_hours` | When the amenity is open |
+| `note` | Additional information for guests |
 
-For example:
+An empty array marks a presence-only amenity. For example, the room type
+amenity `balcony` has `detailKinds: []`, so its value is `{ "code": "balcony" }`.
 
-```json
-{
-  "code": "sauna",
-  "label": { "cs-CZ": "Sauna", "en": "Sauna" },
-  "detailKinds": ["proximity", "access", "options", "opening_hours"],
-  "options": [
-    {
-      "code": "finnish",
-      "label": {
-        "cs-CZ": "Finská sauna",
-        "en": "Finnish sauna"
-      }
-    },
-    {
-      "code": "infrared",
-      "label": {
-        "cs-CZ": "Infra sauna",
-        "en": "Infrared sauna"
-      }
-    },
-    {
-      "code": "steam",
-      "label": {
-        "cs-CZ": "Parní lázeň",
-        "en": "Steam bath"
-      }
-    }
-  ]
-}
-```
+<Card title="Detail kinds reference" icon="list-check" href="/api/objects/amenity-value#detail-kinds" horizontal>
+  Fields, allowed values, and unspecified values for each detail kind.
+</Card>
 
-This sauna can populate `proximity` (and conditionally `proximityMeters`),
-`access`, `options`, and `openingHours`. Because `detailKinds` includes
-`options`, the entry carries an `options` array with every valid sauna choice.
-The sauna does not support `note`, so the `note` property is omitted from its
-[Amenity value](/api/objects/amenity-value).
+When `detailKinds` includes `options`, the dictionary entry also has an
+`options` array with every choice the amenity supports. Amenity values contain
+only the selected choices.
 
-## Room type example
-
-The `scope=roomType` dictionary describes a balcony as a presence-only amenity:
-
-```json
-{
-  "code": "balcony",
-  "label": { "cs-CZ": "Balkon", "en": "Balcony" },
-  "detailKinds": []
-}
-```
-
-The corresponding selected [Amenity value](/api/objects/amenity-value) is
-`{ "code": "balcony" }`. Use this dictionary entry to resolve its label, or
-request `expand=amenityLabels` on the room type.
+## Fields
