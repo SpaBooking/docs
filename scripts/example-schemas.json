@@ -113,6 +113,31 @@
       {
         "schema": "v2#/definitions/AmenityValue"
       }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
     ]
   ],
   "api/objects/hotel.mdx": [
@@ -123,18 +148,7 @@
       }
     ]
   ],
-  "api/objects/amenity.mdx": [
-    [
-      {
-        "schema": "v2#/definitions/Amenity"
-      }
-    ],
-    [
-      {
-        "schema": "v2#/definitions/Amenity"
-      }
-    ]
-  ],
+  "api/objects/amenity.mdx": [],
   "api/pagination.mdx": [
     [
       {

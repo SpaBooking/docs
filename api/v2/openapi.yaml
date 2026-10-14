@@ -2393,10 +2393,11 @@ components:
         detailKinds:
           type: array
           description: >-
-            Structured detail field groups supported by this amenity. Resolve
-            these snake-case values to AmenityValue properties as documented in
-            the Amenity value object reference. An empty array means the
-            amenity is presence-only.
+            Details that hotels and room types can specify for this amenity.
+            Each kind adds specific fields to the amenity value. See
+            [Detail kinds](/api/objects/amenity-value#detail-kinds) for the
+            fields and values of each kind. An empty array marks a
+            presence-only amenity.
           items:
             type: string
             enum:
@@ -2448,10 +2449,13 @@ components:
     AmenityOpeningHoursBlock:
       type: object
       required: [days, from, to]
+      description: >-
+        A weekly time range. Blocks that share a day do not overlap.
       properties:
         days:
           type: array
           minItems: 1
+          description: Days on which the range applies, each at most once, from Monday to Sunday.
           items:
             type: string
             enum:
@@ -2465,10 +2469,12 @@ components:
         from:
           type: string
           pattern: "^([01]\\d|2[0-3]):[0-5]\\d$"
+          description: Opening time, local to the hotel, in the 24-hour `HH:mm` format.
           example: "07:00"
         to:
           type: string
           pattern: "^([01]\\d|2[0-3]):[0-5]\\d$"
+          description: Closing time in the same format. Always later than `from`.
           example: "15:00"
     AmenityOpeningHours:
       type: object
@@ -2476,21 +2482,22 @@ components:
       properties:
         continuous:
           type: boolean
-          description: True when the amenity operates continuously (24/7).
+          description: True when the amenity is open 24 hours a day, 7 days a week.
         blocks:
           type: array
-          description: Weekly opening-hour blocks. Empty when `continuous` is true.
+          description: >-
+            Weekly opening-hour blocks. Empty when `continuous` is true or when
+            the opening hours are not specified.
           items:
             $ref: "#/components/schemas/AmenityOpeningHoursBlock"
     AmenityValue:
       type: object
       required: [code]
       description: >-
-        A structured amenity assigned to a hotel or room type. Responses contain only
-        assigned amenities. Apart from `code` (and `label` with
-        `expand=amenityLabels`), only the fields mapped from the corresponding
-        entry under the amenity dictionary response `data[].amenities[]` are
-        present.
+        A structured amenity assigned to a hotel or room type. Apart from
+        `code` (and `label` with `expand=amenityLabels`), it contains only the
+        fields of the detail kinds that the matching dictionary amenity
+        declares. See [Detail kinds](/api/objects/amenity-value#detail-kinds).
       properties:
         code:
           type: string
@@ -2506,8 +2513,9 @@ components:
           enum: [in-hotel, connecting, nearby, null]
           description: >-
             Where the amenity is located relative to the hotel. Present when
-            `detailKinds` includes `proximity`; null when supported but not
-            filled. `in-hotel` is inside the hotel building, `connecting` is an
+            `detailKinds` includes
+            [`proximity`](/api/objects/amenity-value#proximity); null when not
+            specified. `in-hotel` is inside the hotel building, `connecting` is an
             adjacent building linked by an internal passage, and `nearby` is a
             short distance away (see `proximityMeters`).
         proximityMeters:
@@ -2523,8 +2531,9 @@ components:
           nullable: true
           enum: [included, conditional, paid, null]
           description: >-
-            Present when `detailKinds` includes `access`. Null when supported
-            but not filled. `included` means no additional charge,
+            Present when `detailKinds` includes
+            [`access`](/api/objects/amenity-value#access). Null when not
+            specified. `included` means no additional charge,
             `conditional` means inclusion depends on stated conditions, and
             `paid` means an additional charge applies.
         options:
@@ -2532,7 +2541,8 @@ components:
           description: >-
             Amenity-specific choices selected for this hotel or room type. Each
             option contains `code` by default and also `label` with
-            `expand=amenityLabels`. Present when `detailKinds` includes `options`.
+            `expand=amenityLabels`. Present when `detailKinds` includes
+            [`options`](/api/objects/amenity-value#options).
             Empty when the amenity supports choices but none are selected.
             Labels are also available in the dictionary.
           items:
@@ -2541,16 +2551,18 @@ components:
           allOf:
             - $ref: "#/components/schemas/AmenityOpeningHours"
           description: >-
-            Present when `detailKinds` includes `opening_hours`. When supported
-            but not filled, returns `continuous: false` with an empty `blocks`
+            Present when `detailKinds` includes
+            [`opening_hours`](/api/objects/amenity-value#opening-hours). When
+            not specified, returns `continuous: false` with an empty `blocks`
             array.
         note:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
-            Present when `detailKinds` includes `note`. Localized supplementary
+            Present when `detailKinds` includes
+            [`note`](/api/objects/amenity-value#note). Localized supplementary
             information for guests. Locale values are at most 200 characters
-            and are null when the requested translation is not filled.
+            and are null when the requested translation is not available.
       example:
         code: aquapark
         proximity: nearby
