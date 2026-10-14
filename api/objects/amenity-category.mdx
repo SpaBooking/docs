@@ -5,7 +5,7 @@ openapi-schema: "/api/v2/openapi.yaml AmenityCategory"
 ---
 
 A category groups related amenities. Use both `scope` and `code` to identify
-it: codes such as `accessibility` exist for both hotels and room types.
+it; a code is unique only within its scope.
 
 You receive this object at `data[].category` in the
 [amenity dictionary](/api/v2/reference/amenity-categories/list-the-amenity-dictionary).

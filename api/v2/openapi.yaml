@@ -29,7 +29,7 @@ paths:
         item in `data` contains a category with `scope`, `code`, and a localized label,
 
         and the amenities in that category. Identify categories by the pair `scope`
-        and `code`; codes such as `accessibility` occur in both scopes. Each nested amenity has a stable
+        and `code`. Each nested amenity has a stable
 
         `code`, localized `label`, and supported `detailKinds`.
 
@@ -557,15 +557,8 @@ paths:
               - accessibility
               - view
               - kitchen
-              - room_bathroom
-              - room_equipment
-              - room_accessibility
-              - room_view
-              - room_kitchen
           description: >-
             Require at least one amenity from this room type category.
-            Use unprefixed category codes. The filter also accepts the listed
-            room_ prefixed aliases. The endpoint determines scope roomType.
             Unknown categories return 400.
       responses:
         "200":
@@ -1379,8 +1372,8 @@ components:
           description: Descriptive building label.
     RoomTypeAmenityCategoryGroup:
       type: object
-      description: Room type amenities in dictionary order. Categories use unprefixed
-        room type codes; groups without assigned amenities are omitted.
+      description: Room type amenities in dictionary order. Groups without assigned
+        amenities are omitted.
       required:
         - category
         - amenities
@@ -2261,7 +2254,7 @@ components:
             - equipment
             - view
             - kitchen
-          description: Category code within its scope. Accessibility exists in both scopes; room category codes have no prefix.
+          description: Category code, unique within its scope.
         label:
           $ref: "#/components/schemas/LocalizedString"
     HotelAmenityCategoryRef:
@@ -2305,7 +2298,7 @@ components:
         code:
           type: string
           enum: [bathroom, equipment, accessibility, view, kitchen]
-          description: Category code in the room type amenity dictionary, without a resource prefix.
+          description: Category code in the room type amenity dictionary.
         label:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
