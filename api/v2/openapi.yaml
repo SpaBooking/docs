@@ -731,7 +731,7 @@ components:
         `If-None-Match` to revalidate a cached copy.
       schema:
         type: string
-        example: '"0ff7e6cb9fde95e7-hotel-cs-CZ_de"'
+        example: '"5a9ef9cd5e0cde22-hotel-cs-CZ_de"'
     AmenitiesVersion:
       description: >-
         Current amenity dictionary version. The value changes only when the
@@ -740,7 +740,7 @@ components:
         differs from the version you cached.
       schema:
         type: string
-        example: 0ff7e6cb9fde95e7
+        example: 5a9ef9cd5e0cde22
     RequestId:
       description: Request identifier for support and debugging.
       schema:
@@ -1868,27 +1868,12 @@ components:
                       to: "21:00"
           - category:
               code: parking
-              label:
-                cs-CZ: Parkování
-                de: Parken
-                en: Parking
-                ru: Парковка
             amenities:
               - code: parking
                 pricing: paid
                 options:
                   - code: covered
-                    label:
-                      cs-CZ: Kryté
-                      de: Überdacht
-                      en: Covered
-                      ru: Крытая
                   - code: guarded
-                    label:
-                      cs-CZ: Hlídané
-                      de: Bewacht
-                      en: Guarded
-                      ru: Охраняемая
                 note:
                   cs-CZ: Hlídané parkoviště je přímo u hotelu.
                   de: Der bewachte Parkplatz befindet sich direkt am Hotel.

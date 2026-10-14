@@ -30,6 +30,7 @@ const cases = [
   ['invalid proximity code', 'AmenityValue', { ...sauna, proximity: 'inside' }, false],
   ['negative distance', 'AmenityValue', { ...sauna, proximityMeters: -1 }, false],
   ['missing amenity code', 'AmenityValue', { pricing: null }, false],
+  ['legacy access kind', 'Amenity', { code: 'sauna', label, detailKinds: ['access'] }, false],
   ['missing selected option code', 'AmenityValue', { ...sauna, options: [{}] }, false],
   ['invalid opening time', 'AmenityValue', {
     ...sauna, openingHours: { continuous: false, blocks: [{ days: ['monday'], from: '25:00', to: '26:00' }] },
