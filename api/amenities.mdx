@@ -296,6 +296,10 @@ two amenity filters. Each endpoint filters by its own scope.
 
 When you combine both filters, both must match. Unknown codes return `400`.
 
+The filters match assigned amenity codes, regardless of details such as
+`proximity` or `pricing`. For example, `amenities=indoor_pool` also matches a
+pool that is `nearby`; use the returned `proximity` to narrow the results.
+
 ```bash
 GET /api/v2/hotels?amenities=sauna,parking
 GET /api/v2/room-types?amenityCategory=view
