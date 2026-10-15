@@ -2471,7 +2471,8 @@ components:
           format: date-time
           description: |
             When you captured these values, as an RFC 3339 date-time with a time zone
-            offset, for example `2026-10-14T09:12:00Z`.
+            offset, for example `2026-10-14T09:12:00Z`. The value is stored with millisecond
+            precision. A leap second (`23:59:60`) is not supported, and the value is ignored.
 
     BookingCreateResponse:
       type: object
