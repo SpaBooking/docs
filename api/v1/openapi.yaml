@@ -839,6 +839,8 @@ paths:
 
         The price is always calculated server-side from the current price list; any price sent in the request body is ignored. The stay costs the requested room type's configured price whatever share of its beds is occupied, so `guests` must hold at least one guest and no more than the room type has beds.
 
+        You can send optional marketing and analytics context in `attribution`. It never affects validation, pricing or the response: invalid attribution values are ignored and the booking is created as usual.
+
         The first `Accept-Language` value determines the customer communication language for automated emails.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -1576,6 +1578,15 @@ components:
             birth_date: "1894-01-01"
             loyalty_program_id: 1
             loyalty_program_code: GOLD000001
+        attribution:
+          analytics_visitor_id: 0192a3f4-7c1e-7d2a-9b1f-3e4d5c6b7a89
+          analytics_session_id: 0192a3f4-8d2f-7e3b-8c2a-4f5e6d7c8b9a
+          gclid: Cj0KCQjw...
+          utm_source: google
+          utm_medium: cpc
+          utm_campaign: franzensbad-kur
+          utm_term: kur franzensbad
+          captured_at: "2026-10-14T09:12:00Z"
 
     BookingCreateResponse:
       summary: Created booking
@@ -2342,6 +2353,8 @@ components:
             rate is multiplied by the room's bed count.
           items:
             $ref: "#/components/schemas/BookingGuest"
+        attribution:
+          $ref: "#/components/schemas/BookingAttribution"
 
     BilledTo:
       type: object
@@ -2397,6 +2410,69 @@ components:
         loyalty_program_code:
           type: string
           nullable: true
+
+    BookingAttribution:
+      type: object
+      nullable: true
+      description: |
+        Optional marketing and analytics context of the booking, such as the analytics
+        visitor and the ad click that led to it. Send the values you captured when the
+        customer arrived on your site.
+
+        Attribution never affects validation or pricing. Invalid values and unknown
+        fields are ignored, and the booking is created as usual. String values are
+        trimmed, and empty strings count as missing. A value longer than 256 characters
+        is ignored, not shortened.
+
+        Attribution is stored once with the booking and is never returned in a response.
+      properties:
+        analytics_visitor_id:
+          type: string
+          maxLength: 256
+          description: Visitor ID from your web analytics, for example the PostHog distinct ID.
+        analytics_session_id:
+          type: string
+          maxLength: 256
+          description: Session ID from your web analytics, for example the PostHog session ID.
+        gclid:
+          type: string
+          maxLength: 256
+          description: Google Ads click ID from the `gclid` URL parameter.
+        gbraid:
+          type: string
+          maxLength: 256
+          description: Google Ads click ID from the `gbraid` URL parameter.
+        wbraid:
+          type: string
+          maxLength: 256
+          description: Google Ads click ID from the `wbraid` URL parameter.
+        utm_source:
+          type: string
+          maxLength: 256
+          description: Value of the `utm_source` URL parameter.
+        utm_medium:
+          type: string
+          maxLength: 256
+          description: Value of the `utm_medium` URL parameter.
+        utm_campaign:
+          type: string
+          maxLength: 256
+          description: Value of the `utm_campaign` URL parameter.
+        utm_term:
+          type: string
+          maxLength: 256
+          description: Value of the `utm_term` URL parameter.
+        utm_content:
+          type: string
+          maxLength: 256
+          description: Value of the `utm_content` URL parameter.
+        captured_at:
+          type: string
+          format: date-time
+          description: |
+            When you captured these values, as an RFC 3339 date-time with a time zone
+            offset, for example `2026-10-14T09:12:00Z`. The value is stored with millisecond
+            precision. A leap second (`23:59:60`) is not supported, and the value is ignored.
 
     BookingCreateResponse:
       type: object
