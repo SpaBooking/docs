@@ -80,6 +80,18 @@ structure and labels.
 
 `description` is Markdown.
 
+## Included with this room
+
+The `inclusions` amenity category contains the room's assigned benefits:
+`parking`, `welcome_drink`, and `fruit_bowl`. Room parking includes the
+existing `pricing` field; `included` means parking is included in the room
+price. Labels use the same dictionary and `expand=amenityLabels` as other
+amenities. Empty categories are omitted.
+
+Room responses contain only the room's own assignments. See
+[Included with this room](/api/amenities#included-with-this-room) for response
+examples.
+
 ## Buildings and rules
 
 `building` contains the assigned building's id, short name, and descriptive

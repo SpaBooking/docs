@@ -17,6 +17,12 @@ const sauna = {
 };
 const hotel = { code: 'wellness' };
 const room = { code: 'view' };
+const inclusions = { code: 'inclusions' };
+const benefits = [
+  { code: 'parking', pricing: 'included' },
+  { code: 'welcome_drink' },
+  { code: 'fruit_bowl' },
+];
 const group = (category, amenities) => ({ category, amenities });
 const cases = [
   ['unfilled sauna details', 'AmenityValue', sauna, true],
@@ -50,6 +56,22 @@ const cases = [
   ['room accessibility', 'RoomTypeAmenityCategoryRef', { code: 'accessibility' }, true],
   ['hotel group', 'HotelAmenityCategoryGroup', group(hotel, [sauna]), true],
   ['room group', 'RoomTypeAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), true],
+  ['room inclusions dictionary', 'AmenityCategory', {
+    scope: 'roomType', ...inclusions, label: { en: 'Included with this room' },
+  }, true],
+  ['inclusions dictionary in hotel scope', 'AmenityCategory', {
+    scope: 'hotel', ...inclusions, label: { en: 'Included with this room' },
+  }, false],
+  ['room inclusions group', 'RoomTypeAmenityCategoryGroup', group(inclusions, benefits), true],
+  ['expanded room parking', 'RoomTypeAmenityCategoryGroup', group({
+    ...inclusions, label: { de: 'Im Zimmerpreis inbegriffen' },
+  }, [{ code: 'parking', pricing: 'included', label: { de: 'Parkplatz' } }]), true],
+  ['room parking with unknown pricing', 'RoomTypeAmenityCategoryGroup',
+    group(inclusions, [{ code: 'parking', pricing: null }]), true],
+  ['room parking with invalid pricing', 'RoomTypeAmenityCategoryGroup',
+    group(inclusions, [{ code: 'parking', pricing: 'free' }]), false],
+  ['room inclusions on hotel', 'HotelAmenityCategoryGroup', group(inclusions, benefits), false],
+  ['empty inclusions group', 'RoomTypeAmenityCategoryGroup', group(inclusions, []), false],
   ['room category on hotel', 'HotelAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), false],
   ['hotel category on room', 'RoomTypeAmenityCategoryGroup', group(hotel, [sauna]), false],
   ['empty assigned hotel group', 'HotelAmenityCategoryGroup', group(hotel, []), false],

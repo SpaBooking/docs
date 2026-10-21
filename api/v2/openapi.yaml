@@ -515,8 +515,10 @@ paths:
               type: string
           description: >-
             Comma-separated room type amenity codes. Returns room types that
-            have all listed amenities, for example `balcony,bathtub`. Unknown
-            codes return `400`. See [Filtering](/api/amenities#filtering).
+            have all listed amenities, for example `balcony,bathtub` or
+            `parking,welcome_drink`. Matches room assignments only; hotel
+            amenities are not inherited by this filter. Unknown codes return
+            `400`. See [Filtering](/api/amenities#filtering).
         - name: amenityCategory
           in: query
           schema:
@@ -527,9 +529,10 @@ paths:
               - accessibility
               - view
               - kitchen
+              - inclusions
           description: >-
             Room type amenity category code. Returns room types that have at
-            least one amenity in this category, for example `view`. See
+            least one amenity in this category, for example `view` or `inclusions`. See
             [Filtering](/api/amenities#filtering).
       responses:
         "200":
@@ -1083,7 +1086,9 @@ components:
           type: array
           description: >-
             Amenities assigned to the room type, grouped by category. See
-            [Assigned amenities](/api/amenities#assigned-amenities).
+            [Assigned amenities](/api/amenities#assigned-amenities). Room benefits
+            use the `inclusions` category; see
+            [Included with this room](/api/amenities#included-with-this-room).
           items:
             $ref: "#/components/schemas/RoomTypeAmenityCategoryGroup"
         images:
@@ -1190,6 +1195,13 @@ components:
               code: view
             amenities:
               - code: balcony
+          - category:
+              code: inclusions
+            amenities:
+              - code: parking
+                pricing: included
+              - code: welcome_drink
+              - code: fruit_bowl
         images:
           - url: https://cdn.example.com/rooms/superior.jpg
             width: 1100
@@ -2220,7 +2232,7 @@ components:
           required: [scope, code]
           properties:
             scope: { enum: [roomType] }
-            code: { enum: [bathroom, equipment, accessibility, view, kitchen] }
+            code: { enum: [bathroom, equipment, accessibility, view, kitchen, inclusions] }
             label:
               $ref: "#/components/schemas/LocalizedString"
           example:
@@ -2247,6 +2259,7 @@ components:
             - equipment
             - view
             - kitchen
+            - inclusions
           description: Category code, unique within its scope.
         label:
           $ref: "#/components/schemas/LocalizedString"
@@ -2290,7 +2303,7 @@ components:
       properties:
         code:
           type: string
-          enum: [bathroom, equipment, accessibility, view, kitchen]
+          enum: [bathroom, equipment, accessibility, view, kitchen, inclusions]
           description: Category code in the room type amenity dictionary.
         label:
           allOf:
@@ -2599,4 +2612,21 @@ components:
             amenities:
               - code: balcony
                 label: { cs-CZ: Balkon, de: Balkon, en: Balcony }
+                detailKinds: []
+          - category:
+              scope: roomType
+              code: inclusions
+              label:
+                cs-CZ: V ceně pokoje
+                de: Im Zimmerpreis inbegriffen
+                en: Included with this room
+            amenities:
+              - code: parking
+                label: { cs-CZ: Parkoviště, de: Parkplatz, en: Parking }
+                detailKinds: [pricing]
+              - code: welcome_drink
+                label: { cs-CZ: Welcome drink, de: Begrüßungsgetränk, en: Welcome drink }
+                detailKinds: []
+              - code: fruit_bowl
+                label: { cs-CZ: Mísa s ovocem, de: Obstschale, en: Fruit bowl }
                 detailKinds: []

@@ -25,6 +25,17 @@
     ],
     [
       {
+        "schema": "v2#/definitions/AmenityCategoryGroup"
+      }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/RoomType/properties/amenityCategories",
+        "at": "/amenityCategories"
+      }
+    ],
+    [
+      {
         "schema": "v2#/definitions/AmenityOpeningHours"
       }
     ]

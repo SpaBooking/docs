@@ -7,6 +7,18 @@ hidden: true
 
 ## Unreleased
 
+### Room inclusions
+
+- Added the `inclusions` category in scope `roomType`, containing `parking`,
+  `welcome_drink`, and `fruit_bowl`. Room responses return assigned benefits
+  through `amenityCategories`, including room types embedded in hotels.
+- Room parking uses the existing `pricing` detail kind. `included` identifies
+  parking included in the room price. Hotel parking and its `note` remain
+  unchanged.
+- The category supports `amenityCategory=inclusions`, amenity filters, and
+  `expand=amenityLabels`. The dictionary version changes; refresh cached
+  dictionaries. See [Included with this room](/api/amenities#included-with-this-room).
+
 ### Room type occupancy settings
 
 - Added `max`, `singleUse`, and `infantsExcluded` to `occupancy` in room type

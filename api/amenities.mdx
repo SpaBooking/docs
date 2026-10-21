@@ -93,6 +93,7 @@ its scope. Each amenity has a stable `code`, a localized `label`, and
 | `accessibility` | Accessibility |
 | `view` | View |
 | `kitchen` | Food and drink |
+| `inclusions` | Included with this room |
 
 ## Assigned amenities
 
@@ -203,6 +204,72 @@ them, either:
 
 Codes are stable within API v2.
 
+## Included with this room
+
+Room benefits belong to the `inclusions` category in scope `roomType`.
+Fetch them as part of the amenity dictionary:
+
+```json Dictionary category excerpt
+{
+  "category": {
+    "scope": "roomType",
+    "code": "inclusions",
+    "label": {
+      "cs-CZ": "V ceně pokoje",
+      "de": "Im Zimmerpreis inbegriffen",
+      "en": "Included with this room"
+    }
+  },
+  "amenities": [
+    {
+      "code": "parking",
+      "label": { "cs-CZ": "Parkoviště", "de": "Parkplatz", "en": "Parking" },
+      "detailKinds": ["pricing"]
+    },
+    {
+      "code": "welcome_drink",
+      "label": { "cs-CZ": "Welcome drink", "de": "Begrüßungsgetränk", "en": "Welcome drink" },
+      "detailKinds": []
+    },
+    {
+      "code": "fruit_bowl",
+      "label": { "cs-CZ": "Mísa s ovocem", "de": "Obstschale", "en": "Fruit bowl" },
+      "detailKinds": []
+    }
+  ]
+}
+```
+
+Room type lists, details, and hotel responses with `expand=roomTypes` return
+only the benefits assigned to each room type. Find them in `amenityCategories`:
+
+```json Room with all three benefits
+{
+  "amenityCategories": [
+    {
+      "category": { "code": "inclusions" },
+      "amenities": [
+        { "code": "parking", "pricing": "included" },
+        { "code": "welcome_drink" },
+        { "code": "fruit_bowl" }
+      ]
+    }
+  ]
+}
+```
+
+The category is omitted when no benefits are assigned. Labels are available
+in the dictionary or with `expand=amenityLabels`.
+
+### Parking for a room
+
+Room parking is returned in the room type's `inclusions` category.
+`pricing: "included"` means parking is included in that room's price.
+
+Hotel parking is returned separately in the hotel's `parking` category,
+including its localized `note`. Room type responses do not inherit hotel
+parking details.
+
 ## Detail kinds
 
 An amenity's `detailKinds` lists the details that can be specified for it. Each
@@ -280,8 +347,9 @@ translation is `null`.
 ### Presence-only amenities
 
 An amenity with an empty `detailKinds` array has no details. Its value contains
-only `code`, plus `label` with `expand=amenityLabels`. All room type amenities
-are presence-only.
+only `code`, plus `label` with `expand=amenityLabels`. Most room type amenities
+are presence-only, including `welcome_drink` and `fruit_bowl`. Room type
+`parking` declares `pricing`.
 
 ## Filtering
 
@@ -303,7 +371,13 @@ pool that is `nearby`; use the returned `proximity` to narrow the results.
 ```bash
 GET /api/v2/hotels?amenities=sauna,parking
 GET /api/v2/room-types?amenityCategory=view
+GET /api/v2/room-types?amenityCategory=inclusions
+GET /api/v2/room-types?amenities=parking,welcome_drink
 ```
+
+The room type parking filter matches room assignments only. It does not match
+rooms solely because their hotel offers parking. Check the returned `pricing`
+to determine whether parking is included.
 
 To find hotels by room type amenities, filter room types and use their
 `hotelId`.
