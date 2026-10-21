@@ -65,6 +65,8 @@ are equal for a fixed area. Unknown or invalid sizes are `null`.
 fills missing English and Russian values from the tier and unit type labels.
 When the hotel has several buildings, it also appends the room's building name.
 A missing building translation falls back to the Czech building name.
+Generated names include amenities with coverage only when they apply to all
+rooms in the category.
 
 Names without automatic generation use only saved translations; missing
 translations are `null`. The `search` filter searches saved names only, so it
@@ -77,6 +79,11 @@ Unspecified unit types and tiers are `null`.
 `amenityCategories` lists the amenities assigned to the room type, grouped by
 category. See [Assigned amenities](/api/amenities#assigned-amenities) for the
 structure and labels.
+
+Some amenities include `coverage`: `all` means every physical room in the
+category has the amenity; `some` means only some do. This field is returned
+only for amenities that declare it in the dictionary. See
+[Coverage](/api/amenities#coverage) for supported amenities and examples.
 
 `description` is Markdown.
 

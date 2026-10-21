@@ -25,12 +25,17 @@ const benefits = [
 ];
 const group = (category, amenities) => ({ category, amenities });
 const cases = [
+  ['room amenity in all rooms', 'AmenityValue', { code: 'shower', coverage: 'all' }, true],
+  ['room amenity in some rooms', 'AmenityValue', { code: 'balcony', coverage: 'some' }, true],
+  ['null coverage', 'AmenityValue', { code: 'shower', coverage: null }, false],
+  ['invalid coverage', 'AmenityValue', { code: 'shower', coverage: 'unknown' }, false],
+  ['coverage dictionary kind', 'Amenity', { code: 'shower', label, detailKinds: ['coverage'] }, true],
   ['unfilled sauna details', 'AmenityValue', sauna, true],
   ['expanded sauna details', 'AmenityValue', {
     ...sauna, label, options: [{ code: 'finnish', label: { en: 'Finnish sauna' } }],
   }, true],
-  ['presence-only room amenity', 'AmenityValue', { code: 'balcony' }, true],
-  ['expanded room amenity', 'AmenityValue', { code: 'balcony', label: { en: 'Balcony' } }, true],
+  ['presence-only room amenity', 'AmenityValue', { code: 'toilet' }, true],
+  ['expanded room amenity', 'AmenityValue', { code: 'balcony', label: { en: 'Balcony' }, coverage: 'all' }, true],
   ['unfilled localized note', 'AmenityValue', { code: 'doctor', note: { en: null } }, true],
   ['invalid pricing code', 'AmenityValue', { ...sauna, pricing: 'free' }, false],
   ['invalid proximity code', 'AmenityValue', { ...sauna, proximity: 'inside' }, false],
@@ -55,7 +60,7 @@ const cases = [
   ['hotel accessibility', 'HotelAmenityCategoryRef', { code: 'accessibility' }, true],
   ['room accessibility', 'RoomTypeAmenityCategoryRef', { code: 'accessibility' }, true],
   ['hotel group', 'HotelAmenityCategoryGroup', group(hotel, [sauna]), true],
-  ['room group', 'RoomTypeAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), true],
+  ['room group', 'RoomTypeAmenityCategoryGroup', group(room, [{ code: 'balcony', coverage: 'all' }]), true],
   ['room inclusions dictionary', 'AmenityCategory', {
     scope: 'roomType', ...inclusions, label: { en: 'Included with this room' },
   }, true],
@@ -72,7 +77,7 @@ const cases = [
     group(inclusions, [{ code: 'parking', pricing: 'free' }]), false],
   ['room inclusions on hotel', 'HotelAmenityCategoryGroup', group(inclusions, benefits), false],
   ['empty inclusions group', 'RoomTypeAmenityCategoryGroup', group(inclusions, []), false],
-  ['room category on hotel', 'HotelAmenityCategoryGroup', group(room, [{ code: 'balcony' }]), false],
+  ['room category on hotel', 'HotelAmenityCategoryGroup', group(room, [{ code: 'balcony', coverage: 'all' }]), false],
   ['hotel category on room', 'RoomTypeAmenityCategoryGroup', group(hotel, [sauna]), false],
   ['empty assigned hotel group', 'HotelAmenityCategoryGroup', group(hotel, []), false],
   ['empty assigned room group', 'RoomTypeAmenityCategoryGroup', group(room, []), false],

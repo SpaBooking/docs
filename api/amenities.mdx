@@ -183,7 +183,7 @@ and the fields of its [detail kinds](#detail-kinds).
   "amenityCategories": [
     {
       "category": { "code": "view" },
-      "amenities": [{ "code": "balcony" }]
+      "amenities": [{ "code": "balcony", "coverage": "all" }]
     }
   ]
 }
@@ -279,6 +279,7 @@ detail kind adds fixed fields to the [amenity value](/api/objects/amenity-value)
 | --- | --- | --- |
 | [`proximity`](#proximity) | `proximity`, `proximityMeters` | `null` |
 | [`pricing`](#pricing) | `pricing` | `null` |
+| [`coverage`](#coverage) | `coverage` | `"all"` |
 | [`options`](#options) | `options` | `[]` |
 | [`opening_hours`](#opening-hours) | `openingHours` | `{ "continuous": false, "blocks": [] }` |
 | [`note`](#note) | `note` | `null` for each requested language |
@@ -300,6 +301,45 @@ the approximate distance in metres, from 0 to 1,000,000. It is set only when
 `pricing` says whether using the amenity costs extra: `included` (included in
 the stay price), `conditional` (included under certain conditions), or `paid`
 (charged extra).
+
+### Coverage
+
+`coverage` describes whether an amenity is available in all physical rooms of
+a room type or only some:
+`all` means every room; `some` means only some rooms. An assigned amenity that
+declares this detail kind always returns one of these values, never `null`.
+An unspecified value defaults to `all`.
+
+The room type dictionary declares `coverage` on these amenities:
+
+| Category | Amenities |
+| --- | --- |
+| `bathroom` | `shower`, `bathtub`, `whirlpool_bath`, `bidet` |
+| `equipment` | `air_conditioning` |
+| `accessibility` | All amenities in this category |
+| `view` | All amenities in this category, including `balcony` and `terrace` |
+
+```json Room type bathroom excerpt
+{
+  "amenityCategories": [
+    {
+      "category": { "code": "bathroom" },
+      "amenities": [
+        { "code": "toilet" },
+        { "code": "shower", "coverage": "some" },
+        { "code": "bathtub", "coverage": "some" }
+      ]
+    }
+  ]
+}
+```
+
+In this example, showers and baths are each available in some rooms.
+`some` does not guarantee that a booked room has the amenity. The response
+does not identify individual rooms or describe which amenities occur together.
+
+Other amenities omit `coverage`, including hotel amenities and the room type
+`inclusions` category. Room parking uses the `pricing` detail kind.
 
 ### Options
 
@@ -347,9 +387,9 @@ translation is `null`.
 ### Presence-only amenities
 
 An amenity with an empty `detailKinds` array has no details. Its value contains
-only `code`, plus `label` with `expand=amenityLabels`. Most room type amenities
-are presence-only, including `welcome_drink` and `fruit_bowl`. Room type
-`parking` declares `pricing`.
+only `code`, plus `label` with `expand=amenityLabels`. Examples include
+`hairdryer`, `kettle`, `welcome_drink`, and `fruit_bowl`. The dictionary lists
+the detail kinds for each amenity.
 
 ## Filtering
 
@@ -365,8 +405,10 @@ two amenity filters. Each endpoint filters by its own scope.
 When you combine both filters, both must match. Unknown codes return `400`.
 
 The filters match assigned amenity codes, regardless of details such as
-`proximity` or `pricing`. For example, `amenities=indoor_pool` also matches a
-pool that is `nearby`; use the returned `proximity` to narrow the results.
+`proximity`, `pricing`, or `coverage`. For example, `amenities=balcony` matches
+room types with either `coverage: "all"` or `coverage: "some"`.
+`amenities=indoor_pool` also matches a pool that is `nearby`; use the returned
+`proximity` to narrow the results.
 
 ```bash
 GET /api/v2/hotels?amenities=sauna,parking
