@@ -7,6 +7,16 @@ hidden: true
 
 ## Unreleased
 
+### Room amenity coverage
+
+- Added the `coverage` detail kind to selected room type amenities. Assigned
+  values return `coverage: "all"` or `coverage: "some"` in room type lists,
+  details, and hotel expansions. Existing assignments default to `all`.
+- This is an additive change. Amenities without this detail kind and hotel
+  amenities retain their current fields. Amenity filters match both values.
+- The amenity dictionary version changes. Refresh cached dictionaries.
+  See [Coverage](/api/amenities#coverage).
+
 ### Room inclusions
 
 - Added the `inclusions` category in scope `roomType`, containing `parking`,

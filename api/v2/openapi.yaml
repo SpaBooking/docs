@@ -105,7 +105,7 @@ paths:
                     amenities:
                       - code: balcony
                         label: { cs-CZ: Balkon, de: Balkon, en: Balcony }
-                        detailKinds: []
+                        detailKinds: [coverage]
         "304":
           description: The cached dictionary variant matched by `If-None-Match` is still current.
             The response has no body.
@@ -1191,10 +1191,12 @@ components:
             amenities:
               - code: toilet
               - code: shower
+                coverage: all
           - category:
               code: view
             amenities:
               - code: balcony
+                coverage: all
           - category:
               code: inclusions
             amenities:
@@ -2387,6 +2389,7 @@ components:
             enum:
               - proximity
               - pricing
+              - coverage
               - options
               - opening_hours
               - note
@@ -2520,6 +2523,16 @@ components:
             not specified. `included` means no additional charge,
             `conditional` means inclusion depends on stated conditions, and
             `paid` means an additional charge applies.
+        coverage:
+          type: string
+          enum: [all, some]
+          description: >-
+            Whether the amenity is available in all physical rooms of this
+            room type or only some.
+            Present only when the dictionary declares
+            [coverage](/api/amenities#coverage). `all` means every room;
+            `some` means only some rooms. Defaults to `all` when unspecified
+            and is never null. Omitted on hotel amenities.
         options:
           type: array
           description: >-
@@ -2612,7 +2625,7 @@ components:
             amenities:
               - code: balcony
                 label: { cs-CZ: Balkon, de: Balkon, en: Balcony }
-                detailKinds: []
+                detailKinds: [coverage]
           - category:
               scope: roomType
               code: inclusions
