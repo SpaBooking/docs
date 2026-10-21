@@ -7,6 +7,41 @@ hidden: true
 
 ## Unreleased
 
+### Room type occupancy settings
+
+- Added `max`, `singleUse`, and `infantsExcluded` to `occupancy` in room type
+  list, detail, and hotel expansion responses. Each value is `null` when the
+  room type has no configured value; an explicit `false` is a configured value.
+- Booking and prices still use only `occupancy.standard`. The new fields are
+  informational.
+
+### Room type category filter
+
+- **Breaking:** `GET /room-types` no longer accepts the `room_bathroom`,
+  `room_equipment`, `room_accessibility`, `room_view`, and `room_kitchen`
+  aliases in `amenityCategory`. Use the room type category codes, such as
+  `view`. Prefixed codes return `400`.
+
+### Amenity pricing
+
+- **Breaking:** Renamed the `access` detail kind and amenity value field to
+  `pricing`. The values are unchanged: `included`, `conditional`, and `paid`.
+- The amenity dictionary version changes. Refresh cached dictionaries.
+
+### Disabled room types
+
+- Added the required boolean `disabled` to room type list, detail, and hotel
+  expansion responses.
+- Room type lists now return only enabled rooms by default. Use `disabled=true`
+  for disabled rooms or `disabled=all` for both states.
+- Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
+  Room details remain accessible by ID, including disabled rooms.
+- Use `disabled` instead of checking room type codes for `_DELETED`. Disabled
+  room types are excluded from new bookings, prices, and availability results;
+  historical bookings retain their references.
+
+## 2026-10-21 (v3.2.32)
+
 ### Single room type name
 
 - **Breaking change:** room type `name` is a string instead of a localized
@@ -40,39 +75,6 @@ hidden: true
 - The category supports `amenityCategory=inclusions`, amenity filters, and
   `expand=amenityLabels`. The dictionary version changes; refresh cached
   dictionaries. See [Included with this room](/api/amenities#included-with-this-room).
-
-### Room type occupancy settings
-
-- Added `max`, `singleUse`, and `infantsExcluded` to `occupancy` in room type
-  list, detail, and hotel expansion responses. Each value is `null` when the
-  room type has no configured value; an explicit `false` is a configured value.
-- Booking and prices still use only `occupancy.standard`. The new fields are
-  informational.
-
-### Room type category filter
-
-- **Breaking:** `GET /room-types` no longer accepts the `room_bathroom`,
-  `room_equipment`, `room_accessibility`, `room_view`, and `room_kitchen`
-  aliases in `amenityCategory`. Use the room type category codes, such as
-  `view`. Prefixed codes return `400`.
-
-### Amenity pricing
-
-- **Breaking:** Renamed the `access` detail kind and amenity value field to
-  `pricing`. The values are unchanged: `included`, `conditional`, and `paid`.
-- The amenity dictionary version changes. Refresh cached dictionaries.
-
-### Disabled room types
-
-- Added the required boolean `disabled` to room type list, detail, and hotel
-  expansion responses.
-- Room type lists now return only enabled rooms by default. Use `disabled=true`
-  for disabled rooms or `disabled=all` for both states.
-- Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
-  Room details remain accessible by ID, including disabled rooms.
-- Use `disabled` instead of checking room type codes for `_DELETED`. Disabled
-  room types are excluded from new bookings, prices, and availability results;
-  historical bookings retain their references.
 
 ## 2026-10-07 (v3.2.24)
 
