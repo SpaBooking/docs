@@ -16,11 +16,10 @@ How `search` matches:
   are no search operators, word stemming, or relevance ranking.
 - **Case-insensitive** — `superior` matches `Superior`.
 - **Diacritics-insensitive** — `lazne` matches `Lázně`.
-- **All languages** — matched against every locale (`cs-CZ`, `de`, `en`, `ru`)
-  at once, so a term in any language matches.
+- **Localized fields** — matched against every locale (`cs-CZ`, `de`, `en`, `ru`)
+  at once. Room type names are single text values shared by all languages.
 
 To match an exact value such as a room type code, use that field's own filter.
 
 Each endpoint lists the field(s) its `search` covers. Room-type search matches
-saved names only; it does not match English or Russian names generated in the
-response. See [Room type names and labels](/api/objects/room-type#names-and-labels).
+the single room name. See [Room type names and labels](/api/objects/room-type#names-and-labels).

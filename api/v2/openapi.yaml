@@ -435,9 +435,8 @@ paths:
           schema:
             type: string
             maxLength: 200
-          description: Search saved localized names across all supported languages (case- and
-            diacritics-insensitive). Generated English/Russian names are not searchable; use
-            unitType. To match a code, use code.
+          description: Search the room type name (case- and diacritics-insensitive).
+            To match a room type code, use code.
         - name: expand
           in: query
           schema:
@@ -984,7 +983,7 @@ components:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
             Localized alternative text. Missing translations fall back to the
-            localized hotel or room type name, including generated English/Russian room names, or null if unavailable.
+            localized hotel name or the single room type name, or null if unavailable.
             An empty string is intentional decorative text; preserve it.
         variants:
           $ref: "#/components/schemas/ImageVariants"
@@ -1049,12 +1048,10 @@ components:
             bookings keep their references to the room type. The code does not indicate availability.
           example: false
         name:
-          allOf:
-            - $ref: "#/components/schemas/LocalizedString"
-          description: Localized guest-facing name. Missing generated English/Russian names combine
-            tier, unit type and, for hotels with several buildings, the building name.
-            Names without automatic generation use only saved translations.
-            Generated names are not searchable.
+          type: string
+          description: Single room type name, shared by all languages. Unaffected by
+            Accept-Language. Empty string when no name is available.
+          example: STANDARD 1/1 - IMP
         description:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -1126,11 +1123,7 @@ components:
         hotelId: 66f16191f739705faa020001
         code: 2_APARTMA
         disabled: false
-        name:
-          cs-CZ: Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna
-          de: Komfort Zweibettzimmer mit Balkon · Villa Anna
-          en: Komfort Twin room · Villa Anna
-          ru: Komfort Двухместный номер с раздельными кроватями · Villa Anna
+        name: STANDARD 1/2 - BEL
         description:
           cs-CZ: |-
             **Světlý pokoj** v prvním patře.
@@ -1209,8 +1202,8 @@ components:
             width: 1100
             height: 733
             alt:
-              cs-CZ: Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna
-              en: Komfort Twin room · Villa Anna
+              cs-CZ: STANDARD 1/2 - BEL
+              en: STANDARD 1/2 - BEL
             variants:
               w480: https://cdn.example.com/rooms/superior/generation-1/w480.webp
               w960: https://cdn.example.com/rooms/superior/generation-1/w960.webp

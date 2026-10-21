@@ -66,12 +66,7 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
       "hotelId": "66f16191f739705faa020001",
       "code": "2_APARTMA",
       "disabled": false,
-      "name": {
-        "cs-CZ": "Dvoulůžkový pokoj Komfort s oddělenými postelemi a balkonem · Villa Anna",
-        "de": "Komfort Zweibettzimmer mit Balkon · Villa Anna",
-        "en": "Komfort Twin room · Villa Anna",
-        "ru": "Komfort Двухместный номер с раздельными кроватями · Villa Anna"
-      },
+      "name": "STANDARD 1/2 - BEL",
       "description": {
         "cs-CZ": "**Světlý pokoj** v prvním patře.\n\n- výhled do parku",
         "de": null,
@@ -178,9 +173,8 @@ embeds a hotel summary containing only `id`, `name`, and `stars`. Fetch
 `GET /api/v2/hotels/{hotelId}` for the full hotel. For a paginated, filterable list of a single
 hotel's room types, use `GET /api/v2/room-types?hotelId=<id>` instead of expanding.
 
-Embedded room types use a fixed presentation order: building, tier, internal
-room name, then id. This is not a sort on the translated public `name`.
-Building and internal room names use Czech ordering, so changing
+Embedded room types use a fixed presentation order: building, tier, room
+name, then id. Building and room names use Czech ordering, so changing
 `Accept-Language` does not change the order. Rooms without a building come last.
 The paginated `/room-types` endpoint keeps its requested `createdAt` order.
 
