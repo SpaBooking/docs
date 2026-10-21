@@ -7,6 +7,18 @@ hidden: true
 
 ## Unreleased
 
+### Single room type name
+
+- **Breaking change:** room type `name` is a string instead of a localized
+  object. Read `room.name` directly instead of selecting a language key.
+  This applies to room type lists, details, and hotel `expand=roomTypes`.
+- The name is shared by all languages. Automatic name composition and
+  separate guest-name translations have been removed. `Accept-Language`
+  continues to select description, label, and image `alt` translations.
+- Room type `search` matches the single name. Missing image `alt` values fall
+  back to this name in each requested language.
+  See [Room type names and labels](/api/objects/room-type#names-and-labels).
+
 ### Room amenity coverage
 
 - Added the `coverage` detail kind to selected room type amenities. Assigned

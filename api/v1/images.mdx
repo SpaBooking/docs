@@ -113,8 +113,8 @@ the requested language keys:
 
 - A missing or `null` hotel image translation falls back to the localized
   hotel name.
-- A missing or `null` room image translation falls back to the localized room
-  category, or `null` when that category translation is unavailable.
+- A missing or `null` room image translation falls back to the single room
+  name in each requested language, or `null` when the name is empty.
 - A missing or `null` visit type image translation falls back to the localized
   visit type name.
 - An explicit empty string remains `""`. Preserve it when the image is

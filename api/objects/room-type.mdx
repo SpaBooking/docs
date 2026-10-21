@@ -4,7 +4,7 @@ description: "A category of accommodation within a hotel, with occupancy, beds, 
 openapi-schema: "/api/v2/openapi.yaml RoomType"
 ---
 
-A room type describes accommodation within a hotel. It includes its localized
+A room type describes accommodation within a hotel. It includes its
 `name`, unit type, tier, occupancy, bed configuration, floor area, building,
 rules, amenities, and images. Localized fields return only the locale keys you
 select with [`Accept-Language`](/api/localization).
@@ -61,17 +61,13 @@ are equal for a fixed area. Unknown or invalid sizes are `null`.
 
 ## Names and labels
 
-`name` contains the saved Czech and German names. For generated names, the API
-fills missing English and Russian values from the tier and unit type labels.
-When the hotel has several buildings, it also appends the room's building name.
-A missing building translation falls back to the Czech building name.
-Generated names include amenities with coverage only when they apply to all
-rooms in the category.
+`name` is a single text value, for example `"STANDARD 1/1 - IMP"`. It is the
+same in every language and does not depend on `Accept-Language`. It is not
+translated or composed from the room's parameters. If no name is available,
+it is an empty string.
 
-Names without automatic generation use only saved translations; missing
-translations are `null`. The `search` filter searches saved names only, so it
-does not match generated English or Russian names. Use `unitType` to filter by
-unit type.
+The `search` filter matches this name without regard to case or diacritics.
+Use `code` to filter by a room type's code.
 
 `unitType`, `tier`, and each `bedConfiguration` entry include localized labels.
 Unspecified unit types and tiers are `null`.
@@ -144,7 +140,7 @@ dimensions are unavailable, both are `null` and `variants` is `{}`. Small
 originals can retain dimensions with no variants.
 
 `alt` uses the requested locale keys. Missing or null translations fall back
-to the room type's localized `name`, including a generated English or Russian name, or `null` if the name translation
-is unavailable. Preserve `""` for decorative images.
+to the room type's `name` in each requested language, or `null` if the name
+is empty. Preserve `""` for decorative images.
 
 ## Fields
