@@ -2208,6 +2208,1050 @@ components:
                 name:
                   cs-CZ: Krátkodobý pobyt Weekend
                   de: Kurzaufenthalt Weekend
+    VisitType:
+      type: object
+      description: >-
+        **Draft:** The visit type endpoints are still in progress. Fields may
+        change before they are finalized. A visit type (stay package) is a stay
+        a hotel sells, such as a spa cure or a wellness weekend: its texts,
+        stay rules, included meals and treatment, prices, promotions, deposit
+        rule and loyalty discounts. Localized fields return the locale keys
+        selected by `Accept-Language`.
+      required:
+        - id
+        - name
+        - shortDescription
+        - stayCategory
+        - paymentType
+        - bookingMode
+        - available
+        - unavailableReason
+        - webOrder
+        - hotelIds
+        - collections
+        - meals
+        - stayLength
+        - validity
+        - departure
+        - arrival
+        - treatment
+        - priceFrom
+        - promotions
+        - deposit
+        - loyaltyPrograms
+        - images
+      properties:
+        id:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+          description: >-
+            Visit type id. The same id identifies the visit type in the
+            `priceFrom` minima of hotels.
+          example: 6720c0a1b2c3d4e5f6a7b801
+        name:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeNameLocalizedString"
+          description: >-
+            Localized visit type name. A missing translation falls back to the
+            Czech name, so a returned value is never empty.
+        shortDescription:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: >-
+            Localized short teaser (plain text). Each locale value is at most
+            400 characters. Missing translations are null.
+        stayCategory:
+          type: string
+          nullable: true
+          enum: [health, wellness, null]
+          description: >-
+            `health` for a spa cure, `wellness` for a wellness stay, or null when
+            the visit type has no category.
+        paymentType:
+          type: string
+          nullable: true
+          enum: [self, plp, klp, null]
+          description: >-
+            Who pays a health stay: `self` (the guest), `plp` (the health
+            insurer contributes to the stay) or `klp` (the health insurer covers
+            treatment, accommodation and meals; booked on request). A health
+            stay without a set value is `self`. Null for other stays.
+        bookingMode:
+          type: string
+          enum: [instant, request]
+          description: >-
+            `instant` when guests book the visit type directly; `request` when
+            guests send a booking request that is confirmed later. A `klp` stay
+            is always `request`.
+        available:
+          type: boolean
+          description: >-
+            Whether the visit type is offered now: it is on sale, it has no
+            arrival periods or at least one that has not ended, it permits at
+            least one stay from today, and it has at least one active hotel.
+            Prices and free capacity are not part of this check.
+        unavailableReason:
+          type: string
+          nullable: true
+          enum: [withdrawn, ended, no_arrival, no_hotels, null]
+          description: >-
+            Why the visit type is not available, as the first matching reason:
+            `withdrawn` (not on sale), `ended` (every arrival period has ended),
+            `no_arrival` (no stay is permitted from today, including an invalid
+            stay length) or `no_hotels` (no active hotel). Null exactly when
+            `available` is true.
+        webOrder:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: >-
+            Position of the visit type on the website within its company,
+            starting at 1, or null when it has no position. Used by
+            `sort=webOrder`.
+          example: 3
+        hotelIds:
+          type: array
+          items:
+            type: string
+            pattern: ^[0-9a-fA-F]{24}$
+          description: >-
+            Active hotels that sell the visit type, ordered by Czech hotel name.
+            Each of them is also returned by `GET /hotels`. Assignment does not
+            guarantee prices or free capacity. Can be empty.
+        collections:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitTypeCollection"
+          description: >-
+            Website collections the visit type belongs to, in code-list order.
+            The list combines assigned collections and collections derived from
+            the visit type, without telling them apart.
+            `special_offers` is present exactly when `promotions` is not empty.
+            Can be empty.
+        meals:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeMeals"
+          description: Meal plan included in the price and meal plans the guest can choose.
+        stayLength:
+          anyOf:
+            - title: Stay length
+              allOf:
+                - $ref: "#/components/schemas/VisitTypeStayLength"
+            - title: Invalid stay length
+              type: object
+              nullable: true
+              enum: [null]
+          description: >-
+            Permitted stay length, or null when the visit type's length rules
+            are invalid; such a visit type cannot be booked.
+        validity:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/VisitTypeValidityPeriod"
+          description: >-
+            Arrival periods that have not ended, ordered by start and end date.
+            Null when arrival is not limited by dates; empty when every period
+            has ended. A stay can end after its arrival period; `departure`
+            limits the end.
+        departure:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeDeparture"
+          description: Latest permitted departure, derived from all arrival periods, including ended ones.
+        arrival:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeArrival"
+          description: >-
+            Weekdays and specific dates on which a stay can start. An arrival
+            day must match `weekdays`, `dates` (when not null) and `validity`
+            (when not null).
+        treatment:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeTreatment"
+          description: >-
+            Medical examinations and procedures included in the price. See
+            [Treatment](/api/treatment).
+        priceFrom:
+          anyOf:
+            - title: Available prices
+              allOf:
+                - $ref: "#/components/schemas/VisitTypePriceFrom"
+            - title: No price
+              type: object
+              nullable: true
+              enum: [null]
+          description: >-
+            Lowest prices for the shortest permitted stay across the visit
+            type's hotels, keyed by currency. Null for `request` visit types,
+            for unavailable visit types and when no complete, permitted stay
+            with free capacity exists. Not affected by query parameters. See
+            [Prices](/api/prices).
+        promotions:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitTypePromotion"
+          description: >-
+            Running and future promotions published for your public key's
+            channel, with the hotels and room types they apply to, ordered by
+            first night. Can be empty.
+        deposit:
+          anyOf:
+            - title: Deposit rule
+              allOf:
+                - $ref: "#/components/schemas/VisitTypeDeposit"
+            - title: No base deposit
+              type: object
+              nullable: true
+              enum: [null]
+          description: >-
+            Base deposit rule for one guest booked on this visit type in your
+            public key's channel, or null when no base deposit applies. The
+            deposit of a reservation can differ, for example because of a
+            channel minimum; see
+            [Deposit](/api/objects/visit-type#deposit).
+        loyaltyPrograms:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitTypeLoyaltyProgram"
+          description: >-
+            Loyalty programs assigned to the visit type with the member
+            discount, in configured order. Can be empty.
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+          description: >-
+            Photos in configured order; the first is the main photo.
+            A missing `alt` translation falls back to the localized visit type
+            name; an empty `alt` marks a decorative image. See
+            [Images](/api/images).
+        hotels:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitTypeHotel"
+          description: Embedded only when `expand=hotels`; the hotels of `hotelIds` in the same order.
+      example:
+        id: 6720c0a1b2c3d4e5f6a7b801
+        name:
+          cs-CZ: Klasická lázeňská léčba
+          de: Klassische Kur
+        shortDescription:
+          cs-CZ: Léčebný pobyt s lékařskými prohlídkami, přírodními procedurami a polopenzí. Jeden až tři týdny, nástup v sobotu nebo v neděli.
+          de: Kuraufenthalt mit ärztlichen Untersuchungen, natürlichen Anwendungen und Halbpension. Ein bis drei Wochen, Anreise samstags oder sonntags.
+        stayCategory: health
+        paymentType: self
+        bookingMode: instant
+        available: true
+        unavailableReason: null
+        webOrder: 3
+        hotelIds:
+          - 6720c0a1b2c3d4e5f6a7c103
+          - 6720c0a1b2c3d4e5f6a7c101
+          - 6720c0a1b2c3d4e5f6a7c104
+          - 6720c0a1b2c3d4e5f6a7c102
+        collections:
+          - treatment_stays
+          - special_offers
+        meals:
+          included: half_board
+          available:
+            - half_board
+            - full_board
+        stayLength:
+          unit: week
+          min: 1
+          max: 3
+          minNights: 7
+          maxNights: 21
+        validity:
+          - from: "2026-11-01"
+            to: "2027-03-31"
+          - from: "2027-04-01"
+            to: "2027-10-31"
+        departure:
+          allowed: true
+          latestDate: "2027-10-31"
+        arrival:
+          weekdays:
+            - saturday
+            - sunday
+          dates: null
+        treatment:
+          exams:
+            entry: true
+            interim: true
+            interimFromNights: 14
+            final: true
+            finalFromNights: null
+          procedures:
+            count: 15
+            per: week
+            selection: fixed
+            items:
+              - code: carbon_dioxide_bath
+                label:
+                  cs-CZ: Kysličníková koupel
+                  de: Kohlensäurebad
+                category:
+                  code: hydrotherapy
+                  label:
+                    cs-CZ: Vodoléčba
+                    de: Hydrotherapie
+                naturalSource: carbon_dioxide
+                count: 6
+              - code: peat_wrap
+                label:
+                  cs-CZ: Rašelinový zábal
+                  de: Moorpackung
+                category:
+                  code: thermotherapy
+                  label:
+                    cs-CZ: Teploléčba
+                    de: Thermotherapie
+                naturalSource: peat
+                count: 4
+              - code: classic_full_body_massage
+                label:
+                  cs-CZ: Klasická celková masáž
+                  de: Klassische Ganzkörpermassage
+                category:
+                  code: physiotherapy
+                  label:
+                    cs-CZ: Fyzioterapie
+                    de: Physiotherapie
+                naturalSource: null
+                count: 3
+              - code: drinking_cure
+                label:
+                  cs-CZ: Pitná kúra
+                  de: Trinkkur
+                category:
+                  code: other
+                  label:
+                    cs-CZ: Ostatní
+                    de: Sonstiges
+                naturalSource: mineral_water
+                count: 14
+        priceFrom:
+          CZK:
+            perPersonPerNight:
+              amount:
+                amountMinor: 189000
+                currency: CZK
+                currencyExponent: 2
+              original:
+                amountMinor: 210000
+                currency: CZK
+                currencyExponent: 2
+              nights: 7
+              occupancy: 2
+              hotel:
+                id: 6720c0a1b2c3d4e5f6a7c102
+                name:
+                  cs-CZ: Lázeňský hotel Kolonáda
+                  de: Kurhotel Kolonnade
+            perStay:
+              amount:
+                amountMinor: 1540000
+                currency: CZK
+                currencyExponent: 2
+              original: null
+              nights: 7
+              occupancy: 1
+              hotel:
+                id: 6720c0a1b2c3d4e5f6a7c101
+                name:
+                  cs-CZ: Hotel Pramen
+                  de: Hotel Pramen
+          EUR:
+            perPersonPerNight:
+              amount:
+                amountMinor: 7600
+                currency: EUR
+                currencyExponent: 2
+              original: null
+              nights: 7
+              occupancy: 2
+              hotel:
+                id: 6720c0a1b2c3d4e5f6a7c104
+                name:
+                  cs-CZ: Lázeňský dům Vřídlo
+                  de: Kurhaus Sprudel
+            perStay:
+              amount:
+                amountMinor: 61600
+                currency: EUR
+                currencyExponent: 2
+              original: null
+              nights: 7
+              occupancy: 1
+              hotel:
+                id: 6720c0a1b2c3d4e5f6a7c103
+                name:
+                  cs-CZ: Hotel Bellevue
+                  de: Hotel Bellevue
+        promotions:
+          - name:
+              cs-CZ: Podzimní sleva
+              de: Herbstrabatt
+            percentage: 10
+            firstNight: "2026-11-01"
+            lastNight: "2026-12-19"
+            hotels: null
+        deposit:
+          type: percentage
+          percentage: 30
+          amountPerGuest: null
+          due:
+            type: after_confirmation
+            days: 7
+        loyaltyPrograms:
+          - id: 6720c0a1b2c3d4e5f6a7d201
+            name:
+              cs-CZ: Věrný host
+              de: Treuer Gast
+            discountPercent: 10
+        images:
+          - url: https://cdn.example.com/visit-types/classic-cure.jpg
+            width: 1600
+            height: 1066
+            alt:
+              cs-CZ: Klasická lázeňská léčba
+              de: Klassische Kur
+            variants:
+              w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
+              w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
+              w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+    VisitTypesList:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/VisitType"
+          description: Visit types on this page.
+        pagination:
+          allOf:
+            - $ref: "#/components/schemas/Pagination"
+          description: Cursor of the next page and the total number of matching visit types.
+      example:
+        data:
+          - id: 6720c0a1b2c3d4e5f6a7b802
+            name:
+              cs-CZ: Wellness víkend
+              de: Wellness-Wochenende
+            shortDescription:
+              cs-CZ: Dvě až čtyři noci s polopenzí a vstupem do bazénu a sauny.
+              de: null
+            stayCategory: wellness
+            paymentType: null
+            bookingMode: instant
+            available: true
+            unavailableReason: null
+            webOrder: 8
+            hotelIds:
+              - 6720c0a1b2c3d4e5f6a7c105
+              - 6720c0a1b2c3d4e5f6a7c106
+            collections:
+              - wellness
+              - hotel_stay
+            meals:
+              included: half_board
+              available:
+                - breakfast
+                - half_board
+            stayLength:
+              unit: night
+              min: 2
+              max: 4
+              minNights: 2
+              maxNights: 4
+            validity: null
+            departure:
+              allowed: true
+              latestDate: null
+            arrival:
+              weekdays:
+                - friday
+                - saturday
+              dates: null
+            treatment:
+              exams:
+                entry: false
+                interim: false
+                interimFromNights: null
+                final: false
+                finalFromNights: null
+              procedures:
+                count: 0
+                per: stay
+                selection: hotel_offer
+                items: []
+            priceFrom:
+              CZK:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 159000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 2
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c105
+                    name:
+                      cs-CZ: Hotel Lesní zátiší
+                      de: Hotel Waldfrieden
+                perStay:
+                  amount:
+                    amountMinor: 490000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 2
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c106
+                    name:
+                      cs-CZ: Wellness hotel Sluneční
+                      de: Wellnesshotel Sonne
+            promotions: []
+            deposit: null
+            loyaltyPrograms: []
+            images: []
+        pagination:
+          limit: 1
+          nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6OCwibnVtZXJpY0lkIjoxMiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAyIn0
+          hasMore: true
+          total: 37
+    VisitTypeCollection:
+      type: string
+      description: >-
+        Website collection code. See
+        [Collections](/api/objects/visit-type#collections) for the meaning of
+        each code.
+      enum:
+        - advent_christmas_new_year
+        - families_with_children
+        - wellness
+        - treatment_stays
+        - special_offers
+        - hotel_stay
+    VisitTypeMeals:
+      type: object
+      required: [included, available]
+      properties:
+        included:
+          anyOf:
+            - title: Meal plan
+              allOf:
+                - $ref: "#/components/schemas/MealCode"
+            - title: No meal plan
+              type: string
+              nullable: true
+              enum: [null]
+          description: >-
+            Meal plan included in the price, or null when the visit type
+            includes no meal plan with a code.
+        available:
+          type: array
+          items:
+            $ref: "#/components/schemas/MealCode"
+          description: >-
+            Meal plans the guest can choose, in code-list order. Contains
+            `included` when it is not null.
+    MealCode:
+      type: string
+      description: >-
+        Meal plan code. See [Meals](/api/objects/visit-type#meals) for the
+        meaning of each code.
+      enum:
+        - breakfast
+        - half_board
+        - full_board
+        - all_inclusive
+        - lunch
+        - dinner
+    VisitTypeStayLength:
+      type: object
+      required: [unit, min, max, minNights, maxNights]
+      properties:
+        unit:
+          type: string
+          enum: [night, week]
+          description: Unit of `min` and `max`. A `week` stay is booked in whole weeks only.
+        min:
+          type: integer
+          minimum: 1
+          description: Shortest permitted stay in `unit`.
+        max:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: >-
+            Longest permitted stay in `unit`, or null when no maximum is
+            configured. The booking limit in `maxNights` still applies.
+        minNights:
+          type: integer
+          minimum: 1
+          description: Shortest permitted stay in nights.
+        maxNights:
+          type: integer
+          minimum: 1
+          maximum: 693
+          description: >-
+            Longest permitted stay in nights. Without a configured maximum it is
+            99 nights, or 693 nights (99 weeks) for a `week` stay.
+    VisitTypeValidityPeriod:
+      type: object
+      required: [from, to]
+      properties:
+        from:
+          type: string
+          format: date
+          description: First permitted arrival date.
+        to:
+          type: string
+          format: date
+          description: Last permitted arrival date (inclusive).
+    VisitTypeDeparture:
+      type: object
+      required: [allowed, latestDate]
+      properties:
+        allowed:
+          type: boolean
+          description: False when no departure is permitted; such a visit type cannot be booked.
+        latestDate:
+          type: string
+          format: date
+          nullable: true
+          description: >-
+            Latest permitted departure date (inclusive), or null when departure
+            is not limited. A departure is permitted when `allowed` is true and
+            it is not later than `latestDate`.
+    VisitTypeArrival:
+      type: object
+      required: [weekdays, dates]
+      properties:
+        weekdays:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/Weekday"
+          description: >-
+            Weekdays on which a stay can start, Monday first. Never empty: all
+            seven days when arrival is limited only by dates or periods, and
+            Sunday only when the visit type sets no arrival rule at all.
+        dates:
+          type: array
+          nullable: true
+          items:
+            type: string
+            format: date
+          description: >-
+            Specific arrival dates from today on, in date order, or null when
+            the visit type has no specific dates. Empty when every date has
+            passed. A listed date must also match `weekdays` and `validity`.
+    Weekday:
+      type: string
+      description: Weekday code.
+      enum:
+        - monday
+        - tuesday
+        - wednesday
+        - thursday
+        - friday
+        - saturday
+        - sunday
+    VisitTypeTreatment:
+      type: object
+      required: [exams, procedures]
+      properties:
+        exams:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeExams"
+          description: Medical examinations included in the price.
+        procedures:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeProcedures"
+          description: Procedures included in the price.
+    VisitTypeExams:
+      type: object
+      required: [entry, interim, interimFromNights, final, finalFromNights]
+      properties:
+        entry:
+          type: boolean
+          description: An entry examination at the start of the stay is included.
+        interim:
+          type: boolean
+          description: An interim examination during the stay is included.
+        interimFromNights:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: >-
+            Stay length in nights from which the interim examination is
+            included, or null when it is included for every stay length or not
+            included.
+        final:
+          type: boolean
+          description: A final examination at the end of the stay is included.
+        finalFromNights:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: >-
+            Stay length in nights from which the final examination is included,
+            or null when it is included for every stay length or not included.
+    VisitTypeProcedures:
+      type: object
+      required: [count, per, selection, items]
+      properties:
+        count:
+          type: integer
+          minimum: 0
+          description: Number of procedures included per `per` unit.
+        per:
+          type: string
+          enum: [stay, week, day]
+          description: Unit of `count`.
+        selection:
+          type: string
+          enum: [hotel_offer, from_list, fixed]
+          description: >-
+            How the procedures are chosen: `hotel_offer` (from the hotel's
+            offer; `items` is empty), `from_list` (from `items`) or `fixed`
+            (`items` with their counts).
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TreatmentProcedure"
+          description: Procedures of the visit type in configured order. Empty for `hotel_offer`.
+    TreatmentProcedure:
+      type: object
+      required: [code, label, category, naturalSource, count]
+      properties:
+        code:
+          allOf:
+            - $ref: "#/components/schemas/TreatmentProcedureCode"
+          description: Procedure code. See [Treatment](/api/treatment) for the code list.
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized procedure name.
+        category:
+          allOf:
+            - $ref: "#/components/schemas/TreatmentProcedureCategory"
+          description: Category of the procedure.
+        naturalSource:
+          type: string
+          nullable: true
+          enum: [carbon_dioxide, peat, mineral_water, null]
+          description: Natural healing source the procedure uses, or null.
+        count:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: >-
+            How many times the procedure is included during the whole stay,
+            only for `selection: fixed`; otherwise null. It does not follow
+            `per`, and the counts need not add up to `count`.
+    TreatmentProcedureCategory:
+      type: object
+      required: [code, label]
+      properties:
+        code:
+          allOf:
+            - $ref: "#/components/schemas/TreatmentCategoryCode"
+          description: Category code.
+        label:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized category name.
+    TreatmentProcedureCode:
+      type: string
+      description: Treatment procedure code. See [Treatment](/api/treatment) for labels and categories.
+      enum:
+        - bubble_bath
+        - carbon_dioxide_bath
+        - bubble_bath_with_additives
+        - kneipp_water_treading
+        - hydroxeur
+        - herbal_bath
+        - whirlpool_foot_bath
+        - radon_bath
+        - peat_bath
+        - peat_wrap
+        - paraffin_wrap
+        - peat_vaginal_tampons
+        - diadynamic_therapy
+        - magnetic_therapy
+        - ultrasound
+        - co2_gas_injections
+        - dry_carbon_dioxide_bath
+        - molecular_hydrogen_therapy
+        - classic_full_body_massage
+        - partial_massage
+        - fitness_centre_exercise
+        - individual_physiotherapy
+        - cardiotherapy
+        - machine_lymphatic_drainage
+        - manual_lymphatic_drainage
+        - reflex_massage
+        - hot_stone_massage
+        - anti_cellulite_massage
+        - aroma_massage
+        - french_ear_acupuncture
+        - classic_chinese_acupuncture
+        - inhalation
+        - oxygen_therapy
+        - cryotherapy
+        - thai_aroma_oil_massage
+        - thai_foot_massage
+        - thai_warm_oil_massage
+        - classic_thai_massage
+        - thai_coconut_dream
+        - thai_head_and_back_massage
+        - thai_herbal_massage
+        - thai_special_back_massage
+        - thai_pregnancy_massage
+        - vaginal_irrigation
+        - drinking_cure
+        - ecg
+        - inbody_diagnostics
+        - vascular_condition_measurement
+    TreatmentCategoryCode:
+      type: string
+      description: Treatment category code. See [Treatment](/api/treatment) for labels.
+      enum:
+        - hydrotherapy
+        - thermotherapy
+        - electrotherapy
+        - gas_therapy
+        - physiotherapy
+        - inhalation
+        - wellness
+        - thai_massage
+        - other
+        - diagnostics
+    VisitTypePriceFrom:
+      type: object
+      description: >-
+        Lowest prices keyed by currency. A currency key is present only when
+        the visit type has a complete, permitted stay with free capacity in
+        that currency.
+      properties:
+        CZK:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypePriceFromCurrency"
+          description: Lowest prices in CZK.
+        EUR:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypePriceFromCurrency"
+          description: Lowest prices in EUR.
+    VisitTypePriceFromCurrency:
+      type: object
+      required: [perPersonPerNight, perStay]
+      properties:
+        perPersonPerNight:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypePriceFromMinimum"
+          description: >-
+            Lowest average price per guest per night across the visit type's
+            hotels, for a complete, permitted stay with free capacity at the
+            room type's full standard occupancy.
+        perStay:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypePriceFromMinimum"
+          description: >-
+            Lowest total for the whole room for the shortest permitted stay
+            across the visit type's hotels, at the room type's full standard
+            occupancy. Independent of `perPersonPerNight`; the two minima can
+            come from different hotels.
+    VisitTypePriceFromMinimum:
+      type: object
+      required: [amount, original, nights, occupancy, hotel]
+      properties:
+        amount:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          description: >-
+            Price after applicable promotions. Discounts apply only to the
+            nights they cover; overlapping percentage discounts apply
+            successively.
+        original:
+          anyOf:
+            - title: Original amount
+              allOf:
+                - $ref: "#/components/schemas/Money"
+            - title: No promotion
+              type: object
+              nullable: true
+              enum: [null]
+          description: The same price before promotions, or null when no promotion lowers it.
+        nights:
+          type: integer
+          minimum: 1
+          description: Number of nights priced, which is the shortest permitted stay.
+        occupancy:
+          type: integer
+          minimum: 1
+          description: Full standard occupancy of the room type the price applies to.
+        hotel:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypePriceFromHotel"
+          description: Hotel whose offer gives this minimum.
+    VisitTypePriceFromHotel:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+          description: Hotel id; always one of `hotelIds`.
+        name:
+          allOf:
+            - $ref: "#/components/schemas/HotelNameLocalizedString"
+          description: Localized hotel name. Falls back to the Czech name, so it is never null.
+    VisitTypePromotion:
+      type: object
+      required: [name, percentage, firstNight, lastNight, hotels]
+      properties:
+        name:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized promotion name. Missing translations are null.
+        percentage:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          maximum: 100
+          description: Discount in percent.
+        firstNight:
+          type: string
+          format: date
+          description: First discounted night, as the date on which the night starts.
+        lastNight:
+          type: string
+          format: date
+          nullable: true
+          description: Last discounted night, or null when the promotion has no end.
+        hotels:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/VisitTypePromotionHotel"
+          description: >-
+            Hotels and room types the promotion applies to, or null when it
+            applies to every hotel in `hotelIds`.
+    VisitTypePromotionHotel:
+      type: object
+      required: [hotelId, roomTypeIds]
+      properties:
+        hotelId:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+          description: Hotel id; always one of `hotelIds`.
+        roomTypeIds:
+          type: array
+          nullable: true
+          items:
+            type: string
+            pattern: ^[0-9a-fA-F]{24}$
+          description: >-
+            Room types of that hotel the promotion applies to, or null when it
+            applies to all of them.
+    VisitTypeDeposit:
+      type: object
+      required: [type, percentage, amountPerGuest, due]
+      properties:
+        type:
+          type: string
+          enum: [percentage, fixed]
+          description: A `percentage` of the guest's price, or a `fixed` amount per guest.
+        percentage:
+          type: number
+          nullable: true
+          minimum: 0
+          maximum: 100
+          description: Deposit in percent of the guest's price for `percentage`; null for `fixed`.
+        amountPerGuest:
+          anyOf:
+            - title: Fixed amount
+              allOf:
+                - $ref: "#/components/schemas/VisitTypeDepositAmount"
+            - title: Percentage deposit
+              type: object
+              nullable: true
+              enum: [null]
+          description: Deposit per guest in both currencies for `fixed`; null for `percentage`.
+        due:
+          allOf:
+            - $ref: "#/components/schemas/VisitTypeDepositDue"
+          description: When the deposit is due.
+    VisitTypeDepositAmount:
+      type: object
+      required: [CZK, EUR]
+      properties:
+        CZK:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          description: Amount per guest in CZK.
+        EUR:
+          allOf:
+            - $ref: "#/components/schemas/Money"
+          description: Amount per guest in EUR.
+    VisitTypeDepositDue:
+      type: object
+      required: [type, days]
+      properties:
+        type:
+          type: string
+          enum: [after_confirmation, before_arrival]
+          description: >-
+            `after_confirmation` counts days after the booking is confirmed,
+            `before_arrival` counts days before arrival.
+        days:
+          type: integer
+          minimum: 0
+          description: Number of days.
+    VisitTypeLoyaltyProgram:
+      type: object
+      required: [id, name, discountPercent]
+      properties:
+        id:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+          description: Loyalty program id.
+        name:
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized program name. Missing translations are null.
+        discountPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Discount for program members, in percent.
+    VisitTypeHotel:
+      type: object
+      required: [id, name, stars]
+      properties:
+        id:
+          type: string
+          pattern: ^[0-9a-fA-F]{24}$
+          description: Hotel id; the hotels follow the order of `hotelIds`.
+        name:
+          allOf:
+            - $ref: "#/components/schemas/HotelNameLocalizedString"
+          description: Localized hotel name. Falls back to the Czech name, so it is never null.
+        stars:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 5
+          description: Star rating from 1 to 5, or null when the hotel has no rating.
     AmenityCategory:
       type: object
       required: [scope, code, label]
