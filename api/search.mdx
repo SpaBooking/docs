@@ -19,6 +19,9 @@ How `search` matches:
 - **Localized fields** — matched against every locale (`cs-CZ`, `de`, `en`, `ru`)
   at once. Room type names are single text values shared by all languages.
 
+The draft [visit type](/api/objects/visit-type) list accepts `search` as well and
+matches the visit type name in every language.
+
 To match an exact value such as a room type code, use that field's own filter.
 
 Each endpoint lists the field(s) its `search` covers. Room-type search matches

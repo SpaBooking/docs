@@ -2536,7 +2536,9 @@ components:
       properties:
         id:
           type: string
-          description: Id of the visit type the price comes from.
+          description: >-
+            Id of the visit type the price comes from. See the draft
+            [Visit type](/api/objects/visit-type) object.
           example: 66f16191f739705faa020031
         name:
           $ref: "#/components/schemas/VisitTypeNameLocalizedString"
