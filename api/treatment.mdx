@@ -1,0 +1,149 @@
+---
+title: "Treatment"
+description: "Medical examinations and procedures included in a visit type, with the procedure and category codes."
+icon: "stethoscope"
+---
+
+<Warning>
+  **Draft:** The visit type endpoints are still in progress. Fields and
+  behavior may change before they are finalized.
+</Warning>
+
+`treatment` on a [visit type](/api/objects/visit-type) describes what is
+included in the price: the medical examinations (`exams`) and the procedures
+(`procedures`). Localized labels return only the locale keys you select with
+[`Accept-Language`](/api/localization).
+
+## Examinations
+
+| Field | Included examination |
+| --- | --- |
+| `entry` | An entry examination at the start of the stay. |
+| `interim` | An interim examination during the stay. |
+| `final` | A final examination at the end of the stay. |
+
+`interimFromNights` and `finalFromNights` set the stay length in nights from
+which the interim or final examination is included. They are `null` when the
+examination is included for every stay length, and when it is not included.
+
+For example, `interim: true` with `interimFromNights: 14` includes an interim
+examination only in stays of 14 nights or more.
+
+## Procedures
+
+`procedures.count` is the number of procedures included per `procedures.per`
+unit: `stay`, `week`, or `day`.
+
+`procedures.selection` says how the procedures are chosen:
+
+| `selection` | Meaning | `items` |
+| --- | --- | --- |
+| `hotel_offer` | Procedures are chosen from the hotel's offer. | Empty |
+| `from_list` | Procedures are chosen from `items`. | Procedures to choose from |
+| `fixed` | The stay includes the procedures in `items`. | Procedures with their `count` |
+
+Each item has a `code`, a localized `label`, a `category` with its own `code`
+and `label`, and a `naturalSource`. Items keep their configured order.
+
+An item's `count` is set only for `selection: fixed`; otherwise it is `null`.
+It is the number of times the procedure is included during the whole stay. It
+does not follow `per`, and the item counts need not add up to
+`procedures.count`.
+
+For example, a cure of one to three weeks can include 15 procedures per week
+and a fixed list:
+
+| Field | Value |
+| --- | --- |
+| `procedures.count` | `15` |
+| `procedures.per` | `week` |
+| `procedures.selection` | `fixed` |
+| `items[0]` | `carbon_dioxide_bath` with `count: 6` |
+| `items[1]` | `peat_wrap` with `count: 4` |
+| `items[2]` | `classic_full_body_massage` with `count: 3` |
+| `items[3]` | `drinking_cure` with `count: 14` |
+
+The guest receives 15 procedures per week. The listed counts apply to the whole
+stay, whether it lasts one, two, or three weeks.
+
+## Natural sources
+
+`naturalSource` names the natural healing source a procedure uses, or is `null`
+when it uses none.
+
+| `naturalSource` | Meaning |
+| --- | --- |
+| `carbon_dioxide` | Natural carbon dioxide |
+| `peat` | Peat |
+| `mineral_water` | Natural mineral water |
+
+## Procedure codes
+
+Procedure codes in catalog order. Each item returns its localized `label`; the
+table shows the English label.
+
+| Code | Category | English label |
+| --- | --- | --- |
+| `bubble_bath` | `hydrotherapy` | Bubble bath |
+| `carbon_dioxide_bath` | `hydrotherapy` | Carbon dioxide bath |
+| `bubble_bath_with_additives` | `hydrotherapy` | Bubble bath with additives |
+| `kneipp_water_treading` | `hydrotherapy` | Kneipp water treading |
+| `hydroxeur` | `hydrotherapy` | Hydroxeur |
+| `herbal_bath` | `hydrotherapy` | Herbal bath |
+| `whirlpool_foot_bath` | `hydrotherapy` | Whirlpool foot bath |
+| `radon_bath` | `hydrotherapy` | Radon bath |
+| `peat_bath` | `thermotherapy` | Peat bath |
+| `peat_wrap` | `thermotherapy` | Peat wrap |
+| `paraffin_wrap` | `thermotherapy` | Paraffin wrap |
+| `peat_vaginal_tampons` | `thermotherapy` | Peat vaginal tampons |
+| `diadynamic_therapy` | `electrotherapy` | Diadynamic therapy |
+| `magnetic_therapy` | `electrotherapy` | Magnetic therapy |
+| `ultrasound` | `electrotherapy` | Ultrasound |
+| `co2_gas_injections` | `gas_therapy` | CO2 gas injections |
+| `dry_carbon_dioxide_bath` | `gas_therapy` | Dry carbon dioxide bath |
+| `molecular_hydrogen_therapy` | `gas_therapy` | Molecular hydrogen therapy |
+| `classic_full_body_massage` | `physiotherapy` | Classic full-body massage |
+| `partial_massage` | `physiotherapy` | Partial massage |
+| `fitness_centre_exercise` | `physiotherapy` | Exercise in the fitness centre |
+| `individual_physiotherapy` | `physiotherapy` | Individual physiotherapy |
+| `cardiotherapy` | `physiotherapy` | Cardiotherapy |
+| `machine_lymphatic_drainage` | `physiotherapy` | Machine lymphatic drainage |
+| `manual_lymphatic_drainage` | `physiotherapy` | Manual lymphatic drainage |
+| `reflex_massage` | `physiotherapy` | Reflex massage |
+| `hot_stone_massage` | `physiotherapy` | Hot stone massage |
+| `anti_cellulite_massage` | `physiotherapy` | Anti-cellulite massage |
+| `aroma_massage` | `physiotherapy` | Aroma massage |
+| `french_ear_acupuncture` | `physiotherapy` | French ear acupuncture |
+| `classic_chinese_acupuncture` | `physiotherapy` | Classic Chinese acupuncture |
+| `inhalation` | `inhalation` | Inhalation |
+| `oxygen_therapy` | `inhalation` | Oxygen therapy |
+| `cryotherapy` | `wellness` | Cryotherapy |
+| `thai_aroma_oil_massage` | `thai_massage` | Aroma oil massage |
+| `thai_foot_massage` | `thai_massage` | Thai foot massage |
+| `thai_warm_oil_massage` | `thai_massage` | Warm oil massage |
+| `classic_thai_massage` | `thai_massage` | Classic Thai massage |
+| `thai_coconut_dream` | `thai_massage` | Coconut dream |
+| `thai_head_and_back_massage` | `thai_massage` | Thai head and back massage |
+| `thai_herbal_massage` | `thai_massage` | Thai herbal massage |
+| `thai_special_back_massage` | `thai_massage` | Special back massage |
+| `thai_pregnancy_massage` | `thai_massage` | Pregnancy massage |
+| `vaginal_irrigation` | `other` | Vaginal irrigation |
+| `drinking_cure` | `other` | Drinking cure |
+| `ecg` | `diagnostics` | ECG (electrocardiogram) |
+| `inbody_diagnostics` | `diagnostics` | InBody diagnostics |
+| `vascular_condition_measurement` | `diagnostics` | Vascular condition measurement |
+
+## Category codes
+
+| Code | English label |
+| --- | --- |
+| `hydrotherapy` | Hydrotherapy |
+| `thermotherapy` | Thermotherapy |
+| `electrotherapy` | Electrotherapy |
+| `gas_therapy` | Gas therapy |
+| `physiotherapy` | Physiotherapy |
+| `inhalation` | Inhalation |
+| `wellness` | Wellness |
+| `thai_massage` | Thai massage |
+| `other` | Other |
+| `diagnostics` | Diagnostics |

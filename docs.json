@@ -54,6 +54,7 @@
               "api/sorting",
               "api/expand",
               "api/amenities",
+              "api/treatment",
               "api/status-codes",
               "api/errors",
               "api/versioning",
@@ -65,6 +66,7 @@
             "pages": [
               "api/objects/hotel",
               "api/objects/room-type",
+              "api/objects/visit-type",
               "api/objects/amenity-category",
               "api/objects/amenity",
               "api/objects/amenity-value",
