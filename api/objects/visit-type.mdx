@@ -93,6 +93,19 @@ never empty: when the visit type sets no arrival rule at all, arrival is on
 Sundays only. A date in `arrival.dates` alone does not guarantee a permitted
 stay.
 
+Weekday codes are lowercase English day names, not ISO 8601 day numbers, and
+`arrival.weekdays` lists them Monday first:
+
+| Code | Day |
+| --- | --- |
+| `monday` | Monday |
+| `tuesday` | Tuesday |
+| `wednesday` | Wednesday |
+| `thursday` | Thursday |
+| `friday` | Friday |
+| `saturday` | Saturday |
+| `sunday` | Sunday |
+
 ## Categories and booking
 
 | `stayCategory` | Meaning |

@@ -3378,7 +3378,7 @@ components:
             passed. A listed date must also match `weekdays` and `validity`.
     Weekday:
       type: string
-      description: Weekday code.
+      description: Weekday code, the lowercase English day name (not an ISO 8601 day number).
       enum:
         - monday
         - tuesday
