@@ -630,10 +630,11 @@ paths:
 
         Results follow the website order by default (`sort=webOrder`), one
         order across all companies of your public key. Cursors do not freeze
-        a snapshot: when visit types change between requests, paging can skip
-        or repeat a visit type. To export a consistent catalog, start again
-        after a change and deduplicate by `id`. An unchanged catalog pages
-        through completely, without gaps or duplicates.
+        a snapshot: when visit types change between requests, or when
+        availability and promotions change at midnight (Europe/Prague), paging
+        can skip or repeat a visit type. To export a consistent catalog, start
+        again after a change and deduplicate by `id`. Paging an unchanged
+        catalog within one day returns every visit type exactly once.
 
         See the [Visit type](/api/objects/visit-type) object for the full field reference.
       parameters:
@@ -671,8 +672,9 @@ paths:
             types with the same position keep a stable order. The order is
             shared across all companies of your public key. `createdAt:desc`
             and `createdAt:asc` order by unique record id, which generally
-            follows creation order. Cursors do not freeze a snapshot when visit
-            types change between requests.
+            follows creation order. Cursors do not freeze a snapshot: changes
+            between requests and the change of day at midnight (Europe/Prague)
+            can skip or repeat a visit type.
         - name: available
           in: query
           schema:
