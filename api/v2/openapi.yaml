@@ -619,9 +619,9 @@ paths:
             response shape may change before it is finalized.
           </Warning>
       description: |
-        **Draft:** Returns visit types (stay packages) of the companies your
-        public key is scoped to. Localized fields return the locale keys
-        selected by `Accept-Language`.
+        **Draft:** Returns visit types of the companies your public key is
+        scoped to. Localized fields return the locale keys selected by
+        `Accept-Language`.
 
         Only visit types offered now are returned by default (`available=true`).
         Use `available=false` for visit types that are not offered now, or
@@ -2736,8 +2736,8 @@ components:
       type: object
       description: >-
         **Draft:** The visit type endpoints are still in progress. Fields may
-        change before they are finalized. A visit type (stay package) is a stay
-        a hotel sells, such as a spa cure or a wellness weekend: its texts,
+        change before they are finalized. A visit type is a stay a hotel
+        sells, such as a spa cure or a wellness weekend: its texts,
         stay rules, included meals and treatment, prices, promotions, deposit
         rule and loyalty discounts. Localized fields return the locale keys
         selected by `Accept-Language`.
