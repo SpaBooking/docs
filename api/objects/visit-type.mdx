@@ -78,13 +78,15 @@ minimum exceeds the maximum. Such a visit type cannot be booked and reports
 
 `validity` lists the arrival periods that have not ended, ordered by start
 date. A period's `from` and `to` are the first and last permitted arrival
-dates. `validity` is `null` when arrival is not limited by dates, and `[]` when
-every period has ended.
+dates. `validity` is `null` when no arrival periods are set, and `[]` when
+every period has ended. Without periods, `arrival` alone limits the arrival
+days.
 
-A stay can end after its arrival period. `departure` gives the latest permitted
-departure: `latestDate` is the last permitted departure date, or `null` when
-departure is not limited. When `allowed` is `false`, no departure is permitted,
-so the visit type cannot be booked.
+A stay can end after its arrival period; `departure` limits when it can end.
+When `allowed` is `false`, no departure is permitted, so the visit type cannot
+be booked, and `latestDate` is `null`. Otherwise `latestDate` is the last
+permitted departure date, or `null` when departure is not limited. A
+`latestDate` that has passed leaves no permitted departure either.
 
 `arrival` lists the weekdays and specific dates on which a stay can start. An
 arrival day must match `arrival.weekdays`, `arrival.dates` when it is not

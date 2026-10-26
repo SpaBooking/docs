@@ -2873,9 +2873,9 @@ components:
             $ref: "#/components/schemas/VisitTypeValidityPeriod"
           description: >-
             Arrival periods that have not ended, ordered by start and end date.
-            Null when arrival is not limited by dates; empty when every period
-            has ended. A stay can end after its arrival period; `departure`
-            limits the end.
+            Null when no arrival periods are set (`arrival` can still limit the
+            arrival days); empty when every period has ended. A stay can end
+            after its arrival period; `departure` limits the end.
         departure:
           allOf:
             - $ref: "#/components/schemas/VisitTypeDeparture"
@@ -3343,15 +3343,19 @@ components:
       properties:
         allowed:
           type: boolean
-          description: False when no departure is permitted; such a visit type cannot be booked.
+          description: >-
+            False when the arrival periods permit no departure at all; such a
+            visit type cannot be booked.
         latestDate:
           type: string
           format: date
           nullable: true
           description: >-
-            Latest permitted departure date (inclusive), or null when departure
-            is not limited. A departure is permitted when `allowed` is true and
-            it is not later than `latestDate`.
+            Latest permitted departure date (inclusive). Null when departure is
+            not limited or when `allowed` is false. A departure is permitted
+            when `allowed` is true and, if `latestDate` is not null, it is not
+            later than `latestDate`; a `latestDate` that has passed leaves no
+            permitted departure.
     VisitTypeArrival:
       type: object
       required: [weekdays, dates]
