@@ -2838,6 +2838,7 @@ components:
           example: 3
         hotelIds:
           type: array
+          uniqueItems: true
           items:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
@@ -2847,6 +2848,7 @@ components:
             guarantee prices or free capacity. Can be empty.
         collections:
           type: array
+          uniqueItems: true
           items:
             $ref: "#/components/schemas/VisitTypeCollection"
           description: >-
@@ -3283,6 +3285,7 @@ components:
             includes no meal plan with a code.
         available:
           type: array
+          uniqueItems: true
           items:
             $ref: "#/components/schemas/MealCode"
           description: >-
@@ -3378,6 +3381,7 @@ components:
         dates:
           type: array
           nullable: true
+          uniqueItems: true
           items:
             type: string
             format: date
@@ -3672,11 +3676,12 @@ components:
         hotels:
           type: array
           nullable: true
+          minItems: 1
           items:
             $ref: "#/components/schemas/VisitTypePromotionHotel"
           description: >-
-            Hotels and room types the promotion applies to, or null when it
-            applies to every hotel in `hotelIds`.
+            Hotels and room types the promotion applies to, in configured order,
+            or null when it applies to every hotel in `hotelIds`. Never empty.
     VisitTypePromotionHotel:
       type: object
       required: [hotelId, roomTypeIds]
@@ -3688,12 +3693,13 @@ components:
         roomTypeIds:
           type: array
           nullable: true
+          minItems: 1
           items:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
           description: >-
-            Room types of that hotel the promotion applies to, or null when it
-            applies to all of them.
+            Room types of that hotel the promotion applies to, in configured
+            order, or null when it applies to all of them. Never empty.
     VisitTypeDeposit:
       type: object
       required: [type, percentage, amountPerGuest, due]
