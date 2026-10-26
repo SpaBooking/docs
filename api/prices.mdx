@@ -202,7 +202,6 @@ hotels:
   `name`) instead of `visitType`. The minima of one currency can come from
   different hotels.
 - Each offer uses the visit type's shortest permitted stay.
-- Ties go to the shorter stay, then the lower occupancy, then the lower
-  `hotel.id`.
+- Ties go to the lower occupancy, then the lower `hotel.id`.
 - `priceFrom` is `null` for visit types booked on request, for unavailable
   visit types, and when no complete, permitted stay with free capacity exists.

@@ -203,7 +203,11 @@ The deposit of a reservation can differ from this rule:
 - The channel can require a minimum deposit per reservation.
 - Children and pets pay a deposit according to the channel's rules.
 - A reservation with several guests adds up their deposits.
-- When the stay starts soon, booking can ask for the full price as the deposit.
+- The reservation has one deposit deadline: the earliest due date among the
+  guests, children, and pets that owe a deposit. It is never before the
+  booking date.
+- When the stay starts soon, booking can ask for the full price as the deposit,
+  due on the booking day.
 
 `deposit` is `null` when no base deposit applies to the guest. This does not
 mean that booking never asks for a deposit: the channel minimum or a child in

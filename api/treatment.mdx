@@ -63,8 +63,10 @@ and a fixed list:
 | `items[2]` | `classic_full_body_massage` with `count: 3` |
 | `items[3]` | `drinking_cure` with `count: 14` |
 
-The guest receives 15 procedures per week. The listed counts apply to the whole
-stay, whether it lasts one, two, or three weeks.
+`procedures.count` and `per` give the overall allowance of 15 procedures per
+week. The fixed list gives its own counts for the whole stay, whether it lasts
+one, two, or three weeks. The API returns both as configured and does not
+reconcile them, so show them as separate facts.
 
 ## Natural sources
 

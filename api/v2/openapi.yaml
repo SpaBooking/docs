@@ -776,19 +776,22 @@ paths:
             format: date
           description: >-
             First day of the arrival window (inclusive). Send it together with
-            `arrivalTo`, on or before it; the window spans at most 366 days. A
-            missing `arrivalTo`, a reversed window or a longer one returns
-            `400`. A visit type matches when at least one day of the window,
-            from today on, passes its arrival rules and the departure after
-            `nights` nights (or its shortest stay) is permitted. Capacity and
-            prices are not checked. A window entirely in the past returns no
-            visit types, and visit types with `stayLength: null` never match.
+            `arrivalTo`, on or before it; `arrivalTo` can be at most 366 days
+            after `arrivalFrom`. A missing `arrivalTo`, a reversed window or a
+            longer one returns `400`. A visit type matches when at least one
+            day of the window, from today (Europe/Prague) on, passes its
+            arrival rules and the departure after `nights` nights (or its
+            shortest stay) is permitted. Capacity and prices are not checked. A
+            window entirely in the past returns no visit types, and visit types
+            with `stayLength: null` never match.
         - name: arrivalTo
           in: query
           schema:
             type: string
             format: date
-          description: Last day of the arrival window (inclusive). Send it together with `arrivalFrom`.
+          description: >-
+            Last day of the arrival window (inclusive). Send it together with
+            `arrivalFrom`; either one alone returns `400`.
         - name: expand
           in: query
           style: form
