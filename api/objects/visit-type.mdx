@@ -73,8 +73,9 @@ enforces:
   (99 weeks) for a `week` stay.
 
 `stayLength` is `null` when the length rules are invalid, for example when the
-minimum exceeds the maximum. Such a visit type cannot be booked and reports
-`no_arrival`.
+minimum exceeds the maximum. Such a visit type cannot be booked; its
+`unavailableReason` is `no_arrival` unless `withdrawn` or `ended` applies
+first.
 
 `validity` lists the arrival periods that have not ended, ordered by start
 date. A period's `from` and `to` are the first and last permitted arrival
