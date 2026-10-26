@@ -634,7 +634,8 @@ paths:
         availability and promotions change at midnight (Europe/Prague), paging
         can skip or repeat a visit type. To export a consistent catalog, start
         again after a change and deduplicate by `id`. Paging an unchanged
-        catalog within one day returns every visit type exactly once.
+        catalog within one calendar day (Europe/Prague) returns every visit
+        type exactly once.
 
         See the [Visit type](/api/objects/visit-type) object for the full field reference.
       parameters:
@@ -3391,7 +3392,11 @@ components:
             passed. A listed date must also match `weekdays` and `validity`.
     Weekday:
       type: string
-      description: Weekday code, the lowercase English day name (not an ISO 8601 day number).
+      description: >-
+        Weekday code, the lowercase English day name (not an ISO 8601 day
+        number). See
+        [Stay length and arrival](/api/objects/visit-type#stay-length-and-arrival)
+        for the code table.
       enum:
         - monday
         - tuesday

@@ -80,8 +80,8 @@ first.
 `validity` lists the arrival periods that have not ended, ordered by start
 date. A period's `from` and `to` are the first and last permitted arrival
 dates. `validity` is `null` when no arrival periods are set, and `[]` when
-every period has ended. Without periods, `arrival` alone limits the arrival
-days.
+every period has ended. When `validity` is `null`, only `arrival` limits the
+arrival days.
 
 A stay can end after its arrival period; `departure` limits when it can end.
 When `allowed` is `false`, no departure is permitted, so the visit type cannot
@@ -205,9 +205,10 @@ The deposit of a reservation can differ from this rule:
 - A reservation with several guests adds up their deposits.
 - The reservation has one deposit deadline: the earliest due date among the
   guests, children, and pets that owe a deposit. It is never before the
-  booking date.
+  booking date, or, for a booking request, before the request is confirmed.
 - When the stay starts soon, booking can ask for the full price as the deposit,
-  due on the booking day.
+  due on the booking day. For a booking request, this is decided when the
+  request is confirmed, and the deposit is due on that day.
 
 `deposit` is `null` when no base deposit applies to the guest. This does not
 mean that booking never asks for a deposit: the channel minimum or a child in
