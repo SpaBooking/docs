@@ -67,9 +67,12 @@ The following fields have explicit fallback behavior:
 
 - Hotel `name` and `visitType.name` inside [`priceFrom`](/api/prices) fall back
   to the Czech value, so they are never `null`.
-- Image `alt` falls back to the localized hotel name or the single room type name. Unlike
-  other localized fields, an explicitly stored empty `alt` remains `""` to
-  represent a decorative image. See [Images](/api/images#alternative-text).
+- The draft [visit type](/api/objects/visit-type) `name` falls back to the Czech
+  value, so it is never `null`.
+- Image `alt` falls back to the name of the hotel, room type, or draft
+  [visit type](/api/objects/visit-type) the image belongs to. Unlike other
+  localized fields, an explicitly stored empty `alt` remains `""` to represent a
+  decorative image. See [Images](/api/images#alternative-text).
 
 Room type `name` is a plain string shared by all languages. `Accept-Language`
 does not change it. The room's description and dictionary labels remain localized.

@@ -17,3 +17,8 @@ GET /api/v2/room-types?sort=createdAt:desc
 - Keep the same sort and filters while paging. Cursors do not freeze a snapshot
   of the data: additions, removals, or edits between requests can change results.
 - Server-side sorting by price, name, or relevance is not supported.
+
+The draft [visit type](/api/objects/visit-type) list also supports `webOrder` and
+uses it by default (`sort=webOrder`): visit types follow their website
+position, in one order across all companies of your public key. It supports
+`createdAt:desc` and `createdAt:asc` as well.

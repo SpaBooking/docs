@@ -184,3 +184,24 @@ Every minimum embeds the visit type name in the requested locales. Send
 `Accept-Language` to receive one locale instead of all four. A missing
 translation falls back to Czech, like the hotel `name`; see
 [Localization](/api/localization).
+
+## Visit type prices
+
+<Warning>
+  **Draft:** The visit type endpoints are still in progress. Their prices may
+  change before they are finalized.
+</Warning>
+
+A [visit type](/api/objects/visit-type) carries its own `priceFrom`, built with
+the same selection rules as the hotel price, but for one visit type across its
+hotels:
+
+- It is keyed by currency and holds `perPersonPerNight` and `perStay` directly,
+  without the `all`, `health`, and `wellness` groups.
+- Each minimum names the hotel it comes from in `hotel` (`id` and localized
+  `name`) instead of `visitType`. The minima of one currency can come from
+  different hotels.
+- Each offer uses the visit type's shortest permitted stay.
+- Ties go to the lower occupancy, then the lower `hotel.id`.
+- `priceFrom` is `null` for visit types booked on request, for unavailable
+  visit types, and when no complete, permitted stay with free capacity exists.
