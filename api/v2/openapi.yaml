@@ -123,7 +123,6 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /calendar/dates/bulk:
     post:
-      x-hidden: true
       tags: [Availability]
       summary: Get calendar dates in bulk
       operationId: getCalendarDatesBulk
@@ -143,8 +142,11 @@ paths:
 
         Results are returned one per item, in request order; `key` is echoed when
         supplied. `price.amounts` includes every currency that has a price for
-        the date — a currency with no price is omitted. Per-date prices include
-        any active discount promotions.
+        the date — a currency with no price is omitted. When an item sets
+        `visitTypeId`, `hotelId` and `roomTypeId`, per-date prices include the
+        active discount promotions of your public key's channel and
+        `price.isFinal` is `true`. Without `roomTypeId`, they are the lowest
+        room prices before promotions and `price.isFinal` is `false`.
 
         If any item fails, the whole request fails (no partial results); the
         error details name the failing item index and `key`.
@@ -164,6 +166,17 @@ paths:
         the visit type's starting-day and date-range rules remain selectable,
         including dates whose resulting stay is on request. Set `dateFrom` or
         `dateTo` to disable the automatic first-bookable-month lookup.
+
+        This is the calendar for [visit types](/api/objects/visit-type) of API
+        v2: send the visit type's `id` as `visitTypeId`, one of its
+        `hotelIds` as `hotelId` and one of that hotel's room types as
+        `roomTypeId` for final prices. The calendar does not evaluate
+        `available`; show it only for visit types with `available: true`.
+        A visit type with `bookingMode: request` returns its priced dates as
+        `ON_DEMAND`. No date before today in the Europe/Prague time zone is
+        returned. API v2 has no checkout calendar yet;
+        `GET /api/v1/calendar/checkouts` takes the numeric API v1 ids, which
+        API v2 does not return.
       parameters:
         - $ref: "#/components/parameters/RequestId"
       requestBody:
@@ -3330,10 +3343,10 @@ components:
         maxNights:
           type: integer
           minimum: 1
-          maximum: 693
           description: >-
             Longest permitted stay in nights. Without a configured maximum it is
-            99 nights, or 693 nights (99 weeks) for a `week` stay.
+            99 nights, or 693 nights (99 weeks) for a `week` stay. A higher
+            configured maximum is returned as enforced by booking.
     VisitTypeValidityPeriod:
       type: object
       required: [from, to]
@@ -3630,7 +3643,12 @@ components:
               type: object
               nullable: true
               enum: [null]
-          description: The same price before promotions, or null when no promotion lowers it.
+          description: >-
+            The same offer's price before promotions. It is null when promotions
+            do not reduce the full-room stay total after rounding to minor currency
+            units. The average per-person-per-night amount is rounded separately,
+            so its original and discounted amounts can be equal. Show a crossed-out
+            price only when `original.amountMinor` is greater than `amount.amountMinor`.
         nights:
           type: integer
           minimum: 1
