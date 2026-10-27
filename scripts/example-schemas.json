@@ -44,6 +44,11 @@
       {
         "schema": "v2#/definitions/AmenityOpeningHours"
       }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/AmenityValue"
+      }
     ]
   ],
   "api/currencies.mdx": [

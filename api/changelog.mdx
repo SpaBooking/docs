@@ -22,11 +22,26 @@ hidden: true
   aliases in `amenityCategory`. Use the room type category codes, such as
   `view`. Prefixed codes return `400`.
 
-### Amenity pricing
+### Amenity pricing, hours, and aquapark facilities
 
-- **Breaking:** Renamed the `access` detail kind and amenity value field to
-  `pricing`. The values are unchanged: `included`, `conditional`, and `paid`.
+- **Breaking:** The `pricing` value changes from a string to `null` or an object with
+  `type` and `schedule`, for both hotel and room type amenities (including
+  room parking). Types are `included`,
+  `included_scheduled`, `included_conditional`, and `paid`. Only
+  `included_scheduled` has a non-null schedule.
+- **Breaking:** `openingHours` is `null` when unknown, otherwise
+  `{ "schedule": [...] }`. This replaces `continuous` and `blocks`.
+  A 24/7 schedule uses all seven days with `00:00`–`24:00`.
+- Added the `includes` detail kind and `includedAmenityCodes` dictionary
+  metadata for aquaparks. Nested facilities return resolved conditions and
+  support `expand=amenityLabels`.
+- Hotel amenity filters also match facilities in an aquapark's `includes`,
+  before pagination. Own hotel facilities remain separate amenities.
+- Added `note` to aquapark, indoor pool, outdoor pool, sauna, and laundry.
+  Children’s pools and whirlpools now support location, pricing, hours, and
+  note instead of presence only. Sauna retains its type options.
 - The amenity dictionary version changes. Refresh cached dictionaries.
+  See [Amenities](/api/amenities) for field meanings and examples.
 
 ### Disabled room types
 
