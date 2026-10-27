@@ -272,8 +272,10 @@ paths:
             maxLength: 500
           description: >-
             Comma-separated hotel amenity codes. Returns hotels that have all
-            listed amenities, for example `sauna,parking`. Unknown codes return
-            `400`. See [Filtering](/api/amenities#filtering).
+            listed amenities, for example `sauna,parking`. A facility can match
+            as an own amenity or in an aquapark’s includes, regardless of pricing.
+            Filtering applies before pagination and total counts. Unknown codes
+            return `400`. See [Filtering](/api/amenities#filtering).
         - name: amenityCategory
           in: query
           schema:
@@ -1733,7 +1735,7 @@ components:
               code: inclusions
             amenities:
               - code: parking
-                pricing: included
+                pricing: { type: included, schedule: null }
               - code: welcome_drink
               - code: fruit_bowl
         images:
@@ -2241,10 +2243,11 @@ components:
                 - code: aquapark
                   proximity: nearby
                   proximityMeters: 250
-                  pricing: included
+                  pricing: { type: included, schedule: null }
+                  note: { en: null }
+                  includes: []
                   openingHours:
-                    continuous: false
-                    blocks:
+                    schedule:
                       - days: [monday, tuesday, wednesday]
                         from: "09:00"
                         to: "21:00"
@@ -2378,23 +2381,24 @@ components:
               - code: aquapark
                 proximity: nearby
                 proximityMeters: 250
-                pricing: included
+                pricing: { type: included, schedule: null }
+                note: { en: null }
+                includes: []
                 openingHours:
-                  continuous: false
-                  blocks:
+                  schedule:
                     - days: [monday, tuesday, wednesday, thursday, friday]
                       from: "09:00"
                       to: "21:00"
               - code: sauna
                 proximity: in-hotel
                 proximityMeters: null
-                pricing: included
+                pricing: { type: included, schedule: null }
+                note: { en: null }
                 options:
                   - code: finnish
                   - code: steam
                 openingHours:
-                  continuous: false
-                  blocks:
+                  schedule:
                     - days: [monday, tuesday, wednesday, thursday, friday]
                       from: "09:00"
                       to: "21:00"
@@ -2402,7 +2406,7 @@ components:
               code: parking
             amenities:
               - code: parking
-                pricing: paid
+                pricing: { type: paid, schedule: null }
                 options:
                   - code: covered
                   - code: guarded
@@ -3990,6 +3994,7 @@ components:
               - options
               - opening_hours
               - note
+              - includes
         options:
           type: array
           description: >-
@@ -3997,6 +4002,15 @@ components:
             includes `options`.
           items:
             $ref: "#/components/schemas/AmenityOption"
+        includedAmenityCodes:
+          type: array
+          uniqueItems: true
+          description: >-
+            Allowed child codes, in display order. Present on aquapark, whose
+            detailKinds includes includes. Resolve these codes in the hotel dictionary.
+          items:
+            type: string
+            enum: [indoor_pool, outdoor_pool, children_pool, whirlpool, sauna]
         notePlaceholder:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -4010,7 +4024,7 @@ components:
           de: Sauna
           en: Sauna
           ru: Сауна
-        detailKinds: [proximity, pricing, options, opening_hours]
+        detailKinds: [proximity, pricing, options, opening_hours, note]
         options:
           - code: finnish
             label:
@@ -4030,52 +4044,107 @@ components:
               de: Dampfbad
               en: Steam bath
               ru: Паровая баня
+    AmenityWeekdays:
+      type: array
+      minItems: 1
+      uniqueItems: true
+      description: Weekdays in Monday-to-Sunday order.
+      items:
+        type: string
+        enum: [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
     AmenityOpeningHoursBlock:
       type: object
+      additionalProperties: false
       required: [days, from, to]
       description: >-
-        A weekly time range. Blocks that share a day do not overlap.
+        A weekly interval in hotel local time. Intervals sharing a day do not
+        overlap. A range crossing midnight uses two blocks on successive days.
       properties:
         days:
-          type: array
-          minItems: 1
-          description: Days on which the range applies, each at most once, from Monday to Sunday.
-          items:
-            type: string
-            enum:
-              - monday
-              - tuesday
-              - wednesday
-              - thursday
-              - friday
-              - saturday
-              - sunday
+          $ref: "#/components/schemas/AmenityWeekdays"
         from:
           type: string
           pattern: "^([01]\\d|2[0-3]):[0-5]\\d$"
-          description: Opening time, local to the hotel, in the 24-hour `HH:mm` format.
-          example: "07:00"
+          description: Start time in the 24-hour HH:mm format.
+          example: "09:00"
         to:
           type: string
-          pattern: "^([01]\\d|2[0-3]):[0-5]\\d$"
-          description: Closing time in the same format. Always later than `from`.
-          example: "15:00"
+          pattern: "^(([01]\\d|2[0-3]):[0-5]\\d|24:00)$"
+          description: End time, later than from. 24:00 is the end of the listed day.
+          example: "21:00"
+    AmenityPricingScheduleBlock:
+      oneOf:
+        - $ref: "#/components/schemas/AmenityOpeningHoursBlock"
+        - type: object
+          additionalProperties: false
+          required: [days, from, to]
+          description: Entry is included throughout opening hours on these days.
+          properties:
+            days:
+              $ref: "#/components/schemas/AmenityWeekdays"
+            from:
+              type: string
+              nullable: true
+              enum: [null]
+            to:
+              type: string
+              nullable: true
+              enum: [null]
+    AmenityPricing:
+      description: >-
+        Price status, or null when unknown. No monetary amount is returned.
+        A scheduled window does not specify whether entry outside it is paid.
+      oneOf:
+        - type: object
+          nullable: true
+          enum: [null]
+        - type: object
+          additionalProperties: false
+          required: [type, schedule]
+          properties:
+            type:
+              type: string
+              enum: [included, included_conditional, paid]
+              description: Conditional inclusion is described in the amenity's localized note.
+            schedule:
+              type: array
+              nullable: true
+              enum: [null]
+              items:
+                $ref: "#/components/schemas/AmenityPricingScheduleBlock"
+        - type: object
+          additionalProperties: false
+          required: [type, schedule]
+          properties:
+            type:
+              type: string
+              enum: [included_scheduled]
+            schedule:
+              type: array
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/AmenityPricingScheduleBlock"
     AmenityOpeningHours:
-      type: object
-      required: [continuous, blocks]
-      properties:
-        continuous:
-          type: boolean
-          description: True when the amenity is open 24 hours a day, 7 days a week.
-        blocks:
-          type: array
-          description: >-
-            Weekly opening-hour blocks. Empty when `continuous` is true or when
-            the opening hours are not specified.
-          items:
-            $ref: "#/components/schemas/AmenityOpeningHoursBlock"
+      description: >-
+        Weekly opening hours in hotel local time, or null when unknown.
+        A day absent from a known schedule has no opening interval.
+        A single block covering all seven days from 00:00 to 24:00 means 24/7.
+      oneOf:
+        - type: object
+          nullable: true
+          enum: [null]
+        - type: object
+          additionalProperties: false
+          required: [schedule]
+          properties:
+            schedule:
+              type: array
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/AmenityOpeningHoursBlock"
     AmenityValue:
       type: object
+      additionalProperties: false
       required: [code]
       description: >-
         A structured amenity assigned to a hotel or room type. Apart from
@@ -4111,15 +4180,11 @@ components:
             Present with `proximity`. Contains a distance when `proximity` is
             `nearby`; otherwise null.
         pricing:
-          type: string
-          nullable: true
-          enum: [included, conditional, paid, null]
+          allOf:
+            - $ref: "#/components/schemas/AmenityPricing"
           description: >-
-            Whether using the amenity costs extra. Present when `detailKinds`
-            includes [`pricing`](/api/amenities#pricing). Null when
-            not specified. `included` means no additional charge,
-            `conditional` means inclusion depends on stated conditions, and
-            `paid` means an additional charge applies.
+            Present when the dictionary declares [pricing](/api/amenities#pricing).
+            Null means unknown. Otherwise read type and schedule.
         coverage:
           type: string
           enum: [all, some]
@@ -4146,9 +4211,7 @@ components:
             - $ref: "#/components/schemas/AmenityOpeningHours"
           description: >-
             Present when `detailKinds` includes
-            [`opening_hours`](/api/amenities#opening-hours). When
-            not specified, returns `continuous: false` with an empty `blocks`
-            array.
+            [`opening_hours`](/api/amenities#opening-hours). Null when unknown.
         note:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -4157,17 +4220,64 @@ components:
             [`note`](/api/amenities#note). Localized supplementary
             information for guests. Locale values are at most 200 characters
             and are null when the requested translation is not available.
+        includes:
+          type: array
+          description: >-
+            Aquapark facilities with resolved pricing, hours, location and note.
+            Present when the dictionary declares [includes](/api/amenities#includes).
+            Empty when no facilities are specified. Children are not duplicated
+            among the hotel's own amenities and cannot contain further includes.
+          items:
+            $ref: "#/components/schemas/IncludedAmenityValue"
       example:
         code: aquapark
         proximity: nearby
         proximityMeters: 250
-        pricing: included
+        pricing: { type: included, schedule: null }
+        note: { en: null }
+        includes: []
         openingHours:
-          continuous: false
-          blocks:
+          schedule:
             - days: [monday, tuesday, wednesday]
               from: "09:00"
               to: "21:00"
+    IncludedAmenityValue:
+      type: object
+      additionalProperties: false
+      required: [code, proximity, proximityMeters, pricing, openingHours, note]
+      description: >-
+        One aquapark facility. Values already include inherited conditions;
+        clients do not resolve inheritance. Sauna also returns options.
+      properties:
+        code:
+          type: string
+          enum: [indoor_pool, outdoor_pool, children_pool, whirlpool, sauna]
+        label:
+          $ref: "#/components/schemas/AmenityValue/properties/label"
+        proximity:
+          $ref: "#/components/schemas/AmenityValue/properties/proximity"
+        proximityMeters:
+          $ref: "#/components/schemas/AmenityValue/properties/proximityMeters"
+        pricing:
+          $ref: "#/components/schemas/AmenityValue/properties/pricing"
+        options:
+          $ref: "#/components/schemas/AmenityValue/properties/options"
+        openingHours:
+          $ref: "#/components/schemas/AmenityValue/properties/openingHours"
+        note:
+          $ref: "#/components/schemas/AmenityValue/properties/note"
+      oneOf:
+        - properties:
+            code:
+              enum: [sauna]
+          required: [options]
+        - properties:
+            code:
+              enum: [indoor_pool, outdoor_pool, children_pool, whirlpool]
+          not:
+            properties:
+              options: {}
+            required: [options]
     HotelAmenityCategoryGroup:
       type: object
       required: [category, amenities]
@@ -4204,10 +4314,11 @@ components:
             amenities:
               - code: aquapark
                 label: { cs-CZ: Akvapark, de: Aquapark, en: Aquapark }
-                detailKinds: [proximity, pricing, opening_hours]
+                detailKinds: [proximity, pricing, opening_hours, note, includes]
+                includedAmenityCodes: [indoor_pool, outdoor_pool, children_pool, whirlpool, sauna]
               - code: sauna
                 label: { cs-CZ: Sauna, de: Sauna, en: Sauna }
-                detailKinds: [proximity, pricing, options, opening_hours]
+                detailKinds: [proximity, pricing, options, opening_hours, note]
                 options:
                   - code: finnish
                     label: { cs-CZ: Finská sauna, de: Finnische Sauna, en: "Finnish sauna" }

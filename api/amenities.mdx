@@ -49,7 +49,7 @@ its scope. Each amenity has a stable `code`, a localized `label`, and
         {
           "code": "sauna",
           "label": { "cs-CZ": "Sauna", "en": "Sauna" },
-          "detailKinds": ["proximity", "pricing", "options", "opening_hours"],
+          "detailKinds": ["proximity", "pricing", "options", "opening_hours", "note"],
           "options": [
             {
               "code": "finnish",
@@ -117,11 +117,11 @@ and the fields of its [detail kinds](#detail-kinds).
           "code": "sauna",
           "proximity": "in-hotel",
           "proximityMeters": null,
-          "pricing": "included",
+          "pricing": { "type": "included", "schedule": null },
           "options": [{ "code": "finnish" }, { "code": "steam" }],
+          "note": { "cs-CZ": null, "en": null },
           "openingHours": {
-            "continuous": false,
-            "blocks": [
+            "schedule": [
               {
                 "days": ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
                 "from": "10:00",
@@ -150,7 +150,7 @@ and the fields of its [detail kinds](#detail-kinds).
           "label": { "cs-CZ": "Sauna", "en": "Sauna" },
           "proximity": "in-hotel",
           "proximityMeters": null,
-          "pricing": "included",
+          "pricing": { "type": "included", "schedule": null },
           "options": [
             {
               "code": "finnish",
@@ -161,9 +161,9 @@ and the fields of its [detail kinds](#detail-kinds).
               "label": { "cs-CZ": "Parní lázeň", "en": "Steam bath" }
             }
           ],
+          "note": { "cs-CZ": null, "en": null },
           "openingHours": {
-            "continuous": false,
-            "blocks": [
+            "schedule": [
               {
                 "days": ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
                 "from": "10:00",
@@ -249,7 +249,7 @@ only the benefits assigned to each room type. Find them in `amenityCategories`:
     {
       "category": { "code": "inclusions" },
       "amenities": [
-        { "code": "parking", "pricing": "included" },
+        { "code": "parking", "pricing": { "type": "included", "schedule": null } },
         { "code": "welcome_drink" },
         { "code": "fruit_bowl" }
       ]
@@ -264,7 +264,7 @@ in the dictionary or with `expand=amenityLabels`.
 ### Parking for a room
 
 Room parking is returned in the room type's `inclusions` category.
-`pricing: "included"` means parking is included in that room's price.
+`pricing.type: "included"` means parking is included in that room's price.
 
 Hotel parking is returned separately in the hotel's `parking` category,
 including its localized `note`. Room type responses do not inherit hotel
@@ -281,7 +281,8 @@ detail kind adds fixed fields to the [amenity value](/api/objects/amenity-value)
 | [`pricing`](#pricing) | `pricing` | `null` |
 | [`coverage`](#coverage) | `coverage` | `"all"` |
 | [`options`](#options) | `options` | `[]` |
-| [`opening_hours`](#opening-hours) | `openingHours` | `{ "continuous": false, "blocks": [] }` |
+| [`opening_hours`](#opening-hours) | `openingHours` | `null` |
+| [`includes`](#includes) | `includes` | `[]` |
 | [`note`](#note) | `note` | `null` for each requested language |
 
 A value contains the fields of all declared detail kinds, even when a detail is
@@ -298,9 +299,29 @@ the approximate distance in metres, from 0 to 1,000,000. It is set only when
 
 ### Pricing
 
-`pricing` says whether using the amenity costs extra: `included` (included in
-the stay price), `conditional` (included under certain conditions), or `paid`
-(charged extra).
+`pricing` is `null` when the price conditions are unknown. Otherwise it is
+an object with `type` and `schedule`, for hotel and room type amenities alike.
+
+| `type` | Meaning | `schedule` |
+| --- | --- | --- |
+| `included` | Included in the stay price | `null` |
+| `included_scheduled` | Included on the listed days or at the listed times | Non-empty array of time blocks |
+| `included_conditional` | Included under the conditions described in `note` | `null` |
+| `paid` | Charged extra | `null` |
+
+A pricing block uses `days`, `from`, and `to`, like [opening hours](#opening-hours).
+Both times can be `null`: entry is then included throughout the opening hours
+on those days. Otherwise both times are specified. A schedule does not imply
+that entry outside its windows is paid.
+
+Price conditions and opening hours are independent. A free-entry window can
+be specified when opening hours are unknown. When both are known, windows lie
+within opening hours, including any breaks. The response uses days without
+times for windows that cover the whole opening day. If a window covers the
+entire known opening week, the response uses `included` instead.
+
+Monetary amounts are not structured fields. Any price description remains
+text in `note`; these values do not change the calculated booking price.
 
 ### Coverage
 
@@ -349,20 +370,25 @@ The amenity's dictionary entry lists every choice, in the same order. With
 
 ### Opening hours
 
-`continuous: true` means the amenity is open 24 hours a day, 7 days a week, and
-`blocks` is empty. Otherwise, each block gives the opening time `from`–`to` on
-the listed `days`:
+`openingHours` is `null` when unknown. Otherwise, its non-empty `schedule`
+lists the opening intervals for the week:
 
-- `days` contains weekdays from `monday` to `sunday`, each at most once, in week
-  order.
-- `from` and `to` are hotel local times in the 24-hour `HH:mm` format. `to` is
-  always later than `from`.
-- Blocks that share a day do not overlap.
+- `days` contains weekdays from `monday` to `sunday`, each at most once, in week order.
+- `from` and `to` are hotel local times in `HH:mm` format. Both are required.
+  `24:00` is allowed only in `to` and means the end of that day.
+- `to` is later than `from`. Intervals across midnight use two blocks.
+- Blocks that share a day do not overlap. Adjacent intervals are combined;
+  identical intervals on different days share a block.
+- A day absent from a known schedule is closed. An unknown schedule does not
+  indicate closure.
+
+A 24/7 schedule has one block containing all seven days, `from: "00:00"`,
+and `to: "24:00"`. Blocks are ordered by their first weekday, then start and
+end time. Opening hours do not specify whether entry is included.
 
 ```json Opening hours of a cafe
 {
-  "continuous": false,
-  "blocks": [
+  "schedule": [
     {
       "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
       "from": "08:00",
@@ -374,6 +400,81 @@ the listed `days`:
       "to": "18:00"
     },
     { "days": ["saturday", "sunday"], "from": "09:00", "to": "14:00" }
+  ]
+}
+```
+
+### Includes
+
+The `aquapark` amenity's `includes` array lists its facilities. The dictionary
+entry declares `includedAmenityCodes`: `indoor_pool`, `outdoor_pool`,
+`children_pool`, `whirlpool`, and `sauna`, in that order. Each code references
+an amenity definition in the `hotel` scope. The array contains each selected
+code once and does not nest further.
+
+Each item already contains its resolved location, price conditions, opening
+hours, and note. Sauna also contains `options`. Read these values directly;
+you do not need to compute inheritance. Labels and option labels are included
+with `expand=amenityLabels`.
+
+Location and distance come from the aquapark. Other values use the facility's
+own conditions when specified, otherwise the aquapark's. An inherited
+free-entry window is limited to the facility's known opening hours. No
+overlap yields `pricing: null`, which does not mean paid entry. When parent
+hours are unknown, inherited days without times remain days without times;
+they do not establish unrestricted free entry.
+
+A facility's own note replaces the whole aquapark note, including translations.
+A missing translation remains `null`. Note and price conditions are resolved
+independently.
+
+The hotel's own pool or sauna remains a separate top-level amenity. An
+included facility is not automatically duplicated there. An empty `includes`
+means the aquapark's contents are unspecified.
+
+```json Aquapark with a sauna (Accept-Language: en)
+{
+  "code": "aquapark",
+  "proximity": "nearby",
+  "proximityMeters": 300,
+  "pricing": {
+    "type": "included_scheduled",
+    "schedule": [
+      {
+        "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        "from": null,
+        "to": null
+      }
+    ]
+  },
+  "openingHours": {
+    "schedule": [
+      {
+        "days": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+        "from": "09:00",
+        "to": "21:00"
+      }
+    ]
+  },
+  "note": { "en": null },
+  "includes": [
+    {
+      "code": "sauna",
+      "proximity": "nearby",
+      "proximityMeters": 300,
+      "pricing": { "type": "paid", "schedule": null },
+      "options": [{ "code": "finnish" }],
+      "openingHours": {
+        "schedule": [
+          {
+            "days": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+            "from": "11:00",
+            "to": "19:30"
+          }
+        ]
+      },
+      "note": { "en": null }
+    }
   ]
 }
 ```
@@ -407,8 +508,11 @@ When you combine both filters, both must match. Unknown codes return `400`.
 The filters match assigned amenity codes, regardless of details such as
 `proximity`, `pricing`, or `coverage`. For example, `amenities=balcony` matches
 room types with either `coverage: "all"` or `coverage: "some"`.
-`amenities=indoor_pool` also matches a pool that is `nearby`; use the returned
-`proximity` to narrow the results.
+For hotels, a facility can match as an own amenity or through an aquapark's
+`includes`, regardless of price conditions. For example, `amenities=indoor_pool,sauna`
+can match an own pool and an aquapark sauna. A `nearby` facility also matches;
+use the returned `proximity` to narrow the results. Filtering happens before
+pagination, so `pagination.total` counts all matching hotels.
 
 ```bash
 GET /api/v2/hotels?amenities=sauna,parking

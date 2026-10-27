@@ -10,16 +10,16 @@ const ajv = new Ajv({ allErrors: true, strict: false });
 ajv.addSchema({ components: { schemas: doc.components.schemas } }, 'v2');
 
 const label = { 'cs-CZ': 'Sauna', en: 'Sauna' };
-const emptyHours = { continuous: false, blocks: [] };
+const emptyHours = null;
 const sauna = {
   code: 'sauna', proximity: null, proximityMeters: null, pricing: null,
-  options: [], openingHours: emptyHours,
+  options: [], openingHours: emptyHours, note: { en: null },
 };
 const hotel = { code: 'wellness' };
 const room = { code: 'view' };
 const inclusions = { code: 'inclusions' };
 const benefits = [
-  { code: 'parking', pricing: 'included' },
+  { code: 'parking', pricing: { type: 'included', schedule: null } },
   { code: 'welcome_drink' },
   { code: 'fruit_bowl' },
 ];
@@ -44,7 +44,7 @@ const cases = [
   ['legacy access kind', 'Amenity', { code: 'sauna', label, detailKinds: ['access'] }, false],
   ['missing selected option code', 'AmenityValue', { ...sauna, options: [{}] }, false],
   ['invalid opening time', 'AmenityValue', {
-    ...sauna, openingHours: { continuous: false, blocks: [{ days: ['monday'], from: '25:00', to: '26:00' }] },
+    ...sauna, openingHours: { schedule: [{ days: ['monday'], from: '25:00', to: '26:00' }] },
   }, false],
   ['dictionary category with label', 'AmenityCategory', { scope: 'hotel', ...hotel, label }, true],
   ['dictionary category without label', 'AmenityCategory', { scope: 'hotel', ...hotel }, false],
@@ -70,7 +70,7 @@ const cases = [
   ['room inclusions group', 'RoomTypeAmenityCategoryGroup', group(inclusions, benefits), true],
   ['expanded room parking', 'RoomTypeAmenityCategoryGroup', group({
     ...inclusions, label: { de: 'Im Zimmerpreis inbegriffen' },
-  }, [{ code: 'parking', pricing: 'included', label: { de: 'Parkplatz' } }]), true],
+  }, [{ code: 'parking', pricing: { type: 'included', schedule: null }, label: { de: 'Parkplatz' } }]), true],
   ['room parking with unknown pricing', 'RoomTypeAmenityCategoryGroup',
     group(inclusions, [{ code: 'parking', pricing: null }]), true],
   ['room parking with invalid pricing', 'RoomTypeAmenityCategoryGroup',
@@ -85,6 +85,36 @@ const cases = [
   ['room without amenities', 'RoomType/properties/amenityCategories', [], true],
 ];
 
+const timed = { days: ['monday'], from: '09:00', to: '24:00' };
+const daysOnly = { days: ['monday'], from: null, to: null };
+const scheduled = schedule => ({ type: 'included_scheduled', schedule });
+cases.push(
+  ['unknown pricing', 'AmenityPricing', null, true],
+  ['paid pricing', 'AmenityPricing', { type: 'paid', schedule: null }, true],
+  ['conditional pricing', 'AmenityPricing', { type: 'included_conditional', schedule: null }, true],
+  ['timed entry', 'AmenityPricing', scheduled([timed]), true],
+  ['days-only entry', 'AmenityPricing', scheduled([daysOnly]), true],
+  ['legacy scalar price', 'AmenityPricing', 'included', false],
+  ['empty entry window', 'AmenityPricing', scheduled([]), false],
+  ['absent entry window', 'AmenityPricing', scheduled(null), false],
+  ['paid with schedule', 'AmenityPricing', { type: 'paid', schedule: [timed] }, false],
+  ['missing null schedule', 'AmenityPricing', { type: 'included' }, false],
+  ['unknown opening hours', 'AmenityOpeningHours', null, true],
+  ['opening until midnight', 'AmenityOpeningHours', { schedule: [timed] }, true],
+  ['empty opening hours', 'AmenityOpeningHours', { schedule: [] }, false],
+  ['days-only opening hours', 'AmenityOpeningHours', { schedule: [daysOnly] }, false],
+  ['24:00 as start', 'AmenityOpeningHours', { schedule: [{ ...timed, from: '24:00' }] }, false],
+  ['missing one time', 'AmenityPricing', scheduled([{ ...timed, from: null }]), false],
+  ['duplicate day', 'AmenityPricing', scheduled([{ ...timed, days: ['monday', 'monday'] }]), false],
+  ['invalid day', 'AmenityPricing', scheduled([{ ...timed, days: ['holiday'] }]), false],
+  ['legacy opening fields', 'AmenityOpeningHours', { continuous: false, blocks: [] }, false],
+  ['resolved included sauna', 'IncludedAmenityValue', sauna, true],
+  ['unresolved included sauna', 'IncludedAmenityValue', { code: 'sauna' }, false],
+  ['recursive includes', 'IncludedAmenityValue', { ...sauna, includes: [] }, false],
+  ['unsupported included code', 'IncludedAmenityValue', { ...sauna, code: 'parking' }, false],
+  ['aquapark dictionary', 'Amenity', { code: 'aquapark', label, detailKinds: ['includes'], includedAmenityCodes: ['sauna'] }, true],
+);
+
 let failures = 0;
 for (const [name, schema, value, expected] of cases) {
   const validate = ajv.compile({ $ref: `v2#/components/schemas/${schema}` });
@@ -95,5 +125,42 @@ for (const [name, schema, value, expected] of cases) {
     console.error(error.message);
   }
 }
+// Check documented values against the detail kinds of their dictionary examples,
+// not only against the union of fields allowed by the generic value schema.
+const detailFields = {
+  proximity: ['proximity', 'proximityMeters'], pricing: ['pricing'],
+  opening_hours: ['openingHours'], note: ['note'], options: ['options'],
+  coverage: ['coverage'], includes: ['includes'],
+};
+const guideExamples = [...readFileSync('api/amenities.mdx', 'utf8').matchAll(/```json[^\n]*\n([\s\S]*?)\n```/g)]
+  .map(match => JSON.parse(match[1]));
+const definitions = new Map();
+for (const example of guideExamples) {
+  const groups = example.data ?? (example.category?.scope ? [example] : []);
+  for (const group of groups) for (const definition of group.amenities) {
+    definitions.set(`${group.category.scope}:${definition.code}`, definition);
+  }
+}
+let detailChecks = 0;
+const checkDetails = (value, scope) => {
+  const definition = definitions.get(`${scope}:${value.code}`);
+  if (definition) {
+    const expected = ['code', ...definition.detailKinds.flatMap(kind => detailFields[kind]),
+      ...(value.label ? ['label'] : [])].sort();
+    try { assert.deepEqual(Object.keys(value).sort(), expected, `${scope}:${value.code} fields`); }
+    catch (error) { failures++; console.error(error.message); }
+    detailChecks++;
+  }
+  for (const child of value.includes ?? []) checkDetails(child, 'hotel');
+};
+for (const example of guideExamples) {
+  for (const group of example.amenityCategories ?? []) {
+    const scope = group.category.code === 'inclusions' ? 'roomType' : 'hotel';
+    for (const value of group.amenities) checkDetails(value, scope);
+  }
+  if (example.code) checkDetails(example, 'hotel');
+}
+assert.ok(detailChecks >= 4, 'Dictionary/value examples must be checked');
+console.log(`Checked ${detailChecks} documented values against their dictionary detail kinds.`);
 console.log(`Checked ${cases.length} amenity contract cases; ${failures} failures.`);
 if (failures) process.exitCode = 1;

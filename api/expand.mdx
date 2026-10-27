@@ -201,6 +201,7 @@ usually leaner than expanding labels on every request.
 On `/room-types` and `/room-types/{roomTypeId}`, use `expand=amenityLabels`,
 optionally together with `hotel`. On hotels, `expand=roomTypes,amenityLabels`
 includes labels for both hotel amenities and embedded room type amenities.
+Aquapark `includes` items and their options also receive localized labels.
 Cache the combined dictionary or each scope separately if you resolve labels
 yourself. Match categories using the parent resource type (`hotel` or
 `roomType`) and `code`. Assigned categories omit `scope`, including with
