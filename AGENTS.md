@@ -25,6 +25,7 @@
 
 - Use active voice and second person ("you")
 - Keep sentences concise -- one idea per sentence
+- Write for external integrators: explain the contract and client actions, not internal phase numbers, storage migrations, review history, or previous drafts. Keep release status brief and factual.
 - Use sentence case for headings
 - Bold for UI elements: Click **Settings**
 - Code formatting for file names, commands, paths, and code references
@@ -47,4 +48,6 @@
 - Define distribution channels, public keys, and their scope only on `api/authentication.mdx`. Link there whenever behavior depends on the requesting channel.
 - Keep OpenAPI schemas and examples consistent with the object definitions. Reuse shared schema components for shared objects; validate examples against their actual schema.
 - Mark proposed endpoints, fields, and behavior as **Draft** until their implementation is released. Preserve accurate documentation of live responses when adding a proposed extension.
+- Keep API v2 self-contained. Do not link v2 pages to API v1 or describe v1 handoffs. Do not advertise endpoints outside the current v2 contract, including future booking endpoints. Legacy reference remains separate.
+- Visit type v2 excludes content from the admin section “Obsah pro starý web”; do not add those legacy text fields to its contract.
 - Use **request** for a booking that requires hotel confirmation. Do not use **on demand** as a synonym.

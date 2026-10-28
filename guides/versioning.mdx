@@ -5,8 +5,7 @@ icon: "git-branch"
 ---
 
 Use API v2 for the resources available in its [reference](/api).
-The full booking flow requires [API v1](/api/v1), including visit types,
-final pricing, and booking creation. See [API coverage](/api/versioning).
+See [API coverage](/api/versioning) for released resources and draft contracts.
 
 ## Version path
 
@@ -19,7 +18,7 @@ https://spaportal.cz/api/v2
 ## Breaking changes
 
 Breaking changes to published contracts require a new major API version. This
-applies to hotels, room types, and amenities.
+applies to every released resource. Draft contracts can change during review.
 
 Examples include renamed fields, changed ID semantics, changed pagination, or
 changed authentication requirements.
@@ -28,3 +27,18 @@ Additive changes can be made inside the same major version.
 
 Examples include new optional fields, new optional query parameters, new
 endpoints, or new enum values that clients can ignore safely.
+
+## Catalog codes
+
+Procedure codes and categories, natural-source codes, collections and
+unavailability reasons can gain values. Treat these response codes as
+extensible strings when generating client types.
+
+Use a procedure's returned label even when its code or category is new.
+Omit an unrecognized natural-source badge or collection grouping. For an
+unknown unavailability reason, show a general unavailable state and respect
+`available: false`.
+
+This rule does not apply to control values such as `category`, `payer`,
+`bookingMode`, `arrival.type` or `stayLength.unit`. Their documented values
+define the contract's behavior.

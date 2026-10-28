@@ -29,12 +29,11 @@
             "group": "Guides",
             "pages": [
               "guides/index",
-              "guides/booking",
+              "guides/visit-types",
               "guides/versioning"
             ]
           }
-        ],
-        "hidden": true
+        ]
       },
       {
         "tab": "API reference",
@@ -85,11 +84,18 @@
               "source": "/api/v2/openapi.yaml",
               "directory": "api/v2/reference"
             }
-          },
+          }
+        ]
+      },
+      {
+        "tab": "API v1",
+        "hidden": true,
+        "groups": [
           {
             "group": "Previous Versions",
             "pages": [
               "api/v1",
+              "guides/booking",
               {
                 "group": "API v1 conventions",
                 "pages": [

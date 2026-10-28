@@ -543,10 +543,10 @@ paths:
           </Warning>
       description: "**Draft:** Returns a paginated catalog. Filters apply before pagination and total. See
         [Visit type](/api/objects/visit-type), [publication and availability](/api/visit-types),
-        [Authentication](/api/authentication), and [Pagination](/api/pagination).
-        Each comma-separated query value is limited to 500 characters after trimming.
-        Items are trimmed, empty items ignored and duplicates removed; an unknown code
-        returns 400. Unknown parameter names are ignored."
+        [Authentication](/api/authentication), and [Pagination](/api/pagination). Each
+        comma-separated query value is limited to 500 characters after trimming. Items are trimmed,
+        empty items ignored and duplicates removed; an unknown code returns 400. Unknown parameter
+        names are ignored."
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -602,8 +602,9 @@ paths:
           schema:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
-          description: Filter visit types sold by this authorized hotel. Does not narrow returned hotel
-            entries or aggregate prices; use the matching hotels[] entry for its price.
+          description: Filter visit types sold by this authorized hotel. A valid unknown or unauthorized hotel
+            id matches no packages (200 with an empty list). Does not narrow returned hotel entries
+            or aggregate prices; use the matching hotels[] entry for its price.
         - name: category
           in: query
           style: form
@@ -625,8 +626,9 @@ paths:
             items:
               $ref: "#/components/schemas/VisitTypeCollection"
           description: Match any listed code in collections exposed to this authenticated channel; outside the
-            collection owner channel nothing matches. See [Authentication](/api/authentication#channels-and-scope)
-            and [Collections](/api/objects/visit-type#collections).
+            collection owner channel nothing matches. See
+            [Authentication](/api/authentication#channels-and-scope) and
+            [Collections](/api/objects/visit-type#collections).
         - name: payer
           in: query
           style: form
@@ -674,9 +676,9 @@ paths:
             type: integer
             minimum: 1
             maximum: 693
-          description: "Permit this many nights: convert stayLength.min/max from unit (a week is seven
-            nights), and require whole weeks for week stays. Null max imposes no business maximum;
-            the 693 request bound is technical."
+          description: "Match a permitted stay of this many nights. A week is seven nights and week-based
+            stays require whole weeks. Null stayLength.max imposes no package maximum. See [Stay
+            rules](/api/visit-types#testing-a-stay-against-its-rules)."
         - name: arrivalFrom
           in: query
           schema:
@@ -1225,8 +1227,8 @@ paths:
                 - seasons
           description: "Independent, comma-separated expansions: hotels adds hotels[].hotel; seasons adds
             hotels[].seasons. Combine as expand=hotels,seasons. CSV parsing and the 500-character
-            limit follow the [list endpoint](/api/v2/reference/visit-types/list-visit-types).
-            See [Expand](/api/expand)."
+            limit follow the [list endpoint](/api/v2/reference/visit-types/list-visit-types). See
+            [Expand](/api/expand)."
         - name: hotelId
           in: query
           schema:
@@ -2175,10 +2177,10 @@ paths:
                 onRequest:
                   summary: Insurer-paid request package has no indicative price
                   value:
-                    id: 6720c0a1b2c3d4e5f6a7b801
+                    id: 6720c0a1b2c3d4e5f6a7b802
                     name:
-                      cs-CZ: Klasická lázeňská léčba
-                      de: Klassische Kur
+                      cs-CZ: Komplexní lázeňská péče
+                      de: Komplexe Kurbehandlung
                     shortDescription:
                       cs-CZ: Lázeňská léčba s lékařskými prohlídkami, přírodními procedurami a polopenzí.
                       de: Kuraufenthalt mit ärztlichen Untersuchungen, natürlichen Anwendungen und Halbpension.
@@ -2190,7 +2192,6 @@ paths:
                     webOrder: 3
                     collections:
                       - treatment_stays
-                      - special_offers
                     board:
                       meals:
                         - meal: breakfast
@@ -2278,31 +2279,23 @@ paths:
                             naturalSource: mineral_water
                             count: 14
                     priceFrom: null
-                    promotions:
-                      - id: 6720c0a1b2c3d4e5f6a7d301
-                        name:
-                          cs-CZ: Podzimní sleva
-                          de: Herbstrabatt
-                        percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
-                        hotels: null
+                    promotions: []
                     hotels:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
                         priceFrom: null
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
                         priceFrom: null
                     images:
-                      - url: https://cdn.example.com/visit-types/classic-cure.jpg
+                      - url: https://cdn.example.com/visit-types/insurer-cure.jpg
                         width: 1600
                         height: 1066
                         alt:
-                          cs-CZ: Klasická lázeňská léčba
-                          de: Klassische Kur
+                          cs-CZ: Komplexní lázeňská péče
+                          de: Komplexe Kurbehandlung
                         variants:
-                          w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
-                          w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
-                          w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                          w480: https://cdn.example.com/visit-types/insurer-cure/generation-1/w480.webp
+                          w960: https://cdn.example.com/visit-types/insurer-cure/generation-1/w960.webp
+                          w1440: https://cdn.example.com/visit-types/insurer-cure/generation-1/w1440.webp
                   description: "Illustrative response for the company’s own website channel with Accept-Language:
                     cs-CZ,de and today = 2026-10-28."
         "400":
@@ -3815,8 +3808,8 @@ components:
           enum:
             - instant
             - request
-          description: "instant: confirmed immediately. request: every booking is a request confirmed by the
-            hotel. Insurer-paid stays always use request."
+          description: "instant: permits immediate confirmation, subject to room availability. request: hotel
+            confirmation is required for every stay. Insurer-paid stays always use request."
         available:
           type: boolean
           description: Whether offered now; independent of specific-date price or room capacity. See
@@ -4014,8 +4007,7 @@ components:
         max:
           type: integer
           minimum: 1
-          description: Configured business maximum in unit, at least min, or null when unlimited. Internal
-            99/693 sentinels and search bounds are not business limits.
+          description: Maximum length in unit, at least min, or null for no maximum.
           nullable: true
     VisitTypeValidityPeriod:
       type: object
@@ -4962,9 +4954,8 @@ components:
           items:
             type: string
             format: date
-          description: Current/future explicit arrival dates in ascending order. Empty when all configured
-            dates are past; then no_arrival applies unless an earlier reason does. No weekday
-            intersection in the public shape.
+          description: Explicit arrival dates from today onward, in ascending order. Empty when all configured
+            dates have passed.
       additionalProperties: false
     Procedure:
       type: object
@@ -4994,7 +4985,7 @@ components:
             - peat
             - mineral_water
             - null
-          description: Natural healing source the procedure uses, or null.
+          description: Natural healing source classification; null when no classification is provided.
       not:
         type: object
         required:
@@ -5057,9 +5048,8 @@ components:
           $ref: "#/components/schemas/PriceFromMinimum/properties/visitType"
         hotel:
           $ref: "#/components/schemas/PriceFromHotel"
-      description: "**Draft:** Shared target minimum for hotels, visit types, hotel × visit type and
-        seasons. Both entity references are required. The live hotel minimum does not yet include
-        hotel. See [Price from](/api/objects/price-from)."
+      description: "Shared minimum for hotels, visit types, hotel-pair prices and seasons. Both hotel and
+        visit type references are required. See [Price from](/api/objects/price-from)."
     DraftHotelPriceFrom:
       type: object
       minProperties: 1
@@ -5118,9 +5108,8 @@ components:
       properties:
         id:
           type: string
-          description: Opaque source price-list season id, stable while the season exists; imports that split
-            or replace it can change its identity. Shared across hotels because seasons belong to
-            this visit type price list.
+          description: Opaque season id, stable while the season exists. Splitting or replacing a season
+            creates new ids. The same season can appear under several hotels.
           pattern: ^[0-9a-fA-F]{24}$
         from:
           type: string
@@ -5167,8 +5156,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/VisitTypeSeason"
-          description: Detail only, present only with expand=seasons. Current/future source price-list seasons
-            ordered by from, to, id. Empty when none remain.
+          description: Detail only, present with expand=seasons. Current and future price-list periods ordered
+            by from, to, id. Empty when none remain.
     PromotionHotel:
       type: object
       required:
@@ -5228,5 +5217,5 @@ components:
             $ref: "#/components/schemas/PromotionHotel"
           description: Null for every authorized hotel selling the visit type, independent of a detail hotelId
             filter; otherwise scoped hotels and room types. See [Promotion](/api/objects/promotion).
-      description: "**Draft:** A promotion within the [authenticated scope](/api/authentication#channels-and-scope).
-        No channel identifiers or funding configuration are exposed."
+      description: "A promotion within the [authenticated scope](/api/authentication#channels-and-scope).
+        See [Promotion](/api/objects/promotion)."

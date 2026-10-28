@@ -1,0 +1,58 @@
+---
+title: "Building package pages"
+description: "Use the visit type catalog for package cards, hotel offers and seasonal prices."
+icon: "suitcase"
+---
+
+<Warning>
+  **Draft:** This guide describes the visit type contract for integration
+  review. Check [API coverage](/api/versioning) before implementation.
+</Warning>
+
+Use the visit type catalog to build package listings and details. Keep the
+same [public key](/api/authentication) across the page's catalog requests and
+request the [languages](/api/localization) your page displays.
+
+## Package cards
+
+Load [the package list](/api/v2/reference/visit-types/list-visit-types) and
+follow its pagination. Use the package's name, short description and first
+image for the card. Add category, board and treatment information from the
+[Visit type object](/api/objects/visit-type).
+
+For a whole-package teaser, display `priceFrom.{currency}.perStay.amount`
+alongside that minimum's `nights` and `occupancy`. The two price metrics can
+refer to different offers; use all display values from the chosen minimum.
+See [Prices](/api/prices) for selection, discounts and currency handling.
+
+A null price means no indicative offer is available. For a request package,
+label the package as available on request. Check its catalog availability
+separately from its indicative price.
+
+## Hotel selection
+
+Load [the package detail](/api/v2/reference/visit-types/get-a-visit-type)
+with `expand=hotels` to display its hotels. Each `hotels[]` entry contains
+that hotel's price for the package. Fetch the
+[Hotel](/api/objects/hotel) detail for its full profile and room catalog.
+
+When the visitor chooses a hotel, display the matching entry's price.
+The top-level `priceFrom` compares the package across all its hotels, even
+when `hotelId` narrows the detail response. It can therefore belong to a
+different hotel than the one selected.
+
+Hotel room types describe the accommodation catalog. Their presence does
+not establish a price or availability for this package and a particular stay.
+Keep the room catalog and the package's indicative price separate in the UI.
+
+## Seasonal prices
+
+Request `expand=seasons` on the detail, optionally with `hotelId`. Use
+`expand=hotels,seasons` if you also need hotel names and stars.
+Use the chosen hotel's `seasons[]` for the price timeline, keeping rows with
+null prices visible as periods without an indicative offer.
+
+Compare the same currency and metric across rows. Show each minimum's
+occupancy and nights so different offers remain understandable. Follow the
+[seasonal pricing rules](/api/prices#seasonal-prices); a row represents a
+minimum across arrivals in its period, not a quote for every date.

@@ -5,8 +5,8 @@ openapi-schema: "/api/v2/openapi.yaml Procedure"
 ---
 
 <Warning>
-  **Draft:** Procedure objects are proposed for visit type treatment items
-  and the hotel's procedure offer. These additions are not yet released.
+  **Draft:** Procedure contract for integration review. See
+  [API coverage](/api/versioning) for released endpoints.
 </Warning>
 
 `Procedure` identifies a procedure independently of a package's allowance.
@@ -33,8 +33,8 @@ a hotel's offer and a visit type's treatment list.
 
 ## Natural sources
 
-`naturalSource` names the natural healing source a procedure uses, or is `null`
-when it uses none.
+`naturalSource` identifies the procedure's natural healing source. `null`
+means no source classification is provided.
 
 | `naturalSource` | Meaning |
 | --- | --- |
@@ -45,7 +45,8 @@ when it uses none.
 ## Procedure codes
 
 Procedure codes in catalog order. Each item returns its localized `label`; the
-table shows the English label.
+table shows the English label. Codes can be added under the
+[catalog compatibility rules](/guides/versioning#catalog-codes).
 
 | Code | Category | English label |
 | --- | --- | --- |

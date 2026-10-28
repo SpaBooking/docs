@@ -5,8 +5,8 @@ openapi-schema: "/api/v2/openapi.yaml Promotion"
 ---
 
 <Warning>
-  **Draft:** This public promotion object belongs to the proposed visit type
-  contract and is not yet returned by released visit type endpoints.
+  **Draft:** Promotion contract for integration review. See
+  [API coverage](/api/versioning) for released endpoints.
 </Warning>
 
 A visit type's `promotions` contains its running and future promotions within
@@ -39,10 +39,11 @@ A night is identified by the calendar date on which it starts. For example,
 Each `hotels` entry has `hotelId` and `roomTypeIds`. A `roomTypeIds: null`
 restriction includes all rooms of that hotel; otherwise its non-empty array
 lists eligible room IDs. A non-null `hotels` array is also non-empty. Both
-references stay within the visit type's authorized active hotels.
+references stay within the visit type's authorized active hotels. Draft
+room types are excluded. A disabled room can remain referenced and its
+detail can be fetched, but it is not eligible for new room choices.
 
-Promotions are ordered by `from`, then `id`. No channel list, public key, or
-internal funding flag is included in this object.
+Promotions are ordered by `from`, then `id`.
 
 ## Example: specific rooms in one hotel
 

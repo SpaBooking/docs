@@ -25,9 +25,8 @@ also follow their defined channel scope. A response for one key must not be
 used as the response for another key. Include the public-key context in your
 cache partitioning without exposing the key in a public cache identifier.
 
-Clients do not need to filter internal channel assignments. A promotion can
-be assigned to more than one channel. The response does not disclose other
-channels' keys or internal configuration.
+A promotion can apply to several channels. The API returns only those
+applicable to your key, so clients do not need to filter them by channel.
 
 ## Getting your public key
 

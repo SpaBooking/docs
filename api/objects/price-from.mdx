@@ -5,15 +5,13 @@ openapi-schema: "/api/v2/openapi.yaml SharedPriceFromMinimum"
 ---
 
 <Warning>
-  **Draft shared minimum:** The shape below names both the hotel and visit
-  type. Visit type endpoints and this hotel-price extension are not yet
-  released. Current hotel minima contain the other fields shown below and
-  `visitType`, but do not yet include `hotel`.
+  **Draft:** Shared price contract for integration review. For released
+  hotel responses, use the [Hotel reference](/api/objects/hotel#prices).
 </Warning>
 
 A price minimum describes one complete offer selected by the
-[pricing rules](/api/prices). The same shared minimum is planned for hotel
-prices, visit type prices, a hotel × visit type pair, and that pair's seasons.
+[pricing rules](/api/prices). This minimum is used for hotel prices, visit type
+prices, a hotel × visit type pair, and that pair's seasons.
 
 ## Minimum fields
 
@@ -25,6 +23,10 @@ prices, visit type prices, a hotel × visit type pair, and that pair's seasons.
 | `occupancy` | Full standard room occupancy used to price that stay. |
 | `hotel` | The offer's hotel: `id` and localized `name`. |
 | `visitType` | The offer's visit type: `id` and localized `name`. |
+
+The minimum identifies the hotel and package, but does not contain a room
+type or arrival date. Use it for price comparisons and display its reported
+nights and occupancy.
 
 Both name objects follow [Localization](/api/localization). An original and a
 discounted average can round to the same minor-unit amount. Show a crossed-out
@@ -65,8 +67,8 @@ the two may refer to different offers.
 
 For a hotel, `all` covers all eligible offers in its price-calculation scope.
 `health` and `wellness` restrict that set to one stay category. The
-[hotel pricing scope](/api/prices#comparing-hotel-groups) distinguishes the
-released calculation from the proposed shared extension.
+[hotel pricing scope](/api/prices#comparing-hotel-groups) defines which
+offers qualify.
 A currency key exists only when it contains a
 complete priced offer; a hotel category group is omitted when it has none.
 The `all` group is present whenever the currency is present.

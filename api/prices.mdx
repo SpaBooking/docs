@@ -7,7 +7,7 @@ icon: "tag"
 Use indicative prices for teasers and comparisons. They are calculated from
 complete purchasable stays and do not reserve a room or quote a chosen set of
 guests and dates. The [Price from object](/api/objects/price-from) defines the
-fields, currency containers, and current versus proposed response shapes.
+fields and currency containers.
 
 Hotel prices are released. The visit type, hotel × visit type, and seasonal
 price scopes below are **draft**, together with the shared minimum naming
@@ -54,9 +54,7 @@ lower. Different currencies can select different offers.
 The total uses each occupied night's seasonal rate. The checkout date needs
 neither a nightly price nor room capacity. A gap in prices or capacity makes
 that complete stay ineligible; the calculation does not combine rooms or
-currencies to fill the gap. The v1 calendar applies a stricter checkout-price
-condition; see the [booking-flow limitation](/guides/booking#catalog-and-calendar-boundaries)
-when taking a catalog offer into date selection.
+currencies to fill the gap.
 
 Equal hotel prices prefer the shorter stay, then lower occupancy, then the
 lower visit type ID. Remaining ties use stable offer identities. Query
@@ -64,14 +62,13 @@ parameters on hotel catalog endpoints do not change their indicative prices.
 
 ## Comparing hotel groups
 
-The hotel-wide `all` group considers everything the hotel sells, including
-currently stored visit types without a category. The `health` and `wellness`
-groups apply the same selection to one category.
+The hotel-wide `all` group compares all eligible offers. The `health` and
+`wellness` groups compare offers from one category.
 
-The **draft shared hotel-price extension** will restrict all three groups to
-packages that meet the [visit type publication requirements](/api/visit-types#publication-and-availability).
-Its visit type reference must resolve in that catalog for the same public
-key. This restriction is not part of the released hotel calculation.
+In the **draft shared-price contract**, all three groups use packages in the
+[visit type catalog](/api/visit-types#publication-and-availability), so each
+package reference can be opened with the same public key. Released hotel
+prices can also reference packages outside that draft catalog.
 
 For the same currency and minimum, the hotel-wide amount cannot exceed the
 amount in a category group. Compare the two `perStay` values or the two
@@ -111,10 +108,6 @@ nights or extend the promotion across the whole stay.
 
 ## Visit type and hotel-pair prices
 
-<Warning>
-  **Draft:** Visit type endpoints and hotel-pair prices are not yet released.
-</Warning>
-
 The visit type's overall price compares eligible offers across all its
 eligible hotels. Each hotel entry's price limits the comparison to that
 hotel and visit type. Both use the selection rules above and the same
@@ -127,15 +120,11 @@ to request one hotel's entries and optional expansions.
 
 ## Seasonal prices
 
-<Warning>
-  **Draft:** Seasonal prices are optional data on the visit type detail.
-  They are not yet released and do not add a calendar endpoint.
-</Warning>
-
 Each seasonal price belongs to one hotel and one visit type. A season is a
 configured price-list period; it is not a calendar month. Its price compares
 stays whose **arrival** is in that period. Only current and future seasons
-are returned.
+are returned. A seasonal minimum is not a quote for every arrival in that
+period; prices and promotions can differ within it.
 
 For a current season, search starts at the later of its first date and today
 in Europe/Prague. A cheaper offer available only for a past arrival does not
@@ -158,20 +147,16 @@ The price calculation checks the recorded capacity at calculation time. If
 the cheapest stay is sold out, it selects the next eligible stay. For
 example, a sold-out CZK 3,000 offer does not beat an available CZK 4,500 offer.
 
-The response does not hold a room. Availability and prices can change before
-booking. Refresh cached offers regularly and use the
-[booking flow](/guides/booking) to confirm the selected dates, guests, and
-final price. An absent indicative price does not rule out a stay that needs
-a booking request.
+The response does not hold a room. Prices and recorded capacity can change,
+so refresh cached offers regularly. An absent indicative price does not
+mean the package is unavailable; check its catalog availability separately.
 
 ## Payer and the quoted amount
 
-The draft `payer` field describes who covers the components of a health
-stay; its [values](/api/objects/visit-type#category-payer-and-booking-mode) do
-not split a price automatically. The calculation uses the configured
-booking price list. For `guest_and_insurer`, that price list must contain
-the guest-payable accommodation and meals; the API does not infer or deduct
-an insurer contribution from a combined amount.
+For a health stay, [`payer`](/api/objects/visit-type#category-payer-and-booking-mode)
+describes which costs the guest pays. For `guest_and_insurer`, the quoted
+price covers the guest-payable accommodation and meals. Display that amount
+directly; do not subtract an insurer contribution.
 
 ## Display and rounding
 

@@ -5,22 +5,21 @@ icon: "suitcase"
 ---
 
 <Warning>
-  **Draft:** The visit type endpoints and the rules described here are not yet
-  released. Use API v1 for the current booking flow.
+  **Draft:** This contract is available for integration review. The visit type
+  endpoints are not released; see [API coverage](/api/versioning).
 </Warning>
 
 A [visit type](/api/objects/visit-type) describes a stay package sold by one or
 more hotels. Its catalog availability, permitted stay dates, and indicative
-prices answer different questions. Room availability and the final booking
-price are checked in the [booking flow](/guides/booking).
+prices answer different questions. For a practical walkthrough, see
+[Building package pages](/guides/visit-types).
 
 ## Publication and availability
 
 The catalog follows the [authenticated scope](/api/authentication#channels-and-scope).
-A visit type must have a Czech name and complete, valid required configuration
-to be published. The API does not invent a category, payer, arrival rule, or
-stay length for an incomplete record. Such a record is omitted from the list
-and returns the same `404` as an unknown or inaccessible record.
+The list contains packages with complete required information. A package
+with missing or invalid required fields is omitted and its detail returns
+`404`, as does an unknown or inaccessible package.
 
 A published visit type can still be unavailable. The first applicable reason
 in the [availability code table](/api/objects/visit-type#availability) determines
@@ -45,7 +44,7 @@ and [validity](/api/objects/visit-type#validity) when evaluating a proposed stay
 1. Check the number of nights against the configured unit and limits. A week
    stay requires a whole number of seven-night weeks.
 2. Check the arrival against the selected arrival variant. Weekday rules and
-   explicit-date rules are alternatives; there is no implicit Sunday rule.
+   explicit-date rules are alternatives.
 3. When validity periods exist, at least one period must permit the complete
    stay. Its arrival must be within that period. A departure-limited period
    must also permit the checkout day.
@@ -74,8 +73,8 @@ also fits the arrival and validity rules.
 These filters select packages; they do not recalculate their indicative
 prices for the requested nights or arrival window. For example, a package
 that permits 7–14 nights can match `nights=14` while its `priceFrom` still
-describes a seven-night offer. Use the [booking flow](/guides/booking) for a
-price for the selected dates and guests.
+describes a seven-night offer. Show the nights and occupancy returned with
+the price, rather than treating it as a quote for the filter selection.
 
 ## Hotels and prices
 

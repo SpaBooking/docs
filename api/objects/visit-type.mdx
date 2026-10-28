@@ -5,8 +5,8 @@ openapi-schema: "/api/v2/openapi.yaml VisitType"
 ---
 
 <Warning>
-  **Draft:** The visit type endpoints and the fields below are not yet
-  released. Their contract may change before implementation is finalized.
+  **Draft:** Visit type contract for integration review. See
+  [API coverage](/api/versioning) for released endpoints.
 </Warning>
 
 A visit type is a stay package sold by hotels, such as a spa cure or a wellness
@@ -43,10 +43,12 @@ stay, and the API does not supply a default payer.
 
 | `bookingMode` | Meaning |
 | --- | --- |
-| `instant` | The booking is confirmed immediately. |
-| `request` | Every booking is a request that the hotel confirms. |
+| `instant` | The package permits immediate confirmation, subject to room availability. |
+| `request` | The package requires hotel confirmation for every stay. |
 
 A stay with `payer: "insurer"` always has `bookingMode: "request"`.
+`bookingMode` describes the package's confirmation policy; it does not
+indicate room availability for a particular date.
 
 ## Availability
 
@@ -74,8 +76,7 @@ room capacity and price availability is explained in
 | `min` | Minimum length in that unit, a positive integer. |
 | `max` | Maximum length in that unit, or `null` for no configured maximum. |
 
-A missing maximum is represented by `null`, not a numeric sentinel. The
-maximum cannot be lower than the minimum.
+A numeric maximum cannot be lower than the minimum.
 
 `arrival` is one of two variants:
 
@@ -147,8 +148,7 @@ the included rows. Do not infer changeability from that label.
 channel. It is returned only for that website's
 matching [authenticated channel](/api/authentication#channels-and-scope).
 Other channel keys, including SpaBooking, receive `[]`; they cannot match a
-collection filter. If an own-website channel cannot be resolved uniquely, the
-field is also `[]`.
+collection filter. An unconfigured collection scope also returns `[]`.
 
 Assigned and derived collections follow this same scope. Codes appear in the
 following order, without duplicates:
