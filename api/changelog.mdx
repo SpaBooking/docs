@@ -22,6 +22,20 @@ hidden: true
   aliases in `amenityCategory`. Use the room type category codes, such as
   `view`. Prefixed codes return `400`.
 
+### Disabled room types
+
+- Added the required boolean `disabled` to room type list, detail, and hotel
+  expansion responses.
+- Room type lists now return only enabled rooms by default. Use `disabled=true`
+  for disabled rooms or `disabled=all` for both states.
+- Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
+  Room details remain accessible by ID, including disabled rooms.
+- Use `disabled` instead of checking room type codes for `_DELETED`. Disabled
+  room types are excluded from new bookings, prices, and availability results;
+  historical bookings retain their references.
+
+## 2026-10-28 (v3.2.33)
+
 ### Amenity pricing, hours, and aquapark facilities
 
 - **Breaking:** The `pricing` value changes from a string to `null` or an object with
@@ -42,18 +56,6 @@ hidden: true
   note instead of presence only. Sauna retains its type options.
 - The amenity dictionary version changes. Refresh cached dictionaries.
   See [Amenities](/api/amenities) for field meanings and examples.
-
-### Disabled room types
-
-- Added the required boolean `disabled` to room type list, detail, and hotel
-  expansion responses.
-- Room type lists now return only enabled rooms by default. Use `disabled=true`
-  for disabled rooms or `disabled=all` for both states.
-- Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
-  Room details remain accessible by ID, including disabled rooms.
-- Use `disabled` instead of checking room type codes for `_DELETED`. Disabled
-  room types are excluded from new bookings, prices, and availability results;
-  historical bookings retain their references.
 
 ## 2026-10-21 (v3.2.32)
 

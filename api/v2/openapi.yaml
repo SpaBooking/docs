@@ -2803,8 +2803,8 @@ components:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
-            Localized short teaser (plain text). Each locale value is at most
-            400 characters. Missing translations are null.
+            Localized short teaser (plain text). Missing translations are null.
+            The API returns the complete stored text without truncation.
         stayCategory:
           type: string
           nullable: true
