@@ -50,11 +50,8 @@ for both. The detail endpoint returns a visit type whether or not it is
 available.
 
 Availability does not mean that a particular date can be booked, that a price
-exists, or that a room has free capacity. Use `priceFrom` for prices and the
-[bulk calendar](/api/v2/reference/availability/get-calendar-dates-in-bulk) for
-dates and capacity: send the visit type `id` as `visitTypeId`, a hotel from
-`hotelIds` as `hotelId` and one of that hotel's room types as `roomTypeId` for
-final prices. API v2 has no checkout calendar yet.
+exists, or that a room has free capacity. Use `priceFrom` for indicative prices.
+Date-level availability is outside the scope of this draft.
 
 ## Hotels
 
@@ -69,8 +66,7 @@ type.
 ## Stay length and arrival
 
 These fields describe the rules that booking applies. They do not list bookable
-dates; the [bulk calendar](/api/v2/reference/availability/get-calendar-dates-in-bulk)
-is authoritative for those.
+dates or check room capacity.
 
 `stayLength` combines the configured length with the limits that booking
 enforces:
