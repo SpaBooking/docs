@@ -121,25 +121,21 @@ structure and labels.
 
 ## Prices
 
-`perStay` selects the lowest full-room total for the whole stay at standard
-occupancy. `perPersonPerNight` independently selects the lowest average price
-per guest per night for a complete stay. Each offer has a permitted arrival
-date, a price, and remaining capacity in the same room type for every
-occupied night. Visit types offered only on demand are excluded. The winning
-rooms, occupancies, and visit types can differ. Availability is checked when
-the price is calculated and again in the booking flow; the response does not
-hold a room.
+`priceFrom` contains the hotel's indicative prices. Its current minima
+include the selected visit type; see the canonical
+[Price from fields and containers](/api/objects/price-from) and
+[price-selection rules](/api/prices).
 
-`priceFrom` holds the lowest prices the hotel currently sells, keyed by currency
-(`CZK`, `EUR`). Under each currency you get the hotel-wide price `all` and,
-when the hotel sells such stays, the categories `health` (spa cures) and
-`wellness`. Each of them reports two independent minima, `perPersonPerNight`
-and `perStay`, each with its own `amount`, `original`, `nights`, `occupancy`,
-and `visitType`. `all` is always present when the currency is; a category is
-omitted when it has no available, fully priced stay in that currency.
-`priceFrom` is `null` when the hotel has no such stay, and a currency without
-such a stay is omitted. The
-`visitType.name` falls back to the Czech value like the hotel `name`. See
-[Prices](/api/prices) for the selection rules and an example.
+## Procedures
+
+<Warning>
+  **Draft extension:** Hotel `procedures` and the shared price minimum's
+  `hotel` reference are planned additions. They are not part of the current
+  released Hotel response or the fields below.
+</Warning>
+
+See [Hotel extensions (draft)](/api/objects/hotel-draft) for the proposed
+procedure offer and shared price minimum. The current Hotel schema below
+remains the reference for released responses.
 
 ## Fields

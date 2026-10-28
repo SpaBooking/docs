@@ -4,34 +4,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { parse } from 'yaml';
 
-// OpenAPI 3.0 uses nullable and boolean exclusive bounds instead of draft-07.
-function toJsonSchema(value, version) {
-  if (Array.isArray(value)) return value.map(item => toJsonSchema(item, version));
-  if (!value || typeof value !== 'object') return value;
-  const result = {};
-  for (const [key, child] of Object.entries(value)) {
-    if (['example', 'examples', 'discriminator', 'xml', 'externalDocs', 'nullable'].includes(key)) continue;
-    result[key] = key === '$ref'
-      ? child.replace('#/components/schemas/', `${version}#/definitions/`)
-      : toJsonSchema(child, version);
-  }
-  for (const bound of ['Minimum', 'Maximum']) {
-    const exclusive = `exclusive${bound}`;
-    if (typeof value[exclusive] !== 'boolean') continue;
-    delete result[exclusive];
-    if (value[exclusive]) {
-      result[exclusive] = value[bound.toLowerCase()];
-      delete result[bound.toLowerCase()];
-    }
-  }
-  if (value.nullable) {
-    if (typeof result.type === 'string') {
-      result.type = [result.type, 'null'];
-      if (result.enum && !result.enum.includes(null)) result.enum = [...result.enum, null];
-    } else return { anyOf: [result, { type: 'null' }] };
-  }
-  return result;
-}
+import { toJsonSchema } from './lib/openapi-schema.mjs';
 
 function atPointer(object, pointer) {
   if (!pointer) return object;
@@ -105,7 +78,7 @@ for (const [version, doc] of documents) {
 // Bind complete objects or selected parts of deliberately abridged MDX examples.
 // Array order matches JSON fences in the page; a count change requires review.
 const bindings = JSON.parse(readFileSync('scripts/example-schemas.json', 'utf8'));
-const pages = execFileSync('git', ['ls-files', '-z', '--', '*.mdx'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+const pages = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', '*.mdx'], { encoding: 'utf8' }).split('\0').filter(Boolean);
 for (const page of pages) {
   const blocks = [...readFileSync(page, 'utf8').matchAll(/^```json[^\n]*\n([\s\S]*?)^```/gm)];
   try {
@@ -127,7 +100,7 @@ for (const page of pages) {
 for (const page of Object.keys(bindings)) {
   if (!pages.includes(page)) {
     failures++;
-    console.error(`Example bindings refer to an untracked or deleted page: ${page}`);
+    console.error(`Example bindings refer to a missing or deleted page: ${page}`);
   }
 }
 console.log(`Parsed ${parsed} MDX JSON examples; checked ${checked} schema examples; ${failures} failures.`);

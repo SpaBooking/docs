@@ -1,0 +1,31 @@
+---
+title: "Hotel extensions (draft)"
+description: "Proposed procedure and shared-price additions to the Hotel response."
+openapi-schema: "/api/v2/openapi.yaml DraftHotel"
+---
+
+<Warning>
+  **Draft:** This is a proposed extension, not the response returned by
+  released hotel endpoints. Use [Hotel](/api/objects/hotel) for the current
+  contract. All existing hotel fields keep their definitions there.
+</Warning>
+
+## Procedures
+
+The proposed `procedures` array describes the hotel's procedure offer using
+the shared [Procedure](/api/objects/procedure) object. It contains `code`,
+localized `label`, `category`, and `naturalSource`, without a `count` field.
+An empty array means no procedures are configured for the offer.
+
+The hotel offer is independent of which procedures a particular stay
+includes. See [Treatment behavior](/api/treatment#hotel-offer-and-package-inclusion)
+for the distinction.
+
+## Shared price minimum
+
+The proposed price extension uses the
+[shared Price from minimum](/api/objects/price-from) with both `hotel` and
+`visitType` references. The hotel keeps its currency and category containers.
+The calculation continues to follow the [pricing rules](/api/prices).
+
+## Fields

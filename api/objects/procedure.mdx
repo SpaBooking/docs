@@ -1,0 +1,116 @@
+---
+title: "Procedure"
+description: "A treatment procedure, its localized label, category, and natural source."
+openapi-schema: "/api/v2/openapi.yaml Procedure"
+---
+
+<Warning>
+  **Draft:** Procedure objects are proposed for visit type treatment items
+  and the hotel's procedure offer. These additions are not yet released.
+</Warning>
+
+`Procedure` identifies a procedure independently of a package's allowance.
+It contains `code`, localized `label`, `category` with its own `code` and
+localized `label`, and `naturalSource`. Labels use the requested
+[locales](/api/localization); a missing translation is `null`.
+
+A hotel lists base Procedure objects without a `count` field.
+[Package treatment items](/api/objects/treatment#procedure-allowance) add
+`count` to these same fields. Use `code` to match the same procedure between
+a hotel's offer and a visit type's treatment list.
+
+```json
+{
+  "code": "carbon_dioxide_bath",
+  "label": { "en": "Carbon dioxide bath" },
+  "category": {
+    "code": "hydrotherapy",
+    "label": { "en": "Hydrotherapy" }
+  },
+  "naturalSource": "carbon_dioxide"
+}
+```
+
+## Natural sources
+
+`naturalSource` names the natural healing source a procedure uses, or is `null`
+when it uses none.
+
+| `naturalSource` | Meaning |
+| --- | --- |
+| `carbon_dioxide` | Natural carbon dioxide |
+| `peat` | Peat |
+| `mineral_water` | Natural mineral water |
+
+## Procedure codes
+
+Procedure codes in catalog order. Each item returns its localized `label`; the
+table shows the English label.
+
+| Code | Category | English label |
+| --- | --- | --- |
+| `bubble_bath` | `hydrotherapy` | Bubble bath |
+| `carbon_dioxide_bath` | `hydrotherapy` | Carbon dioxide bath |
+| `bubble_bath_with_additives` | `hydrotherapy` | Bubble bath with additives |
+| `kneipp_water_treading` | `hydrotherapy` | Kneipp water treading |
+| `hydroxeur` | `hydrotherapy` | Hydroxeur |
+| `herbal_bath` | `hydrotherapy` | Herbal bath |
+| `whirlpool_foot_bath` | `hydrotherapy` | Whirlpool foot bath |
+| `radon_bath` | `hydrotherapy` | Radon bath |
+| `peat_bath` | `thermotherapy` | Peat bath |
+| `peat_wrap` | `thermotherapy` | Peat wrap |
+| `paraffin_wrap` | `thermotherapy` | Paraffin wrap |
+| `peat_vaginal_tampons` | `thermotherapy` | Peat vaginal tampons |
+| `diadynamic_therapy` | `electrotherapy` | Diadynamic therapy |
+| `magnetic_therapy` | `electrotherapy` | Magnetic therapy |
+| `ultrasound` | `electrotherapy` | Ultrasound |
+| `co2_gas_injections` | `gas_therapy` | CO2 gas injections |
+| `dry_carbon_dioxide_bath` | `gas_therapy` | Dry carbon dioxide bath |
+| `molecular_hydrogen_therapy` | `gas_therapy` | Molecular hydrogen therapy |
+| `classic_full_body_massage` | `physiotherapy` | Classic full-body massage |
+| `partial_massage` | `physiotherapy` | Partial massage |
+| `fitness_centre_exercise` | `physiotherapy` | Exercise in the fitness centre |
+| `individual_physiotherapy` | `physiotherapy` | Individual physiotherapy |
+| `cardiotherapy` | `physiotherapy` | Cardiotherapy |
+| `machine_lymphatic_drainage` | `physiotherapy` | Machine lymphatic drainage |
+| `manual_lymphatic_drainage` | `physiotherapy` | Manual lymphatic drainage |
+| `reflex_massage` | `physiotherapy` | Reflex massage |
+| `hot_stone_massage` | `physiotherapy` | Hot stone massage |
+| `anti_cellulite_massage` | `physiotherapy` | Anti-cellulite massage |
+| `aroma_massage` | `physiotherapy` | Aroma massage |
+| `french_ear_acupuncture` | `physiotherapy` | French ear acupuncture |
+| `classic_chinese_acupuncture` | `physiotherapy` | Classic Chinese acupuncture |
+| `inhalation` | `inhalation` | Inhalation |
+| `oxygen_therapy` | `inhalation` | Oxygen therapy |
+| `cryotherapy` | `wellness` | Cryotherapy |
+| `thai_aroma_oil_massage` | `thai_massage` | Aroma oil massage |
+| `thai_foot_massage` | `thai_massage` | Thai foot massage |
+| `thai_warm_oil_massage` | `thai_massage` | Warm oil massage |
+| `classic_thai_massage` | `thai_massage` | Classic Thai massage |
+| `thai_coconut_dream` | `thai_massage` | Coconut dream |
+| `thai_head_and_back_massage` | `thai_massage` | Thai head and back massage |
+| `thai_herbal_massage` | `thai_massage` | Thai herbal massage |
+| `thai_special_back_massage` | `thai_massage` | Special back massage |
+| `thai_pregnancy_massage` | `thai_massage` | Pregnancy massage |
+| `vaginal_irrigation` | `other` | Vaginal irrigation |
+| `drinking_cure` | `other` | Drinking cure |
+| `ecg` | `diagnostics` | ECG (electrocardiogram) |
+| `inbody_diagnostics` | `diagnostics` | InBody diagnostics |
+| `vascular_condition_measurement` | `diagnostics` | Vascular condition measurement |
+
+## Category codes
+
+| Code | English label |
+| --- | --- |
+| `hydrotherapy` | Hydrotherapy |
+| `thermotherapy` | Thermotherapy |
+| `electrotherapy` | Electrotherapy |
+| `gas_therapy` | Gas therapy |
+| `physiotherapy` | Physiotherapy |
+| `inhalation` | Inhalation |
+| `wellness` | Wellness |
+| `thai_massage` | Thai massage |
+| `other` | Other |
+| `diagnostics` | Diagnostics |
+
+## Fields

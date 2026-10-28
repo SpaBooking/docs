@@ -115,13 +115,6 @@
       }
     ]
   ],
-  "api/prices.mdx": [
-    [
-      {
-        "schema": "v2#/definitions/PriceFrom"
-      }
-    ]
-  ],
   "api/v1/currencies.mdx": [
     [
       {
@@ -166,6 +159,34 @@
       {
         "schema": "v2#/definitions/Hotel/properties/name",
         "at": "/data/0/name"
+      }
+    ]
+  ],
+  "api/objects/visit-type.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Board"
+      }
+    ]
+  ],
+  "api/objects/procedure.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Procedure"
+      }
+    ]
+  ],
+  "api/objects/price-from.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/SharedPriceFromMinimum"
+      }
+    ]
+  ],
+  "api/objects/promotion.mdx": [
+    [
+      {
+        "schema": "v2#/definitions/Promotion"
       }
     ]
   ]

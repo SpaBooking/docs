@@ -26,7 +26,8 @@ https://spaportal.cz/api/v2
 Resource paths use plural nouns: `/hotels`, `/room-types`, `/amenity-categories`.
 
 Visit types (`/visit-types`) are a draft resource: their endpoints are still in
-progress. See the [Visit type](/api/objects/visit-type) object.
+progress. Read [Visit types](/api/visit-types) for the draft behavior and
+the [Visit type object](/api/objects/visit-type) for its fields.
 
 ## IDs
 
@@ -51,9 +52,9 @@ currency selector for these catalog endpoints.
 
 [Read the prices guide](/api/prices).
 
-Hotels carry `priceFrom`: the lowest prices the hotel currently sells, keyed by
-currency, for all stays (`all`) and per category (`health`, `wellness`), each
-with two independent minima, `perPersonPerNight` and `perStay`.
+The [Price from object](/api/objects/price-from) defines the indicative price
+fields and their containers. The prices guide explains how complete offers
+are selected and discounted.
 
 ## Images
 

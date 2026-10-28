@@ -1,0 +1,78 @@
+---
+title: "Price from"
+description: "The monetary fields and offer references of an indicative price minimum."
+openapi-schema: "/api/v2/openapi.yaml SharedPriceFromMinimum"
+---
+
+<Warning>
+  **Draft shared minimum:** The shape below names both the hotel and visit
+  type. Visit type endpoints and this hotel-price extension are not yet
+  released. Current hotel minima contain the other fields shown below and
+  `visitType`, but do not yet include `hotel`.
+</Warning>
+
+A price minimum describes one complete offer selected by the
+[pricing rules](/api/prices). The same shared minimum is planned for hotel
+prices, visit type prices, a hotel × visit type pair, and that pair's seasons.
+
+## Minimum fields
+
+| Field | Meaning |
+| --- | --- |
+| `amount` | The offer's discounted [`Money`](/api/currencies) amount. |
+| `original` | The same offer's amount before its applicable promotions, or `null` when those promotions do not reduce the complete stay total after rounding. |
+| `nights` | Number of nights in the selected stay. |
+| `occupancy` | Full standard room occupancy used to price that stay. |
+| `hotel` | The offer's hotel: `id` and localized `name`. |
+| `visitType` | The offer's visit type: `id` and localized `name`. |
+
+Both name objects follow [Localization](/api/localization). An original and a
+discounted average can round to the same minor-unit amount. Show a crossed-out
+price only when `original.amountMinor` is greater than `amount.amountMinor`.
+
+Example of a shared `perStay` minimum in EUR:
+
+```json
+{
+  "amount": { "amountMinor": 76500, "currency": "EUR", "currencyExponent": 2 },
+  "original": { "amountMinor": 100000, "currency": "EUR", "currencyExponent": 2 },
+  "nights": 7,
+  "occupancy": 1,
+  "hotel": {
+    "id": "66f16191f739705faa020001",
+    "name": { "en": "Spa Hotel Example" }
+  },
+  "visitType": {
+    "id": "6720c0a1b2c3d4e5f6a7b801",
+    "name": { "en": "Classic spa treatment" }
+  }
+}
+```
+
+## Price containers
+
+Amounts are grouped by currency (`CZK`, `EUR`). Each pair of minima contains
+`perPersonPerNight`, the average per guest per night, and `perStay`, the
+total for the whole room and stay. Each minimum carries its own offer fields;
+the two may refer to different offers.
+
+| Container | Path to a pair of minima |
+| --- | --- |
+| Hotel | `priceFrom.{currency}.all`, and optional `.health` and `.wellness` groups |
+| Visit type | `priceFrom.{currency}` |
+| Visit type at a hotel | `hotels[].priceFrom.{currency}` |
+| Visit type at a hotel in a season | `hotels[].seasons[].priceFrom.{currency}` |
+
+For a hotel, `all` covers everything it sells. `health` and `wellness` restrict
+that set to one stay category. A currency key exists only when it contains a
+complete priced offer; a hotel category group is omitted when it has none.
+The `all` group is present whenever the currency is present.
+
+An entire `priceFrom` is `null` when its scope has no eligible priced offer.
+For visit types, this also applies to unavailable packages and packages booked
+on request. A known seasonal period remains in `seasons` with
+`priceFrom: null` when it has no eligible offer. See
+[Prices](/api/prices#availability) for the capacity and booking limits of
+these values.
+
+## Fields

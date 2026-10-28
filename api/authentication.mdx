@@ -9,9 +9,25 @@ The API uses a dedicated public key header:
 X-SpaPortal-Public-Key: <your_public_key>
 ```
 
-Treat the public key as an opaque value. It identifies the channel and scopes
-requests to the active companies connected to that channel. A channel key can
-cover more than one company.
+Treat the public key as an opaque value.
+
+## Channels and scope
+
+A distribution channel is a sales context, such as a hotel's own website or
+SpaBooking. Each channel has its own public key. A key identifies one specific
+channel and scopes requests to the active companies connected to it; one key
+can cover more than one company.
+
+Resources and channel-specific content are resolved within this scope.
+Promotions and their effect on prices depend on the requesting channel. In the
+draft visit type contract, [collections](/api/objects/visit-type#collections)
+also follow their defined channel scope. A response for one key must not be
+used as the response for another key. Include the public-key context in your
+cache partitioning without exposing the key in a public cache identifier.
+
+Clients do not need to filter internal channel assignments. A promotion can
+be assigned to more than one channel. The response does not disclose other
+channels' keys or internal configuration.
 
 ## Getting your public key
 
