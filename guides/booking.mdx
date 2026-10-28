@@ -39,6 +39,20 @@ That way you do not have to page through empty months to find the first date a g
 
 After the guest chooses a selectable check-in date, call `GET /api/v1/calendar/checkouts` with the hotel, room type, and visit type. The endpoint returns check-out dates that satisfy the visit type rules and have continuous pricing. Capacity does not remove checkout choices because a valid priced stay can continue as an `ON_DEMAND` request. The check-out date is not charged and does not consume capacity, but it must be covered by the continuous pricing range.
 
+## Catalog and calendar boundaries
+
+The v2 catalog price calculation and the v1 price/booking calculation require
+prices for occupied nights only. The v1 calendar also requires a price for
+the checkout day. For example, four nights from 28 December can be fully
+priced by a price list ending on 31 December, yet the calendar will not offer
+checkout on 1 January if that day has no price.
+
+Do not assume that every v2 catalog offer can be selected through the v1
+calendar. A client that obtains dates separately can submit them to the v1
+price and booking endpoints, which still validate the stay rules, price and
+availability. Confirm the final quote before offering that selection. The
+catalog does not replace those checks.
+
 ## Booking configuration
 
 Use `GET /api/v1/booking` when you need SpaPortal to match a partial selection by names.

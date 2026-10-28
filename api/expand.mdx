@@ -26,7 +26,7 @@ GET /api/v2/room-types?expand=hotel
 # Include the hotel and localized amenity labels
 GET /api/v2/room-types?expand=hotel,amenityLabels
 
-# Embed each visit type's hotels (draft endpoint)
+# Add hotel summaries to visit type entries (draft endpoint)
 GET /api/v2/visit-types?expand=hotels
 ```
 
@@ -184,9 +184,13 @@ The paginated `/room-types` endpoint keeps its requested `createdAt` order.
 Hotel [`buildings`](/api/objects/hotel#buildings) are always included in hotel
 list and detail responses, independently of `expand=roomTypes`.
 
-The draft [visit type](/api/objects/visit-type) endpoints accept `expand=hotels`.
-It embeds each hotel's `id`, `name`, and `stars` in `hotels`, in the order of
-`hotelIds`.
+The draft [visit type](/api/objects/visit-type) endpoints always return
+hotel entries. Their `hotels` expansion adds each entry's hotel summary;
+without it, the entry still contains its ID and price. The detail also has
+an independent `seasons` expansion. The
+[list](/api/v2/reference/visit-types/list-visit-types) and
+[detail](/api/v2/reference/visit-types/get-a-visit-type) references specify
+which expansions are accepted and show complete examples.
 
 ## Amenity labels
 

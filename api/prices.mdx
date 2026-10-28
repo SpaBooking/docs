@@ -1,133 +1,27 @@
 ---
 title: "Prices"
-description: "Read the hotel \"from\" prices returned by the SpaPortal API."
+description: "Understand indicative prices, complete-stay selection, and applicable promotions."
 icon: "tag"
 ---
 
-Hotels carry `priceFrom`: the lowest prices the hotel currently sells, computed
-from its active visit types and price lists. Use it for teasers and client-side sorting,
-not as a quote for concrete dates.
+Use indicative prices for teasers and comparisons. They are calculated from
+complete purchasable stays and do not reserve a room or quote a chosen set of
+guests and dates. The [Price from object](/api/objects/price-from) defines the
+fields and currency containers.
 
-## Shape
-
-`priceFrom` is keyed by currency (`CZK`, `EUR`). Each currency can contain
-three independently calculated price groups:
-
-| Key | What it covers |
-| --- | --- |
-| `all` | Everything the hotel sells. This is the hotel-wide "from" price. |
-| `health` | Only health stays (spa cures). |
-| `wellness` | Only wellness stays. |
-
-Each of them holds two minima, `perPersonPerNight` and `perStay`, with the same
-fields:
-
-| Field | Meaning |
-| --- | --- |
-| `amount` | The price as a [`Money`](/api/currencies) object, after any promotion. |
-| `original` | The same price before the promotion, or `null` when none applies. |
-| `nights` | Shortest stay the visit type allows. |
-| `occupancy` | Full standard occupancy of the room type the price applies to. |
-| `visitType` | `id` and localized `name` of the visit type the price comes from. |
-
-Example for a hotel priced in EUR, requested with `Accept-Language: de`:
-
-```json
-{
-  "EUR": {
-    "all": {
-      "perPersonPerNight": {
-        "amount": { "amountMinor": 6100, "currency": "EUR", "currencyExponent": 2 },
-        "original": null,
-        "nights": 2,
-        "occupancy": 2,
-        "visitType": { "id": "66f16191f739705faa020031", "name": { "de": "Kurzaufenthalt Weekend" } }
-      },
-      "perStay": {
-        "amount": { "amountMinor": 24400, "currency": "EUR", "currencyExponent": 2 },
-        "original": null,
-        "nights": 2,
-        "occupancy": 2,
-        "visitType": { "id": "66f16191f739705faa020031", "name": { "de": "Kurzaufenthalt Weekend" } }
-      }
-    },
-    "health": {
-      "perPersonPerNight": {
-        "amount": { "amountMinor": 9900, "currency": "EUR", "currencyExponent": 2 },
-        "original": { "amountMinor": 11000, "currency": "EUR", "currencyExponent": 2 },
-        "nights": 7,
-        "occupancy": 2,
-        "visitType": { "id": "66f16191f739705faa020004", "name": { "de": "Franzensbader Heilkur" } }
-      },
-      "perStay": {
-        "amount": { "amountMinor": 138600, "currency": "EUR", "currencyExponent": 2 },
-        "original": { "amountMinor": 154000, "currency": "EUR", "currencyExponent": 2 },
-        "nights": 7,
-        "occupancy": 2,
-        "visitType": { "id": "66f16191f739705faa020004", "name": { "de": "Franzensbader Heilkur" } }
-      }
-    }
-  }
-}
-```
-
-## All stays and the two categories
-
-`all` looks at every visit type the hotel sells, including visit types that
-have no category yet. `health` and `wellness` apply the same selection rules
-to one category. In the same currency, `all.perStay.amount` is less than or
-equal to `health.perStay.amount` and `wellness.perStay.amount`. The same rule
-applies to `perPersonPerNight`, even when the selected offers have different
-occupancies.
-
-A category is omitted when it has no available, fully priced stay in that currency; this does
-not prove that the hotel has no stays in the category. `all` is present whenever
-the currency is. If a category is absent, omit its price. You can display `all`
-as a clearly labeled hotel-wide price, but do not label it as a health or
-wellness offer.
-
-In the example, the Weekend stay has no category yet and the hotel sells no
-wellness stay, so only `all` and `health` appear.
+Hotel prices are released. The visit type, hotel × visit type, and seasonal
+price scopes below are **draft**, together with the shared minimum naming
+both the hotel and visit type.
 
 ## Two independent minima
 
-`perPersonPerNight.amount` is the average price per guest per night for the
-selected complete stay at `occupancy` guests per room. `perStay.amount` is the
-total for `occupancy` guests for `nights` nights at full standard room occupancy. Each minimum is
-chosen on its own and carries its own `visitType`, `nights`, and `occupancy`,
-so the two can name different visit types and room types.
+`perPersonPerNight` selects the lowest average price per guest per night for
+a complete stay. `perStay` independently selects the lowest total for the
+whole room and stay. Each uses the room type's full standard occupancy.
 
-Do not derive one from the other: the minima can come from different offers.
-Even when they refer to the same offer, independently rounded amounts can make
+Do not derive one minimum from the other: they can select different offers.
+Even for the same offer, independently rounded values can make
 `perStay.amount` differ from `perPersonPerNight.amount × occupancy × nights`.
-
-## Selection rules
-
-- `perPersonPerNight` is the offer with the lowest average price per guest
-  per night for a complete stay.
-- `perStay` is the offer with the lowest total for the whole room and stay,
-  after applicable promotions. It considers all eligible room types at their
-  full standard occupancy. A single, double, or larger room
-  can have the lowest total.
-- Each offer uses the shortest stay its visit type allows. A longer stay can
-  still win when its total is lower than another offer's shorter stay.
-- Ties go to the shorter stay, then the lower occupancy, then the lower
-  `visitType.id`.
-- Each offer corresponds to a permitted arrival date and a complete stay in
-  one room type. Every occupied night must have a price in the same currency.
-  The same room type must have remaining capacity for every occupied night.
-  The total includes each night's applicable seasonal price.
-- Arrival weekdays, specific arrival dates, and stay date restrictions apply.
-  Offers without an available, fully priced, permitted stay are omitted.
-- Visit types offered only on demand are excluded, even when room capacity
-  is recorded.
-- Promotions apply only to the nights they cover. When multiple promotions
-  cover the same night, their percentage discounts apply successively.
-- Visit types whose selling period has ended are ignored.
-- Query parameters do not affect the values, and the cheapest offer can differ
-  by currency.
-
-## Example: single room and double room
 
 For two available seven-night offers without a promotion:
 
@@ -136,72 +30,137 @@ For two available seven-night offers without a promotion:
 | Single | 1 | CZK 2,000 | CZK 14,000 |
 | Double | 2 | CZK 1,600 | CZK 22,400 |
 
-`perPersonPerNight` selects the double room: `amountMinor: 160000`,
-`occupancy: 2`, `nights: 7`. `perStay` selects the single room:
-`amountMinor: 1400000`, `occupancy: 1`, `nights: 7`.
+`perPersonPerNight` selects the double room. `perStay` selects the single
+room. To display the cheapest whole package, use `perStay.amount` with its
+reported occupancy and nights. Dividing the double-room total by two does
+not produce a purchasable single-room offer.
 
-To display the cheapest whole package, show `perStay.amount` with its
-`occupancy` and `nights`. Dividing that amount by `occupancy` gives a per-guest
-share of the selected package; it does not give the lowest per-guest stay price
-across all offers.
+## Selecting a complete stay
 
-## Example: a stay across two seasons
+An offer is eligible only when all of these conditions hold:
 
-A three-night package includes two nights at CZK 1,000 and a third night at
-CZK 2,000. Its full price is CZK 4,000. A 50% promotion covering only the third
-night reduces the total to CZK 3,000; `original` is CZK 4,000.
+- Its arrival and checkout satisfy the applicable stay rules.
+- Every occupied night has a price in the same currency and the same room
+  type has remaining capacity for every night.
+- The visit type is offered now and permits an immediately confirmed booking.
+  Stays booked on **request** are excluded even when room capacity exists.
+- Its visit type, hotel, and room are eligible within the price calculation's
+  scope.
 
-A stay contributes a price only in currencies that cover every occupied
-night. The departure date does not need a nightly price.
+Each candidate uses the shortest stay its visit type permits. When comparing
+several visit types, a longer minimum stay can still win if its total is
+lower. Different currencies can select different offers.
+
+The total uses each occupied night's seasonal rate. The checkout date needs
+neither a nightly price nor room capacity. A gap in prices or capacity makes
+that complete stay ineligible; the calculation does not combine rooms or
+currencies to fill the gap.
+
+Equal hotel prices prefer the shorter stay, then lower occupancy, then the
+lower visit type ID. Remaining ties use stable offer identities. Query
+parameters on hotel catalog endpoints do not change their indicative prices.
+
+## Comparing hotel groups
+
+The hotel-wide `all` group compares all eligible offers. The `health` and
+`wellness` groups compare offers from one category.
+
+In the **draft shared-price contract**, all three groups use packages in the
+[visit type catalog](/api/visit-types#publication-and-availability), so each
+package reference can be opened with the same public key. Released hotel
+prices can also reference packages outside that draft catalog.
+
+For the same currency and minimum, the hotel-wide amount cannot exceed the
+amount in a category group. Compare the two `perStay` values or the two
+`perPersonPerNight` values; comparing across those metrics is not meaningful.
+
+An omitted category price does not prove the hotel has no packages in that
+category. Do not present a hotel-wide price as a category-specific offer.
+The [container definitions](/api/objects/price-from#price-containers) specify
+which groups and currencies are omitted when no offer exists.
+
+## Promotions
+
+Promotion eligibility follows the
+[authenticated sales context](/api/authentication#channels-and-scope) and the
+promotion's hotel, room, and night restrictions. Its public field definitions
+and a room-limited example are on [Promotion](/api/objects/promotion).
+
+Apply overlapping percentage discounts one after another to the nights they
+both cover. For a base price of 1,000, a 10% discount followed by 15% gives
+`1,000 × 0.90 × 0.85 = 765`: a combined reduction of 23.5%, not 25%.
+
+For example, a hotel promotion shared with its own website and SpaBooking can
+combine with a separate SpaBooking promotion. In that example the direct
+website uses the shared 10% discount and reports 900; SpaBooking uses both
+discounts and reports 765. A promotion assigned only to another channel is
+not inherited automatically. Count the same promotion identity only once,
+even when it has more than one applicable assignment.
+
+A promotion changes only the nights within its inclusive public date range.
+The original amount belongs to the **same selected offer** before those
+promotions; it is not a separately selected cheapest undiscounted stay.
+
+For example, a three-night package has two nights at CZK 1,000 and one at
+CZK 2,000. A 50% promotion covering only the third night gives a total of
+CZK 3,000 and an original total of CZK 4,000. Do not discount the first two
+nights or extend the promotion across the whole stay.
+
+## Visit type and hotel-pair prices
+
+The visit type's overall price compares eligible offers across all its
+eligible hotels. Each hotel entry's price limits the comparison to that
+hotel and visit type. Both use the selection rules above and the same
+[shared minimum](/api/objects/price-from).
+
+Restricting the detail response's hotel entries does not change the
+package-wide summary or its overall price. The
+[detail endpoint](/api/v2/reference/visit-types/get-a-visit-type) defines how
+to request one hotel's entries and optional expansions.
+
+## Seasonal prices
+
+Each seasonal price belongs to one hotel and one visit type. A season is a
+configured price-list period; it is not a calendar month. Its price compares
+stays whose **arrival** is in that period. Only current and future seasons
+are returned. A seasonal minimum is not a quote for every arrival in that
+period; prices and promotions can differ within it.
+
+For a current season, search starts at the later of its first date and today
+in Europe/Prague. A cheaper offer available only for a past arrival does not
+contribute. The season keeps its original date bounds in the response.
+
+A stay can continue into another price-list season. Price every occupied
+night using its own applicable seasonal rate, while keeping the offer in
+the season of its arrival. Promotions and remaining room capacity apply to
+the entire candidate stay in the same way as above.
+
+A known season without an eligible complete stay remains visible with a
+null price. This also applies when the package is unavailable or booked on
+request. Clients can distinguish a known period without an offer from an
+absent period. Requesting seasons does not alter the package's overall
+price or its hotel-pair prices.
 
 ## Availability
 
-`priceFrom` uses the availability recorded by the API at calculation time.
-Every occupied night must have remaining capacity in the same room type;
-the departure date does not require capacity. Stays offered only on demand
-are excluded.
+The price calculation checks the recorded capacity at calculation time. If
+the cheapest stay is sold out, it selects the next eligible stay. For
+example, a sold-out CZK 3,000 offer does not beat an available CZK 4,500 offer.
 
-For example, if a CZK 3,000 stay is sold out and the cheapest available stay
-costs CZK 4,500, `perStay.amount` reports CZK 4,500.
+The response does not hold a room. Prices and recorded capacity can change,
+so refresh cached offers regularly. An absent indicative price does not
+mean the package is unavailable; check its catalog availability separately.
 
-A category or currency without an available, fully priced stay is omitted.
-If no such stay exists for the hotel, `priceFrom` is `null`. This does not
-rule out stays that require an availability request.
+## Payer and the quoted amount
 
-The response does not hold a room. Availability can change after the price
-is calculated. Select your dates and guests to confirm availability and the
-final price through the booking flow. If you cache hotel responses, refresh
-them regularly; a cached price is not a room reservation.
+For a health stay, [`payer`](/api/objects/visit-type#category-payer-and-booking-mode)
+describes which costs the guest pays. For `guest_and_insurer`, the quoted
+price covers the guest-payable accommodation and meals. Display that amount
+directly; do not subtract an insurer contribution.
 
-## Rounding
+## Display and rounding
 
-The API returns full precision in minor units. Rounding to whole currency units
-for display is up to you.
-
-## Payload size
-
-Every minimum embeds the visit type name in the requested locales. Send
-`Accept-Language` to receive one locale instead of all four. A missing
-translation falls back to Czech, like the hotel `name`; see
-[Localization](/api/localization).
-
-## Visit type prices
-
-<Warning>
-  **Draft:** The visit type endpoints are still in progress. Their prices may
-  change before they are finalized.
-</Warning>
-
-A [visit type](/api/objects/visit-type) carries its own `priceFrom`, built with
-the same selection rules as the hotel price, but for one visit type across its
-hotels:
-
-- It is keyed by currency and holds `perPersonPerNight` and `perStay` directly,
-  without the `all`, `health`, and `wellness` groups.
-- Each minimum names the hotel it comes from in `hotel` (`id` and localized
-  `name`) instead of `visitType`. The minima of one currency can come from
-  different hotels.
-- Each offer uses the visit type's shortest permitted stay.
-- Ties go to the lower occupancy, then the lower `hotel.id`.
-- `priceFrom` is `null` for visit types booked on request, for unavailable
-  visit types, and when no complete, permitted stay with free capacity exists.
+Amounts use integer minor currency units. Convert them using the reported
+currency exponent; rounding to whole units for display is a client choice.
+The rules for the original-price field and its separately rounded average
+are on [Price from](/api/objects/price-from#minimum-fields).

@@ -1,0 +1,72 @@
+---
+title: "Promotion"
+description: "A percentage promotion and the hotels and room types it applies to."
+openapi-schema: "/api/v2/openapi.yaml Promotion"
+---
+
+<Warning>
+  **Draft:** Promotion contract for integration review. See
+  [API coverage](/api/versioning) for released endpoints.
+</Warning>
+
+A visit type's `promotions` contains its running and future promotions within
+the [authenticated scope](/api/authentication#channels-and-scope). Fields
+describe the promotion; [Prices](/api/prices#promotions) explains how eligible
+promotions affect an offer and how overlapping discounts combine.
+
+This is configured promotion metadata, not a guarantee of an eligible
+discounted stay. A future promotion may have no overlap with the package's
+permitted stays or no remaining room capacity. Its presence, including in
+the [special-offers collection](/api/objects/visit-type#collections), does not
+prove that the displayed minimum uses that promotion.
+
+## Fields and date boundaries
+
+| Field | Meaning |
+| --- | --- |
+| `id` | The identity of the promotion. |
+| `name` | Its localized display name. Missing translations are `null`. |
+| `percentage` | Percentage discount, greater than zero and at most 100. |
+| `from` | First discounted night, inclusive. |
+| `to` | Last discounted night, inclusive; `null` for no configured end. |
+| `hotels` | The applicable hotel and room-type restrictions, or `null` for all hotels of the visit type. |
+
+A night is identified by the calendar date on which it starts. For example,
+`to: "2027-01-31"` includes the night of 31 January and its checkout on
+1 February. These bounds describe discounted nights, not the package's
+[permitted arrival and departure rules](/api/visit-types#testing-a-stay-against-its-rules).
+
+Each `hotels` entry has `hotelId` and `roomTypeIds`. A `roomTypeIds: null`
+restriction includes all rooms of that hotel; otherwise its non-empty array
+lists eligible room IDs. A non-null `hotels` array is also non-empty. Both
+references stay within the visit type's authorized active hotels. Draft
+room types are excluded. A disabled room can remain referenced and its
+detail can be fetched, but it is not eligible for new room choices.
+
+Promotions are ordered by `from`, then `id`.
+
+## Example: specific rooms in one hotel
+
+This promotion covers only the two listed room types at one hotel. Other
+rooms and hotels are unaffected.
+
+```json
+{
+  "id": "6720c0a1b2c3d4e5f6a7b901",
+  "name": { "en": "Winter room offer" },
+  "percentage": 10,
+  "from": "2027-01-01",
+  "to": "2027-01-31",
+  "hotels": [
+    {
+      "hotelId": "66f16191f739705faa020001",
+      "roomTypeIds": [
+        "66f16191f739705faa020003",
+        "66f16191f739705faa020004"
+      ]
+    }
+  ]
+}
+```
+
+## Fields

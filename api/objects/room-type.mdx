@@ -15,8 +15,7 @@ hotel detail endpoint for the full hotel object.
 ## Availability
 
 Every room type includes `disabled`. A value of `true` means you must exclude it
-from new room choices. Existing bookings keep their references to that room type.
-Use `disabled` to determine whether the room type is enabled for new bookings.
+from new room choices. Its detail remains available by ID.
 
 The room type list returns enabled room types by default (`disabled=false`).
 Request `GET /api/v2/room-types?disabled=true` to list disabled room types, or
@@ -29,8 +28,7 @@ includes `disabled: true`. When requesting archived rooms or a detail by ID,
 check this flag before offering the room to guests.
 
 A room type's code can change. Store its `id` for references. A room being enabled
-does not guarantee availability for a particular stay; use the calendar and price
-endpoints for dates and prices.
+does not guarantee availability for a particular stay.
 
 ## Occupancy and beds
 
@@ -46,11 +44,9 @@ aged 0–2 are configured not to count towards the guest count. Each of these
 fields is `null` when the room type has no configured value. An explicit
 `false` is a configured value.
 
-Booking uses `standard` as the guest-count limit. Price calculations use it
-where occupancy affects the price. Neither uses `max`, `singleUse`, or
-`infantsExcluded`, so these settings do not confirm that a guest party can book
-the room. A `singleUse` of `false` does not reject a booking for one guest.
-`infantsExcluded` does not change how infants are counted or priced.
+Indicative prices use `standard` where occupancy affects the amount.
+`max`, `singleUse`, and `infantsExcluded` describe the room configuration;
+they do not change `priceFrom` or establish availability for a guest party.
 
 `bedConfiguration` describes the physical beds separately. It lists
 positive counts in dictionary order with a singular localized label for each bed.

@@ -1,0 +1,93 @@
+---
+title: "Visit types"
+description: "Understand the availability and stay rules of a stay package."
+icon: "suitcase"
+---
+
+<Warning>
+  **Draft:** This contract is available for integration review. The visit type
+  endpoints are not released; see [API coverage](/api/versioning).
+</Warning>
+
+A [visit type](/api/objects/visit-type) describes a stay package sold by one or
+more hotels. Its catalog availability, permitted stay dates, and indicative
+prices answer different questions. For a practical walkthrough, see
+[Building package pages](/guides/visit-types).
+
+## Publication and availability
+
+The catalog follows the [authenticated scope](/api/authentication#channels-and-scope).
+The list contains packages with complete required information. A package
+with missing or invalid required fields is omitted and its detail returns
+`404`, as does an unknown or inaccessible package.
+
+A published visit type can still be unavailable. The first applicable reason
+in the [availability code table](/api/objects/visit-type#availability) determines
+its `unavailableReason`. Availability is evaluated using today's calendar date in
+Europe/Prague and can change at midnight.
+
+The list returns available visit types by default; the detail can return an
+unavailable visit type. The endpoint references define the
+[list filters](/api/v2/reference/visit-types/list-visit-types) and
+[detail response](/api/v2/reference/visit-types/get-a-visit-type).
+
+Catalog availability does not promise a price or a room on any particular
+date. A permitted arrival with no free room still satisfies a catalog date
+filter. [Prices](/api/prices) require a complete priced stay with capacity and
+are recalculated against the sales context.
+
+## Testing a stay against its rules
+
+Use the field definitions for [stay length and arrival](/api/objects/visit-type#stay-length-and-arrival)
+and [validity](/api/objects/visit-type#validity) when evaluating a proposed stay.
+
+1. Check the number of nights against the configured unit and limits. A week
+   stay requires a whole number of seven-night weeks.
+2. Check the arrival against the selected arrival variant. Weekday rules and
+   explicit-date rules are alternatives.
+3. When validity periods exist, at least one period must permit the complete
+   stay. Its arrival must be within that period. A departure-limited period
+   must also permit the checkout day.
+
+Overlapping periods are alternatives: one matching period is sufficient. Do
+not take the arrival from one period and a later departure limit from another.
+If no validity periods are configured, the arrival rule and stay-length
+limits still apply.
+
+For example, a departure-limited period ending on 31 January allows checkout
+on 31 January. A stay arriving on 30 January and checking out on 1 February
+does not fit it, even when a separate March period exists. An overlapping
+arrival-limited period that independently permits 30 January can allow that
+same stay.
+
+The catalog date-window filter tests for at least one permitted arrival and
+stay in the requested window. It applies these rules to the requested length,
+or the package's shortest permitted stay when no length is supplied. It does
+not query room capacity or room prices. Request limits and parameter pairing
+are defined on the [list endpoint](/api/v2/reference/visit-types/list-visit-types).
+
+Without an arrival window, `nights` checks only the package's length bounds
+and whole-week rule. Add the window to require a stay of that length that
+also fits the arrival and validity rules.
+
+These filters select packages; they do not recalculate their indicative
+prices for the requested nights or arrival window. For example, a package
+that permits 7–14 nights can match `nights=14` while its `priceFrom` still
+describes a seven-night offer. Show the nights and occupancy returned with
+the price, rather than treating it as a quote for the filter selection.
+
+## Hotels and prices
+
+The hotel entries identify where the visit type is sold. An entry remains
+present even when its price is `null`; the relationship to a hotel is separate
+from a currently purchasable offer.
+
+The visit type's overall price compares eligible offers across its hotels.
+An entry's price compares offers only for that hotel and visit type. Both use
+the [same selection and discount rules](/api/prices); their field shape is
+defined by [Price from](/api/objects/price-from).
+
+Seasons show how this pair's prices change with the arrival date. They are
+price-list periods, not calendar months and not a calendar of bookable dates.
+See [seasonal price selection](/api/prices#seasonal-prices) and the
+[hotel entry fields](/api/objects/visit-type#hotels).

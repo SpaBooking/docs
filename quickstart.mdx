@@ -7,9 +7,9 @@ icon: "rocket"
 
 ### 1. Get your public key
 
-Every distribution channel in SpaPortal has its own **public key** that identifies your channel and scopes all requests to it.
-
-To find yours, go to: `Administration → Distribution Channel → [your channel] → Channel detail → Public keys`
+Get a public key using the [authentication instructions](/api/authentication#getting-your-public-key).
+The [channels and scope reference](/api/authentication#channels-and-scope)
+explains which resources your key can access.
 
 ### 2. Use public key
 
@@ -57,9 +57,8 @@ curl \
 
 ## Next steps
 
-Follow the v2 reference for catalog endpoints. For final pricing and booking
-creation, follow the [API v1 booking flow](/guides/booking). See
-[API coverage](/api/versioning) before combining the two versions.
+Explore the catalog endpoints and their response objects. Check
+[API coverage](/api/versioning#api-coverage) for the status of each resource.
 
 <Card title="API Reference" icon="square-terminal" href="/api/">
   All endpoints, parameters, and response shapes.

@@ -1,0 +1,48 @@
+---
+title: "Treatment"
+description: "The examinations and procedure allowance included in a visit type."
+openapi-schema: "/api/v2/openapi.yaml Treatment"
+---
+
+<Warning>
+  **Draft:** Treatment contract for integration review. See
+  [API coverage](/api/versioning) for released endpoints.
+</Warning>
+
+`Treatment` contains `exams`, the included medical examinations, and
+`procedures`, the included procedure allowance and selection. A visit type
+always includes this object. See [Treatment behavior](/api/treatment) for
+how to present allowances and fixed lists together.
+
+## Examinations
+
+| Field | Meaning |
+| --- | --- |
+| `exams.entry` | An entry examination at the start of the stay is included. |
+| `exams.interim` | An interim examination during the stay is included. |
+| `exams.interimFromNights` | Minimum stay length in nights for the interim examination; `null` when no threshold is set or the examination is not included. |
+| `exams.final` | A final examination at the end of the stay is included. |
+| `exams.finalFromNights` | Minimum stay length in nights for the final examination; `null` when no threshold is set or the examination is not included. |
+
+## Procedure allowance
+
+`procedures.count` is the overall number of included procedures per
+`procedures.per`: `stay`, `week`, or `day`. Zero is a configured allowance of
+no procedures.
+
+| `procedures.selection` | Meaning | `procedures.items` |
+| --- | --- | --- |
+| `hotel_offer` | Procedures are selected from the hotel's offer. | Empty |
+| `from_list` | Procedures are selected from the supplied list. | Procedures to choose from |
+| `fixed` | The supplied procedures are included. | Procedures with their individual counts |
+
+Each item uses the shared [Procedure](/api/objects/procedure) fields and adds
+`count`. It keeps its configured position in the list.
+
+An item's `count` is the number of times that procedure is included during
+the **whole stay**. It is a positive integer for `selection: fixed` and
+`null` for the other selection modes. It does not use the allowance's `per`
+unit. Hotel procedure items use the base Procedure object and have no
+`count` field.
+
+## Fields
