@@ -22,6 +22,12 @@ List visit types with
 fetch one with
 [`GET /api/v2/visit-types/{visitTypeId}`](/api/v2/reference/visit-types/get-a-visit-type).
 
+## Short description
+
+`shortDescription` is a localized plain-text teaser. Missing translations are
+`null`. The API returns the complete text without truncation; allow longer
+text when rendering preview cards.
+
 ## Availability
 
 `available` tells you whether the visit type is offered now. When it is `false`,
