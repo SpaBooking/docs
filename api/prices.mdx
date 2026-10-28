@@ -54,7 +54,9 @@ lower. Different currencies can select different offers.
 The total uses each occupied night's seasonal rate. The checkout date needs
 neither a nightly price nor room capacity. A gap in prices or capacity makes
 that complete stay ineligible; the calculation does not combine rooms or
-currencies to fill the gap.
+currencies to fill the gap. The v1 calendar applies a stricter checkout-price
+condition; see the [booking-flow limitation](/guides/booking#catalog-and-calendar-boundaries)
+when taking a catalog offer into date selection.
 
 Equal hotel prices prefer the shorter stay, then lower occupancy, then the
 lower visit type ID. Remaining ties use stable offer identities. Query
@@ -65,6 +67,11 @@ parameters on hotel catalog endpoints do not change their indicative prices.
 The hotel-wide `all` group considers everything the hotel sells, including
 currently stored visit types without a category. The `health` and `wellness`
 groups apply the same selection to one category.
+
+The **draft shared hotel-price extension** will restrict all three groups to
+packages that meet the [visit type publication requirements](/api/visit-types#publication-and-availability).
+Its visit type reference must resolve in that catalog for the same public
+key. This restriction is not part of the released hotel calculation.
 
 For the same currency and minimum, the hotel-wide amount cannot exceed the
 amount in a category group. Compare the two `perStay` values or the two
@@ -156,6 +163,15 @@ booking. Refresh cached offers regularly and use the
 [booking flow](/guides/booking) to confirm the selected dates, guests, and
 final price. An absent indicative price does not rule out a stay that needs
 a booking request.
+
+## Payer and the quoted amount
+
+The draft `payer` field describes who covers the components of a health
+stay; its [values](/api/objects/visit-type#category-payer-and-booking-mode) do
+not split a price automatically. The calculation uses the configured
+booking price list. For `guest_and_insurer`, that price list must contain
+the guest-payable accommodation and meals; the API does not infer or deduct
+an insurer contribution from a combined amount.
 
 ## Display and rounding
 

@@ -543,7 +543,10 @@ paths:
           </Warning>
       description: "**Draft:** Returns a paginated catalog. Filters apply before pagination and total. See
         [Visit type](/api/objects/visit-type), [publication and availability](/api/visit-types),
-        [Authentication](/api/authentication), and [Pagination](/api/pagination)."
+        [Authentication](/api/authentication), and [Pagination](/api/pagination).
+        Each comma-separated query value is limited to 500 characters after trimming.
+        Items are trimmed, empty items ignored and duplicates removed; an unknown code
+        returns 400. Unknown parameter names are ignored."
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -622,8 +625,8 @@ paths:
             items:
               $ref: "#/components/schemas/VisitTypeCollection"
           description: Match any listed code in collections exposed to this authenticated channel; outside the
-            collection owner channel nothing matches. See
-            [Collections](/api/objects/visit-type#collections).
+            collection owner channel nothing matches. See [Authentication](/api/authentication#channels-and-scope)
+            and [Collections](/api/objects/visit-type#collections).
         - name: payer
           in: query
           style: form
@@ -679,17 +682,18 @@ paths:
           schema:
             type: string
             format: date
-          description: Inclusive arrival-window start; required together with arrivalTo. Window length is at
-            most 366 days. Matches when an arrival from today onward and the stay of nights (or the
-            minimum length) satisfy the stay rules. Does not check price or capacity. See
-            [Stay rules](/api/visit-types#testing-a-stay-against-its-rules).
+          description: Inclusive arrival-window start; required together with arrivalTo. arrivalTo may be at
+            most 366 calendar days after arrivalFrom (both bounds are inclusive). Matches when an
+            arrival from today onward and the stay of nights (or the minimum length) satisfy the
+            stay rules. Does not check price or capacity. See [Stay
+            rules](/api/visit-types#testing-a-stay-against-its-rules).
         - name: arrivalTo
           in: query
           schema:
             type: string
             format: date
-          description: Inclusive arrival-window end, on or after arrivalFrom. A missing partner, reversed
-            window or span over 366 days returns 400.
+          description: Inclusive arrival-window end, on or after arrivalFrom and at most 366 calendar days
+            later. A missing partner, reversed window or larger date difference returns 400.
         - name: expand
           in: query
           style: form
@@ -936,6 +940,8 @@ paths:
                       nextCursor: null
                       hasMore: false
                       total: 1
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
                 expandedHotels:
                   summary: List with expand=hotels
                   value:
@@ -1171,6 +1177,8 @@ paths:
                       nextCursor: null
                       hasMore: false
                       total: 1
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -1216,7 +1224,9 @@ paths:
                 - hotels
                 - seasons
           description: "Independent, comma-separated expansions: hotels adds hotels[].hotel; seasons adds
-            hotels[].seasons. Combine as expand=hotels,seasons. See [Expand](/api/expand)."
+            hotels[].seasons. Combine as expand=hotels,seasons. CSV parsing and the 500-character
+            limit follow the [list endpoint](/api/v2/reference/visit-types/list-visit-types).
+            See [Expand](/api/expand)."
         - name: hotelId
           in: query
           schema:
@@ -1454,6 +1464,8 @@ paths:
                           w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
                           w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
                 expandedHotels:
                   summary: expand=hotels; one hotel has no buyable price
                   value:
@@ -1683,6 +1695,8 @@ paths:
                           w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
                           w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
                 seasonalPrices:
                   summary: expand=hotels,seasons; seasons without offers remain null
                   value:
@@ -1973,6 +1987,8 @@ paths:
                           w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
                           w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
                 filteredSeasons:
                   summary: hotelId=6720c0a1b2c3d4e5f6a7c103&expand=seasons; package summary unchanged
                   value:
@@ -2154,6 +2170,8 @@ paths:
                           w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
                           w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
                 onRequest:
                   summary: Insurer-paid request package has no indicative price
                   value:
@@ -2285,6 +2303,8 @@ paths:
                           w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
                           w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                  description: "Illustrative response for the company’s own website channel with Accept-Language:
+                    cs-CZ,de and today = 2026-10-28."
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -4066,6 +4086,51 @@ components:
           description: >-
             Stay length in nights from which the final examination is included, or null when it is
             included for every stay length or not included.
+      allOf:
+        - oneOf:
+            - type: object
+              required:
+                - interim
+              properties:
+                interim:
+                  type: boolean
+                  enum:
+                    - false
+                interimFromNights:
+                  type: integer
+                  nullable: true
+                  enum:
+                    - null
+            - type: object
+              required:
+                - interim
+              properties:
+                interim:
+                  type: boolean
+                  enum:
+                    - true
+        - oneOf:
+            - type: object
+              required:
+                - final
+              properties:
+                final:
+                  type: boolean
+                  enum:
+                    - false
+                finalFromNights:
+                  type: integer
+                  nullable: true
+                  enum:
+                    - null
+            - type: object
+              required:
+                - final
+              properties:
+                final:
+                  type: boolean
+                  enum:
+                    - true
     VisitTypeProcedures:
       type: object
       required: [ count, per, selection, items ]
@@ -4089,6 +4154,56 @@ components:
           items:
             $ref: "#/components/schemas/TreatmentProcedure"
           description: Procedures of the visit type in configured order. Empty for `hotel_offer`.
+      oneOf:
+        - type: object
+          required:
+            - selection
+          properties:
+            selection:
+              type: string
+              enum:
+                - hotel_offer
+            items:
+              type: array
+              maxItems: 0
+        - type: object
+          required:
+            - selection
+          properties:
+            selection:
+              type: string
+              enum:
+                - from_list
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  - count
+                properties:
+                  count:
+                    type: integer
+                    nullable: true
+                    enum:
+                      - null
+        - type: object
+          required:
+            - selection
+          properties:
+            selection:
+              type: string
+              enum:
+                - fixed
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  - count
+                properties:
+                  count:
+                    type: integer
+                    minimum: 1
     TreatmentProcedure:
       type: object
       required:
@@ -4971,11 +5086,11 @@ components:
               $ref: "#/components/schemas/VisitTypePriceFromCurrency"
             wellness:
               $ref: "#/components/schemas/VisitTypePriceFromCurrency"
-      description: "**Draft:** Target hotel currency/category wrappers around the shared minimum. Not
-        returned until phase 8."
+      description: "**Draft:** Proposed hotel currency/category wrappers around the shared minimum. Not
+        returned by released hotel endpoints."
     DraftHotel:
-      description: "**Draft:** Target hotel additions for phases 7–8. Current hotel endpoints still use
-        Hotel. See [Hotel](/api/objects/hotel)."
+      description: "**Draft:** Proposed hotel procedures and shared prices. Released hotel endpoints still
+        use Hotel. See [Hotel](/api/objects/hotel)."
       allOf:
         - $ref: "#/components/schemas/Hotel"
         - type: object
@@ -5113,5 +5228,5 @@ components:
             $ref: "#/components/schemas/PromotionHotel"
           description: Null for every authorized hotel selling the visit type, independent of a detail hotelId
             filter; otherwise scoped hotels and room types. See [Promotion](/api/objects/promotion).
-      description: "**Draft:** A promotion applicable to the authenticated channel. No channel identifiers
-        or funding configuration are exposed."
+      description: "**Draft:** A promotion within the [authenticated scope](/api/authentication#channels-and-scope).
+        No channel identifiers or funding configuration are exposed."

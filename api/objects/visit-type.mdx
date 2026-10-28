@@ -57,7 +57,7 @@ A stay with `payer: "insurer"` always has `bookingMode: "request"`.
 | --- | --- |
 | `disabled` | The visit type is not on sale. |
 | `ended` | Every configured validity period has ended. |
-| `no_arrival` | No permitted future stay remains under its valid arrival and stay rules. |
+| `no_arrival` | No permitted stay with arrival today or later remains under its valid arrival and stay rules. |
 | `no_hotels` | No active hotel sells the visit type. |
 
 `unavailableReason` is `null` when `available` is `true`. The distinction from

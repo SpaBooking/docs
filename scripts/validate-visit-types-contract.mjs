@@ -59,6 +59,27 @@ delete procedure.count;
 expectSchema('Procedure', procedure, true, 'hotel procedure');
 expectSchema('Procedure', { ...procedure, count:2 }, false, 'hotel procedure has no count');
 expectSchema('TreatmentProcedure', { ...procedure, count:2 }, true, 'treatment procedure count');
+for (const [selection, count, hasItems, valid] of [
+  ['fixed', 2, true, true],
+  ['fixed', null, true, false],
+  ['from_list', null, true, true],
+  ['from_list', 2, true, false],
+  ['hotel_offer', null, false, true],
+  ['hotel_offer', null, true, false],
+]) {
+  expectSchema('VisitType', changed(v => {
+    v.treatment.procedures.selection = selection;
+    v.treatment.procedures.items = hasItems ? [{ ...procedure, count }] : [];
+  }), valid, `procedure mode ${selection}, count ${count}, list ${hasItems}`);
+}
+for (const exam of ['interim','final']) for (const [included, threshold, valid] of [
+  [false, null, true], [false, 14, false], [true, null, true], [true, 14, true],
+]) {
+  expectSchema('VisitType', changed(v => {
+    v.treatment.exams[exam] = included;
+    v.treatment.exams[`${exam}FromNights`] = threshold;
+  }), valid, `${exam} included ${included}, threshold ${threshold}`);
+}
 const shared = base.priceFrom.CZK.perStay;
 expectSchema('SharedPriceFromMinimum', shared, true, 'shared minimum');
 for (const field of ['hotel','visitType']) {

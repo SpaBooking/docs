@@ -63,8 +63,11 @@ the two may refer to different offers.
 | Visit type at a hotel | `hotels[].priceFrom.{currency}` |
 | Visit type at a hotel in a season | `hotels[].seasons[].priceFrom.{currency}` |
 
-For a hotel, `all` covers everything it sells. `health` and `wellness` restrict
-that set to one stay category. A currency key exists only when it contains a
+For a hotel, `all` covers all eligible offers in its price-calculation scope.
+`health` and `wellness` restrict that set to one stay category. The
+[hotel pricing scope](/api/prices#comparing-hotel-groups) distinguishes the
+released calculation from the proposed shared extension.
+A currency key exists only when it contains a
 complete priced offer; a hotel category group is omitted when it has none.
 The `all` group is present whenever the currency is present.
 

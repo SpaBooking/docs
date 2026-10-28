@@ -24,8 +24,7 @@ and returns the same `404` as an unknown or inaccessible record.
 
 A published visit type can still be unavailable. The first applicable reason
 in the [availability code table](/api/objects/visit-type#availability) determines
-its `unavailableReason`: disabled, ended, no permitted future arrival, then no
-active hotel. Availability is evaluated using today's calendar date in
+its `unavailableReason`. Availability is evaluated using today's calendar date in
 Europe/Prague and can change at midnight.
 
 The list returns available visit types by default; the detail can return an
@@ -67,6 +66,16 @@ stay in the requested window. It applies these rules to the requested length,
 or the package's shortest permitted stay when no length is supplied. It does
 not query room capacity or room prices. Request limits and parameter pairing
 are defined on the [list endpoint](/api/v2/reference/visit-types/list-visit-types).
+
+Without an arrival window, `nights` checks only the package's length bounds
+and whole-week rule. Add the window to require a stay of that length that
+also fits the arrival and validity rules.
+
+These filters select packages; they do not recalculate their indicative
+prices for the requested nights or arrival window. For example, a package
+that permits 7–14 nights can match `nights=14` while its `priceFrom` still
+describes a seven-night offer. Use the [booking flow](/guides/booking) for a
+price for the selected dates and guests.
 
 ## Hotels and prices
 
