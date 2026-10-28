@@ -67,6 +67,13 @@ for (const field of ['hotel','visitType']) {
 }
 const liveMinimum = clone(shared); delete liveMinimum.hotel;
 expectSchema('PriceFromMinimum', liveMinimum, true, 'live hotel remains valid without draft hotel reference');
+const draftHotel = clone(schemas.Hotel.example);
+draftHotel.procedures = [procedure];
+draftHotel.priceFrom = { CZK: { all: clone(base.priceFrom.CZK) } };
+expectSchema('DraftHotel', draftHotel, true, 'future hotel uses shared minimum and count-free procedures');
+delete draftHotel.priceFrom.CZK.all.perStay.hotel;
+expectSchema('DraftHotel', draftHotel, false, 'future hotel minimum requires hotel reference');
+expectSchema('DraftHotel', schemas.Hotel.example, false, 'live hotel is not advertised as the future shape');
 expectSchema('VisitTypePriceFrom', {}, false, 'empty map is not a price');
 expectSchema('VisitTypeAtHotel', { hotelId:base.hotels[0].hotelId, priceFrom:null }, true, 'hotel without an offer');
 

@@ -139,7 +139,7 @@ paths:
         currency, for all stays (`all`) and per category (`health`,
         `wellness`), each with two independent minima: `perPersonPerNight`
         and `perStay`. Each offer requires a permitted, fully priced stay with
-        remaining room capacity for every night. On-demand stays are excluded.
+        remaining room capacity for every night. Stays booked on request are excluded.
         It is null when no such stay is available. See
         [Prices](/api/prices).
 
@@ -681,7 +681,7 @@ paths:
             format: date
           description: Inclusive arrival-window start; required together with arrivalTo. Window length is at
             most 366 days. Matches when an arrival from today onward and the stay of nights (or the
-            minimum length) satisfy the same validity period. Does not check price or capacity. See
+            minimum length) satisfy the stay rules. Does not check price or capacity. See
             [Stay rules](/api/visit-types#testing-a-stay-against-its-rules).
         - name: arrivalTo
           in: query
@@ -3232,7 +3232,7 @@ components:
           description: >-
             Lowest prices the hotel currently sells, per currency, for all stays and per category,
             each with two independent minima, or null when no available, fully priced stay exists.
-            On-demand stays are excluded. See [Prices](/api/prices).
+            Stays booked on request are excluded. See [Prices](/api/prices).
         roomTypes:
           type: array
           description: |
