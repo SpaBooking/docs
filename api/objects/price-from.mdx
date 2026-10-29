@@ -18,7 +18,7 @@ prices, a hotel × visit type pair, and that pair's seasons.
 | Field | Meaning |
 | --- | --- |
 | `amount` | The offer's discounted [`Money`](/api/currencies) amount. |
-| `original` | The same offer's amount before its applicable promotions, or `null` when those promotions do not reduce the complete stay total after rounding. |
+| `original` | The same offer's amount before its applicable promotions, or `null` when the rounded amount is not lower after those promotions. |
 | `nights` | Number of nights in the selected stay. |
 | `occupancy` | Full standard room occupancy used to price that stay. |
 | `hotel` | The offer's hotel: `id` and localized `name`. |
@@ -28,9 +28,10 @@ The minimum identifies the hotel and package, but does not contain a room
 type or arrival date. Use it for price comparisons and display its reported
 nights and occupancy.
 
-Both name objects follow [Localization](/api/localization). An original and a
-discounted average can round to the same minor-unit amount. Show a crossed-out
-price only when `original.amountMinor` is greater than `amount.amountMinor`.
+Both name objects follow [Localization](/api/localization). Each minimum applies
+rounding separately. A small discount can give `perStay` an `original` amount
+while `perPersonPerNight.original` is `null` because its average rounds to the
+same amount. A non-null `original` is always greater than `amount`.
 
 Example of a shared `perStay` minimum in EUR:
 
