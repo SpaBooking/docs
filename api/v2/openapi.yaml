@@ -5037,8 +5037,8 @@ components:
         original:
           allOf:
             - $ref: "#/components/schemas/PriceFromMinimum/properties/original"
-          description: Same selected offer before promotions; null unless its full-stay total decreases after
-            rounding. The separately rounded average may equal the discounted average. See [Price
+          description: Same selected offer before promotions; null unless this minimum's rounded amount
+            decreases. Each minimum applies this rule separately; a non-null original is greater than amount. See [Price
             from](/api/objects/price-from#minimum-fields).
         nights:
           $ref: "#/components/schemas/PriceFromMinimum/properties/nights"
@@ -5176,7 +5176,7 @@ components:
           items:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
-          description: Room types of that hotel the promotion applies to, in configured order, or null when it
+          description: Room types of that hotel the promotion applies to, ordered by ID, or null when it
             applies to all of them. Never empty.
     Promotion:
       type: object
