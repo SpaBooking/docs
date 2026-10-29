@@ -4337,8 +4337,9 @@ components:
           description: Hotel id, equal to the containing entry's hotelId.
         name:
           allOf:
-            - $ref: "#/components/schemas/HotelNameLocalizedString"
-          description: Localized hotel name. Falls back to the Czech name, so it is never null.
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized hotel name. A missing translation falls back to the Czech name when
+            available; otherwise its value is null.
         stars:
           type: integer
           nullable: true
@@ -5021,7 +5022,9 @@ components:
           description: Hotel whose offer gives this minimum.
           pattern: ^[0-9a-fA-F]{24}$
         name:
-          $ref: "#/components/schemas/HotelNameLocalizedString"
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized hotel name, with the same fallback as a visit type's hotel entry.
     SharedPriceFromMinimum:
       type: object
       required:
@@ -5167,7 +5170,7 @@ components:
         hotelId:
           type: string
           pattern: ^[0-9a-fA-F]{24}$
-          description: An authorized active hotel selling this visit type; a detail hotelId filter does not
+          description: An authorized active hotel selling this visit type; entries are ordered by hotelId. A detail hotelId filter does not
             trim promotion scope.
         roomTypeIds:
           type: array
