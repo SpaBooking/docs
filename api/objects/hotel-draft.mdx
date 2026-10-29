@@ -14,7 +14,8 @@ openapi-schema: "/api/v2/openapi.yaml DraftHotel"
 The `procedures` array describes the hotel's procedure offer using
 the shared [Procedure](/api/objects/procedure) object. It contains `code`,
 localized `label`, `category`, and `naturalSource`, without a `count` field.
-An empty array means no procedures are configured for the offer.
+The array preserves the hotel’s configured order, with each procedure code
+appearing once. An empty array means no procedures are published for the hotel.
 
 The hotel offer is independent of which procedures a particular stay
 includes. See [Treatment behavior](/api/treatment#hotel-offer-and-package-inclusion)
