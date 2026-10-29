@@ -56,3 +56,34 @@ Compare the same currency and metric across rows. Show each minimum's
 occupancy and nights so different offers remain understandable. Follow the
 [seasonal pricing rules](/api/prices#seasonal-prices); a row represents a
 minimum across arrivals in its period, not a quote for every date.
+
+## Stay modal from a hotel price
+
+Choose the currency and hotel price group (`all`, `health`, or `wellness`),
+then read the selected minimum's `visitType.id` and `hotel.id`. Open that
+package's detail with the same public key and language selection:
+
+```http
+GET /api/v2/visit-types/{visitTypeId}?hotelId={hotelId}&expand=hotels,seasons
+```
+
+Use the matching hotel's entry for the modal price and seasonal rows. Use the
+package fields for board, treatment, stay length and booking mode. The hotel
+and package summary can select different offers, so keep each price's own
+nights, occupancy and original amount together.
+
+Catalog data can change between requests. If the detail returns `404`, the
+hotel entry is absent, or its price is null, refresh the originating offer
+instead of keeping an outdated price in the modal.
+
+## Showing a seasonal discount
+
+For each seasonal row, use `perStay.amount` for a whole-stay price or
+`perPersonPerNight.amount` for a per-guest average. When that same minimum has
+a non-null `original`, show it struck through beside the current amount.
+Do not take the original from the other metric or from the package summary.
+
+For example, a September–November row with a stay amount of EUR 765 and an
+original of EUR 1,000 can show **from EUR 765**, with **EUR 1,000** struck
+through. Display the returned nights and occupancy alongside it. The price
+follows the [seasonal selection rules](/api/prices#seasonal-prices).

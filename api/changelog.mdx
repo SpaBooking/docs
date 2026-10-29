@@ -7,6 +7,17 @@ hidden: true
 
 ## Unreleased
 
+### Shared hotel and package prices
+
+- Hotel responses always include the count-free `procedures` offer.
+- Hotel price minima include both the hotel and visit type references, using
+  the same [Price from object](/api/objects/price-from) as package and seasonal
+  prices. Currency and category containers stay the same.
+- Hotel prices select published, immediately bookable packages from the
+  [visit type catalog](/api/visit-types#publication-and-availability).
+- The [package-page guide](/guides/visit-types) covers a stay modal opened from
+  a hotel price and the display of seasonal original and discounted amounts.
+
 ### Room type occupancy settings
 
 - Added `max`, `singleUse`, and `infantsExcluded` to `occupancy` in room type

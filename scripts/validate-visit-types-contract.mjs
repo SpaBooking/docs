@@ -17,6 +17,7 @@ function expectSchema(name, value, valid, label) {
   const validate = ajv.compile({ $ref: `v2#/definitions/${name}` });
   assert.equal(validate(value), valid, `${label}: ${ajv.errorsText(validate.errors)}`);
 }
+expectSchema('HotelMealService', { enabled: false, servingTime: { from: null, to: null }, serviceMethod: null, drinksIncluded: false, drinksNote: { en: null } }, true, 'unset hotel service method remains null');
 const base = doc.paths['/visit-types/{visitTypeId}'].get.responses['200'].content['application/json'].examples.default.value;
 const changed = update => { const value = clone(base); update(value); return value; };
 expectSchema('VisitType', base, true, 'canonical package');
