@@ -174,7 +174,10 @@ and `priceFrom`, the price of this package at this hotel using the
 [Price from](/api/objects/price-from) shape.
 
 The optional `hotel` object contains `id`, localized `name`, and `stars` and
-is present only with `expand=hotels`. On the detail, `hotelId` can narrow these
+is present only with `expand=hotels`. Hotel names use the Czech name as a fallback;
+a value is `null` when neither the requested translation nor the Czech name is available.
+The same rule applies to hotel references in price minima.
+On the detail, `hotelId` can narrow these
 entries while the top-level package summary remains unchanged. A hotel entry is a package-at-hotel
 offer, not a full [Hotel](/api/objects/hotel) object. Its `hotelId` remains
 present when `priceFrom` is `null`.
