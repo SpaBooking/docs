@@ -772,10 +772,10 @@ paths:
                           max: 3
                         validity:
                           - from: 2026-11-01
-                            to: 2027-03-31
+                            to: "2027-03-31"
                             toAppliesTo: departure
                           - from: 2027-04-01
-                            to: 2027-10-31
+                            to: "2027-10-31"
                             toAppliesTo: arrival
                         arrival:
                           type: weekdays
@@ -931,8 +931,8 @@ paths:
                               cs-CZ: Podzimní sleva
                               de: Herbstrabatt
                             percentage: 10
-                            from: 2026-11-01
-                            to: 2026-12-19
+                            from: "2026-11-01"
+                            to: "2026-12-19"
                             hotels: null
                         hotels:
                           - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -1403,10 +1403,10 @@ paths:
                           max: 3
                         validity:
                           - from: 2026-11-01
-                            to: 2027-03-31
+                            to: "2027-03-31"
                             toAppliesTo: departure
                           - from: 2027-04-01
-                            to: 2027-10-31
+                            to: "2027-10-31"
                             toAppliesTo: arrival
                         arrival:
                           type: weekdays
@@ -1562,8 +1562,8 @@ paths:
                               cs-CZ: Podzimní sleva
                               de: Herbstrabatt
                             percentage: 10
-                            from: 2026-11-01
-                            to: 2026-12-19
+                            from: "2026-11-01"
+                            to: "2026-12-19"
                             hotels: null
                         hotels:
                           - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -2125,10 +2125,10 @@ paths:
                       max: 3
                     validity:
                       - from: 2026-11-01
-                        to: 2027-03-31
+                        to: "2027-03-31"
                         toAppliesTo: departure
                       - from: 2027-04-01
-                        to: 2027-10-31
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -2284,8 +2284,8 @@ paths:
                           cs-CZ: Podzimní sleva
                           de: Herbstrabatt
                         percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
+                        from: "2026-11-01"
+                        to: "2026-12-19"
                         hotels: null
                     hotels:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -2430,10 +2430,10 @@ paths:
                       max: 3
                     validity:
                       - from: 2026-11-01
-                        to: 2027-03-31
+                        to: "2027-03-31"
                         toAppliesTo: departure
                       - from: 2027-04-01
-                        to: 2027-10-31
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -2589,8 +2589,8 @@ paths:
                           cs-CZ: Podzimní sleva
                           de: Herbstrabatt
                         percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
+                        from: "2026-11-01"
+                        to: "2026-12-19"
                         hotels: null
                     hotels:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -2747,10 +2747,10 @@ paths:
                       max: 3
                     validity:
                       - from: 2026-11-01
-                        to: 2027-03-31
+                        to: "2027-03-31"
                         toAppliesTo: departure
                       - from: 2027-04-01
-                        to: 2027-10-31
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -2906,8 +2906,8 @@ paths:
                           cs-CZ: Podzimní sleva
                           de: Herbstrabatt
                         percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
+                        from: "2026-11-01"
+                        to: "2026-12-19"
                         hotels: null
                     hotels:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -2920,12 +2920,12 @@ paths:
                           stars: 3
                         seasons:
                           - id: 6720c0a1b2c3d4e5f6a7e401
-                            from: 2026-11-01
-                            to: 2027-03-31
+                            from: "2026-11-01"
+                            to: "2027-03-31"
                             priceFrom: null
                           - id: 6720c0a1b2c3d4e5f6a7e402
-                            from: 2027-04-01
-                            to: 2027-10-31
+                            from: "2027-04-01"
+                            to: "2027-10-31"
                             priceFrom: null
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
                         priceFrom:
@@ -3023,8 +3023,8 @@ paths:
                           stars: 4
                         seasons:
                           - id: 6720c0a1b2c3d4e5f6a7e401
-                            from: 2026-11-01
-                            to: 2027-03-31
+                            from: "2026-11-01"
+                            to: "2027-03-31"
                             priceFrom:
                               CZK:
                                 perPersonPerNight:
@@ -3113,8 +3113,8 @@ paths:
                                       cs-CZ: Klasická lázeňská léčba
                                       de: Klassische Kur
                           - id: 6720c0a1b2c3d4e5f6a7e402
-                            from: 2027-04-01
-                            to: 2027-10-31
+                            from: "2027-04-01"
+                            to: "2027-10-31"
                             priceFrom:
                               CZK:
                                 perPersonPerNight:
@@ -3242,10 +3242,10 @@ paths:
                       max: 3
                     validity:
                       - from: 2026-11-01
-                        to: 2027-03-31
+                        to: "2027-03-31"
                         toAppliesTo: departure
                       - from: 2027-04-01
-                        to: 2027-10-31
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -3401,8 +3401,8 @@ paths:
                           cs-CZ: Podzimní sleva
                           de: Herbstrabatt
                         percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
+                        from: "2026-11-01"
+                        to: "2026-12-19"
                         hotels: null
                     hotels:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
@@ -3495,8 +3495,8 @@ paths:
                                   de: Klassische Kur
                         seasons:
                           - id: 6720c0a1b2c3d4e5f6a7e401
-                            from: 2026-11-01
-                            to: 2027-03-31
+                            from: "2026-11-01"
+                            to: "2027-03-31"
                             priceFrom:
                               CZK:
                                 perPersonPerNight:
@@ -3585,8 +3585,8 @@ paths:
                                       cs-CZ: Klasická lázeňská léčba
                                       de: Klassische Kur
                           - id: 6720c0a1b2c3d4e5f6a7e402
-                            from: 2027-04-01
-                            to: 2027-10-31
+                            from: "2027-04-01"
+                            to: "2027-10-31"
                             priceFrom:
                               CZK:
                                 perPersonPerNight:
@@ -3713,15 +3713,15 @@ paths:
                       max: 4
                     validity:
                       - from: 2026-11-01
-                        to: 2027-06-30
+                        to: "2027-06-30"
                         toAppliesTo: arrival
                     arrival:
                       type: dates
                       dates:
-                        - 2026-11-08
-                        - 2026-11-29
-                        - 2027-01-10
-                        - 2027-02-07
+                        - "2026-11-08"
+                        - "2026-11-29"
+                        - "2027-01-10"
+                        - "2027-02-07"
                     treatment:
                       exams:
                         entry: true
@@ -4757,11 +4757,11 @@ components:
               de: null
         accommodationRules:
           checkIn:
-            from: 14:00
-            to: 20:00
+            from: "14:00"
+            to: "20:00"
           checkOut:
-            from: 07:00
-            to: 10:00
+            from: "07:00"
+            to: "10:00"
           children:
             allowed: true
             minimumAge: 6
@@ -4778,8 +4778,8 @@ components:
           breakfast:
             enabled: true
             servingTime:
-              from: 07:00
-              to: 10:00
+              from: "07:00"
+              to: "10:00"
             serviceMethod: buffet
             drinksIncluded: true
             drinksNote:
@@ -4788,8 +4788,8 @@ components:
           lunch:
             enabled: true
             servingTime:
-              from: 11:30
-              to: 14:30
+              from: "11:30"
+              to: "14:30"
             serviceMethod: buffet
             drinksIncluded: true
             drinksNote:
@@ -4798,8 +4798,8 @@ components:
           dinner:
             enabled: true
             servingTime:
-              from: 18:00
-              to: 21:00
+              from: "18:00"
+              to: "21:00"
             serviceMethod: served
             drinksIncluded: false
             drinksNote:
@@ -4906,8 +4906,8 @@ components:
                         - wednesday
                         - thursday
                         - friday
-                      from: 09:00
-                      to: 21:00
+                      from: "09:00"
+                      to: "21:00"
               - code: sauna
                 proximity: in-hotel
                 proximityMeters: null
@@ -4928,8 +4928,8 @@ components:
                         - wednesday
                         - thursday
                         - friday
-                      from: 09:00
-                      to: 21:00
+                      from: "09:00"
+                      to: "21:00"
           - category:
               code: parking
             amenities:
@@ -5566,10 +5566,10 @@ components:
           max: 3
         validity:
           - from: 2026-11-01
-            to: 2027-03-31
+            to: "2027-03-31"
             toAppliesTo: departure
           - from: 2027-04-01
-            to: 2027-10-31
+            to: "2027-10-31"
             toAppliesTo: arrival
         arrival:
           type: weekdays
@@ -5725,8 +5725,8 @@ components:
               cs-CZ: Podzimní sleva
               de: Herbstrabatt
             percentage: 10
-            from: 2026-11-01
-            to: 2026-12-19
+            from: "2026-11-01"
+            to: "2026-12-19"
             hotels: null
         hotels:
           - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -5739,12 +5739,12 @@ components:
               stars: 3
             seasons:
               - id: 6720c0a1b2c3d4e5f6a7e401
-                from: 2026-11-01
-                to: 2027-03-31
+                from: "2026-11-01"
+                to: "2027-03-31"
                 priceFrom: null
               - id: 6720c0a1b2c3d4e5f6a7e402
-                from: 2027-04-01
-                to: 2027-10-31
+                from: "2027-04-01"
+                to: "2027-10-31"
                 priceFrom: null
           - hotelId: 6720c0a1b2c3d4e5f6a7c101
             priceFrom:
@@ -5842,8 +5842,8 @@ components:
               stars: 4
             seasons:
               - id: 6720c0a1b2c3d4e5f6a7e401
-                from: 2026-11-01
-                to: 2027-03-31
+                from: "2026-11-01"
+                to: "2027-03-31"
                 priceFrom:
                   CZK:
                     perPersonPerNight:
@@ -5932,8 +5932,8 @@ components:
                           cs-CZ: Klasická lázeňská léčba
                           de: Klassische Kur
               - id: 6720c0a1b2c3d4e5f6a7e402
-                from: 2027-04-01
-                to: 2027-10-31
+                from: "2027-04-01"
+                to: "2027-10-31"
                 priceFrom:
                   CZK:
                     perPersonPerNight:
@@ -7273,8 +7273,8 @@ components:
           cs-CZ: Zimní nabídka vybraných pokojů
           de: Winterangebot für ausgewählte Zimmer
         percentage: 15
-        from: 2027-01-04
-        to: 2027-02-28
+        from: "2027-01-04"
+        to: "2027-02-28"
         hotels:
           - hotelId: 6720c0a1b2c3d4e5f6a7c101
             roomTypeIds:
