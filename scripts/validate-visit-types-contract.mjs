@@ -201,19 +201,44 @@ assert(!('minNights' in schemas.VisitTypeStayLength.properties));
 assert(!('maxNights' in schemas.VisitTypeStayLength.properties));
 assert.deepEqual(schemas.VisitTypeWeekdayArrival.additionalProperties, false);
 assert.deepEqual(schemas.VisitTypeDateArrival.additionalProperties, false);
-// Property order is documentation order: the examples follow the schema.
-const keysInSchemaOrder = (schema, value) => {
-  const order = Object.keys(schema.properties);
-  const keys = Object.keys(value);
-  assert.deepEqual(keys, order.filter(key => keys.includes(key)), `example keys follow ${Object.keys(schema.properties).length} schema properties`);
-};
-keysInSchemaOrder(schemas.VisitType, base);
-keysInSchemaOrder(schemas.VisitType, schemas.VisitType.example);
-keysInSchemaOrder(schemas.VisitTypeAtHotel, schemas.VisitType.example.hotels[1]);
-keysInSchemaOrder(schemas.PriceFromMinimum, minimum);
-keysInSchemaOrder(schemas.Hotel, schemas.Hotel.example);
-keysInSchemaOrder(schemas.Promotion, schemas.Promotion.example);
-checked += 6;
+// Property order is documentation order: every object in an example, nested ones
+// included, lists its keys in the order of its schema's properties.
+const deref = schema => schema?.$ref
+  ? schema.$ref.replace('#/components/schemas/', '').split('/').reduce((node, key) => node[key], schemas)
+  : schema;
+function propertiesOf(schema, value) {
+  schema = deref(schema);
+  if (!schema) return null;
+  const properties = {};
+  for (const part of schema.allOf ?? []) Object.assign(properties, propertiesOf(part, value) ?? {});
+  Object.assign(properties, schema.properties ?? {});
+  if (!Object.keys(properties).length) for (const variants of [schema.oneOf, schema.anyOf]) {
+    const match = (variants ?? []).map(variant => propertiesOf(variant, value))
+      .find(candidate => candidate && Object.keys(value).every(key => key in candidate));
+    if (match) Object.assign(properties, match);
+  }
+  return Object.keys(properties).length ? properties : null;
+}
+function keysInSchemaOrder(schema, value, path) {
+  if (Array.isArray(value)) {
+    const items = deref(schema)?.items ?? deref(deref(schema)?.allOf?.[0])?.items;
+    if (items) value.forEach((item, index) => keysInSchemaOrder(items, item, `${path}[${index}]`));
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  const properties = propertiesOf(schema, value);
+  if (!properties) return;
+  const keys = Object.keys(value).filter(key => key in properties);
+  assert.deepEqual(keys, Object.keys(properties).filter(key => keys.includes(key)), `${path}: keys follow the schema order`);
+  checked++;
+  for (const key of keys) keysInSchemaOrder(properties[key], value[key], `${path}.${key}`);
+}
+for (const [name, schema] of Object.entries(schemas)) if ('example' in schema) keysInSchemaOrder(schema, schema.example, name);
+keysInSchemaOrder(schemas.Hotel.properties.amenityCategories, schemas.Hotel.properties.amenityCategories.example, 'Hotel.amenityCategories');
+for (const path of ['/visit-types', '/visit-types/{visitTypeId}', '/hotels']) {
+  const content = doc.paths[path].get.responses['200'].content['application/json'];
+  for (const [name, example] of Object.entries(content.examples)) keysInSchemaOrder(content.schema, example.value, `${path} ${name}`);
+}
 for (const path of ['/visit-types', '/visit-types/{visitTypeId}']) {
   const operation = doc.paths[path].get;
   const parameters = operation.parameters.filter(p => p.name);
@@ -242,6 +267,40 @@ for (const path of ['/visit-types', '/visit-types/{visitTypeId}']) {
 for (const [currency, groups] of Object.entries(schemas.Hotel.example.priceFrom)) for (const group of ['health', 'wellness']) for (const metric of ['perPersonPerNight', 'perStay']) {
   if (groups[group]) assert(groups.all[metric].amount.amountMinor <= groups[group][metric].amount.amountMinor, `${currency} all ${metric} is a minimum`);
   checked++;
+}
+// List examples show the default request: one page, sorted as documented.
+const listExamples = path => Object.entries(doc.paths[path].get.responses['200'].content['application/json'].examples);
+for (const [name, example] of listExamples('/visit-types')) {
+  const { data, pagination } = example.value;
+  assert.deepEqual(pagination, { limit: 25, nextCursor: null, hasMore: false, total: data.length }, `${name}: the default page lists every package`);
+  const orders = data.map(v => v.webOrder);
+  const placed = orders.filter(order => order !== null);
+  assert.deepEqual(orders, [...[...placed].sort((a, b) => a - b), ...orders.filter(order => order === null)], `${name}: webOrder sort, unplaced packages last`);
+  checked++;
+}
+// Hotel list example: every hotel validates, is sorted by id descending, and each of its
+// minima is the cheapest matching package entry of the visit type list example.
+const packages = doc.paths['/visit-types'].get.responses['200'].content['application/json'].examples['without-expansions'].value.data;
+for (const [name, example] of listExamples('/hotels')) {
+  const { data, pagination } = example.value;
+  assert.deepEqual(pagination, { limit: 25, nextCursor: null, hasMore: false, total: data.length }, `${name}: the default page lists every hotel`);
+  assert.deepEqual(data.map(h => h.id), [...data.map(h => h.id)].sort().reverse(), `${name}: default sort is id descending`);
+  for (const hotel of data) {
+    expectSchema('Hotel', hotel, true, `${name}: ${hotel.id}`);
+    assert.equal(new Set(hotel.procedures.map(p => p.code)).size, hotel.procedures.length, `${name}: ${hotel.id} lists each procedure once`);
+    for (const [currency, groups] of Object.entries(hotel.priceFrom ?? {})) {
+      const entries = group => packages
+        .filter(p => group === 'all' || p.category === group)
+        .flatMap(p => p.hotels.filter(h => h.hotelId === hotel.id && h.priceFrom?.[currency]).map(h => h.priceFrom[currency]));
+      for (const group of ['health', 'wellness']) assert.equal(group in groups, entries(group).length > 0, `${name}: ${hotel.id} ${currency} ${group} only with a priced package`);
+      for (const [group, pair] of Object.entries(groups)) for (const metric of ['perPersonPerNight', 'perStay']) {
+        const cheapest = entries(group).map(e => e[metric]).reduce((a, b) => b.amount.amountMinor < a.amount.amountMinor ? b : a);
+        assert.deepEqual(pair[metric], cheapest, `${name}: ${hotel.id} ${currency} ${group} ${metric} is the cheapest package entry`);
+        checked++;
+      }
+    }
+  }
+  assert.deepEqual(data.find(h => h.id === schemas.Hotel.example.id), schemas.Hotel.example, `${name}: the Hotel example is the same hotel as in the list`);
 }
 // Independent arithmetic oracle for the documented composition example.
 assert.equal(1000 * (1 - 0.10) * (1 - 0.15), 765);
