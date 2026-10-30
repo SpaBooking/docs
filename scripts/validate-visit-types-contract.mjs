@@ -12,6 +12,17 @@ addFormats(ajv);
 ajv.addSchema({ definitions: toJsonSchema(schemas, 'v2') }, 'v2');
 let checked = 0;
 const clone = value => structuredClone(value);
+// Mintlify renders property-pointer refs as `any`, even when OpenAPI validators
+// resolve them correctly. Field refs must name reusable schema components.
+function assertRenderableRefs(value, path) {
+  if (!value || typeof value !== 'object') return;
+  if (value.$ref) {
+    assert.match(value.$ref, /^#\/components\/schemas\/[^/]+$/, `${path}: use a schema component reference for Mintlify`);
+    checked++;
+  }
+  for (const [key, child] of Object.entries(value)) assertRenderableRefs(child, `${path}.${key}`);
+}
+assertRenderableRefs(schemas, 'components.schemas');
 function expectSchema(name, value, valid, label) {
   checked++;
   const validate = ajv.compile({ $ref: `v2#/definitions/${name}` });
