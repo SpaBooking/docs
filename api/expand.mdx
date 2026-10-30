@@ -34,7 +34,7 @@ GET /api/v2/visit-types?expand=hotels
 
 A hotel does not include its room types by default. Without `expand` you get the
 hotel on its own; with `expand=roomTypes` the `roomTypes` array contains the hotel's
-enabled, non-draft rooms inline — no second request needed. The only difference
+enabled, non-draft rooms, so no second request is needed. The only difference
 between the two responses is the added `roomTypes` block.
 
 The snippets below show only the fields relevant to expansion. The remaining
@@ -198,10 +198,10 @@ complete examples of each variant.
 By default hotel and room type categories carry `code`; their
 amenities and options carry `code`. You resolve
 labels against the [amenity dictionary](/api/amenities). `expand=amenityLabels`
-inlines the localized `label` on each category, amenity, and option so the
-response is self-contained — useful when you would rather not fetch and join the
-dictionary. For apps that render many hotels, caching the dictionary once is
-usually leaner than expanding labels on every request.
+inlines the localized `label` on each category, amenity, and option, so you
+do not have to fetch and join the dictionary. For apps that render many hotels,
+caching the dictionary once is usually cheaper than expanding labels on every
+request.
 
 On `/room-types` and `/room-types/{roomTypeId}`, use `expand=amenityLabels`,
 optionally together with `hotel`. On hotels, `expand=roomTypes,amenityLabels`

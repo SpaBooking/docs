@@ -31,7 +31,7 @@ Visit types (`/visit-types`) are the stay packages hotels sell. Read
 
 ## IDs
 
-Resources are identified by `id` — a 24-character hex string.
+Resources are identified by `id`, a 24-character hex string.
 
 ## Dates
 
@@ -58,10 +58,10 @@ are selected and discounted.
 
 ## Images
 
-Hotels and room types include images with `url`, `width`, `height`, localized
-`alt`, and `variants`. Use available variants for responsive images and `url`
-as the fallback. Read the [images guide](/api/images) for complete rendering
-and accessibility guidance.
+Hotels, room types, and visit types include images with `url`, `width`,
+`height`, localized `alt`, and `variants`. Use available variants for
+responsive images and `url` as the fallback. Read the
+[images guide](/api/images) for complete rendering and accessibility guidance.
 
 ## Localization
 
@@ -73,26 +73,27 @@ Set the `Accept-Language` header (BCP 47 tags) to choose which locale keys local
 
 [Read the pagination guide](/api/pagination).
 
-Hotel and room-type list responses are `{ data, pagination }`; pass the previous
-response's `nextCursor` back as `cursor` to fetch the next page. The amenity
-dictionary returns `{ data }` in one response without pagination.
+Hotel, room type, and visit type list responses are `{ data, pagination }`;
+pass the previous response's `nextCursor` back as `cursor` to fetch the next
+page. The amenity dictionary returns `{ data }` in one response without
+pagination.
 
 ## Search
 
 [Read the search guide](/api/search).
 
-Hotel and room-type lists accept `search` for free-text filtering — case- and
-diacritics-insensitive, matched across all supported languages (`cs-CZ`, `de`,
-`en`, `ru`) at once, so a term in any language matches. Each endpoint documents
-which field(s) it searches.
+Hotel, room type, and visit type lists accept `search` for free-text
+filtering. Matching is case- and diacritics-insensitive and covers all
+supported languages (`cs-CZ`, `de`, `en`, `ru`) at once, so a term in any
+language matches. Each endpoint documents which field(s) it searches.
 
 ## Sorting
 
 [Read the sorting guide](/api/sorting).
 
-Hotel and room-type lists accept `sort` as `<field>:<direction>` (`asc` or `desc`), for
-example `createdAt:desc`. Each endpoint documents its sortable fields and
-default order.
+Hotel, room type, and visit type lists accept `sort` as `<field>:<direction>`
+(`asc` or `desc`), for example `createdAt:desc`. Each endpoint documents its
+sortable fields and default order.
 
 ## Expand
 

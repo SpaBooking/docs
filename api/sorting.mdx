@@ -4,21 +4,20 @@ description: "Order list results with the sort parameter."
 icon: "arrow-up-arrow-down"
 ---
 
-Hotel and room-type lists accept a `sort` query parameter as `<field>:<direction>`, where
-direction is `asc` or `desc`.
+Hotel, room type, and visit type lists accept a `sort` query parameter as
+`<field>:<direction>`, where direction is `asc` or `desc`.
 
 ```bash
 GET /api/v2/room-types?sort=createdAt:desc
 ```
 
-- Supported values are `createdAt:desc` (default) and `createdAt:asc`.
-- These orders use the unique record `id`, descending or ascending. IDs generally
-  follow creation order; this is not a separate sort on a timestamp field.
+- Hotel and room type lists support `createdAt:desc` (default) and
+  `createdAt:asc`. The [visit type](/api/objects/visit-type) list accepts them
+  too, but its default is `sort=webOrder`: visit types follow their website
+  position, in one order across all companies of your public key.
+- The `createdAt` orders use the unique record `id`, descending or ascending.
+  IDs generally follow creation order; this is not a separate sort on a
+  timestamp field.
 - Keep the same sort and filters while paging. Cursors do not freeze a snapshot
   of the data: additions, removals, or edits between requests can change results.
 - Server-side sorting by price, name, or relevance is not supported.
-
-The [visit type](/api/objects/visit-type) list also supports `webOrder` and
-uses it by default (`sort=webOrder`): visit types follow their website
-position, in one order across all companies of your public key. It supports
-`createdAt:desc` and `createdAt:asc` as well.
