@@ -9,9 +9,9 @@ complete purchasable stays and do not reserve a room or quote a chosen set of
 guests and dates. The [Price from object](/api/objects/price-from) defines the
 fields and currency containers.
 
-Hotel prices are released. The visit type, hotel × visit type, and seasonal
-price scopes below are **draft**, together with the shared minimum naming
-both the hotel and visit type.
+Hotel prices are released. Package, package-at-hotel, and seasonal prices,
+and the `hotel` reference in hotel minima, are not yet released on the
+production API. See [API coverage](/api/versioning#api-coverage).
 
 ## Two independent minima
 
@@ -65,10 +65,9 @@ parameters on hotel catalog endpoints do not change their indicative prices.
 The hotel-wide `all` group compares all eligible offers. The `health` and
 `wellness` groups compare offers from one category.
 
-In the **draft shared-price contract**, all three groups use packages in the
-[visit type catalog](/api/visit-types#publication-and-availability), so each
-package reference can be opened with the same public key. Released hotel
-prices can also reference packages outside that draft catalog.
+All three groups compare packages from the
+[visit type catalog](/api/visit-types#publication-and-availability), so every
+referenced package can be opened with the same public key.
 
 For the same currency and minimum, the hotel-wide amount cannot exceed the
 amount in a category group. Compare the two `perStay` values or the two
@@ -90,12 +89,12 @@ Apply overlapping percentage discounts one after another to the nights they
 both cover. For a base price of 1,000, a 10% discount followed by 15% gives
 `1,000 × 0.90 × 0.85 = 765`: a combined reduction of 23.5%, not 25%.
 
-For example, a hotel promotion shared with its own website and SpaBooking can
-combine with a separate SpaBooking promotion. In that example the direct
-website uses the shared 10% discount and reports 900; SpaBooking uses both
-discounts and reports 765. A promotion assigned only to another channel is
-not inherited automatically. Count the same promotion identity only once,
-even when it has more than one applicable assignment.
+For example, a hotel promotion shared with the hotel's own website and
+SpaBooking combines with a separate SpaBooking-only promotion. The website
+uses the shared 10% discount and reports 900; SpaBooking uses both discounts
+and reports 765. A promotion assigned only to another channel is not
+inherited. Each promotion counts once, even when it has more than one
+applicable assignment.
 
 A promotion changes only the nights within its inclusive public date range.
 The original amount belongs to the **same selected offer** before those

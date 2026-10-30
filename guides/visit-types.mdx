@@ -1,89 +1,98 @@
 ---
 title: "Building package pages"
-description: "Use the visit type catalog for package cards, hotel offers and seasonal prices."
+description: "Use the visit type catalog for package cards, hotel offers, and seasonal prices."
 icon: "suitcase"
 ---
 
 <Warning>
-  **Draft:** This guide describes the visit type contract for integration
-  review. Check [API coverage](/api/versioning) before implementation.
+  **Draft:** The visit type endpoints are not yet released on the production
+  API. See [API coverage](/api/versioning#api-coverage).
 </Warning>
 
-Use the visit type catalog to build package listings and details. Keep the
-same [public key](/api/authentication) across the page's catalog requests and
-request the [languages](/api/localization) your page displays.
+This guide walks through a package listing and a package detail with a hotel
+choice and seasonal prices. Use the same [public key](/api/authentication)
+for all requests of a page and request the [languages](/api/localization)
+the page displays.
 
 ## Package cards
 
-Load [the package list](/api/v2/reference/visit-types/list-visit-types) and
-follow its pagination. Use the package's name, short description and first
-image for the card. Add category, board and treatment information from the
-[Visit type object](/api/objects/visit-type).
+Load the [package list](/api/v2/reference/visit-types/list-visit-types) and
+follow its [pagination](/api/pagination). A card typically shows the name,
+`shortDescription`, the first image, the category, the board, and the stay
+length from the [Visit type](/api/objects/visit-type) object. Use
+`channelContent.collections` to group the cards of your own website.
 
-For a whole-package teaser, display `priceFrom.{currency}.perStay.amount`
-alongside that minimum's `nights` and `occupancy`. The two price metrics can
-refer to different offers; use all display values from the chosen minimum.
-See [Prices](/api/prices) for selection, discounts and currency handling.
+For a "from" price, show `priceFrom.{currency}.perStay.amount` with the
+`nights` and `occupancy` of that minimum, for example "from CZK 12,600 for
+7 nights, 1 guest". Keep every displayed value from the same minimum; the
+`perPersonPerNight` minimum can be a different offer. When the minimum has a
+non-null `original`, show it struck through.
 
-A null price means no indicative offer is available. For a request package,
-label the package as available on request. Check its catalog availability
-separately from its indicative price.
+A `null` price means no buyable offer. For a `request` package, label the
+card as available on request. Check `available` separately from the price.
 
-## Hotel selection
+## Hotel choice
 
-Load [the package detail](/api/v2/reference/visit-types/get-a-visit-type)
-with `expand=hotels` to display its hotels. Each `hotels[]` entry contains
-that hotel's price for the package. Fetch the
-[Hotel](/api/objects/hotel) detail for its full profile and room catalog.
+Load the [package detail](/api/v2/reference/visit-types/get-a-visit-type)
+with `expand=hotels`. Each `hotels[]` entry carries the hotel summary and the
+price of this package at that hotel. An entry without a buyable offer has
+`priceFrom: null` but remains a hotel that sells the package. Fetch the
+[Hotel](/api/objects/hotel) detail for the full profile and room catalog.
 
-When the visitor chooses a hotel, display the matching entry's price.
-The top-level `priceFrom` compares the package across all its hotels, even
-when `hotelId` narrows the detail response. It can therefore belong to a
-different hotel than the one selected.
+When the visitor chooses a hotel, show that entry's price. The package's
+top-level `priceFrom` compares all hotels and can belong to a different hotel
+than the selected one.
 
-Hotel room types describe the accommodation catalog. Their presence does
-not establish a price or availability for this package and a particular stay.
-Keep the room catalog and the package's indicative price separate in the UI.
+## Stay rules and board
+
+Present `stayLength`, `arrival`, and `validity` as the booking constraints,
+and `board.meals` as what is included and what the guest can change. The
+[stay-rule algorithm](/api/visit-types#testing-a-stay-against-its-rules)
+tells you whether a chosen arrival and length is permitted. It does not tell
+you whether a room is free.
 
 ## Seasonal prices
 
-Request `expand=seasons` on the detail, optionally with `hotelId`. Use
-`expand=hotels,seasons` if you also need hotel names and stars.
-Use the chosen hotel's `seasons[]` for the price timeline, keeping rows with
-null prices visible as periods without an indicative offer.
+Request the detail with `expand=seasons` and `hotelId={hotelId}` to get the
+seasons of the chosen hotel. Add `hotels` to the expansion when you also need
+the hotel summary. Each season in `hotels[0].seasons` has the inclusive
+arrival dates `from` and `to` and its own `priceFrom`. Keep seasons with
+`priceFrom: null` visible as periods without an offer.
 
-Compare the same currency and metric across rows. Show each minimum's
-occupancy and nights so different offers remain understandable. Follow the
-[seasonal pricing rules](/api/prices#seasonal-prices); a row represents a
-minimum across arrivals in its period, not a quote for every date.
+Show the same currency and metric in every row, and include the `nights` and
+`occupancy` of each minimum, because rows can select different offers. A row
+is the minimum across arrivals in its season, not a quote for every date.
 
-## Stay modal from a hotel price
+## Regular and discounted price
 
-Choose the currency and hotel price group (`all`, `health`, or `wellness`),
-then read the selected minimum's `visitType.id` and `hotel.id`. Open that
-package's detail with the same public key and language selection:
+A minimum's `amount` is the discounted price. Its `original` is the same offer
+before its promotions, or `null` when nothing is discounted. Take both values
+from the same minimum: never combine the `original` of one minimum with the
+`amount` of another, and never use a package-level `original` for a seasonal
+row.
+
+In the [seasonal example](/api/v2/reference/visit-types/get-a-visit-type),
+the winter season at Hotel Pramen has a `perStay` minimum of CZK 12,600 with
+an `original` of CZK 14,000. Show "from CZK 12,600" with "CZK 14,000" struck
+through, for 7 nights and 1 guest. The summer season has `original: null`, so
+show its CZK 13,300 without a struck-through price.
+
+The package's `promotions` explain which discounts exist and when; see
+[Promotion](/api/objects/promotion). A promotion can be listed without
+lowering a minimum, for example when it covers nights outside the cheapest
+stay.
+
+## Opening a package from a hotel price
+
+A hotel's `priceFrom` minima name their `visitType` and `hotel`. To open the
+package from a hotel card, pick the currency and group (`all`, `health`, or
+`wellness`) you displayed, then load:
 
 ```http
 GET /api/v2/visit-types/{visitTypeId}?hotelId={hotelId}&expand=hotels,seasons
 ```
 
-Use the matching hotel's entry for the modal price and seasonal rows. Use the
-package fields for board, treatment, stay length and booking mode. The hotel
-and package summary can select different offers, so keep each price's own
-nights, occupancy and original amount together.
-
-Catalog data can change between requests. If the detail returns `404`, the
-hotel entry is absent, or its price is null, refresh the originating offer
-instead of keeping an outdated price in the modal.
-
-## Showing a seasonal discount
-
-For each seasonal row, use `perStay.amount` for a whole-stay price or
-`perPersonPerNight.amount` for a per-guest average. When that same minimum has
-a non-null `original`, show it struck through beside the current amount.
-Do not take the original from the other metric or from the package summary.
-
-For example, a September–November row with a stay amount of EUR 765 and an
-original of EUR 1,000 can show **from EUR 765**, with **EUR 1,000** struck
-through. Display the returned nights and occupancy alongside it. The price
-follows the [seasonal selection rules](/api/prices#seasonal-prices).
+Use the returned hotel entry for the price and the seasons, and the package
+fields for board, treatment, and stay rules. If the detail returns `404`, the
+entry is missing, or its price is `null`, refresh the hotel price instead of
+showing the outdated amount.

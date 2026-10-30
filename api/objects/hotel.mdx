@@ -4,9 +4,16 @@ description: "A spa or wellness property and its structured guest profile."
 openapi-schema: "/api/v2/openapi.yaml Hotel"
 ---
 
+<Warning>
+  **Draft additions:** `procedures` and the `hotel` reference inside the
+  `priceFrom` minima are not yet returned by the production API. See
+  [API coverage](/api/versioning#api-coverage).
+</Warning>
+
 A hotel contains identity, contact details, images, buildings, localized
 content, structured accommodation rules, meal services, medical indications,
-staff languages, and hotel-level [amenities](/api/amenities).
+the procedures it offers, staff languages, and hotel-level
+[amenities](/api/amenities).
 
 Localized values return only the keys selected by
 [`Accept-Language`](/api/localization). `name` falls back to the Czech value when
@@ -119,25 +126,64 @@ staff: `cs` (Czech), `en` (English), `de` (German), and `ru` (Russian).
 category. See [Assigned amenities](/api/amenities#assigned-amenities) for the
 structure and labels.
 
-## Prices
-
-`priceFrom` contains the hotel's indicative prices. Released minima identify
-the selected visit type; the containing Hotel identifies the property. The
-`hotel` field on each minimum belongs to the [draft extension](/api/objects/hotel-draft).
-See the canonical
-[Price from fields and containers](/api/objects/price-from) and
-[price-selection rules](/api/prices).
-
 ## Procedures
 
-<Warning>
-  **Draft extension:** Hotel `procedures` and the shared price minimum's
-  `hotel` reference are planned additions. They are not part of the current
-  released Hotel response or the fields below.
-</Warning>
+`procedures` lists the procedures the hotel offers, in its configured order,
+each code once. Items use the [Procedure](/api/objects/procedure) object
+without a `count`. An empty array means the hotel publishes no procedures.
 
-See [Hotel extensions (draft)](/api/objects/hotel-draft) for the proposed
-procedure offer and shared price minimum. The current Hotel schema below
-remains the reference for released responses.
+The offer is independent of what a package includes: a package's
+[treatment](/api/objects/treatment) says which procedures its guests receive.
+Join the two by `code`.
+
+```json
+{
+  "procedures": [
+    {
+      "code": "carbon_dioxide_bath",
+      "label": {
+        "cs-CZ": "Kysličníková koupel",
+        "de": "Kohlensäurebad"
+      },
+      "category": {
+        "code": "hydrotherapy",
+        "label": {
+          "cs-CZ": "Vodoléčba",
+          "de": "Hydrotherapie"
+        }
+      },
+      "naturalSource": "carbon_dioxide"
+    },
+    {
+      "code": "peat_wrap",
+      "label": {
+        "cs-CZ": "Rašelinový zábal",
+        "de": "Moorpackung"
+      },
+      "category": {
+        "code": "thermotherapy",
+        "label": {
+          "cs-CZ": "Teploléčba",
+          "de": "Thermotherapie"
+        }
+      },
+      "naturalSource": "peat"
+    }
+  ]
+}
+```
+
+## Prices
+
+`priceFrom` holds the lowest prices the hotel currently sells, per currency.
+Each currency has the hotel-wide group `all` and the category groups `health`
+and `wellness`, each with the two independent
+[Price from](/api/objects/price-from) minima. A category group is omitted
+when it has no buyable offer; `all` is present whenever the currency is.
+`priceFrom` is `null` when the hotel has no buyable offer at all.
+
+Every minimum names its `hotel` and `visitType`. Open the package with the
+same public key to show its details. [Prices](/api/prices) defines which
+offers qualify and how to compare the groups.
 
 ## Fields

@@ -47,7 +47,9 @@
 - Give each fact one canonical home. Concepts link to object definitions and endpoints; object pages link to behavioral explanations; endpoint descriptions link to both instead of repeating them.
 - Define distribution channels, public keys, and their scope only on `api/authentication.mdx`. Link there whenever behavior depends on the requesting channel.
 - Keep OpenAPI schemas and examples consistent with the object definitions. Reuse shared schema components for shared objects; validate examples against their actual schema.
-- Mark proposed endpoints, fields, and behavior as **Draft** until their implementation is released. Preserve accurate documentation of live responses when adding a proposed extension.
+- Mark unreleased endpoints, fields, and behavior as **Draft** on their pages and in the API coverage table. Document one target shape per object; name the fields that the production API does not return yet in a callout on the object page and in the changelog, instead of keeping a parallel schema.
+- Give every schema that has its own object page a complete `example` whose keys follow the schema's property order; endpoint examples must match the request they illustrate, including its `expand` values.
+- Express cross-field rules in OpenAPI as forbidden combinations (`not` with `anyOf`) and give real variants a `title`. Mintlify renders a root-level `oneOf`/`anyOf` as unnamed "Options". For a nullable object, use `type: object` with `nullable: true` and inline properties so the field renders as `object | null`.
 - Keep API v2 self-contained. Do not link v2 pages to API v1 or describe v1 handoffs. Do not advertise endpoints outside the current v2 contract, including future booking endpoints. Legacy reference remains separate.
 - Visit type v2 excludes content from the admin section “Obsah pro starý web”; do not add those legacy text fields to its contract.
 - Use **request** for a booking that requires hotel confirmation. Do not use **on demand** as a synonym.

@@ -7,6 +7,15 @@ hidden: true
 
 ## Unreleased
 
+### Visit type catalog (draft)
+
+- Added `GET /visit-types` and `GET /visit-types/{visitTypeId}` with the
+  [Visit type](/api/objects/visit-type) object, catalog filters, cursor
+  pagination, `expand=hotels`, and, on the detail, `expand=seasons`.
+- Content for the sales channel is returned under `channelContent`. Its
+  `collections` lists the website collections of the company's own website
+  channel; other channels receive an empty array.
+
 ### Shared hotel and package prices
 
 - Hotel responses include the hotel's procedures as
