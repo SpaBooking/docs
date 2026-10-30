@@ -4,11 +4,6 @@ description: "Understand the availability and stay rules of a stay package."
 icon: "suitcase"
 ---
 
-<Warning>
-  **Draft:** The visit type endpoints are not yet released on the production
-  API. See [API coverage](/api/versioning#api-coverage).
-</Warning>
-
 A [visit type](/api/objects/visit-type) is a stay package sold by one or more
 hotels. Its catalog availability, its permitted stays, and its indicative
 prices answer three different questions.
@@ -42,18 +37,18 @@ A stay with arrival `a`, `nights` nights, and checkout `c` is permitted when:
 2. `a` satisfies [`arrival`](/api/objects/visit-type#stay-length-and-arrival):
    it falls on a permitted weekday, or it is one of the permitted dates.
 3. When [`validity`](/api/objects/visit-type#validity) is an array, at least
-   one period contains the whole stay: `a` lies within the period, and for a
-   departure-limited period `c` is on or before `to`.
+   one period permits the stay on its own: `a` lies within the period, and
+   for a departure-limited period `c` is on or before `to`.
 
 Overlapping periods are alternatives: one matching period is enough, and the
 limits of two periods never combine. A `validity` of `null` imposes no date
 restriction; `[]` permits no stay.
 
 For example, the period `2026-11-01` to `2027-03-31` with
-`toAppliesTo: "departure"` permits a stay that checks out on 31 March 2027.
-A stay arriving on 30 March and checking out on 6 April does not fit it, even
-when an April period exists. An overlapping arrival-limited period that
-contains 30 March would permit that stay.
+`toAppliesTo: "departure"` permits a seven-night stay from Saturday 20 March
+to 27 March 2027. A stay from Saturday 27 March to 3 April does not fit it,
+even when an April period exists. An overlapping arrival-limited period that
+contains 27 March would permit that stay.
 
 The list filters `nights`, `arrivalFrom`, and `arrivalTo` apply these rules.
 Without an arrival window, `nights` checks only the stay length. With a

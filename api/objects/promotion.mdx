@@ -4,19 +4,12 @@ description: "A percentage discount on nights of a stay, and the hotels and room
 openapi-schema: "/api/v2/openapi.yaml Promotion"
 ---
 
-<Warning>
-  **Draft:** Promotions are returned by the visit type endpoints, which are not
-  yet released on the production API. See
-  [API coverage](/api/versioning#api-coverage).
-</Warning>
-
 A visit type's `promotions` lists its current and future promotions that apply
 to the channel of your [public key](/api/authentication#channels-and-scope).
 The API returns only applicable promotions; you do not filter them by channel.
 
-A promotion is configured metadata, not a guarantee of a discounted stay: it
-can have no overlap with the package's permitted stays, or no remaining room
-capacity. [Prices](/api/prices#promotions) explains how promotions change the
+A listed promotion does not guarantee a discounted stay: it can lie outside
+the package's permitted stays, or the discounted rooms can be sold out. [Prices](/api/prices#promotions) explains how promotions change the
 indicative minima and how overlapping discounts combine.
 
 ## Fields and night bounds

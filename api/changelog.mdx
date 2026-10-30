@@ -5,16 +5,14 @@ icon: "clock-rotate-left"
 hidden: true
 ---
 
-## Unreleased
+## 2026-10-30
 
-### Visit type catalog (draft)
+### Visit type catalog
 
 - Added `GET /visit-types` and `GET /visit-types/{visitTypeId}` with the
-  [Visit type](/api/objects/visit-type) object, catalog filters, cursor
-  pagination, `expand=hotels`, and, on the detail, `expand=seasons`.
-- Content for the sales channel is returned under `channelContent`. Its
-  `collections` lists the website collections of the company's own website
-  channel; other channels receive an empty array.
+  [Visit type](/api/objects/visit-type) object: catalog filters, cursor
+  pagination, `expand=hotels`, `expand=seasons` on the detail, and
+  `channelContent.collections` for the company's own website channel.
 
 ### Shared hotel and package prices
 
@@ -25,8 +23,8 @@ hidden: true
   prices. Currency and category containers stay the same.
 - Hotel prices select published, immediately bookable packages from the
   [visit type catalog](/api/visit-types#publication-and-availability).
-- The [package-page guide](/guides/visit-types) covers a stay modal opened from
-  a hotel price and the display of seasonal original and discounted amounts.
+- The [package-page guide](/guides/visit-types) covers opening a package from
+  a hotel price and showing seasonal original and discounted amounts.
 
 ### Room type occupancy settings
 

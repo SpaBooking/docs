@@ -4,11 +4,6 @@ description: "Use the visit type catalog for package cards, hotel offers, and se
 icon: "suitcase"
 ---
 
-<Warning>
-  **Draft:** The visit type endpoints are not yet released on the production
-  API. See [API coverage](/api/versioning#api-coverage).
-</Warning>
-
 This guide walks through a package listing and a package detail with a hotel
 choice and seasonal prices. Use the same [public key](/api/authentication)
 for all requests of a page and request the [languages](/api/localization)
@@ -65,8 +60,8 @@ is the minimum across arrivals in its season, not a quote for every date.
 
 ## Regular and discounted price
 
-A minimum's `amount` is the discounted price. Its `original` is the same offer
-before its promotions, or `null` when nothing is discounted. Take both values
+A minimum's `amount` is the price after promotions. Its `original` is the
+same offer before its promotions, or `null` when no promotion applies. Take both values
 from the same minimum: never combine the `original` of one minimum with the
 `amount` of another, and never use a package-level `original` for a seasonal
 row.
@@ -84,9 +79,10 @@ stay.
 
 ## Opening a package from a hotel price
 
-A hotel's `priceFrom` minima name their `visitType` and `hotel`. To open the
-package from a hotel card, pick the currency and group (`all`, `health`, or
-`wellness`) you displayed, then load:
+A hotel's `priceFrom` minima name their `visitType` and `hotel`. Take
+`visitType.id` and `hotel.id` from the exact minimum you displayed (currency,
+group, and metric); the two minima of one group can name different packages.
+Then load:
 
 ```http
 GET /api/v2/visit-types/{visitTypeId}?hotelId={hotelId}&expand=hotels,seasons

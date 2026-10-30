@@ -20,8 +20,8 @@ can cover more than one company.
 
 Resources and channel-specific content are resolved within this scope.
 Promotions and their effect on prices depend on the requesting channel, and a
-visit type's [channel content](/api/objects/visit-type#channel-content) is
-returned only to the company's own website channel. A response for one key
+visit type's [`channelContent.collections`](/api/objects/visit-type#channel-content)
+is filled only for the key of the company's own website. A response for one key
 must not be reused for another key. Include the public-key context in your
 cache partitioning without exposing the key in a public cache identifier.
 

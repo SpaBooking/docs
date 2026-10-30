@@ -533,12 +533,6 @@ paths:
         - Visit types
       summary: List visit types
       operationId: getVisitTypes
-      x-mint:
-        content: |
-          <Warning>
-            **Draft:** This endpoint is not yet released on the production API.
-            Its contract is complete and published for integration review.
-          </Warning>
       description: |
         Returns the stay packages sold by the companies your public key is
         scoped to, as [Visit type](/api/objects/visit-type) objects. Only
@@ -747,7 +741,7 @@ paths:
                         bookingMode: instant
                         available: true
                         unavailableReason: null
-                        webOrder: 3
+                        webOrder: 1
                         channelContent:
                           collections:
                             - treatment_stays
@@ -1048,7 +1042,7 @@ paths:
                         bookingMode: instant
                         available: true
                         unavailableReason: null
-                        webOrder: 4
+                        webOrder: 2
                         channelContent:
                           collections:
                             - families_with_children
@@ -1358,12 +1352,12 @@ paths:
                               w1440: https://cdn.example.com/visit-types/wellness-stay/generation-1/w1440.webp
                     pagination:
                       limit: 2
-                      nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAzIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6NCwibnVtZXJpY0lkIjowfQ
+                      nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAzIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6MiwibnVtZXJpY0lkIjowfQ
                       hasMore: true
                       total: 3
                 first-page-expand-hotels:
                   summary: The same page with expand=hotels
-                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. `expand=hotels` adds the hotel summary to every hotel entry."
+                  description: Same context as the first example. `expand=hotels` adds the hotel summary to every hotel entry.
                   value:
                     data:
                       - id: 6720c0a1b2c3d4e5f6a7b801
@@ -1378,7 +1372,7 @@ paths:
                         bookingMode: instant
                         available: true
                         unavailableReason: null
-                        webOrder: 3
+                        webOrder: 1
                         channelContent:
                           collections:
                             - treatment_stays
@@ -1691,7 +1685,7 @@ paths:
                         bookingMode: instant
                         available: true
                         unavailableReason: null
-                        webOrder: 4
+                        webOrder: 2
                         channelContent:
                           collections:
                             - families_with_children
@@ -2013,7 +2007,7 @@ paths:
                               w1440: https://cdn.example.com/visit-types/wellness-stay/generation-1/w1440.webp
                     pagination:
                       limit: 2
-                      nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAzIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6NCwibnVtZXJpY0lkIjowfQ
+                      nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAzIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6MiwibnVtZXJpY0lkIjowfQ
                       hasMore: true
                       total: 3
         "400":
@@ -2028,12 +2022,6 @@ paths:
         - Visit types
       summary: Get a visit type
       operationId: getVisitType
-      x-mint:
-        content: |
-          <Warning>
-            **Draft:** This endpoint is not yet released on the production API.
-            Its contract is complete and published for integration review.
-          </Warning>
       description: |
         Returns one published [visit type](/api/objects/visit-type), including
         an unavailable one. An unknown, unauthorized or unpublished id returns
@@ -2100,7 +2088,7 @@ paths:
                     bookingMode: instant
                     available: true
                     unavailableReason: null
-                    webOrder: 3
+                    webOrder: 1
                     channelContent:
                       collections:
                         - treatment_stays
@@ -2391,7 +2379,7 @@ paths:
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
                 expand-hotels:
                   summary: "expand=hotels: hotel summaries added"
-                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. The hotel entries additionally carry the hotel summary."
+                  description: Same context as the first example. The hotel entries additionally carry the hotel summary.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b801
                     name:
@@ -2405,7 +2393,7 @@ paths:
                     bookingMode: instant
                     available: true
                     unavailableReason: null
-                    webOrder: 3
+                    webOrder: 1
                     channelContent:
                       collections:
                         - treatment_stays
@@ -2708,7 +2696,7 @@ paths:
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
                 expand-hotels-seasons:
                   summary: "expand=hotels,seasons: seasons of every hotel entry"
-                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. The winter season at Hotel Pramen carries the discounted minimum with its original price; the summer season has no promotion. Hotel Bellevue knows both seasons but has no buyable offer in them."
+                  description: Same context as the first example. The winter season at Hotel Pramen carries the discounted minimum with its original price; the summer season has no promotion. Hotel Bellevue lists both seasons without a buyable offer.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b801
                     name:
@@ -2722,7 +2710,7 @@ paths:
                     bookingMode: instant
                     available: true
                     unavailableReason: null
-                    webOrder: 3
+                    webOrder: 1
                     channelContent:
                       collections:
                         - treatment_stays
@@ -3203,7 +3191,7 @@ paths:
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
                 one-hotel-with-seasons:
                   summary: "hotelId=6720c0a1b2c3d4e5f6a7c101&expand=seasons: one hotel's seasons"
-                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. Only the requested hotel entry is returned; `priceFrom`, `promotions` and `channelContent` still describe the whole package."
+                  description: Same context as the first example. Only the requested hotel entry is returned; `priceFrom`, `promotions` and `channelContent` still describe the whole package.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b801
                     name:
@@ -3217,7 +3205,7 @@ paths:
                     bookingMode: instant
                     available: true
                     unavailableReason: null
-                    webOrder: 3
+                    webOrder: 1
                     channelContent:
                       collections:
                         - treatment_stays
@@ -3675,7 +3663,7 @@ paths:
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
                 on-request:
                   summary: Insurer-paid package booked on request
-                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. A request package has no indicative price; its arrivals are fixed dates."
+                  description: Same context as the first example. A request package has no indicative price; its arrivals are fixed dates.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b802
                     name:
@@ -3921,22 +3909,26 @@ components:
         cs-CZ:
           type: string
           minLength: 1
+          nullable: true
         de:
           type: string
           minLength: 1
+          nullable: true
         en:
           type: string
           minLength: 1
+          nullable: true
         ru:
           type: string
           minLength: 1
+          nullable: true
       description: >-
-        Localized hotel name keyed by supported response locale (`cs-CZ`, `de`, `en`, `ru`). Missing
-        requested translations fall back to the Czech name, so every returned value is a non-empty
-        string.
+        Localized hotel name keyed by response locale (`cs-CZ`, `de`, `en`, `ru`). A missing
+        translation falls back to the Czech name; a key is null only when the hotel has no Czech
+        name.
       example:
-        cs-CZ: Spa Resort Pawlik
-        de: Kurhotel Pawlik
+        cs-CZ: Hotel Pramen
+        de: Hotel Pramen
     Image:
       type: object
       required: [ url, width, height, alt, variants ]
@@ -4084,7 +4076,7 @@ components:
             name:
               allOf:
                 - $ref: "#/components/schemas/HotelNameLocalizedString"
-              description: Localized hotel name. Falls back to the default locale (cs-CZ), so it is never null.
+              description: Localized hotel name, with the same Czech fallback as the hotel's `name`.
               example:
                 cs-CZ: Pawlik
                 de: Pawlik-Aquaforum
@@ -4596,8 +4588,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/HotelNameLocalizedString"
           description: >-
-            Localized hotel name (plain text). Falls back to the default locale (cs-CZ) when a
-            requested locale has no value, so it is never null.
+            Localized hotel name (plain text). A missing translation falls back to the Czech name.
         shortDescription:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
@@ -4661,8 +4652,7 @@ components:
             $ref: "#/components/schemas/Procedure"
           description: >-
             Procedures the hotel offers, in configured order, each code once. Independent of the
-            procedures a package includes. Not yet returned by the production API; see
-            [API coverage](/api/versioning#api-coverage).
+            procedures a package includes.
         staffLanguages:
           type: array
           description: Languages spoken by hotel staff.
@@ -5237,10 +5227,8 @@ components:
           description: Hotel whose offer gives this minimum.
         name:
           allOf:
-            - $ref: "#/components/schemas/LocalizedString"
-          description: >-
-            Localized hotel name. A missing translation falls back to the Czech name; the value is
-            null when neither exists.
+            - $ref: "#/components/schemas/HotelNameLocalizedString"
+          description: Localized hotel name, with the same Czech fallback as the hotel's `name`.
     MoneyOrNull:
       type: object
       nullable: true
@@ -5541,7 +5529,7 @@ components:
         bookingMode: instant
         available: true
         unavailableReason: null
-        webOrder: 3
+        webOrder: 1
         channelContent:
           collections:
             - treatment_stays
@@ -6364,10 +6352,8 @@ components:
           description: Hotel id, equal to the entry's `hotelId`.
         name:
           allOf:
-            - $ref: "#/components/schemas/LocalizedString"
-          description: >-
-            Localized hotel name. A missing translation falls back to the Czech name; the value is
-            null when neither exists.
+            - $ref: "#/components/schemas/HotelNameLocalizedString"
+          description: Localized hotel name, with the same Czech fallback as the hotel's `name`.
         stars:
           type: integer
           nullable: true
@@ -6917,6 +6903,7 @@ components:
       properties:
         meals:
           type: array
+          minItems: 4
           maxItems: 4
           uniqueItems: true
           items:

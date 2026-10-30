@@ -4,12 +4,6 @@ description: "A treatment procedure with its localized label, category, and natu
 openapi-schema: "/api/v2/openapi.yaml Procedure"
 ---
 
-<Warning>
-  **Draft:** Procedures are returned by the visit type endpoints and in hotel
-  `procedures`, which are not yet released on the production API. See
-  [API coverage](/api/versioning#api-coverage).
-</Warning>
-
 A procedure is identified by `code` and carries a localized `label`, a
 `category` with its own `code` and localized `label`, and `naturalSource`.
 Labels follow [Localization](/api/localization); a missing translation is

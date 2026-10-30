@@ -65,13 +65,11 @@ missing or empty translation is returned as `null`.
 
 The following fields have explicit fallback behavior:
 
-- The Hotel object's `name` and `visitType.name` inside [`priceFrom`](/api/prices) fall back
-  to the Czech value, so they are never `null`.
-- The draft [visit type](/api/objects/visit-type) `name` falls back to the Czech
-  value, so it is never `null`.
-- Hotel entries and hotel references in the draft visit type contract follow
-  the [hotel entry fallback rules](/api/objects/visit-type#hotels).
-- Image `alt` falls back to the name of the hotel, room type, or draft
+- Hotel and visit type names, including the `hotel` and `visitType`
+  references inside [price minima](/api/objects/price-from), fall back to the
+  Czech value. A visit type always has a Czech name; a hotel name is `null`
+  only when the hotel has no Czech name.
+- Image `alt` falls back to the name of the hotel, room type, or
   [visit type](/api/objects/visit-type) the image belongs to. Unlike other
   localized fields, an explicitly stored empty `alt` remains `""` to represent a
   decorative image. See [Images](/api/images#alternative-text).

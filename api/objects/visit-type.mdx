@@ -4,11 +4,6 @@ description: "A stay package with its board, treatment, stay rules, hotel offers
 openapi-schema: "/api/v2/openapi.yaml VisitType"
 ---
 
-<Warning>
-  **Draft:** The visit type endpoints are not yet released on the production
-  API. See [API coverage](/api/versioning#api-coverage).
-</Warning>
-
 A visit type is a stay package sold by one or more hotels, such as a spa cure
 or a wellness weekend. [Visit types](/api/visit-types) explains availability
 and stay rules. The [list](/api/v2/reference/visit-types/list-visit-types)
@@ -33,8 +28,8 @@ to the Czech name. `shortDescription` is a plain-text purpose line of at most
 | `health` | A spa cure with medical treatment. |
 | `wellness` | A wellness stay. |
 
-`payer` says who pays for a health stay. It is `null` for a wellness stay and
-is never defaulted.
+`payer` says who pays for a health stay; every health stay has one. It is
+`null` for a wellness stay.
 
 | `payer` | Meaning |
 | --- | --- |
@@ -74,13 +69,13 @@ when it has none. The list endpoint sorts by it by default.
 
 ### Channel content
 
-`channelContent` holds content for the sales channel of your public key, like
-the hotel's `channelContent.tagline`. Its `collections` lists the website
-collections the package belongs to.
+`channelContent` groups the content that depends on the sales channel of your
+public key. Its only field, `collections`, lists the website collections the
+package belongs to.
 
-Collections are content of the company's own website. Only the public key of
-that website receives them, and only with that key does the `collection`
-filter match. Other keys, including SpaBooking, receive `[]`. See
+Collections are content of the company's own website. The public key of that
+website receives them, and only with that key does the `collection` filter
+match. Every other key, including SpaBooking, receives `[]`. See
 [Channels and scope](/api/authentication#channels-and-scope).
 
 Codes appear in this order, each at most once:
@@ -94,8 +89,10 @@ Codes appear in this order, each at most once:
 | `special_offers` | Packages with at least one promotion in `promotions`. |
 | `hotel_stay` | Wellness stays without included procedures. |
 
-`special_offers` is present exactly when `promotions` is non-empty. The other
-derived codes follow `category` and `treatment`.
+`advent_christmas_new_year` and `families_with_children` are assigned in
+SpaPortal. The other codes are derived: `wellness`, `treatment_stays`, and
+`hotel_stay` follow `category` and `treatment`, and `special_offers` is present
+exactly when `promotions` is non-empty for the company's own website key.
 
 ## Board
 
@@ -148,7 +145,7 @@ or 21 nights.
 | `arrival.type` | Field | Meaning |
 | --- | --- | --- |
 | `weekdays` | `weekdays` | Permitted arrival weekdays, Monday first; never empty. |
-| `dates` | `dates` | Permitted arrival dates from today onward, ascending. Empty when every configured date has passed, which makes the package `no_arrival`. |
+| `dates` | `dates` | Permitted arrival dates from today onward, ascending. Empty when every configured date has passed; the package then has no permitted stay. |
 
 Weekday codes are the lowercase English day names, `monday` to `sunday`.
 
@@ -164,8 +161,9 @@ stayed, ordered by `from`. Each period has:
 | `toAppliesTo` | `arrival`: `to` limits the arrival date. `departure`: `to` limits the checkout date. |
 
 `validity` is `null` when no periods are configured, which means no date
-restriction, and `[]` when every configured period has ended. A stay must fit
-one period completely. See
+restriction, and `[]` when every configured period has ended. One period must
+permit the stay on its own: the arrival lies within it and, for a
+departure-limited period, the checkout is on or before `to`. See
 [Testing a stay against its rules](/api/visit-types#testing-a-stay-against-its-rules).
 
 ## Treatment
@@ -196,8 +194,8 @@ name. Every entry has:
 | `seasons` | Current and future price-list seasons with their prices. Only with `expand=seasons` on the detail endpoint. |
 
 An entry is a package-at-hotel offer, not a [Hotel](/api/objects/hotel)
-object; fetch the hotel endpoint for the full profile. A hotel name falls back
-to the Czech name and is `null` when neither exists.
+object; fetch the hotel endpoint for the full profile. Hotel names use the
+same Czech fallback as the hotel's `name`.
 
 Each season has an opaque `id`, the inclusive arrival-date bounds `from` and
 `to`, and `priceFrom` for arrivals in the season, or `null` when the season
