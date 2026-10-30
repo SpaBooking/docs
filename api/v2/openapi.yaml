@@ -144,6 +144,10 @@ paths:
         See the [Hotel](/api/objects/hotel) object for the full field
         reference, including the allowed values for `serviceMethod`,
         `indications`, and `staffLanguages`.
+
+        The response example is the plain request, sent with the company's own
+        website key and `Accept-Language: cs-CZ,de` on 2026-10-30; both hotels
+        fit on one page.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -225,6 +229,823 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HotelsList"
+              examples:
+                without-expansions:
+                  summary: Both hotels on one page (default request)
+                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. Hotel Bellevue has a buyable offer only for the wellness package; Hotel Pramen also sells the health package."
+                  value:
+                    data:
+                      - id: 6720c0a1b2c3d4e5f6a7c103
+                        name:
+                          cs-CZ: Hotel Bellevue
+                          de: Hotel Bellevue
+                        shortDescription:
+                          cs-CZ: Menší lázeňský hotel s vlastní saunou a wellness pobyty po celý rok.
+                          de: Kleineres Kurhotel mit eigener Sauna und Wellnessaufenthalten das ganze Jahr über.
+                        channelContent:
+                          tagline:
+                            cs-CZ: Klidný odpočinek u lázeňského parku
+                            de: Ruhige Erholung am Kurpark
+                        stars: 3
+                        address:
+                          addressLine: Jiráskova 12
+                          city: Františkovy Lázně
+                          postalCode: 351 01
+                          country: cze
+                        email: bellevue@example.com
+                        phoneNumber: +420 123 456 790
+                        url: https://bellevue.example.com
+                        images:
+                          - url: https://files.example.com/bellevue.jpg
+                            width: 1200
+                            height: 800
+                            alt:
+                              cs-CZ: Hotel Bellevue od lázeňského parku
+                              de: Hotel Bellevue vom Kurpark aus
+                            variants:
+                              w480: https://files.example.com/bellevue/generation-1/w480.webp
+                              w960: https://files.example.com/bellevue/generation-1/w960.webp
+                        buildings: []
+                        accommodationRules:
+                          checkIn:
+                            from: "15:00"
+                            to: "22:00"
+                          checkOut:
+                            from: null
+                            to: "10:00"
+                          children:
+                            allowed: true
+                            minimumAge: null
+                          pets:
+                            allowed: false
+                            minimumNights: null
+                            feePerNight:
+                              czk: null
+                              eur: null
+                            conditions:
+                              cs-CZ: null
+                              de: null
+                        mealServices:
+                          breakfast:
+                            enabled: true
+                            servingTime:
+                              from: "07:30"
+                              to: "10:00"
+                            serviceMethod: buffet
+                            drinksIncluded: true
+                            drinksNote:
+                              cs-CZ: null
+                              de: null
+                          lunch:
+                            enabled: false
+                            servingTime:
+                              from: null
+                              to: null
+                            serviceMethod: null
+                            drinksIncluded: false
+                            drinksNote:
+                              cs-CZ: null
+                              de: null
+                          dinner:
+                            enabled: true
+                            servingTime:
+                              from: "17:30"
+                              to: "20:00"
+                            serviceMethod: served
+                            drinksIncluded: false
+                            drinksNote:
+                              cs-CZ: Nápoje se hradí samostatně.
+                              de: Getränke werden separat berechnet.
+                        indications:
+                          - musculoskeletal
+                          - prevention
+                        procedures:
+                          - code: peat_wrap
+                            label:
+                              cs-CZ: Rašelinový zábal
+                              de: Moorpackung
+                            category:
+                              code: thermotherapy
+                              label:
+                                cs-CZ: Teploléčba
+                                de: Thermotherapie
+                            naturalSource: peat
+                          - code: peat_bath
+                            label:
+                              cs-CZ: Rašelinová koupel
+                              de: Moorbad
+                            category:
+                              code: thermotherapy
+                              label:
+                                cs-CZ: Teploléčba
+                                de: Thermotherapie
+                            naturalSource: peat
+                          - code: classic_full_body_massage
+                            label:
+                              cs-CZ: Klasická celková masáž
+                              de: Klassische Ganzkörpermassage
+                            category:
+                              code: physiotherapy
+                              label:
+                                cs-CZ: Fyzioterapie
+                                de: Physiotherapie
+                            naturalSource: null
+                          - code: aroma_massage
+                            label:
+                              cs-CZ: Aromamasáž
+                              de: Aromamassage
+                            category:
+                              code: physiotherapy
+                              label:
+                                cs-CZ: Fyzioterapie
+                                de: Physiotherapie
+                            naturalSource: null
+                          - code: inhalation
+                            label:
+                              cs-CZ: Inhalace
+                              de: Inhalationen
+                            category:
+                              code: inhalation
+                              label:
+                                cs-CZ: Inhalace
+                                de: Inhalation
+                            naturalSource: null
+                        staffLanguages:
+                          - cs
+                          - de
+                        amenityCategories:
+                          - category:
+                              code: wellness
+                            amenities:
+                              - code: sauna
+                                proximity: in-hotel
+                                proximityMeters: null
+                                pricing:
+                                  type: included_scheduled
+                                  schedule:
+                                    - days:
+                                        - monday
+                                        - tuesday
+                                        - wednesday
+                                        - thursday
+                                        - friday
+                                      from: "15:00"
+                                      to: "18:00"
+                                options:
+                                  - code: finnish
+                                openingHours:
+                                  schedule:
+                                    - days:
+                                        - monday
+                                        - tuesday
+                                        - wednesday
+                                        - thursday
+                                        - friday
+                                        - saturday
+                                        - sunday
+                                      from: "10:00"
+                                      to: "21:00"
+                                note:
+                                  cs-CZ: Mimo uvedené hodiny je vstup do sauny zpoplatněn.
+                                  de: Außerhalb der angegebenen Zeiten ist der Saunaeintritt kostenpflichtig.
+                          - category:
+                              code: parking
+                            amenities:
+                              - code: parking
+                                pricing:
+                                  type: included
+                                  schedule: null
+                                options: []
+                                note:
+                                  cs-CZ: null
+                                  de: null
+                        priceFrom:
+                          CZK:
+                            all:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 195000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perStay:
+                                amount:
+                                  amountMinor: 780000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                            wellness:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 195000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perStay:
+                                amount:
+                                  amountMinor: 780000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                          EUR:
+                            all:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 7800
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perStay:
+                                amount:
+                                  amountMinor: 31200
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                            wellness:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 7800
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perStay:
+                                amount:
+                                  amountMinor: 31200
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                      - id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                        shortDescription:
+                          cs-CZ: Lázeňský hotel s vlastním balneoprovozem a přímým vstupem do aquaparku.
+                          de: Kurhotel mit eigener Balneoabteilung und direktem Zugang zum Aquapark.
+                        channelContent:
+                          tagline:
+                            cs-CZ: Lázeňská péče pod jednou střechou
+                            de: Kurbehandlungen unter einem Dach
+                        stars: 4
+                        address:
+                          addressLine: Národní 25
+                          city: Františkovy Lázně
+                          postalCode: 351 01
+                          country: cze
+                        email: hotel@example.com
+                        phoneNumber: +420 123 456 789
+                        url: https://hotel.example.com
+                        images:
+                          - url: https://files.example.com/hotel.jpg
+                            width: 2400
+                            height: 1600
+                            alt:
+                              cs-CZ: Pohled na hotel
+                              de: Außenansicht des Hotels
+                            variants:
+                              w480: https://files.example.com/hotel/generation-1/w480.webp
+                              w960: https://files.example.com/hotel/generation-1/w960.webp
+                              w1440: https://files.example.com/hotel/generation-1/w1440.webp
+                              w1920: https://files.example.com/hotel/generation-1/w1920.webp
+                        buildings:
+                          - id: 6720c0a1b2c3d4e5f6a7cb01
+                            name:
+                              cs-CZ: Villa Anna
+                              de: Villa Anna
+                            label:
+                              cs-CZ: Villa Anna — krytou chodbou, 60 m
+                              de: null
+                        accommodationRules:
+                          checkIn:
+                            from: "14:00"
+                            to: "20:00"
+                          checkOut:
+                            from: "07:00"
+                            to: "10:00"
+                          children:
+                            allowed: true
+                            minimumAge: 6
+                          pets:
+                            allowed: true
+                            minimumNights: 2
+                            feePerNight:
+                              czk: 500
+                              eur: 20
+                            conditions:
+                              cs-CZ: Mazlíčci jsou povoleni ve vybraných pokojích.
+                              de: Haustiere sind in ausgewählten Zimmern erlaubt.
+                        mealServices:
+                          breakfast:
+                            enabled: true
+                            servingTime:
+                              from: "07:00"
+                              to: "10:00"
+                            serviceMethod: buffet
+                            drinksIncluded: true
+                            drinksNote:
+                              cs-CZ: Nealkoholické nápoje jsou v ceně.
+                              de: Alkoholfreie Getränke sind inklusive.
+                          lunch:
+                            enabled: true
+                            servingTime:
+                              from: "11:30"
+                              to: "14:30"
+                            serviceMethod: buffet
+                            drinksIncluded: true
+                            drinksNote:
+                              cs-CZ: Voda je zahrnuta v ceně oběda.
+                              de: Wasser ist im Mittagessen inbegriffen.
+                          dinner:
+                            enabled: true
+                            servingTime:
+                              from: "18:00"
+                              to: "21:00"
+                            serviceMethod: served
+                            drinksIncluded: false
+                            drinksNote:
+                              cs-CZ: Nápoje se hradí samostatně.
+                              de: Getränke werden separat berechnet.
+                        indications:
+                          - musculoskeletal
+                          - cardiovascular
+                          - diabetes
+                        procedures:
+                          - code: carbon_dioxide_bath
+                            label:
+                              cs-CZ: Kysličníková koupel
+                              de: Kohlensäurebad
+                            category:
+                              code: hydrotherapy
+                              label:
+                                cs-CZ: Vodoléčba
+                                de: Hydrotherapie
+                            naturalSource: carbon_dioxide
+                          - code: peat_wrap
+                            label:
+                              cs-CZ: Rašelinový zábal
+                              de: Moorpackung
+                            category:
+                              code: thermotherapy
+                              label:
+                                cs-CZ: Teploléčba
+                                de: Thermotherapie
+                            naturalSource: peat
+                          - code: peat_bath
+                            label:
+                              cs-CZ: Rašelinová koupel
+                              de: Moorbad
+                            category:
+                              code: thermotherapy
+                              label:
+                                cs-CZ: Teploléčba
+                                de: Thermotherapie
+                            naturalSource: peat
+                          - code: classic_full_body_massage
+                            label:
+                              cs-CZ: Klasická celková masáž
+                              de: Klassische Ganzkörpermassage
+                            category:
+                              code: physiotherapy
+                              label:
+                                cs-CZ: Fyzioterapie
+                                de: Physiotherapie
+                            naturalSource: null
+                          - code: aroma_massage
+                            label:
+                              cs-CZ: Aromamasáž
+                              de: Aromamassage
+                            category:
+                              code: physiotherapy
+                              label:
+                                cs-CZ: Fyzioterapie
+                                de: Physiotherapie
+                            naturalSource: null
+                          - code: inhalation
+                            label:
+                              cs-CZ: Inhalace
+                              de: Inhalationen
+                            category:
+                              code: inhalation
+                              label:
+                                cs-CZ: Inhalace
+                                de: Inhalation
+                            naturalSource: null
+                          - code: drinking_cure
+                            label:
+                              cs-CZ: Pitná kúra
+                              de: Trinkkur
+                            category:
+                              code: other
+                              label:
+                                cs-CZ: Ostatní
+                                de: Sonstiges
+                            naturalSource: mineral_water
+                        staffLanguages:
+                          - cs
+                          - de
+                          - en
+                        amenityCategories:
+                          - category:
+                              code: wellness
+                            amenities:
+                              - code: aquapark
+                                proximity: nearby
+                                proximityMeters: 250
+                                pricing:
+                                  type: included
+                                  schedule: null
+                                openingHours:
+                                  schedule:
+                                    - days:
+                                        - monday
+                                        - tuesday
+                                        - wednesday
+                                        - thursday
+                                        - friday
+                                      from: "09:00"
+                                      to: "21:00"
+                                note:
+                                  cs-CZ: null
+                                  de: null
+                                includes: []
+                              - code: sauna
+                                proximity: in-hotel
+                                proximityMeters: null
+                                pricing:
+                                  type: included
+                                  schedule: null
+                                options:
+                                  - code: finnish
+                                  - code: steam
+                                openingHours:
+                                  schedule:
+                                    - days:
+                                        - monday
+                                        - tuesday
+                                        - wednesday
+                                        - thursday
+                                        - friday
+                                      from: "09:00"
+                                      to: "21:00"
+                                note:
+                                  cs-CZ: null
+                                  de: null
+                          - category:
+                              code: parking
+                            amenities:
+                              - code: parking
+                                pricing:
+                                  type: paid
+                                  schedule: null
+                                options:
+                                  - code: covered
+                                  - code: guarded
+                                note:
+                                  cs-CZ: Hlídané parkoviště je přímo u hotelu.
+                                  de: Der bewachte Parkplatz befindet sich direkt am Hotel.
+                        priceFrom:
+                          CZK:
+                            all:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 144000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 160000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
+                              perStay:
+                                amount:
+                                  amountMinor: 840000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                            health:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 144000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 160000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
+                              perStay:
+                                amount:
+                                  amountMinor: 1260000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 1400000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 1
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
+                            wellness:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 210000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perStay:
+                                amount:
+                                  amountMinor: 840000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                          EUR:
+                            all:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 5760
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 6400
+                                  currency: EUR
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
+                              perStay:
+                                amount:
+                                  amountMinor: 33600
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                            health:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 5760
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 6400
+                                  currency: EUR
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
+                              perStay:
+                                amount:
+                                  amountMinor: 50400
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 56000
+                                  currency: EUR
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 1
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
+                            wellness:
+                              perPersonPerNight:
+                                amount:
+                                  amountMinor: 8400
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perStay:
+                                amount:
+                                  amountMinor: 33600
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                    pagination:
+                      limit: 25
+                      nextCursor: null
+                      hasMore: false
+                      total: 2
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -246,6 +1067,10 @@ paths:
         See the [Hotel](/api/objects/hotel) object for the full field
         reference, including the allowed values for `serviceMethod`,
         `indications`, and `staffLanguages`.
+
+        The response example is `GET /hotels/6720c0a1b2c3d4e5f6a7c101`, sent
+        with the company's own website key and `Accept-Language: cs-CZ,de` on
+        2026-10-30.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -540,9 +1365,14 @@ paths:
         apply before pagination and `total`.
 
         Comma-separated values are trimmed, empty items are ignored and
-        duplicates are removed. Each value may have at most 500 characters; an
-        unknown code returns `400`. Unknown parameter names are ignored. See
-        [Visit types](/api/visit-types) for availability and stay rules.
+        duplicates are removed; the whole parameter value may have at most 500
+        characters. An unknown code returns `400`. Unknown parameter names are
+        ignored. See [Visit types](/api/visit-types) for availability and stay
+        rules.
+
+        The response examples are the plain request (`without-expansions`) and
+        the same request with `expand=hotels`, both sent with the company's own
+        website key and `Accept-Language: cs-CZ,de` on 2026-10-30.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -724,9 +1554,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/VisitTypesList"
               examples:
-                first-page:
-                  summary: First page of two packages (limit=2)
-                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. `limit=2` leaves the third matching package for the next page."
+                without-expansions:
+                  summary: Every package on one page (default request)
+                  description: "Illustrative response for the company's own website channel with `Accept-Language: cs-CZ,de` and today = 2026-10-30. The three packages fit on the default page; the package without `webOrder` comes last."
                   value:
                     data:
                       - id: 6720c0a1b2c3d4e5f6a7b801
@@ -1350,12 +2180,87 @@ paths:
                               w480: https://cdn.example.com/visit-types/wellness-stay/generation-1/w480.webp
                               w960: https://cdn.example.com/visit-types/wellness-stay/generation-1/w960.webp
                               w1440: https://cdn.example.com/visit-types/wellness-stay/generation-1/w1440.webp
+                      - id: 6720c0a1b2c3d4e5f6a7b802
+                        name:
+                          cs-CZ: Komplexní lázeňská péče
+                          de: Komplexe Kurbehandlung
+                        shortDescription:
+                          cs-CZ: Léčebný pobyt hrazený zdravotní pojišťovnou s lékařským dohledem a plnou penzí.
+                          de: Von der Krankenkasse bezahlter Kuraufenthalt mit ärztlicher Betreuung und Vollpension.
+                        category: health
+                        payer: insurer
+                        bookingMode: request
+                        available: true
+                        unavailableReason: null
+                        webOrder: null
+                        channelContent:
+                          collections:
+                            - treatment_stays
+                        board:
+                          meals:
+                            - meal: breakfast
+                              included: true
+                              changeable: false
+                            - meal: lunch
+                              included: true
+                              changeable: false
+                            - meal: dinner
+                              included: true
+                              changeable: false
+                            - meal: all_inclusive
+                              included: false
+                              changeable: false
+                        stayLength:
+                          unit: week
+                          min: 3
+                          max: 4
+                        validity:
+                          - from: "2026-11-01"
+                            to: "2027-06-30"
+                            toAppliesTo: arrival
+                        arrival:
+                          type: dates
+                          dates:
+                            - "2026-11-08"
+                            - "2026-11-29"
+                            - "2027-01-10"
+                            - "2027-02-07"
+                        treatment:
+                          exams:
+                            entry: true
+                            interim: true
+                            interimFromNights: 14
+                            final: true
+                            finalFromNights: null
+                          procedures:
+                            count: 18
+                            per: week
+                            selection: hotel_offer
+                            items: []
+                        priceFrom: null
+                        promotions: []
+                        hotels:
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c103
+                            priceFrom: null
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c101
+                            priceFrom: null
+                        images:
+                          - url: https://cdn.example.com/visit-types/insurer-cure.jpg
+                            width: 1600
+                            height: 1066
+                            alt:
+                              cs-CZ: Komplexní lázeňská péče
+                              de: Komplexe Kurbehandlung
+                            variants:
+                              w480: https://cdn.example.com/visit-types/insurer-cure/generation-1/w480.webp
+                              w960: https://cdn.example.com/visit-types/insurer-cure/generation-1/w960.webp
+                              w1440: https://cdn.example.com/visit-types/insurer-cure/generation-1/w1440.webp
                     pagination:
-                      limit: 2
-                      nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAzIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6MiwibnVtZXJpY0lkIjowfQ
-                      hasMore: true
+                      limit: 25
+                      nextCursor: null
+                      hasMore: false
                       total: 3
-                first-page-expand-hotels:
+                expand-hotels:
                   summary: The same page with expand=hotels
                   description: Same context as the first example. `expand=hotels` adds the hotel summary to every hotel entry.
                   value:
@@ -2005,10 +2910,97 @@ paths:
                               w480: https://cdn.example.com/visit-types/wellness-stay/generation-1/w480.webp
                               w960: https://cdn.example.com/visit-types/wellness-stay/generation-1/w960.webp
                               w1440: https://cdn.example.com/visit-types/wellness-stay/generation-1/w1440.webp
+                      - id: 6720c0a1b2c3d4e5f6a7b802
+                        name:
+                          cs-CZ: Komplexní lázeňská péče
+                          de: Komplexe Kurbehandlung
+                        shortDescription:
+                          cs-CZ: Léčebný pobyt hrazený zdravotní pojišťovnou s lékařským dohledem a plnou penzí.
+                          de: Von der Krankenkasse bezahlter Kuraufenthalt mit ärztlicher Betreuung und Vollpension.
+                        category: health
+                        payer: insurer
+                        bookingMode: request
+                        available: true
+                        unavailableReason: null
+                        webOrder: null
+                        channelContent:
+                          collections:
+                            - treatment_stays
+                        board:
+                          meals:
+                            - meal: breakfast
+                              included: true
+                              changeable: false
+                            - meal: lunch
+                              included: true
+                              changeable: false
+                            - meal: dinner
+                              included: true
+                              changeable: false
+                            - meal: all_inclusive
+                              included: false
+                              changeable: false
+                        stayLength:
+                          unit: week
+                          min: 3
+                          max: 4
+                        validity:
+                          - from: "2026-11-01"
+                            to: "2027-06-30"
+                            toAppliesTo: arrival
+                        arrival:
+                          type: dates
+                          dates:
+                            - "2026-11-08"
+                            - "2026-11-29"
+                            - "2027-01-10"
+                            - "2027-02-07"
+                        treatment:
+                          exams:
+                            entry: true
+                            interim: true
+                            interimFromNights: 14
+                            final: true
+                            finalFromNights: null
+                          procedures:
+                            count: 18
+                            per: week
+                            selection: hotel_offer
+                            items: []
+                        priceFrom: null
+                        promotions: []
+                        hotels:
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c103
+                            priceFrom: null
+                            hotel:
+                              id: 6720c0a1b2c3d4e5f6a7c103
+                              name:
+                                cs-CZ: Hotel Bellevue
+                                de: Hotel Bellevue
+                              stars: 3
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c101
+                            priceFrom: null
+                            hotel:
+                              id: 6720c0a1b2c3d4e5f6a7c101
+                              name:
+                                cs-CZ: Hotel Pramen
+                                de: Hotel Pramen
+                              stars: 4
+                        images:
+                          - url: https://cdn.example.com/visit-types/insurer-cure.jpg
+                            width: 1600
+                            height: 1066
+                            alt:
+                              cs-CZ: Komplexní lázeňská péče
+                              de: Komplexe Kurbehandlung
+                            variants:
+                              w480: https://cdn.example.com/visit-types/insurer-cure/generation-1/w480.webp
+                              w960: https://cdn.example.com/visit-types/insurer-cure/generation-1/w960.webp
+                              w1440: https://cdn.example.com/visit-types/insurer-cure/generation-1/w1440.webp
                     pagination:
-                      limit: 2
-                      nextCursor: eyJyZXNvdXJjZSI6InZpc2l0LXR5cGVzIiwic29ydCI6IndlYk9yZGVyIiwibGFzdElkIjoiNjcyMGMwYTFiMmMzZDRlNWY2YTdiODAzIiwicGxhY2VkIjp0cnVlLCJwb3NpdGlvbiI6MiwibnVtZXJpY0lkIjowfQ
-                      hasMore: true
+                      limit: 25
+                      nextCursor: null
+                      hasMore: false
                       total: 3
         "400":
           $ref: "#/components/responses/BadRequest"
@@ -2028,6 +3020,17 @@ paths:
         `404`; a malformed id returns `400`.
         [Authentication](/api/authentication) determines the channel and the
         companies in scope.
+
+        The response examples are sent with the company's own website key and
+        `Accept-Language: cs-CZ,de` on 2026-10-30:
+
+        - `without-expansions`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b801`
+        - `expand-hotels`: the same request with `expand=hotels`
+        - `expand-hotels-seasons`: the same request with `expand=hotels,seasons`
+        - `one-hotel-with-seasons`: the same request with
+          `expand=seasons&hotelId=6720c0a1b2c3d4e5f6a7c101`
+        - `on-request`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b802`, a package
+          booked on request
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -4371,11 +5374,14 @@ components:
           type: string
           nullable: true
           description: Pass as `cursor` to fetch the next page. Null on the last page.
+          example: null
         hasMore:
           type: boolean
+          example: false
         total:
           type: integer
           description: Total number of matching records across all pages.
+          example: 1
     RoomTypesList:
       type: object
       required: [ data, pagination ]
@@ -4674,13 +5680,13 @@ components:
                   proximity: nearby
                   proximityMeters: 250
                   pricing: { type: included, schedule: null }
-                  note: { en: null }
-                  includes: []
                   openingHours:
                     schedule:
                       - days: [ monday, tuesday, wednesday ]
                         from: "09:00"
                         to: "21:00"
+                  note: { en: null }
+                  includes: []
         priceFrom:
           type: object
           nullable: true
@@ -4884,10 +5890,6 @@ components:
                 pricing:
                   type: included
                   schedule: null
-                note:
-                  cs-CZ: null
-                  de: null
-                includes: []
                 openingHours:
                   schedule:
                     - days:
@@ -4898,15 +5900,16 @@ components:
                         - friday
                       from: "09:00"
                       to: "21:00"
+                note:
+                  cs-CZ: null
+                  de: null
+                includes: []
               - code: sauna
                 proximity: in-hotel
                 proximityMeters: null
                 pricing:
                   type: included
                   schedule: null
-                note:
-                  cs-CZ: null
-                  de: null
                 options:
                   - code: finnish
                   - code: steam
@@ -4920,6 +5923,9 @@ components:
                         - friday
                       from: "09:00"
                       to: "21:00"
+                note:
+                  cs-CZ: null
+                  de: null
           - category:
               code: parking
             amenities:
@@ -6611,75 +7617,103 @@ components:
           description: End time, later than from. 24:00 is the end of the listed day.
           example: "21:00"
     AmenityPricingScheduleBlock:
-      oneOf:
-        - $ref: "#/components/schemas/AmenityOpeningHoursBlock"
-        - type: object
-          additionalProperties: false
-          required: [ days, from, to ]
-          description: Entry is included throughout opening hours on these days.
-          properties:
-            days:
-              $ref: "#/components/schemas/AmenityWeekdays"
-            from:
-              type: string
-              nullable: true
-              enum: [ null ]
-            to:
-              type: string
-              nullable: true
-              enum: [ null ]
-    AmenityPricing:
+      type: object
+      additionalProperties: false
+      required: [ days, from, to ]
       description: >-
-        Price status, or null when unknown. No monetary amount is returned. A scheduled window does
-        not specify whether entry outside it is paid.
-      oneOf:
-        - type: object
+        Days on which entry is included, with an optional time window. Both times are set, or both
+        are null when entry is included throughout the opening hours of these days.
+      properties:
+        days:
+          $ref: "#/components/schemas/AmenityWeekdays"
+        from:
+          type: string
           nullable: true
-          enum: [ null ]
-        - type: object
-          additionalProperties: false
-          required: [ type, schedule ]
-          properties:
-            type:
-              type: string
-              enum: [ included, included_conditional, paid ]
-              description: Conditional inclusion is described in the amenity's localized note.
-            schedule:
-              type: array
-              nullable: true
-              enum: [ null ]
-              items:
-                $ref: "#/components/schemas/AmenityPricingScheduleBlock"
-        - type: object
-          additionalProperties: false
-          required: [ type, schedule ]
-          properties:
-            type:
-              type: string
-              enum: [ included_scheduled ]
-            schedule:
-              type: array
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/AmenityPricingScheduleBlock"
+          pattern: "^([01]\\d|2[0-3]):[0-5]\\d$"
+          description: Start time in the 24-hour HH:mm format, or null for the whole opening day.
+          example: "09:00"
+        to:
+          type: string
+          nullable: true
+          pattern: "^(([01]\\d|2[0-3]):[0-5]\\d|24:00)$"
+          description: End time, later than from; 24:00 is the end of the listed day. Null together with from.
+          example: "21:00"
+      not:
+        anyOf:
+          - type: object
+            required: [ from, to ]
+            properties:
+              from:
+                type: string
+              to:
+                type: string
+                nullable: true
+                enum: [ null ]
+          - type: object
+            required: [ from, to ]
+            properties:
+              from:
+                type: string
+                nullable: true
+                enum: [ null ]
+              to:
+                type: string
+    AmenityPricing:
+      type: object
+      nullable: true
+      additionalProperties: false
+      required: [ type, schedule ]
+      description: >-
+        Price status, or null when unknown. No monetary amount is returned. `schedule` is a
+        non-empty array for `included_scheduled` and null for every other type; a scheduled window
+        does not specify whether entry outside it is paid.
+      properties:
+        type:
+          type: string
+          enum: [ included, included_scheduled, included_conditional, paid ]
+          description: >-
+            Conditional inclusion is described in the amenity's localized note. See
+            [Pricing](/api/amenities#pricing).
+        schedule:
+          type: array
+          nullable: true
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AmenityPricingScheduleBlock"
+          description: Days and times when entry is included; an array only for `included_scheduled`.
+      not:
+        anyOf:
+          - type: object
+            required: [ type, schedule ]
+            properties:
+              type:
+                enum: [ included_scheduled ]
+              schedule:
+                type: array
+                nullable: true
+                enum: [ null ]
+          - type: object
+            required: [ type, schedule ]
+            properties:
+              type:
+                enum: [ included, included_conditional, paid ]
+              schedule:
+                type: array
     AmenityOpeningHours:
+      type: object
+      nullable: true
+      additionalProperties: false
+      required: [ schedule ]
       description: >-
         Weekly opening hours in hotel local time, or null when unknown. A day absent from a known
         schedule has no opening interval. A single block covering all seven days from 00:00 to 24:00
         means 24/7.
-      oneOf:
-        - type: object
-          nullable: true
-          enum: [ null ]
-        - type: object
-          additionalProperties: false
-          required: [ schedule ]
-          properties:
-            schedule:
-              type: array
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/AmenityOpeningHoursBlock"
+      properties:
+        schedule:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/AmenityOpeningHoursBlock"
     AmenityValue:
       type: object
       additionalProperties: false
@@ -6764,20 +7798,20 @@ components:
         proximity: nearby
         proximityMeters: 250
         pricing: { type: included, schedule: null }
-        note: { en: null }
-        includes: []
         openingHours:
           schedule:
             - days: [ monday, tuesday, wednesday ]
               from: "09:00"
               to: "21:00"
+        note: { en: null }
+        includes: []
     IncludedAmenityValue:
       type: object
       additionalProperties: false
       required: [ code, proximity, proximityMeters, pricing, openingHours, note ]
       description: >-
         One aquapark facility. Values already include inherited conditions; clients do not resolve
-        inheritance. Sauna also returns options.
+        inheritance. Only `sauna` returns `options`.
       properties:
         code:
           type: string
@@ -6796,18 +7830,23 @@ components:
           $ref: "#/components/schemas/AmenityValue/properties/openingHours"
         note:
           $ref: "#/components/schemas/AmenityValue/properties/note"
-      oneOf:
-        - properties:
-            code:
-              enum: [ sauna ]
-          required: [ options ]
-        - properties:
-            code:
-              enum: [ indoor_pool, outdoor_pool, children_pool, whirlpool ]
-          not:
+      not:
+        anyOf:
+          - type: object
+            required: [ code ]
             properties:
+              code:
+                enum: [ sauna ]
+            not:
+              required: [ options ]
+              properties:
+                options: {}
+          - type: object
+            required: [ code, options ]
+            properties:
+              code:
+                enum: [ indoor_pool, outdoor_pool, children_pool, whirlpool ]
               options: {}
-            required: [ options ]
     HotelAmenityCategoryGroup:
       type: object
       required: [ category, amenities ]
