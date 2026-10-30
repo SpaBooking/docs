@@ -7251,13 +7251,19 @@ components:
         - count
       properties:
         code:
-          $ref: "#/components/schemas/Procedure/properties/code"
+          allOf:
+            - $ref: "#/components/schemas/TreatmentProcedureCode"
+          description: Procedure code. See [Procedure codes](/api/objects/procedure#procedure-codes).
         label:
-          $ref: "#/components/schemas/Procedure/properties/label"
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized procedure name.
         category:
-          $ref: "#/components/schemas/Procedure/properties/category"
+          allOf:
+            - $ref: "#/components/schemas/TreatmentProcedureCategory"
+          description: Procedure category.
         naturalSource:
-          $ref: "#/components/schemas/Procedure/properties/naturalSource"
+          $ref: "#/components/schemas/ProcedureNaturalSource"
         count:
           type: integer
           nullable: true
@@ -8051,6 +8057,15 @@ components:
             Permitted arrival dates from today onward, in ascending order. Empty when every
             configured date has passed.
       additionalProperties: false
+    ProcedureNaturalSource:
+      type: string
+      nullable: true
+      enum:
+        - carbon_dioxide
+        - peat
+        - mineral_water
+        - null
+      description: Natural healing source of the procedure, or null when it has none.
     Procedure:
       type: object
       required:
@@ -8072,14 +8087,7 @@ components:
             - $ref: "#/components/schemas/TreatmentProcedureCategory"
           description: Procedure category.
         naturalSource:
-          type: string
-          nullable: true
-          enum:
-            - carbon_dioxide
-            - peat
-            - mineral_water
-            - null
-          description: Natural healing source of the procedure, or null when it has none.
+          $ref: "#/components/schemas/ProcedureNaturalSource"
       not:
         type: object
         required:
