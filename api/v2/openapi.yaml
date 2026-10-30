@@ -7817,19 +7817,39 @@ components:
           type: string
           enum: [ indoor_pool, outdoor_pool, children_pool, whirlpool, sauna ]
         label:
-          $ref: "#/components/schemas/AmenityValue/properties/label"
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: Localized facility label. Present only with `expand=amenityLabels`.
         proximity:
-          $ref: "#/components/schemas/AmenityValue/properties/proximity"
+          type: string
+          nullable: true
+          enum: [ in-hotel, connecting, nearby, null ]
+          description: Location, inherited from the aquapark; see `proximity` of the amenity value.
         proximityMeters:
-          $ref: "#/components/schemas/AmenityValue/properties/proximityMeters"
+          type: number
+          minimum: 0
+          maximum: 1000000
+          nullable: true
+          description: Distance inherited from the aquapark; a number only when `proximity` is `nearby`.
         pricing:
-          $ref: "#/components/schemas/AmenityValue/properties/pricing"
+          allOf:
+            - $ref: "#/components/schemas/AmenityPricing"
+          description: Resolved price conditions of the facility. Null means unknown.
         options:
-          $ref: "#/components/schemas/AmenityValue/properties/options"
+          type: array
+          description: Selected sauna types. Present only for `sauna`; empty when none are selected.
+          items:
+            $ref: "#/components/schemas/AmenityOptionRef"
         openingHours:
-          $ref: "#/components/schemas/AmenityValue/properties/openingHours"
+          allOf:
+            - $ref: "#/components/schemas/AmenityOpeningHours"
+          description: Resolved opening hours of the facility. Null when unknown.
         note:
-          $ref: "#/components/schemas/AmenityValue/properties/note"
+          allOf:
+            - $ref: "#/components/schemas/LocalizedString"
+          description: >-
+            The facility's own note, or the aquapark's note when the facility has none. A missing
+            translation is null.
       not:
         anyOf:
           - type: object
