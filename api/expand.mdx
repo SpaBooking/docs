@@ -63,6 +63,12 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
     "cs-CZ": "Pawlik",
     "de": "Pawlik-Aquaforum"
   },
+  "address": {
+    "addressLine": "Americká 384/26",
+    "city": "Františkovy Lázně",
+    "postalCode": "351 01",
+    "country": "cze"
+  },
   "roomTypes": [
     {
       "id": "66f16191f739705faa020003",
@@ -126,11 +132,11 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
         "name": {
           "cs-CZ": "Villa Anna",
           "de": "Villa Anna",
-          "en": null,
+          "en": "Villa Anna",
           "ru": null
         },
         "label": {
-          "cs-CZ": "Villa Anna — krytou chodbou, 60 m",
+          "cs-CZ": "Krytou chodbou, 60 m",
           "de": null,
           "en": null,
           "ru": null
@@ -174,7 +180,8 @@ schema. `priceFrom` is left out here; see [Prices](/api/prices).
 The same pattern applies in the other direction: `GET /api/v2/room-types?expand=hotel`
 embeds a hotel summary containing only `id`, `name`, and `stars`. Fetch
 `GET /api/v2/hotels/{hotelId}` for the full hotel. For a paginated, filterable list of a single
-hotel's room types, use `GET /api/v2/room-types?hotelId=<id>` instead of expanding.
+hotel's room types, use `GET /api/v2/room-types?hotelId={hotelId}` instead of
+expanding.
 
 Embedded room types use a fixed presentation order: building, tier, room
 name, then id. Building and room names use Czech ordering, so changing

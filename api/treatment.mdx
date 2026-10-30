@@ -13,12 +13,12 @@ join them by `code`.
 
 An examination with a `…FromNights` threshold is included only when the stay
 reaches that length. An interim examination with `interimFromNights: 14` is
-part of a 14-night stay, but not of a 7-night stay. Apply each threshold
-separately.
+part of a 14-night stay, but not of a 7-night stay. The interim and final
+thresholds are independent, so a stay can reach one and not the other.
 
 ## Allowances and fixed lists
 
-The overall allowance and the item list describe different facts. A package
+The overall allowance and the item counts are independent numbers. A package
 can include 15 procedures per week and also list six carbon dioxide baths and
 four peat wraps for the whole stay. Show the allowance with its unit and the
 list with its own counts. Do not multiply item counts by the number of weeks,
@@ -26,6 +26,6 @@ and do not expect them to add up to the allowance.
 
 With `selection: hotel_offer`, an empty item list does not mean that no
 treatment is included: the guest chooses from the hotel's
-[procedure offer](/api/objects/hotel#procedures), so present the hotel's
-procedures as the choices. With `from_list`, the items are the choices, not a
-promise that every listed procedure is provided.
+[`procedures`](/api/objects/hotel#procedures), so present those as the
+choices. With `from_list`, the items are the choices, not a promise that
+every listed procedure is provided.

@@ -5,17 +5,19 @@ icon: "suitcase"
 ---
 
 A [visit type](/api/objects/visit-type) is a stay package sold by one or more
-hotels. Its catalog availability, its permitted stays, and its indicative
-prices answer three different questions.
+hotels. Its availability, stay rules, and prices are independent: an available
+package can have no permitted stay in your dates, and a permitted stay can
+have no price.
 [Building package pages](/guides/visit-types) walks through a typical
 integration.
 
 ## Publication and availability
 
-The catalog follows the [channel and companies](/api/authentication#channels-and-scope)
-of your public key. It contains only packages whose required configuration is
-complete. An incomplete package is omitted from the list, and its detail
-returns `404` like an unknown or inaccessible package.
+The catalog contains the packages of the
+[companies your public key is scoped to](/api/authentication#channels-and-scope).
+It contains only published packages, meaning packages whose required
+configuration is complete. An unpublished package is omitted from the list,
+and its detail returns `404` like an unknown or inaccessible package.
 
 A published package can still be unavailable. `unavailableReason` gives the
 first applicable reason from the
@@ -26,7 +28,8 @@ unavailable package.
 
 Availability does not promise a price or a free room on a particular date. A
 permitted arrival with no free room still satisfies the catalog date filters.
-[Prices](/api/prices) require a complete, priced stay with room capacity.
+An indicative price also needs a nightly price and a free room for every
+night; see [Prices](/api/prices).
 
 ## Testing a stay against its rules
 
@@ -60,12 +63,11 @@ recalculate `priceFrom` for the requested stay: a package matching
 
 ## Hotels and prices
 
-The hotel entries say where the package is sold. An entry stays present when
-its price is `null`. The package's `priceFrom` compares offers across all its
-hotels; an entry's `priceFrom` compares offers at that hotel only. Both use
-the [same rules](/api/prices) and the [Price from](/api/objects/price-from)
-shape.
+The hotel entries say where the package is sold; an entry stays present when
+its price is `null`.
+[Prices](/api/prices#package-and-package-at-hotel-prices) explains the package
+price and the price of each entry.
 
-Seasons show how the price of the package at one hotel changes with the
-arrival date. They are price-list periods, not calendar months and not a
-calendar of bookable dates. See [Seasonal prices](/api/prices#seasonal-prices).
+Seasons show how the price at one hotel changes with the arrival date. They
+are price-list periods for arrivals, not a calendar of bookable dates. See
+[Seasonal prices](/api/prices#seasonal-prices).

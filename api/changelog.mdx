@@ -14,15 +14,17 @@ hidden: true
   pagination, `expand=hotels`, `expand=seasons` on the detail, and
   `channelContent.collections` for the company's own website channel.
 
-### Shared hotel and package prices
+### Hotel procedures and prices
 
 - Hotel responses include the hotel's procedures as
   [Procedure objects](/api/objects/procedure).
 - Hotel price minima include both the hotel and visit type references, using
   the same [Price from object](/api/objects/price-from) as package and seasonal
   prices. Currency and category containers stay the same.
-- Hotel prices select published, immediately bookable packages from the
-  [visit type catalog](/api/visit-types#publication-and-availability).
+- Hotel prices select available packages with `bookingMode: "instant"` from
+  the [visit type catalog](/api/visit-types#publication-and-availability).
+- A promotion now lowers a hotel price on the nights it covers, instead of
+  only when it covers the whole stay.
 - The [package-page guide](/guides/visit-types) covers opening a package from
   a hotel price and showing seasonal original and discounted amounts.
 

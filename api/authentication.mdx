@@ -14,23 +14,27 @@ Treat the public key as an opaque value.
 ## Channels and scope
 
 A distribution channel is a sales context, such as a hotel's own website or
-SpaBooking. Each channel has its own public key. A key identifies one specific
-channel and scopes requests to the active companies connected to it; one key
-can cover more than one company.
+SpaBooking. A channel can have several named public keys, and each key
+belongs to exactly one channel. A key scopes requests to the active companies
+connected to its channel; one key can cover more than one company.
 
-Resources and channel-specific content are resolved within this scope.
-Promotions and their effect on prices depend on the requesting channel, and a
-visit type's [`channelContent.collections`](/api/objects/visit-type#channel-content)
-is filled only for the key of the company's own website. A response for one key
-must not be reused for another key. Include the public-key context in your
-cache partitioning without exposing the key in a public cache identifier.
+A company's own website is its direct sales channel, as opposed to a reseller
+such as SpaBooking. Website-only content, such as a visit type's
+[`channelContent.collections`](/api/objects/visit-type#channel-content), is
+returned only to keys of that channel, and only while the company has a single
+direct channel.
 
-A promotion can apply to several channels. The API returns only those
-applicable to your key, so clients do not need to filter them by channel.
+You receive only the hotels, room types, and visit types of the companies in
+this scope. Promotions and their effect on prices depend on the requesting
+channel. A response for one key must not be reused for another key. Partition
+your cache by key, and put a hash of the key, never the key itself, into any
+public cache identifier.
 
 ## Getting your public key
 
-To find your public key: `Administration → Distribution Channel → [your channel] → Channel detail → Public keys`
+SpaPortal issues public keys per channel. To get one, write to
+[info@spabooking.de](mailto:info@spabooking.de) with the name of the company
+and the website or sales channel you are integrating.
 
 ## Authentication errors
 

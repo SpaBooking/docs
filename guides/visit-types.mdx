@@ -1,6 +1,6 @@
 ---
 title: "Building package pages"
-description: "Use the visit type catalog for package cards, hotel offers, and seasonal prices."
+description: "Use the visit type catalog for package cards, the hotel choice, and seasonal prices."
 icon: "suitcase"
 ---
 
@@ -23,8 +23,10 @@ For a "from" price, show `priceFrom.{currency}.perStay.amount` with the
 `perPersonPerNight` minimum can be a different offer. When the minimum has a
 non-null `original`, show it struck through.
 
-A `null` price means no buyable offer. For a `request` package, label the
-card as available on request. Check `available` separately from the price.
+When `priceFrom` is `null`, show the card without a price, and label a
+`request` package as available on request. The list returns only available
+packages unless you set `available`; a package detail can be unavailable, so
+check `available` there.
 
 ## Hotel choice
 
@@ -67,10 +69,11 @@ rounded amount. Take both values from the same minimum: never combine the
 package-level `original` for a seasonal row.
 
 In the [seasonal example](/api/v2/reference/visit-types/get-a-visit-type),
-the winter season at Hotel Pramen has a `perStay` minimum of CZK 12,600 with
-an `original` of CZK 14,000. Show "from CZK 12,600" with "CZK 14,000" struck
-through, for 7 nights and 1 guest. The summer season has `original: null`, so
-show its CZK 13,300 without a struck-through price.
+the season from 1 November 2026 to 31 March 2027 at Hotel Pramen has a
+`perStay` minimum of CZK 12,600 with an `original` of CZK 14,000. Show "from
+CZK 12,600" with "CZK 14,000" struck through, for 7 nights and 1 guest. The
+season from 1 April to 31 October 2027 has `original: null`, so show its
+CZK 13,300 without a struck-through price.
 
 The package's `promotions` explain which discounts exist and when; see
 [Promotion](/api/objects/promotion). A promotion can be listed without
