@@ -1,46 +1,37 @@
 ---
 title: "Treatment"
-description: "Present the examinations, procedure allowance, and treatment choice of a stay."
+description: "Present the examinations, the procedure allowance, and the procedure choice of a stay."
 icon: "stethoscope"
 ---
 
-<Warning>
-  **Draft:** The visit type treatment response and hotel procedure offer
-  described here are not yet released.
-</Warning>
-
-Use the [Treatment object](/api/objects/treatment) to describe what a package
-includes, and the [Procedure object](/api/objects/procedure) to identify a
-procedure consistently across the hotel and package.
+A package's [Treatment](/api/objects/treatment) says what the stay includes.
+A hotel's [`procedures`](/api/objects/hotel#procedures) say what the hotel can
+provide. Both use the [Procedure](/api/objects/procedure) object, so you can
+join them by `code`.
 
 ## Examinations depend on stay length
 
-An examination with a minimum-night threshold is included only when the
-selected stay reaches that length. For example, an interim examination with
-a threshold of 14 nights is included in a 14-night stay but not a seven-night
-stay. Apply each examination's threshold independently.
+An examination with a `…FromNights` threshold is included only when the stay
+reaches that length. An interim examination with `interimFromNights: 14` is
+part of a 14-night stay, but not of a 7-night stay. Apply each threshold
+separately.
 
 ## Allowances and fixed lists
 
-An overall allowance and a fixed procedure list describe different facts.
-For example, a package can offer 15 procedures per week and also specify a
-fixed list with six carbon dioxide baths and four peat wraps for the whole
-stay.
+The overall allowance and the item list describe different facts. A package
+can include 15 procedures per week and also list six carbon dioxide baths and
+four peat wraps for the whole stay. Show the allowance with its unit and the
+list with its own counts. Do not multiply item counts by the number of weeks,
+and do not expect them to add up to the allowance.
 
-Show the overall allowance with its unit and the fixed list with its own
-counts. Do not multiply those item counts by the number of weeks or force
-their sum to equal the overall allowance. The API returns the configured
-allowance and list independently.
-
-When procedures are selected from the hotel's offer, an empty package item
-list does not mean that treatment is absent. The hotel supplies the choices.
-When the package supplies a choice list, the entries describe the choices
-rather than a promise that every listed procedure will be provided.
+With `selection: hotel_offer`, an empty item list does not mean that no
+treatment is included: the guest chooses from the hotel's offer. With
+`from_list`, the items are the choices, not a promise that every listed
+procedure is provided.
 
 ## Hotel offer and package inclusion
 
 The hotel's procedure offer describes services the property provides. It does
-not say which ones are included in a particular stay. Use the package's
-Treatment to determine inclusion and its selection mode. The
-[Hotel procedures](/api/objects/hotel#procedures) and Treatment items share
-Procedure identities, so clients can join them by code.
+not say which ones a stay includes; the package's Treatment does, together
+with its selection mode. When a package uses `hotel_offer`, present the
+hotel's procedures as the choices.

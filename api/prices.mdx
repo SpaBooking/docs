@@ -9,10 +9,6 @@ complete purchasable stays and do not reserve a room or quote a chosen set of
 guests and dates. The [Price from object](/api/objects/price-from) defines the
 fields and currency containers.
 
-Hotel prices are released. The visit type, hotel × visit type, and seasonal
-price scopes below are **draft**, together with the shared minimum naming
-both the hotel and visit type.
-
 ## Two independent minima
 
 `perPersonPerNight` selects the lowest average price per guest per night for
@@ -44,8 +40,9 @@ An offer is eligible only when all of these conditions hold:
   type has remaining capacity for every night.
 - The visit type is offered now and permits an immediately confirmed booking.
   Stays booked on **request** are excluded even when room capacity exists.
-- Its visit type, hotel, and room are eligible within the price calculation's
-  scope.
+- Its hotel, package, and room type belong to the scope of the calculation:
+  the hotel's packages for a hotel price, the package's hotels for a package
+  price.
 
 Each candidate uses the shortest stay its visit type permits. When comparing
 several visit types, a longer minimum stay can still win if its total is
@@ -56,19 +53,18 @@ neither a nightly price nor room capacity. A gap in prices or capacity makes
 that complete stay ineligible; the calculation does not combine rooms or
 currencies to fill the gap.
 
-Equal hotel prices prefer the shorter stay, then lower occupancy, then the
-lower visit type ID. Remaining ties use stable offer identities. Query
-parameters on hotel catalog endpoints do not change their indicative prices.
+Equal amounts prefer the shorter stay, then the lower occupancy, then the
+lower visit type, hotel, and room type ids, then the earlier arrival. Query
+parameters do not change indicative prices.
 
 ## Comparing hotel groups
 
 The hotel-wide `all` group compares all eligible offers. The `health` and
 `wellness` groups compare offers from one category.
 
-In the **draft shared-price contract**, all three groups use packages in the
-[visit type catalog](/api/visit-types#publication-and-availability), so each
-package reference can be opened with the same public key. Released hotel
-prices can also reference packages outside that draft catalog.
+All three groups compare packages from the
+[visit type catalog](/api/visit-types#publication-and-availability), so every
+referenced package can be opened with the same public key.
 
 For the same currency and minimum, the hotel-wide amount cannot exceed the
 amount in a category group. Compare the two `perStay` values or the two
@@ -76,7 +72,7 @@ amount in a category group. Compare the two `perStay` values or the two
 
 An omitted category price does not prove the hotel has no packages in that
 category. Do not present a hotel-wide price as a category-specific offer.
-The [container definitions](/api/objects/price-from#price-containers) specify
+The [container definitions](/api/objects/price-from#where-minima-appear) specify
 which groups and currencies are omitted when no offer exists.
 
 ## Promotions
@@ -86,16 +82,16 @@ Promotion eligibility follows the
 promotion's hotel, room, and night restrictions. Its public field definitions
 and a room-limited example are on [Promotion](/api/objects/promotion).
 
-Apply overlapping percentage discounts one after another to the nights they
+Overlapping percentage discounts apply one after another to the nights they
 both cover. For a base price of 1,000, a 10% discount followed by 15% gives
 `1,000 × 0.90 × 0.85 = 765`: a combined reduction of 23.5%, not 25%.
 
-For example, a hotel promotion shared with its own website and SpaBooking can
-combine with a separate SpaBooking promotion. In that example the direct
-website uses the shared 10% discount and reports 900; SpaBooking uses both
-discounts and reports 765. A promotion assigned only to another channel is
-not inherited automatically. Count the same promotion identity only once,
-even when it has more than one applicable assignment.
+For example, a hotel promotion shared with the hotel's own website and
+SpaBooking combines with a separate SpaBooking-only promotion. The website
+uses the shared 10% discount and reports 900; SpaBooking uses both discounts
+and reports 765. A promotion assigned only to another channel is not
+inherited. Each promotion counts once, even when it has more than one
+applicable assignment.
 
 A promotion changes only the nights within its inclusive public date range.
 The original amount belongs to the **same selected offer** before those
@@ -103,10 +99,10 @@ promotions; it is not a separately selected cheapest undiscounted stay.
 
 For example, a three-night package has two nights at CZK 1,000 and one at
 CZK 2,000. A 50% promotion covering only the third night gives a total of
-CZK 3,000 and an original total of CZK 4,000. Do not discount the first two
-nights or extend the promotion across the whole stay.
+CZK 3,000 and an original total of CZK 4,000. The first two nights are not
+discounted, and the promotion does not extend across the whole stay.
 
-## Visit type and hotel-pair prices
+## Package and package-at-hotel prices
 
 The visit type's overall price compares eligible offers across all its
 eligible hotels. Each hotel entry's price limits the comparison to that
@@ -130,18 +126,18 @@ For a current season, search starts at the later of its first date and today
 in Europe/Prague. A cheaper offer available only for a past arrival does not
 contribute. The season keeps its original date bounds in the response.
 
-A stay can continue into another price-list season. Price every occupied
-night using its own applicable seasonal rate, while keeping the offer in
-the season of its arrival. Promotions and remaining room capacity apply to
-the entire candidate stay in the same way as above.
+A stay can continue into another price-list season. Each occupied night is
+priced at its own seasonal rate, and the offer belongs to the season of its
+arrival. Promotions and remaining room capacity apply to the whole stay as
+above.
 
 A known season without an eligible complete stay remains visible with a
 null price. This also applies when the package is unavailable or booked on
 request. Clients can distinguish a known period without an offer from an
 absent period. Requesting seasons does not alter the package's overall
-price or its hotel-pair prices.
+price or its package-at-hotel prices.
 
-## Availability
+## Room capacity
 
 The price calculation checks the recorded capacity at calculation time. If
 the cheapest stay is sold out, it selects the next eligible stay. For

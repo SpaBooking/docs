@@ -1,132 +1,116 @@
 ---
 title: "Visit type"
-description: "A stay package with its meals, treatment, stay rules, hotel offers, and promotions."
+description: "A stay package with its board, treatment, stay rules, hotel offers, and promotions."
 openapi-schema: "/api/v2/openapi.yaml VisitType"
 ---
 
-<Warning>
-  **Draft:** Visit type contract for integration review. See
-  [API coverage](/api/versioning) for released endpoints.
-</Warning>
+A visit type is a stay package sold by one or more hotels, such as a spa cure
+or a wellness weekend. [Visit types](/api/visit-types) explains availability
+and stay rules. The [list](/api/v2/reference/visit-types/list-visit-types)
+and [detail](/api/v2/reference/visit-types/get-a-visit-type) endpoints define
+the request parameters and show complete responses.
 
-A visit type is a stay package sold by hotels, such as a spa cure or a wellness
-weekend. Read [Visit types](/api/visit-types) for publication, availability,
-and stay-rule behavior. The
-[list](/api/v2/reference/visit-types/list-visit-types) and
-[detail](/api/v2/reference/visit-types/get-a-visit-type) references define the
-request parameters and complete response examples.
+The example on this page includes the optional `hotel` and `seasons` fields of
+the hotel entries. The API returns them only with `expand=hotels` and
+`expand=seasons`.
 
-## Names and short description
+## Name and short description
 
-`name` and `shortDescription` use the selected
-[locales](/api/localization). A missing name translation falls back to the
-Czech name. `shortDescription` is a plain-text purpose line of at most 120
-characters per locale; missing translations are `null`.
+`name` and `shortDescription` are localized by
+[`Accept-Language`](/api/localization). A missing name translation falls back
+to the Czech name. `shortDescription` is a plain-text purpose line of at most
+120 characters per locale; a missing translation is `null`.
 
 ## Category, payer, and booking mode
-
-`category` is required and never `null`:
 
 | `category` | Meaning |
 | --- | --- |
 | `health` | A spa cure with medical treatment. |
 | `wellness` | A wellness stay. |
 
-`payer` is required and non-null for a health stay. It is `null` for a wellness
-stay, and the API does not supply a default payer.
+`payer` says who pays for a health stay; every health stay has one. It is
+`null` for a wellness stay.
 
 | `payer` | Meaning |
 | --- | --- |
-| `guest` | The guest pays for the stay. |
+| `guest` | The guest pays for the whole stay. |
 | `guest_and_insurer` | The insurer pays for treatment and medical care; the guest pays for accommodation and meals. |
 | `insurer` | The insurer pays for treatment, medical care, accommodation, and meals. |
 
 | `bookingMode` | Meaning |
 | --- | --- |
-| `instant` | The package permits immediate confirmation, subject to room availability. |
-| `request` | The package requires hotel confirmation for every stay. |
+| `instant` | A booking is confirmed immediately when a room is available. |
+| `request` | Every booking is a request that the hotel confirms. |
 
-A stay with `payer: "insurer"` always has `bookingMode: "request"`.
-`bookingMode` describes the package's confirmation policy; it does not
-indicate room availability for a particular date.
+A stay with `payer: "insurer"` is always booked on request. `bookingMode` is
+the package's confirmation policy; it says nothing about room availability on
+a particular date.
 
 ## Availability
 
 `available` says whether the package is offered now. When it is `false`,
-`unavailableReason` is one of these codes, in priority order:
+`unavailableReason` gives the first applicable reason:
 
 | `unavailableReason` | Meaning |
 | --- | --- |
-| `disabled` | The visit type is not on sale. |
-| `ended` | Every configured validity period has ended. |
-| `no_arrival` | No permitted stay with arrival today or later remains under its valid arrival and stay rules. |
-| `no_hotels` | No active hotel sells the visit type. |
+| `disabled` | The package is not on sale. |
+| `ended` | Every validity period has ended. |
+| `no_arrival` | No permitted stay with an arrival from today onward remains. |
+| `no_hotels` | No active hotel sells the package. |
 
-`unavailableReason` is `null` when `available` is `true`. The distinction from
-room capacity and price availability is explained in
+`unavailableReason` is `null` when `available` is `true`. Availability is a
+catalog property; room capacity and prices are separate. See
 [Publication and availability](/api/visit-types#publication-and-availability).
 
-## Stay length and arrival
+## Website presentation
 
-`stayLength` is required and never `null`. It contains only:
+`webOrder` is the package's position on the website, starting at 1, or `null`
+when it has none. The list endpoint sorts by it by default.
 
-| Field | Meaning |
+### Channel content
+
+`channelContent` groups the content that depends on the sales channel of your
+public key. Its only field, `collections`, lists the website collections the
+package belongs to.
+
+Collections are content of the company's own website. The public key of that
+website receives them, and only with that key does the `collection` filter
+match. Every other key, including SpaBooking, receives `[]`. See
+[Channels and scope](/api/authentication#channels-and-scope).
+
+Codes appear in this order, each at most once:
+
+| Code | Meaning |
 | --- | --- |
-| `unit` | `night` or `week`. |
-| `min` | Minimum length in that unit, a positive integer. |
-| `max` | Maximum length in that unit, or `null` for no configured maximum. |
+| `advent_christmas_new_year` | Advent, Christmas, and New Year stays. |
+| `families_with_children` | Stays for families with children. |
+| `wellness` | Wellness stays. |
+| `treatment_stays` | Spa cures. |
+| `special_offers` | Packages with at least one promotion in `promotions`. |
+| `hotel_stay` | Wellness stays without included procedures. |
 
-A numeric maximum cannot be lower than the minimum.
-
-`arrival` is one of two variants:
-
-| `arrival.type` | Required field | Meaning |
-| --- | --- | --- |
-| `weekdays` | `weekdays` | Non-empty list of permitted weekdays, Monday first. |
-| `dates` | `dates` | Explicit arrival dates from today onward, in ascending order; may be empty when all configured dates have passed. |
-
-Only the field for the selected variant is present. A date-based rule with
-`dates: []` has no remaining arrival and can produce `no_arrival`. Lists contain
-unique values. The weekday codes are `monday`, `tuesday`, `wednesday`, `thursday`,
-`friday`, `saturday`, and `sunday`.
-
-## Validity
-
-`validity` is `null` when no periods are configured, `[]` when all configured
-periods have ended, or an array of current and future periods ordered by
-`from`, then `to`, then `toAppliesTo`. Every period contains:
-
-| Field | Meaning |
-| --- | --- |
-| `from` | First permitted arrival date, inclusive. |
-| `to` | Last permitted date, inclusive, interpreted by `toAppliesTo`. |
-| `toAppliesTo` | `arrival` limits the arrival date; `departure` limits the checkout date. |
-
-Use [the stay-rule algorithm](/api/visit-types#testing-a-stay-against-its-rules)
-for the interaction between arrival, stay length, and overlapping periods.
+`advent_christmas_new_year` and `families_with_children` are assigned in
+SpaPortal. The other codes are derived: `wellness`, `treatment_stays`, and
+`hotel_stay` follow `category` and `treatment`, and `special_offers` is present
+exactly when `promotions` is non-empty for the company's own website key.
 
 ## Board
 
-`board.meals` is required and never `null`. Each row has `meal`, `included`,
-and `changeable`:
+`board.meals` has one row per meal, always in this order: `breakfast`,
+`lunch`, `dinner`, `all_inclusive`. Each row has:
 
 | Field | Meaning |
 | --- | --- |
-| `meal` | `breakfast`, `lunch`, `dinner`, or `all_inclusive`. |
-| `included` | This meal is included in the package price. |
-| `changeable` | The guest can drop an included meal or add a meal that is not included. |
-
-The server returns all four rows in the order listed above. Consumers treat
-an omitted meal as neither included nor orderable. A meal code occurs at most
-once. No price for changing a meal is included in this contract.
+| `meal` | The meal code. |
+| `included` | The meal is included in the package price. |
+| `changeable` | The guest can drop the meal when it is included, or add it when it is not. |
 
 `all_inclusive` adds snacks and drinks during the day. When it is included,
-breakfast, lunch, and dinner are included too. Dropping all inclusive leaves
-those included meals in place. Drinks served with an individual meal are a
-separate [hotel meal-service attribute](/api/objects/hotel#structured-profile).
+breakfast, lunch, and dinner are included too; dropping it leaves those meals
+in place. Drinks served with a meal are a property of the hotel's
+[meal services](/api/objects/hotel#structured-profile), not of the package.
 
-For example, the following board includes breakfast and dinner and allows the
-guest to add lunch:
+The following board is half board with lunch available as an add-on:
 
 ```json
 {
@@ -139,72 +123,93 @@ guest to add lunch:
 }
 ```
 
-Clients derive their own localized board label, such as “Half board”, from
-the included rows. Do not infer changeability from that label.
+Derive your own board label, such as “Half board”, from the included rows.
+The API does not price meal changes.
 
-## Collections
+## Stay length and arrival
 
-`collections` is website grouping content for the company's own website
-channel. It is returned only for that website's
-matching [authenticated channel](/api/authentication#channels-and-scope).
-Other channel keys, including SpaBooking, receive `[]`; they cannot match a
-collection filter. An unconfigured collection scope also returns `[]`.
+`stayLength` is never `null`:
 
-Assigned and derived collections follow this same scope. Codes appear in the
-following order, without duplicates:
-
-| Code | Meaning |
+| Field | Meaning |
 | --- | --- |
-| `advent_christmas_new_year` | Advent, Christmas, and New Year stays. |
-| `families_with_children` | Stays for families with children. |
-| `wellness` | Wellness stays. |
-| `treatment_stays` | Spa cures. |
-| `special_offers` | Packages with at least one published promotion in this collections scope. |
-| `hotel_stay` | Wellness stays without included procedures. |
+| `unit` | `night` or `week`. A week is seven nights. |
+| `min` | Shortest permitted stay, in `unit`. |
+| `max` | Longest permitted stay, in `unit`, or `null` when there is no maximum. |
 
-Within the matching website scope, `special_offers` is present exactly when
-`promotions` is non-empty. A response outside that collections scope can
-contain promotions while still returning `collections: []`.
+For example, `{ "unit": "night", "min": 2, "max": null }` permits any stay of
+two or more nights, and `{ "unit": "week", "min": 1, "max": 3 }` permits 7, 14,
+or 21 nights.
+
+`arrival` has one of two shapes, selected by `type`:
+
+| `arrival.type` | Field | Meaning |
+| --- | --- | --- |
+| `weekdays` | `weekdays` | Permitted arrival weekdays, Monday first; never empty. |
+| `dates` | `dates` | Permitted arrival dates from today onward, ascending. Empty when every configured date has passed; the package then has no permitted stay. |
+
+Weekday codes are the lowercase English day names, `monday` to `sunday`.
+
+## Validity
+
+`validity` lists the current and future periods in which the package can be
+stayed, ordered by `from`. Each period has:
+
+| Field | Meaning |
+| --- | --- |
+| `from` | First permitted arrival date. |
+| `to` | Last permitted date, inclusive, as interpreted by `toAppliesTo`. |
+| `toAppliesTo` | `arrival`: `to` limits the arrival date. `departure`: `to` limits the checkout date. |
+
+`validity` is `null` when no periods are configured, which means no date
+restriction, and `[]` when every configured period has ended. One period must
+permit the stay on its own: the arrival lies within it and, for a
+departure-limited period, the checkout is on or before `to`. See
+[Testing a stay against its rules](/api/visit-types#testing-a-stay-against-its-rules).
+
+## Treatment
+
+`treatment` is a [Treatment](/api/objects/treatment) object: the included
+examinations and the procedure allowance with its selection mode.
+
+## Prices and promotions
+
+`priceFrom` holds the lowest prices across all hotels selling the package, per
+currency, as two independent [Price from](/api/objects/price-from) minima. It
+is `null` when the package is unavailable, booked on request, or has no
+buyable offer. [Prices](/api/prices) explains how offers are selected.
+
+`promotions` lists the current and future [promotions](/api/objects/promotion)
+that apply to your channel, ordered by `from`. It is empty when none applies.
 
 ## Hotels
 
-`hotels` is always present. It lists the active hotels that sell the visit type
-in Czech-name order, with ID as a tie-break. Every entry contains `hotelId`
-and `priceFrom`, the price of this package at this hotel using the
-[Price from](/api/objects/price-from) shape.
+`hotels` lists the active hotels selling the package, ordered by Czech hotel
+name. Every entry has:
 
-The optional `hotel` object contains `id`, localized `name`, and `stars` and
-is present only with `expand=hotels`. Hotel names use the Czech name as a fallback;
-a value is `null` when neither the requested translation nor the Czech name is available.
-The same rule applies to hotel references in price minima.
-On the detail, `hotelId` can narrow these
-entries while the top-level package summary remains unchanged. A hotel entry is a package-at-hotel
-offer, not a full [Hotel](/api/objects/hotel) object. Its `hotelId` remains
-present when `priceFrom` is `null`.
+| Field | Meaning |
+| --- | --- |
+| `hotelId` | The hotel. Present even when the hotel has no buyable price. |
+| `priceFrom` | Lowest prices of this package at this hotel, per currency, or `null`. |
+| `hotel` | Hotel summary with `id`, localized `name`, and `stars`. Only with `expand=hotels`. |
+| `seasons` | Current and future price-list seasons with their prices. Only with `expand=seasons` on the detail endpoint. |
 
-The optional `seasons` array is present only when the detail's `seasons`
-expansion is requested. A season contains `id`, `from`, `to`, and
-`priceFrom`. Its date bounds are the inclusive arrival-date bounds of a
-price-list season. Treat its `id` as opaque: it identifies that configured
-season while it exists, but replacing or splitting a season can create new
-IDs. The array contains current and future periods in date order; it is empty
-when none exist. The fields and calculation of the minima
-follow [Price from](/api/objects/price-from) and
-[seasonal pricing](/api/prices#seasonal-prices).
+An entry is a package-at-hotel offer, not a [Hotel](/api/objects/hotel)
+object; fetch the hotel endpoint for the full profile. Hotel names use the
+same Czech fallback as the hotel's `name`.
 
-## Treatment, prices, and promotions
+Each season has an opaque `id`, the inclusive arrival-date bounds `from` and
+`to`, and `priceFrom` for arrivals in the season, or `null` when the season
+has no buyable offer. Replacing or splitting a season in the price list
+creates new ids. See [Seasonal prices](/api/prices#seasonal-prices).
 
-- `treatment` uses the [Treatment](/api/objects/treatment) object.
-- `priceFrom` uses [Price from](/api/objects/price-from), aggregated across the
-  package's hotels.
-- `promotions` is an ordered list of [Promotion](/api/objects/promotion)
-  objects and is empty when none apply in the authenticated scope.
+On the detail endpoint, `hotelId` narrows `hotels` to one entry. The rest of
+the response still describes the whole package.
 
 ## Images
 
-`images` contains photos in their configured order; the first is the main
-photo. Each uses the [image fields](/api/images). The requested locale keys
-are preserved in `alt`; missing translations fall back to the localized
-visit type name. An explicit empty string marks a decorative image.
+`images` contains the package photos in configured order; the first is the
+main photo. Each uses the [image fields](/api/images). A missing `alt`
+translation falls back to the localized package name; an empty string marks a
+decorative image.
 
 ## Fields

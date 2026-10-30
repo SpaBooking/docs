@@ -105,6 +105,12 @@
         "schema": "v2#/definitions/Hotel/properties/buildings",
         "at": "/buildings"
       }
+    ],
+    [
+      {
+        "schema": "v2#/definitions/Hotel/properties/procedures",
+        "at": "/procedures"
+      }
     ]
   ],
   "api/objects/amenity.mdx": [],
@@ -179,7 +185,7 @@
   "api/objects/price-from.mdx": [
     [
       {
-        "schema": "v2#/definitions/SharedPriceFromMinimum"
+        "schema": "v2#/definitions/PriceFromMinimum"
       }
     ]
   ],

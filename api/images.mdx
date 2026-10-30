@@ -7,8 +7,7 @@ icon: "image"
 Hotel and room type responses include responsive image metadata. Embedded room
 types use the same fields as top-level room type responses.
 
-Responses of the draft [visit type](/api/objects/visit-type) endpoints use the
-same image fields.
+Visit type responses use the same image fields.
 
 ## Response shape
 
@@ -109,7 +108,7 @@ requested locale keys:
   hotel name.
 - A missing or `null` room image translation falls back to the single room
   `name` in each requested language, or `null` when the name is empty.
-- In the draft [visit type](/api/objects/visit-type) object, a missing or `null`
+- In the [visit type](/api/objects/visit-type) object, a missing or `null`
   image `alt` translation falls back to the localized visit type name.
 - An explicit empty string remains `""`. Preserve it when the image is
   decorative.

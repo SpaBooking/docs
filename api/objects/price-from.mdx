@@ -1,84 +1,92 @@
 ---
 title: "Price from"
-description: "The monetary fields and offer references of an indicative price minimum."
-openapi-schema: "/api/v2/openapi.yaml SharedPriceFromMinimum"
+description: "The lowest buyable offer of a hotel or package: amount, original price, nights, occupancy, and references."
+openapi-schema: "/api/v2/openapi.yaml PriceFromMinimum"
 ---
 
-<Warning>
-  **Draft:** Shared price contract for integration review. For released
-  hotel responses, use the [Hotel reference](/api/objects/hotel#prices).
-</Warning>
-
-A price minimum describes one complete offer selected by the
-[pricing rules](/api/prices). This minimum is used for hotel prices, visit type
-prices, a hotel × visit type pair, and that pair's seasons.
+A price minimum describes one complete, buyable offer selected by the
+[pricing rules](/api/prices). The same object appears in hotel prices,
+package prices, package-at-hotel prices, and seasonal prices.
 
 ## Minimum fields
 
 | Field | Meaning |
 | --- | --- |
-| `amount` | The offer's discounted [`Money`](/api/currencies) amount. |
-| `original` | The same offer's amount before its applicable promotions, or `null` when the rounded amount is not lower after those promotions. |
-| `nights` | Number of nights in the selected stay. |
-| `occupancy` | Full standard room occupancy used to price that stay. |
+| `amount` | [`Money`](/api/currencies) amount of the offer after its promotions. |
+| `original` | Amount of the same offer before its promotions, or `null` when no promotion lowers this minimum's rounded amount. |
+| `nights` | Number of nights of the offer. |
+| `occupancy` | Standard occupancy of the offer's room type. `perStay` amounts cover this many guests. |
 | `hotel` | The offer's hotel: `id` and localized `name`. |
 | `visitType` | The offer's visit type: `id` and localized `name`. |
 
-The minimum identifies the hotel and package, but does not contain a room
-type or arrival date. Use it for price comparisons and display its reported
-nights and occupancy.
+A minimum identifies the hotel and package of the offer, not its room type or
+arrival date. Display the amount together with its `nights` and `occupancy`.
+Both names follow [Localization](/api/localization) and fall back to Czech.
 
-Both name objects follow [Localization](/api/localization). Each minimum applies
-rounding separately. A small discount can give `perStay` an `original` amount
-while `perPersonPerNight.original` is `null` because its average rounds to the
-same amount. A non-null `original` is always greater than `amount`.
-
-Example of a shared `perStay` minimum in EUR:
+The following minimum is a seven-night single-room stay for EUR 504.00,
+discounted from EUR 560.00:
 
 ```json
 {
-  "amount": { "amountMinor": 76500, "currency": "EUR", "currencyExponent": 2 },
-  "original": { "amountMinor": 100000, "currency": "EUR", "currencyExponent": 2 },
+  "amount": {
+    "amountMinor": 50400,
+    "currency": "EUR",
+    "currencyExponent": 2
+  },
+  "original": {
+    "amountMinor": 56000,
+    "currency": "EUR",
+    "currencyExponent": 2
+  },
   "nights": 7,
   "occupancy": 1,
   "hotel": {
-    "id": "66f16191f739705faa020001",
-    "name": { "en": "Spa Hotel Example" }
+    "id": "6720c0a1b2c3d4e5f6a7c101",
+    "name": {
+      "cs-CZ": "Hotel Pramen",
+      "de": "Hotel Pramen"
+    }
   },
   "visitType": {
     "id": "6720c0a1b2c3d4e5f6a7b801",
-    "name": { "en": "Classic spa treatment" }
+    "name": {
+      "cs-CZ": "Klasická lázeňská léčba",
+      "de": "Klassische Kur"
+    }
   }
 }
 ```
 
-## Price containers
+A non-null `original` is always greater than `amount`. Rounding applies to
+each minimum separately: a small discount can produce an `original` on
+`perStay` while `perPersonPerNight.original` stays `null`, because the
+rounded average does not change.
 
-Amounts are grouped by currency (`CZK`, `EUR`). Each pair of minima contains
-`perPersonPerNight`, the average per guest per night, and `perStay`, the
-total for the whole room and stay. Each minimum carries its own offer fields;
-the two may refer to different offers.
+## Pairs of minima
 
-| Container | Path to a pair of minima |
+Prices are grouped by currency (`CZK`, `EUR`). A currency is present only when
+it has a buyable offer. Each currency holds two independently selected minima:
+
+| Minimum | Selection |
 | --- | --- |
-| Hotel | `priceFrom.{currency}.all`, and optional `.health` and `.wellness` groups |
-| Visit type | `priceFrom.{currency}` |
-| Visit type at a hotel | `hotels[].priceFrom.{currency}` |
-| Visit type at a hotel in a season | `hotels[].seasons[].priceFrom.{currency}` |
+| `perPersonPerNight` | The lowest average price per guest per night. |
+| `perStay` | The lowest total for the whole room and stay at its standard occupancy. |
 
-For a hotel, `all` covers all eligible offers in its price-calculation scope.
-`health` and `wellness` restrict that set to one stay category. The
-[hotel pricing scope](/api/prices#comparing-hotel-groups) defines which
-offers qualify.
-A currency key exists only when it contains a
-complete priced offer; a hotel category group is omitted when it has none.
-The `all` group is present whenever the currency is present.
+The two minima can be different offers with different hotels, rooms, nights,
+and occupancy. Never derive one from the other; see
+[Two independent minima](/api/prices#two-independent-minima).
 
-An entire `priceFrom` is `null` when its scope has no eligible priced offer.
-For visit types, this also applies to unavailable packages and packages booked
-on request. A known seasonal period remains in `seasons` with
-`priceFrom: null` when it has no eligible offer. See
-[Prices](/api/prices#availability) for the capacity and booking limits of
-these values.
+## Where minima appear
+
+| Object | Path | Compared offers |
+| --- | --- | --- |
+| [Hotel](/api/objects/hotel) | `priceFrom.{currency}.all`, `.health`, `.wellness` | All packages the hotel sells, or one category. A category group is omitted when it has no buyable offer. |
+| [Visit type](/api/objects/visit-type) | `priceFrom.{currency}` | The package at all its hotels. |
+| Visit type hotel entry | `hotels[].priceFrom.{currency}` | The package at that hotel. |
+| Visit type season | `hotels[].seasons[].priceFrom.{currency}` | Arrivals in that season at that hotel. |
+
+A whole `priceFrom` is `null` when its scope has no buyable offer. For a
+package this includes unavailable packages and packages booked on request. A
+season without an offer stays listed with `priceFrom: null`.
 
 ## Fields

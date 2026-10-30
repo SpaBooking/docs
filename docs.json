@@ -65,7 +65,6 @@
             "group": "Objects",
             "pages": [
               "api/objects/hotel",
-              "api/objects/hotel-draft",
               "api/objects/room-type",
               "api/objects/visit-type",
               "api/objects/treatment",
@@ -203,6 +202,10 @@
     {
       "source": "/api/v1/reference/catalog/get-visit-types",
       "destination": "/api/v1/reference/get-visit-types"
+    },
+    {
+      "source": "/api/objects/hotel-draft",
+      "destination": "/api/objects/hotel"
     }
   ],
   "footer": {

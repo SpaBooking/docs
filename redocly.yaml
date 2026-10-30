@@ -1,0 +1,9 @@
+# Redocly CLI configuration for `npm run lint:openapi`.
+extends:
+  - recommended
+rules:
+  # Redocly reads the `id` fields of example objects as JSON Schema ids and
+  # reports "resolves to more than one schema" when a value repeats. Every
+  # OpenAPI and MDX example is validated with Ajv by `npm run validate:examples`.
+  no-invalid-media-type-examples: off
+  no-invalid-schema-examples: off

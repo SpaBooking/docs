@@ -1,31 +1,32 @@
 ---
 title: "Procedure"
-description: "A treatment procedure, its localized label, category, and natural source."
+description: "A treatment procedure with its localized label, category, and natural source."
 openapi-schema: "/api/v2/openapi.yaml Procedure"
 ---
 
-<Warning>
-  **Draft:** Procedure contract for integration review. See
-  [API coverage](/api/versioning) for released endpoints.
-</Warning>
+A procedure is identified by `code` and carries a localized `label`, a
+`category` with its own `code` and localized `label`, and `naturalSource`.
+Labels follow [Localization](/api/localization); a missing translation is
+`null`.
 
-`Procedure` identifies a procedure independently of a package's allowance.
-It contains `code`, localized `label`, `category` with its own `code` and
-localized `label`, and `naturalSource`. Labels use the requested
-[locales](/api/localization); a missing translation is `null`.
-
-A hotel lists base Procedure objects without a `count` field.
-[Package treatment items](/api/objects/treatment#procedure-allowance) add
-`count` to these same fields. Use `code` to match the same procedure between
-a hotel's offer and a visit type's treatment list.
+A hotel's [`procedures`](/api/objects/hotel#procedures) lists the procedures
+it offers as plain Procedure objects. A package's
+[treatment items](/api/objects/treatment#procedures) add `count` to the same
+fields. Match the two by `code`.
 
 ```json
 {
   "code": "carbon_dioxide_bath",
-  "label": { "en": "Carbon dioxide bath" },
+  "label": {
+    "cs-CZ": "Kysličníková koupel",
+    "de": "Kohlensäurebad"
+  },
   "category": {
     "code": "hydrotherapy",
-    "label": { "en": "Hydrotherapy" }
+    "label": {
+      "cs-CZ": "Vodoléčba",
+      "de": "Hydrotherapie"
+    }
   },
   "naturalSource": "carbon_dioxide"
 }
@@ -33,8 +34,8 @@ a hotel's offer and a visit type's treatment list.
 
 ## Natural sources
 
-`naturalSource` identifies the procedure's natural healing source. `null`
-means no source classification is provided.
+`naturalSource` is the natural healing source the procedure uses, or `null`
+when it has none.
 
 | `naturalSource` | Meaning |
 | --- | --- |
@@ -44,8 +45,8 @@ means no source classification is provided.
 
 ## Procedure codes
 
-Procedure codes in catalog order. Each item returns its localized `label`; the
-table shows the English label. Codes can be added under the
+Procedure codes in catalog order, with their English labels. The API returns
+the label in the requested languages. Codes can be added under the
 [catalog compatibility rules](/guides/versioning#catalog-codes).
 
 | Code | Category | English label |

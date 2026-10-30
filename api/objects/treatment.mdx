@@ -1,18 +1,12 @@
 ---
 title: "Treatment"
-description: "The examinations and procedure allowance included in a visit type."
+description: "The examinations and the procedure allowance included in a package."
 openapi-schema: "/api/v2/openapi.yaml Treatment"
 ---
 
-<Warning>
-  **Draft:** Treatment contract for integration review. See
-  [API coverage](/api/versioning) for released endpoints.
-</Warning>
-
-`Treatment` contains `exams`, the included medical examinations, and
-`procedures`, the included procedure allowance and selection. A visit type
-always includes this object. See [Treatment behavior](/api/treatment) for
-how to present allowances and fixed lists together.
+Every visit type has a `treatment` with `exams`, the included medical
+examinations, and `procedures`, the included procedure allowance.
+[Treatment behavior](/api/treatment) explains how to present them.
 
 ## Examinations
 
@@ -20,29 +14,25 @@ how to present allowances and fixed lists together.
 | --- | --- |
 | `exams.entry` | An entry examination at the start of the stay is included. |
 | `exams.interim` | An interim examination during the stay is included. |
-| `exams.interimFromNights` | Minimum stay length in nights for the interim examination; `null` when no threshold is set or the examination is not included. |
+| `exams.interimFromNights` | Shortest stay, in nights, that includes the interim examination. `null` when it is included for every stay length or not included at all. |
 | `exams.final` | A final examination at the end of the stay is included. |
-| `exams.finalFromNights` | Minimum stay length in nights for the final examination; `null` when no threshold is set or the examination is not included. |
+| `exams.finalFromNights` | The same rule for the final examination. |
 
-## Procedure allowance
+## Procedures
 
-`procedures.count` is the overall number of included procedures per
-`procedures.per`: `stay`, `week`, or `day`. Zero is a configured allowance of
-no procedures.
+`procedures.count` is the number of included procedures per `procedures.per`:
+`stay`, `week`, or `day`. Zero means no procedure allowance.
 
 | `procedures.selection` | Meaning | `procedures.items` |
 | --- | --- | --- |
-| `hotel_offer` | Procedures are selected from the hotel's offer. | Empty |
-| `from_list` | Procedures are selected from the supplied list. | Procedures to choose from |
-| `fixed` | The supplied procedures are included. | Procedures with their individual counts |
+| `hotel_offer` | The guest chooses from the hotel's [procedure offer](/api/objects/hotel#procedures). | Empty. |
+| `from_list` | The guest chooses from the listed procedures. | The choices, each with `count: null`. |
+| `fixed` | The listed procedures are included. | The procedures with their counts. |
 
-Each item uses the shared [Procedure](/api/objects/procedure) fields and adds
-`count`. It keeps its configured position in the list.
-
-An item's `count` is the number of times that procedure is included during
-the **whole stay**. It is a positive integer for `selection: fixed` and
-`null` for the other selection modes. It does not use the allowance's `per`
-unit. Hotel procedure items use the base Procedure object and have no
-`count` field.
+Each item is a [Procedure](/api/objects/procedure) with an added `count`: how
+many times it is included during the whole stay. It is a positive integer for
+`fixed` and `null` otherwise. Item counts do not use `per` and need not add up
+to `count`; see
+[Allowances and fixed lists](/api/treatment#allowances-and-fixed-lists).
 
 ## Fields

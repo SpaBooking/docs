@@ -19,10 +19,10 @@ channel and scopes requests to the active companies connected to it; one key
 can cover more than one company.
 
 Resources and channel-specific content are resolved within this scope.
-Promotions and their effect on prices depend on the requesting channel. In the
-draft visit type contract, [collections](/api/objects/visit-type#collections)
-also follow their defined channel scope. A response for one key must not be
-used as the response for another key. Include the public-key context in your
+Promotions and their effect on prices depend on the requesting channel, and a
+visit type's [`channelContent.collections`](/api/objects/visit-type#channel-content)
+is filled only for the key of the company's own website. A response for one key
+must not be reused for another key. Include the public-key context in your
 cache partitioning without exposing the key in a public cache identifier.
 
 A promotion can apply to several channels. The API returns only those
