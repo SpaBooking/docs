@@ -4,25 +4,22 @@ description: "Substring search across localized fields."
 icon: "magnifying-glass"
 ---
 
-Hotel and room-type lists accept a `search` query parameter for text filtering.
+Hotel, room type, and visit type lists accept a `search` query parameter for
+text filtering.
 
 ```bash
 GET /api/v2/room-types?search=superior
 ```
 
-How `search` matches:
-
-- **Literal substring** — matches the supplied text anywhere in a value. There
-  are no search operators, word stemming, or relevance ranking.
-- **Case-insensitive** — `superior` matches `Superior`.
-- **Diacritics-insensitive** — `lazne` matches `Lázně`.
-- **Localized fields** — matched against every locale (`cs-CZ`, `de`, `en`, `ru`)
-  at once. Room type names are single text values shared by all languages.
-
-The [visit type](/api/objects/visit-type) list accepts `search` as well and
-matches the visit type name in every language.
+`search` matches a literal substring anywhere in a value: there are no search
+operators, word stemming, or relevance ranking. Matching is case-insensitive
+(`superior` matches `Superior`) and diacritics-insensitive (`lazne` matches
+`Lázně`). A localized field is matched in every locale (`cs-CZ`, `de`, `en`,
+`ru`) at once.
 
 To match an exact value such as a room type code, use that field's own filter.
 
-Each endpoint lists the field(s) its `search` covers. Room-type search matches
-the single room name. See [Room type names and labels](/api/objects/room-type#names-and-labels).
+Each endpoint lists the field(s) its `search` covers. Hotel and
+[visit type](/api/objects/visit-type) search match the localized name;
+room-type search matches the single room name shared by all languages. See
+[Room type names and labels](/api/objects/room-type#names-and-labels).
