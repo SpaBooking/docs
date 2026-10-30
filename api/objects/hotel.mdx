@@ -48,7 +48,7 @@ For example, with `Accept-Language: cs-CZ,en`:
 Use `expand=roomTypes` to include the hotel's enabled, non-draft
 [room types](/api/objects/room-type). Both the hotel list and detail exclude
 disabled rooms. Request `GET /api/v2/room-types?hotelId={hotelId}&disabled=all`
-if you need the hotel's complete non-draft catalog, including archived rooms.
+if you need the hotel's complete non-draft catalog, including disabled rooms.
 
 Without this expansion, the hotel response does not include room types.
 See [Expand](/api/expand) for examples.
@@ -65,8 +65,8 @@ decorative image.
 `shortDescription` is the localized short hotel description (up to 400
 characters per locale).
 
-`channelContent.tagline` is a localized tagline intended for sales channels (up
-to 100 characters per locale).
+`channelContent.tagline` is a localized tagline for sales channels, up to 100
+characters per locale. It is the same for every public key.
 
 `accommodationRules` always contains check-in and check-out ranges, the children
 policy, and the pets policy. The children policy includes whether children are
@@ -111,7 +111,7 @@ structure and labels.
 each code once. Items use the [Procedure](/api/objects/procedure) object
 without a `count`. An empty array means the hotel publishes no procedures.
 
-The offer is independent of what a package includes: a package's
+The list is independent of what a package includes: a package's
 [treatment](/api/objects/treatment) says which procedures its guests receive.
 Join the two by `code`.
 
@@ -154,7 +154,8 @@ Join the two by `code`.
 
 ## Prices
 
-`priceFrom` holds the lowest prices the hotel currently sells, per currency.
+`priceFrom` holds the lowest prices the hotel sells for arrivals from today
+onward, per currency.
 Each currency has the hotel-wide group `all` and the category groups `health`
 and `wellness`, each with the two independent
 [Price from](/api/objects/price-from) minima. A category group is omitted

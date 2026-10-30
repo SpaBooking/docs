@@ -31,7 +31,7 @@ that overlaps the promotion only partly is discounted on the overlapping
 nights.
 
 Each `hotels` entry has `hotelId` and `roomTypeIds`. `roomTypeIds: null` means
-every room type of that hotel; otherwise it lists the eligible room type ids.
+every room type of that hotel; otherwise it lists the room type ids it applies to.
 Entries reference only hotels that sell the package, and a detail request with
 `hotelId` does not narrow them. A disabled room type can remain referenced,
 but it is not offered for new bookings.
@@ -40,7 +40,7 @@ Promotions are ordered by `from`, then `id`.
 
 ## Example: selected room types of one hotel
 
-This promotion discounts two room types of one hotel by 15 % on the nights
+This promotion discounts two room types of one hotel by 15% on the nights
 from 4 January to 28 February 2027. Other room types and hotels are
 unaffected.
 

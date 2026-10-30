@@ -132,11 +132,9 @@ paths:
         content, structured accommodation rules, meal services, indications,
         the procedures it offers, staff languages, and hotel
         [amenities](/api/amenities#assigned-amenities). Localized fields return
-        the locale keys selected by `Accept-Language`. `name` falls back to the
-        default locale (cs-CZ); other untranslated values are returned as null.
+        the locale keys selected by `Accept-Language`. `name` falls back to Czech, image `alt` to the hotel name, and other missing translations are null.
 
-        `priceFrom` holds the lowest prices the hotel currently sells, per
-        currency, across all packages (`all`) and per category (`health`,
+        `priceFrom` holds the lowest prices the hotel sells for arrivals from today onward, per currency, across all packages (`all`) and per category (`health`,
         `wellness`), each with two independent minima that name the hotel and
         the package. It is null when no buyable offer exists. See
         [Prices](/api/prices).
@@ -145,7 +143,7 @@ paths:
         reference, including the allowed values for `serviceMethod`,
         `indications`, and `staffLanguages`.
 
-        The response example is the plain request, sent with the company's own
+        The response example is `GET /hotels` without query parameters, sent with the company's own
         website key and `Accept-Language: cs-CZ,de` on 2026-10-30; both hotels
         fit on one page.
       parameters:
@@ -1370,7 +1368,7 @@ paths:
         ignored. See [Visit types](/api/visit-types) for availability and stay
         rules.
 
-        The response examples are the plain request (`without-expansions`) and
+        The response examples are `GET /visit-types` without query parameters (`without-expansions`) and
         the same request with `expand=hotels`, both sent with the company's own
         website key and `Accept-Language: cs-CZ,de` on 2026-10-30.
       parameters:
@@ -5488,7 +5486,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
           description: >-
-            Localized tagline intended for sales channels. Each locale value is at most 100
+            Localized tagline for sales channels, the same for every public key. Each locale value is at most 100
             characters.
     HotelMealService:
       type: object
@@ -5628,7 +5626,7 @@ components:
         buildings:
           type: array
           description: >-
-            All physical buildings in stored order, including buildings with no assigned room types.
+            All physical buildings in configured order, including buildings with no assigned room types.
             Always included without expand, even for a single building; empty when none are
             configured. Match each id to a room type's building.id.
           items:
@@ -5698,7 +5696,7 @@ components:
             EUR:
               $ref: "#/components/schemas/HotelPriceFromCurrency"
           description: >-
-            Lowest prices the hotel currently sells, per currency: across all packages (`all`) and
+            Lowest prices the hotel sells for arrivals from today onward, per currency: across all packages (`all`) and
             per category (`health`, `wellness`), each with two independent minima. A currency is
             present only when it has a buyable offer. Null when the hotel has none. See
             [Prices](/api/prices).
@@ -6380,7 +6378,7 @@ components:
           enum:
             - health
             - wellness
-          description: "`health` is a spa cure with medical treatment; `wellness` is a wellness stay."
+          description: "`health` is a spa cure with medical treatment; `wellness` is any other stay, such as a wellness weekend."
         payer:
           type: string
           nullable: true
@@ -6399,7 +6397,7 @@ components:
             - request
           description: >-
             `instant`: a booking is confirmed immediately when a room is available. `request`: every
-            booking is a request that the hotel confirms. Insurer-paid stays are always `request`.
+            booking is a request that the hotel confirms. Packages with `payer: insurer` are always `request`.
         available:
           type: boolean
           description: >-
@@ -6470,7 +6468,7 @@ components:
             $ref: "#/components/schemas/VisitTypeAtHotel"
           description: >-
             Active hotels selling the package, ordered by Czech hotel name, then id. An entry is
-            present even when the hotel has no buyable price.
+            present even when the hotel has no buyable offer.
         images:
           type: array
           items:
@@ -7191,7 +7189,7 @@ components:
           type: string
           enum: [ hotel_offer, from_list, fixed ]
           description: >-
-            How the procedures are chosen. `hotel_offer`: from the hotel's offer; `items` is empty.
+            How the procedures are chosen. `hotel_offer`: from the hotel's `procedures`; `items` is empty.
             `from_list`: the guest chooses from `items`. `fixed`: `items` are included, each with its
             own `count`.
         items:
@@ -8014,7 +8012,7 @@ components:
           nullable: true
           maxLength: 120
       description: >-
-        Localized plain-text purpose line of up to 120 characters per translation. A missing
+        Localized plain-text teaser for package lists and previews, up to 120 characters per translation. A missing
         translation is null.
     VisitTypeWeekdayArrival:
       title: Weekday arrival
@@ -8218,7 +8216,7 @@ components:
             continue into a later season. Null when the season has no buyable offer, or when the
             package is unavailable or booked on request.
       description: >-
-        A price-list season of a package at one hotel. See
+        A price-list season of the package, with its price at this hotel. See
         [Seasonal prices](/api/prices#seasonal-prices).
     VisitTypeAtHotel:
       type: object
@@ -8229,7 +8227,7 @@ components:
         hotelId:
           type: string
           pattern: ^[0-9a-fA-F]{24}$
-          description: Active hotel selling the package. Present even when the hotel has no buyable price.
+          description: Active hotel selling the package. Present even when the hotel has no buyable offer.
         priceFrom:
           type: object
           nullable: true
@@ -8294,13 +8292,13 @@ components:
         name:
           allOf:
             - $ref: "#/components/schemas/LocalizedString"
-          description: Localized promotion name.
+          description: Localized promotion name; a missing translation is null.
         percentage:
           type: number
           minimum: 0
           exclusiveMinimum: true
           maximum: 100
-          description: Discount in percent.
+          description: Discount in percent, greater than 0 and at most 100.
         from:
           type: string
           format: date
