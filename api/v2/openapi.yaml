@@ -191,7 +191,7 @@ paths:
             maxLength: 500
           description: >-
             Comma-separated hotel amenity codes. Returns hotels that have all listed amenities, for
-            example `sauna,parking`. A facility can match as an own amenity or in an aquapark’s
+            example `sauna,parking`. A facility can match as an own amenity or in an aquapark's
             includes, regardless of pricing. Filtering applies before pagination and total counts.
             Unknown codes return `400`. See [Filtering](/api/amenities#filtering).
         - name: amenityCategory
