@@ -61,10 +61,10 @@ is the minimum across arrivals in its season, not a quote for every date.
 ## Regular and discounted price
 
 A minimum's `amount` is the price after promotions. Its `original` is the
-same offer before its promotions, or `null` when no promotion applies. Take both values
-from the same minimum: never combine the `original` of one minimum with the
-`amount` of another, and never use a package-level `original` for a seasonal
-row.
+same offer before its promotions, or `null` when no promotion lowers its
+rounded amount. Take both values from the same minimum: never combine the
+`original` of one minimum with the `amount` of another, and never use a
+package-level `original` for a seasonal row.
 
 In the [seasonal example](/api/v2/reference/visit-types/get-a-visit-type),
 the winter season at Hotel Pramen has a `perStay` minimum of CZK 12,600 with

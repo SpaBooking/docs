@@ -55,25 +55,10 @@ See [Expand](/api/expand) for examples.
 
 ## Images
 
-Every image contains `url`, `width`, `height`, `alt`, and `variants`. Use `url`
-for the original or lightbox. The [images guide](/api/images) provides a
-complete rendering example.
-
-Build `srcset` from the returned `variants` entries: `w480` means `480w`, and
-likewise for `w960`, `w1440`, and `w1920`. Set `sizes` for your layout and choose
-an available variant for `src`, with `url` as the fallback.
-Use the returned URLs directly; do not construct URLs for missing
-widths. Images are never enlarged, so an 1100-pixel original has only `w480`
-and `w960`.
-
-Use non-null `width` and `height` as intrinsic HTML dimensions to reserve the
-correct aspect ratio. They describe the original after orientation. When
-dimensions are unavailable, both are `null` and `variants` is `{}`. An original
-narrower than 480 pixels also has `{}`, but retains its known dimensions.
-
-`alt` follows [`Accept-Language`](/api/localization). Missing or null image
-translations fall back to the localized hotel name. Preserve an explicit empty
-string: it marks a decorative image. A non-empty value is trimmed.
+Each entry in `images` uses the shared [image fields](/api/images): build
+`srcset` from the returned `variants` and fall back to `url`. A missing `alt`
+translation falls back to the localized hotel name; an empty string marks a
+decorative image.
 
 ## Structured profile
 
