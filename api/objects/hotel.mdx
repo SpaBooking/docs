@@ -92,8 +92,8 @@ time or optional numeric value is `null`.
 
 `mealServices` always contains `breakfast`, `lunch`, and `dinner`. Each meal
 reports whether it is enabled, its optional serving time, its service method
-(`buffet` or `served`), whether drinks are included, and a localized drinks note
-(up to 200 characters per locale).
+(`buffet`, `served`, or `null` when unset), whether drinks are included, and
+a localized drinks note (up to 200 characters per locale).
 
 `indications` is an ordered array of medical indication codes. The hotel
 specializes in treating the listed areas:

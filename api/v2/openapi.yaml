@@ -3054,7 +3054,7 @@ components:
         serviceMethod:
           type: string
           nullable: true
-          enum: [ buffet, served ]
+          enum: [ buffet, served, null ]
         drinksIncluded:
           type: boolean
         drinksNote:
