@@ -19,8 +19,9 @@ package prices, package-at-hotel prices, and seasonal prices.
 | `hotel` | The offer's hotel: `id` and localized `name`. |
 | `visitType` | The offer's visit type: `id` and localized `name`. |
 
-A minimum identifies the hotel and package of the offer, not its room type or
-arrival date. Display the amount together with its `nights` and `occupancy`.
+A minimum identifies the hotel and package of the offer. It does not include
+its room type, arrival date, or applied promotion ids. Display the amount
+together with its `nights` and `occupancy`.
 Both names follow [Localization](/api/localization) and fall back to Czech.
 
 The following minimum is a seven-night stay for one guest at EUR 504.00,
