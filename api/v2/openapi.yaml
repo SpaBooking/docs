@@ -3019,6 +3019,10 @@ paths:
         [Authentication](/api/authentication) determines the channel and the
         companies in scope.
 
+        Use `expand=seasons` for `hotels[].seasons[]`; see
+        [Seasonal prices](/api/prices#seasonal-prices) and the
+        [package page guide](/guides/visit-types#seasonal-prices).
+
         The response examples are sent with the company's own website key and
         `Accept-Language: cs-CZ,de` on 2026-10-30:
 
@@ -8191,16 +8195,17 @@ components:
           type: string
           pattern: ^[0-9a-fA-F]{24}$
           description: >-
-            Season id. Stable while the season exists; splitting or replacing a season creates new
+            Configured price-list season id. Stable while the season exists; splitting or replacing
+            it in the price list creates new ids. Promotions do not split seasons or change their
             ids. The same season appears under every hotel of the package.
         from:
           type: string
           format: date
-          description: First arrival date of the season.
+          description: First arrival date of the configured season, unchanged by promotion dates.
         to:
           type: string
           format: date
-          description: Last arrival date of the season, inclusive.
+          description: Last arrival date of the configured season, inclusive and unchanged by promotion dates.
         priceFrom:
           type: object
           nullable: true
@@ -8212,11 +8217,15 @@ components:
             EUR:
               $ref: "#/components/schemas/PriceFromPair"
           description: >-
-            Lowest prices for arrivals in this season, from today onward, per currency. A stay can
-            continue into a later season. Null when the season has no buyable offer, or when the
-            package is unavailable or booked on request.
+            Lowest eligible complete-stay prices for arrivals in this season from today onward,
+            per currency and metric, after all promotions applicable to each offer's channel,
+            hotel, room type, and occupied nights. Do not apply promotions again. The discount
+            need not apply to every arrival or room in the season. A stay can continue into a
+            later season. Null when the season has no buyable offer, or when the package is
+            unavailable or booked on request. See [Seasonal prices](/api/prices#seasonal-prices).
       description: >-
-        A price-list season of the package, with its price at this hotel. See
+        A configured price-list season of the package, with its price at this hotel. Promotions
+        do not split it into smaller periods. See
         [Seasonal prices](/api/prices#seasonal-prices).
     VisitTypeAtHotel:
       type: object
