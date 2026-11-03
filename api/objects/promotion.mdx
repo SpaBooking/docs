@@ -39,6 +39,10 @@ Entries reference only hotels that sell the package, and a detail request with
 `hotelId` does not narrow them. A disabled room type can remain referenced,
 but it is not offered for new bookings.
 
+A promotion targeting only disabled rooms does not appear in any period's
+`activePromotionIds`; a scope that also includes an eligible room can still
+be active. See [Price periods](/api/objects/price-from-period#fields-and-night-bounds).
+
 Promotions are ordered by `from`, then `id`.
 
 ## Example: selected room types of one hotel
