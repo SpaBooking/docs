@@ -7,6 +7,9 @@ openapi-schema: "/api/v2/openapi.yaml Promotion"
 A visit type's `promotions` lists its current and future promotions that apply
 to the channel of your [public key](/api/authentication#channels-and-scope).
 The API returns only applicable promotions; you do not filter them by channel.
+With `expand=priceFromPeriods`, the detail also includes ended promotions so
+you can explain historical periods. Ended promotions do not add the package
+to the `special_offers` collection.
 
 A listed promotion does not guarantee a discounted stay: it can lie outside
 the package's permitted stays, or the discounted rooms can be sold out. [Prices](/api/prices#promotions) explains how promotions change the
@@ -21,7 +24,7 @@ indicative minima and how overlapping discounts combine.
 | `percentage` | Discount in percent, greater than 0 and at most 100. |
 | `from` | First discounted night. |
 | `to` | Last discounted night, inclusive, or `null` when the promotion has no end. |
-| `hotels` | Hotels and room types the promotion is limited to, or `null` when it applies to every hotel selling the package. |
+| `appliesTo` | Hotels and room types the promotion is limited to, or `null` when it applies to every hotel selling the package. |
 
 A night is identified by the date it starts on: `to: "2027-02-28"` includes
 the night of 28 February and its checkout on 1 March. These bounds describe
@@ -30,7 +33,7 @@ discounted nights, not the package's
 that overlaps the promotion only partly is discounted on the overlapping
 nights.
 
-Each `hotels` entry has `hotelId` and `roomTypeIds`. `roomTypeIds: null` means
+Each `appliesTo` entry has `hotelId` and `roomTypeIds`. `roomTypeIds: null` means
 every room type of that hotel; otherwise it lists the room type ids it applies to.
 Entries reference only hotels that sell the package, and a detail request with
 `hotelId` does not narrow them. A disabled room type can remain referenced,
@@ -54,7 +57,7 @@ unaffected.
   "percentage": 15,
   "from": "2027-01-04",
   "to": "2027-02-28",
-  "hotels": [
+  "appliesTo": [
     {
       "hotelId": "6720c0a1b2c3d4e5f6a7c101",
       "roomTypeIds": [

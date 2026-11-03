@@ -28,7 +28,7 @@ unavailable package.
 
 Availability does not promise a price or a free room on a particular date. A
 permitted arrival with no free room still satisfies the catalog date filters.
-An indicative price also needs a nightly price and a free room for every
+`priceFrom` also needs a nightly price and a free room for every
 night; see [Prices](/api/prices).
 
 ## Testing a stay against its rules
@@ -68,6 +68,7 @@ its price is `null`.
 [Prices](/api/prices#package-and-package-at-hotel-prices) explains the package
 price and the price of each entry.
 
-Seasons show how the price at one hotel changes with the arrival date. They
-are price-list periods for arrivals, not a calendar of bookable dates. See
-[Seasonal prices](/api/prices#seasonal-prices).
+The optional `priceFromPeriods` shows rates across configured validity and
+price-list coverage, split at applicable promotion changes. Periods include
+history and do not check capacity or arrival rules. See
+[Price periods](/api/objects/price-from-period).

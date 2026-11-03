@@ -1,11 +1,11 @@
 ---
 title: "Building package pages"
-description: "Use the visit type catalog for package cards, the hotel choice, and seasonal prices."
+description: "Use the visit type catalog for package cards, the hotel choice, and price periods."
 icon: "suitcase"
 ---
 
 This guide walks through a package listing and a package detail with a hotel
-choice and seasonal prices. Use the same [public key](/api/authentication)
+choice and price periods. Use the same [public key](/api/authentication)
 for all requests of a page and request the [languages](/api/localization)
 the page displays.
 
@@ -23,103 +23,105 @@ For a "from" price, show `priceFrom.{currency}.perStay.amount` with the
 `perPersonPerNight` minimum can be a different offer. When the minimum has a
 non-null `original`, show it struck through.
 
-When `priceFrom` is `null`, show the card without a price, and label a
-`request` package as available on request. The list returns only available
-packages unless you set `available`; a package detail can be unavailable, so
-check `available` there.
+When `priceFrom` is `null`, show the card without a price. Always label a
+`request` package as available on request, including when it has a price.
+The list returns only available packages unless you set `available`; a
+package detail can be unavailable, so check `available` separately from price.
 
 ## Hotel choice
 
 Load the [package detail](/api/v2/reference/visit-types/get-a-visit-type)
-with `expand=hotels`. Each `hotels[]` entry carries the hotel summary and the
-price of this package at that hotel. An entry without a buyable offer has
-`priceFrom: null` but remains a hotel that sells the package. Fetch the
-[Hotel](/api/objects/hotel) detail for the full profile and room catalog.
+with `expand=hotel`. Each `hotelListings[]` entry carries the hotel summary
+and the price of this package at that hotel. An entry without a qualifying
+complete stay has `priceFrom: null` but remains a hotel that sells the
+package. Fetch the [Hotel](/api/objects/hotel) detail for the full profile
+and room catalog.
 
-When the website visitor chooses a hotel, show that entry's price. The package's
-top-level `priceFrom` compares all hotels and can belong to a different hotel
-than the selected one.
+When the website visitor chooses a hotel, show that listing's price. The
+package's top-level `priceFrom` compares all hotels and can belong to a
+different hotel than the selected one.
 
 ## Stay rules and board
 
 Present `stayLength`, `arrival`, and `validity` as the booking constraints,
 and `board.meals` as what is included and what the guest can change. The
 [stay-rule algorithm](/api/visit-types#testing-a-stay-against-its-rules)
-tells you whether a chosen arrival and length is permitted. It does not tell
-you whether a room is free.
+tells you whether a chosen arrival and length is permitted. Check whether a
+room is free when the guest chooses dates.
 
-## Seasonal prices
+## Price periods
 
-Request the detail with `expand=seasons` and `hotelId={hotelId}` to get the
-seasons of the chosen hotel. Add `hotels` to the expansion when you also need
-the hotel summary. Each season in `hotels[0].seasons` has the inclusive
-arrival dates `from` and `to` and its own `priceFrom`. Keep seasons with
-`priceFrom: null` visible as periods without an offer.
+Request the detail with `expand=hotel,priceFromPeriods&hotelId={hotelId}`.
+Use `hotelListings[0].priceFromPeriods` for the selected hotel's table. The
+root `priceFromPeriods` continues to compare all hotels even with `hotelId`.
 
-Keep one table row per returned season. [Seasonal prices](/api/prices#seasonal-prices)
-preserve the configured periods even when a promotion starts or ends inside
-them; use the separate promotion list to explain its dates and room scope.
+Keep one row per returned [price period](/api/objects/price-from-period).
+Its `from` and `to` are inclusive night dates. Rates change at season and
+relevant promotion boundaries inside configured package validity. Keep rows
+with `priceFrom: null` as periods without a calculated price. A null periods
+field means the price source cannot be safely interpreted; an empty array
+means there are no periods in the configured coverage.
 
-Show the same currency and metric in every row, and include the `nights` and
-`occupancy` of each minimum, because rows can select different offers. A row
-is the minimum across arrivals in its season, not a quote for every date.
+Periods include history. For a current-offer page, omit periods whose `to`
+is before today in Europe/Prague. Do not reconstruct periods from public
+`validity`, which omits ended intervals.
 
-For a heading such as "per person, 7 nights", check the metric before using
-the amount. `perStay.amount` covers the whole room for `occupancy` guests;
-it is a per-person total only when `occupancy` is 1. Label it with the
-reported guest count and `nights`, or use `perPersonPerNight` with a per-night
-label. The API has no separate per-person full-stay minimum. Multiplying a
-rounded nightly average by `nights` is only a derived display value and can
-introduce rounding differences; it does not request a seven-night offer.
+For a heading such as "per person, 7 nights", use
+`priceFrom.{currency}.perPersonPerStay.amount` and its `nights`. For a nightly
+heading, use `perPersonPerNight.amount`. For a whole-room total, use
+`perStay.amount` and display both `nights` and `occupancy`. Take each value
+directly from the API: multiplying the rounded nightly amount can produce
+a different result.
+
+A row is a price-list rate for the package's shortest stay. It can be priced
+even when its cheapest room is sold out or no permitted full stay fits
+inside that period. Present the package's rules alongside the table and show
+actual room availability when the guest selects dates.
 
 ## Regular and discounted price
 
-A minimum's `amount` is the price after promotions. Its `original` is the
-same offer before its promotions, or `null` when no promotion lowers its
-rounded amount. Take both values from the same minimum: never combine the
-`original` of one minimum with the `amount` of another, and never use a
-package-level `original` for a seasonal row.
+Take `amount` and `original` from the same metric in the same period.
+`original` describes that winning room before promotions. When it is null,
+show the amount without a struck-through price.
 
-In the [seasonal example](/api/v2/reference/visit-types/get-a-visit-type),
-the season from 1 November 2026 to 31 March 2027 at Hotel Pramen has a
-`perStay` minimum of CZK 12,600 with an `original` of CZK 14,000. Show "from
-CZK 12,600" with "CZK 14,000" struck through, for 7 nights and 1 guest. The
-season from 1 April to 31 October 2027 has `original: null`, so show its
-CZK 13,300 without a struck-through price.
+In the detail reference's `expand-hotel-price-periods` example, the package's
+period from 5 to 9 January 2027 has `perPersonPerStay.amount` of EUR 523.60
+and `original` of EUR 770.00 for seven nights at Hotel Bellevue. Its
+`perPersonPerNight.amount` is EUR 74.80. The independently selected
+`perStay.amount` is EUR 714.00, discounted from EUR 840.00, for a single room
+at Hotel Pramen. Use the hotel and occupancy belonging to the metric you
+display; the cheapest room total and cheapest price per guest are different
+offers.
 
 ## Displaying discounts
 
-Use the seasonal table for prices and a separate promotion list for discount
-conditions. Build that list from the package's `promotions`, using the
-[Promotion fields](/api/objects/promotion#fields-and-night-bounds):
+Resolve `activePromotionIds` and each minimum's `appliedPromotionIds`
+against the package's `promotions`. The first explains conditions relevant
+to the period; the second identifies promotions applied to the displayed
+winner. A promotion on another eligible room can split the period without
+changing the lowest price.
+
+Use the [Promotion fields](/api/objects/promotion#fields-and-night-bounds)
+to explain conditions:
 
 - Show the localized name and `percentage` with the discounted nights `from`
   and `to`. A null `to` means no end date.
-- For the chosen hotel, show promotions with `hotels: null` or a matching
-  `hotels[].hotelId`. The detail's `hotelId` parameter does not filter
-  `promotions` for you.
-- Show the applicable room types from `roomTypeIds`; null means all room
-  types of that hotel. Use the [hotel's room catalog](/api/objects/hotel)
-  to resolve their names. With `hotels: null`, the promotion covers all rooms
-  at all hotels selling the package.
+- For the chosen hotel, include promotions with `appliesTo: null` or a
+  matching `appliesTo[].hotelId`. The detail's `hotelId` parameter does not
+  narrow `promotions`.
+- Resolve `roomTypeIds` against the [hotel's room catalog](/api/objects/hotel).
+  Null means all room types of that hotel. `appliesTo: null` covers all
+  rooms at all hotels selling the package.
 
-For example, show "15% off nights from 4 January to 28 February 2027, selected
-room types" beside the unchanged November-to-March season. These are night
-bounds, so a stay that overlaps only part of the promotion is discounted only
-on those nights.
+An expanded detail includes ended promotions for historical periods.
+For a current promotion list, filter their dates rather than assuming every
+returned promotion is still running or upcoming.
 
-Do not copy a listed promotion's `percentage` onto the season as a blanket
-discount. If you show a savings badge beside a seasonal price, derive it from
-that exact minimum's raw `amount.amountMinor` and `original.amountMinor`,
-before rounding prices for display: `100 × (1 − amount / original)`. Show it
-only when `original` is non-null, and label it as the saving on the displayed
-"from" offer. Partial-night discounts and overlapping promotions can make it
-differ from any individual promotion's percentage.
-
-A listed promotion need not lower the displayed minimum: another room or
-arrival can be cheaper, or its discounted rooms can be sold out. A minimum
-does not identify its room type, arrival date, or applied promotion ids, so
-you cannot link it to an exact promotion from this response.
+For a savings badge, use `100 × (1 − amountMinor / originalMinor)` from the
+exact metric you display, before rounding prices for display. Show it only
+when `original` is non-null. Label it as the saving on the displayed rate;
+do not copy a promotion's percentage onto every price in its period or apply
+the discount to the returned amount again.
 
 ## Opening a package from a hotel price
 
@@ -129,10 +131,12 @@ group, and metric); the two minima of one group can name different packages.
 Then load:
 
 ```http
-GET /api/v2/visit-types/{visitTypeId}?hotelId={hotelId}&expand=hotels,seasons
+GET /api/v2/visit-types/{visitTypeId}?hotelId={hotelId}&expand=hotel,priceFromPeriods
 ```
 
-Use the returned hotel entry for the price and the seasons, and the package
-fields for board, treatment, and stay rules. If the detail returns `404`, the
-entry is missing, or its price is `null`, refresh the hotel price instead of
-showing the outdated amount.
+Use the returned hotel listing's `priceFrom` for the complete-stay teaser and
+its `priceFromPeriods` for the rate table. Use package fields for board,
+treatment, and stay rules. If the detail returns `404`, the listing is
+missing, `available` is false, `bookingMode` is not `instant`, or its current
+`priceFrom` is null, refresh the hotel price instead of showing the outdated
+amount. Period rates need not equal that teaser.

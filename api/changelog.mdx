@@ -5,6 +5,23 @@ icon: "clock-rotate-left"
 hidden: true
 ---
 
+## 2026-11-03
+
+### Visit type price periods
+
+- **Breaking:** Visit type `hotels` becomes `hotelListings`.
+- **Breaking:** Promotion `hotels` becomes `appliesTo`.
+- **Breaking:** Visit type `expand=hotels` becomes `expand=hotel`; the old value returns `400`.
+- **Breaking:** Removed visit type `seasons` and `expand=seasons`; the expansion returns `400`.
+- **Breaking:** Visit type `priceFrom` also calculates prices for request and
+  unavailable packages when a qualifying stay exists. Hotel price eligibility is unchanged.
+- Added detail-only `expand=priceFromPeriods`: package and hotel-listing
+  [price periods](/api/objects/price-from-period), including history, three
+  price metrics, winning room types, and applied promotion ids. Periods
+  intersect configured validity with price-list coverage and promotion windows.
+- An expanded detail includes ended promotions. These do not add the
+  `special_offers` collection.
+
 ## 2026-10-30
 
 ### Visit type catalog
