@@ -19,8 +19,23 @@ function atPointer(object, pointer) {
 const ajv = new Ajv({ allErrors: true, strict: false });
 addFormats(ajv);
 const documents = new Map();
+// Mintlify reads the specs with YAML 1.1 types: an unquoted date becomes a
+// timestamp rendered as 2027-01-04T00:00:00.000Z and 09:00 becomes 540. Both
+// readings must agree, so dates and times in examples stay quoted strings.
+const yamlTypeDifferences = [];
+function compareYamlReadings(core, legacy, pointer) {
+  if (legacy instanceof Date || typeof core !== typeof legacy || Array.isArray(core) !== Array.isArray(legacy)) {
+    yamlTypeDifferences.push(`${pointer}: ${JSON.stringify(core)} reads as ${JSON.stringify(legacy)}`);
+    return;
+  }
+  if (core && typeof core === 'object') {
+    for (const key of new Set([...Object.keys(core), ...Object.keys(legacy)])) compareYamlReadings(core[key], legacy[key], `${pointer}/${key}`);
+  } else if (core !== legacy) yamlTypeDifferences.push(`${pointer}: ${JSON.stringify(core)} reads as ${JSON.stringify(legacy)}`);
+}
 for (const version of ['v1', 'v2']) {
-  const doc = parse(readFileSync(`api/${version}/openapi.yaml`, 'utf8'));
+  const source = readFileSync(`api/${version}/openapi.yaml`, 'utf8');
+  const doc = parse(source);
+  compareYamlReadings(doc, parse(source, { version: '1.1' }), `${version}#`);
   documents.set(version, doc);
   ajv.addSchema({ definitions: toJsonSchema(doc.components.schemas, version) }, version);
 }
@@ -103,5 +118,7 @@ for (const page of Object.keys(bindings)) {
     console.error(`Example bindings refer to a missing or deleted page: ${page}`);
   }
 }
+for (const difference of yamlTypeDifferences.slice(0, 20)) console.error(`YAML 1.1 reading differs, quote the value: ${difference}`);
+failures += yamlTypeDifferences.length;
 console.log(`Parsed ${parsed} MDX JSON examples; checked ${checked} schema examples; ${failures} failures.`);
 if (failures) process.exitCode = 1;

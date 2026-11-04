@@ -1,12 +1,13 @@
 ---
 title: "Price from"
-description: "The lowest buyable offer of a hotel or package: amount, original price, nights, occupancy, and references."
+description: "The lowest price of a complete stay at a hotel or in a package: amount, original price, nights, occupancy, and references."
 openapi-schema: "/api/v2/openapi.yaml PriceFromMinimum"
 ---
 
-A price minimum describes one complete, buyable offer selected by the
+A price minimum describes one complete stay selected by the
 [pricing rules](/api/prices). The same object appears in hotel prices,
-package prices, package-at-hotel prices, and seasonal prices.
+package prices, and package-at-hotel prices.
+[Price periods](/api/objects/price-from-period) have their own price object.
 
 ## Minimum fields
 
@@ -66,7 +67,8 @@ rounded average does not change.
 ## Pairs of minima
 
 Prices are grouped by currency (`CZK`, `EUR`). A currency is present only when
-it has a buyable offer. Each currency holds two independently selected minima:
+a complete stay has a price in it. Each currency holds two independently
+selected minima:
 
 | Minimum | Selection |
 | --- | --- |
@@ -81,13 +83,13 @@ and occupancy. Never derive one from the other; see
 
 | Object | Path | Compared offers |
 | --- | --- | --- |
-| [Hotel](/api/objects/hotel) | `priceFrom.{currency}.all`, `.health`, `.wellness` | All packages the hotel sells, or one category. A category group is omitted when it has no buyable offer. |
+| [Hotel](/api/objects/hotel) | `priceFrom.{currency}.all`, `.health`, `.wellness` | All packages the hotel sells, or one category. A category group is omitted when it has no complete stay. |
 | [Visit type](/api/objects/visit-type) | `priceFrom.{currency}` | The package at all its hotels. |
-| Visit type hotel entry | `hotels[].priceFrom.{currency}` | The package at that hotel. |
-| Visit type season | `hotels[].seasons[].priceFrom.{currency}` | Arrivals in that season at that hotel. |
+| Visit type hotel listing | `hotelListings[].priceFrom.{currency}` | The package at that hotel. |
 
-A whole `priceFrom` is `null` when its scope has no buyable offer. For a
-package this includes unavailable packages and packages booked on request. A
-season without an offer stays listed with `priceFrom: null`.
+A whole `priceFrom` is `null` when no complete stay exists in its scope.
+Visit type prices also cover packages booked on request and packages switched
+off in SpaPortal (`unavailableReason: "disabled"`). Hotel prices include only
+available packages with `bookingMode: "instant"`.
 
 ## Fields

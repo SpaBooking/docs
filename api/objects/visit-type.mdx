@@ -1,6 +1,6 @@
 ---
 title: "Visit type"
-description: "A stay package with its board, treatment, stay rules, hotel entries, and promotions."
+description: "A stay package with its board, treatment, stay rules, prices, hotel listings, and promotions."
 openapi-schema: "/api/v2/openapi.yaml VisitType"
 ---
 
@@ -10,9 +10,9 @@ and stay rules. The [list](/api/v2/reference/visit-types/list-visit-types)
 and [detail](/api/v2/reference/visit-types/get-a-visit-type) endpoints define
 the request parameters and show complete responses.
 
-The example on this page includes the optional `hotel` and `seasons` fields of
-the hotel entries. The API returns them only with `expand=hotels` and
-`expand=seasons`.
+The example on this page also includes the optional `hotelListings[].hotel`
+and `priceFromPeriods` fields. The API returns them only with `expand=hotel`
+and, on the detail endpoint, `expand=priceFromPeriods`.
 
 ## Name and short description
 
@@ -88,7 +88,7 @@ Codes appear in this order, each at most once:
 | `families_with_children` | Stays for families with children. |
 | `wellness` | Wellness stays. |
 | `treatment_stays` | Spa cures. |
-| `special_offers` | Packages with at least one promotion in `promotions`. |
+| `special_offers` | Packages with at least one current or future promotion for your channel. |
 | `hotel_stay` | Wellness stays without included procedures. |
 
 `advent_christmas_new_year` and `families_with_children` are assigned in
@@ -97,7 +97,9 @@ SpaPortal. The other codes are derived. `wellness` covers every package with
 `category: "health"`. `hotel_stay` covers wellness packages whose
 `treatment.procedures.count` is `0` and whose `selection` is not `fixed` with
 items; these packages are also in `wellness`. `special_offers` is present
-exactly when `promotions` is non-empty for the company's own website key.
+exactly when a current or future promotion applies to the company's own
+website key. Ended promotions, which the detail returns with
+`expand=priceFromPeriods`, do not count.
 
 ## Board
 
@@ -177,38 +179,44 @@ examinations and the procedure allowance with its selection mode.
 
 ## Prices and promotions
 
-`priceFrom` holds the lowest prices across all hotels selling the package, per
-currency, as two independent [Price from](/api/objects/price-from) minima. It
-is `null` when the package is unavailable, booked on request, or has no
-buyable offer. [Prices](/api/prices) explains how offers are selected.
+`priceFrom` holds the package's lowest prices across all its hotels, per
+currency, as two independent [Price from](/api/objects/price-from) minima.
+Packages booked on request and packages switched off in SpaPortal
+(`unavailableReason: "disabled"`) also have a `priceFrom`; check `available`
+and `bookingMode` before you offer a booking. `priceFrom` is `null` when no
+complete stay exists from today onward. [Prices](/api/prices) explains how
+stays are selected.
+
+`priceFromPeriods` lists the package's [price periods](/api/objects/price-from-period):
+ranges of nights with their prices across all hotels, including past nights.
+The detail returns it only with `expand=priceFromPeriods`. Periods do not
+check free rooms or permitted arrival days.
 
 `promotions` lists the current and future [promotions](/api/objects/promotion)
-that apply to your channel, ordered by `from`. It is empty when none applies.
+that apply to your channel, ordered by `from`, then `id`. With
+`expand=priceFromPeriods`, it also includes ended promotions, so every
+promotion id in a period can be looked up.
 
-## Hotels
+## Hotel listings
 
-`hotels` lists the active hotels selling the package, ordered by Czech hotel
-name. Every entry has:
+`hotelListings` lists the active hotels selling the package, ordered by Czech
+hotel name. Every listing has:
 
 | Field | Meaning |
 | --- | --- |
-| `hotelId` | The hotel. Present even when the hotel has no buyable offer. |
+| `hotelId` | The hotel. |
 | `priceFrom` | Lowest prices of this package at this hotel, per currency, or `null`. |
-| `hotel` | Hotel summary with `id`, localized `name`, and `stars`. Only with `expand=hotels`. |
-| `seasons` | Current and future price-list seasons with their prices. Only with `expand=seasons` on the detail endpoint. |
+| `hotel` | Hotel summary with `id`, localized `name`, and `stars`. Only with `expand=hotel`. |
+| `priceFromPeriods` | Price periods of this package at this hotel. Only with `expand=priceFromPeriods` on the detail. |
 
-An entry describes the package at one hotel; it is not a
-[Hotel](/api/objects/hotel) object. Fetch the hotel endpoint for the full
-profile. Hotel names use the
-same Czech fallback as the hotel's `name`.
+A listing describes the package at one hotel and stays present when its
+`priceFrom` is `null`. Fetch the [Hotel](/api/objects/hotel) endpoint for the
+full profile. Hotel names use
+the same Czech fallback as the hotel's `name`.
 
-Each season has an opaque `id`, the inclusive arrival-date bounds `from` and
-`to`, and `priceFrom` for arrivals in the season, or `null` when the season
-has no buyable offer. Replacing or splitting a season in the price list
-creates new ids. See [Seasonal prices](/api/prices#seasonal-prices).
-
-On the detail endpoint, `hotelId` narrows `hotels` to one entry. The rest of
-the response still describes the whole package.
+On the detail endpoint, `hotelId` narrows `hotelListings` to one entry.
+The package's `priceFrom`, `priceFromPeriods`, and `promotions` still cover
+all its hotels.
 
 ## Images
 

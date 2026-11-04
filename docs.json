@@ -70,6 +70,7 @@
               "api/objects/treatment",
               "api/objects/procedure",
               "api/objects/price-from",
+              "api/objects/price-from-period",
               "api/objects/promotion",
               "api/objects/amenity-category",
               "api/objects/amenity",

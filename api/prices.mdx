@@ -4,10 +4,12 @@ description: "Understand indicative prices, complete-stay selection, and applica
 icon: "tag"
 ---
 
-Use indicative prices for teasers and comparisons. They are calculated from
-complete buyable stays and do not reserve a room or quote a chosen set of
-guests and dates. The [Price from object](/api/objects/price-from) defines the
-fields and currency containers.
+Use indicative prices for teasers and comparisons. `priceFrom` is the lowest
+price of a complete stay with free rooms from today onward.
+`priceFromPeriods` shows how a package's prices change over time. Neither
+reserves a room or quotes a chosen set of guests and dates. The
+[Price from object](/api/objects/price-from) and
+[Price period object](/api/objects/price-from-period) define their fields.
 
 ## Two independent minima
 
@@ -33,7 +35,7 @@ not produce a buyable single-room offer.
 
 ## Selecting a complete stay
 
-An offer is buyable, and can become a minimum, only when all of these
+A complete stay can become a `priceFrom` minimum only when all of these
 conditions hold:
 
 - Its arrival and checkout satisfy the applicable stay rules.
@@ -41,8 +43,9 @@ conditions hold:
   type has remaining capacity for every night.
 - The package is in the
   [visit type catalog](/api/visit-types#publication-and-availability) of your
-  public key, with `available: true` and `bookingMode: "instant"`. A
-  `request` package is excluded even when room capacity exists.
+  public key. Hotel prices include only packages with `available: true` and
+  `bookingMode: "instant"`. Visit type prices also include packages booked
+  on request and packages switched off in SpaPortal.
 - Its hotel, package, and room type belong to the scope of the calculation:
   the hotel's packages for a hotel price, the package's hotels for a package
   price.
@@ -53,7 +56,7 @@ longer minimum stay can still win: `perStay` compares totals, and
 currencies can select different offers.
 
 Package and hotel minima compare every arrival from today in Europe/Prague
-onward; seasonal minima compare the arrivals in their season.
+onward.
 
 The total uses each occupied night's seasonal rate. The checkout date needs
 neither a nightly price nor room capacity. A gap in prices or capacity makes
@@ -109,66 +112,30 @@ discounted.
 
 ## Package and package-at-hotel prices
 
-The package's `priceFrom` compares buyable offers across all hotels that sell
-it. Each hotel entry's `priceFrom` limits the comparison to that hotel. Both
-use the selection rules above and the same
+The package's `priceFrom` compares complete stays across all hotels that sell
+it. The `priceFrom` of each `hotelListings[]` entry compares only that hotel.
+Both use the selection rules above and the same
 [Price from](/api/objects/price-from) object.
 
 Requesting one hotel with `hotelId` on the
 [detail endpoint](/api/v2/reference/visit-types/get-a-visit-type) does not
 change the package's `priceFrom`.
 
-## Seasonal prices
+## Price periods
 
-Request `GET /api/v2/visit-types/{visitTypeId}?expand=seasons` to receive
-`hotels[].seasons[]`. Add `hotelId` to return only the chosen hotel's entry.
-The hotel endpoints do not return seasons; these are prices of a particular
-package at a hotel.
-
-Every hotel of a package has the same configured price-list seasons, and each
-seasonal price belongs to one hotel. Only current and future seasons are
-returned. **Promotions do not split seasons into smaller periods or change
-their ids, `from`, or `to`.** A promotion can start or end inside a season.
-
-Each season's `priceFrom` selects the lowest eligible complete-stay prices
-for arrivals in that season, separately for each currency and metric. The
-calculation applies all promotions eligible for each candidate's channel,
-hotel, room type, and occupied nights **before** selecting the minima. Use
-the returned `amount` directly; do not apply the listed promotions again.
-The [complete-stay rules](#selecting-a-complete-stay), including the package's
-shortest permitted stay and full standard room occupancy, still apply.
-
-A seasonal minimum is not a quote for every arrival in that period. Its
-discount can be available only on some dates or in some room types. Its
-`original` is the price of the same winning offer before promotions, not a
-regular price that applies throughout the season.
-
-For a current season, search starts at the later of its first date and today
-in Europe/Prague. A cheaper offer available only for a past arrival does not
-contribute. The season keeps its original date bounds in the response.
-
-A stay can continue into another price-list season. Each occupied night is
-priced at its own seasonal rate, and the offer belongs to the season of its
-arrival. Promotions and remaining room capacity apply to the whole stay as
-above.
-
-For example, a season from 1 November 2026 to 31 March 2027 stays one entry
-when a 15% promotion covers only the nights from 4 January to 28 February
-2027 in selected room types. Its minimum can come from a discounted stay in
-one of those rooms. This does not make the whole season 15% cheaper: other
-rooms and nights outside the promotion keep their own prices. See
-[Displaying discounts](/guides/visit-types#displaying-discounts) for the
-seasonal table and a separate promotion list.
-
-A season without a buyable stay is still returned with `priceFrom: null`, also
-when the package is unavailable or booked on request. Requesting seasons does
-not change the package's `priceFrom` or the prices of its hotel entries.
+Request the detail with `expand=priceFromPeriods` to receive
+[price periods](/api/objects/price-from-period): ranges of nights with the
+package's prices, including past nights. Each period prices the package's
+shortest stay with that period's prices and promotions, without checking free
+rooms or permitted arrival days. Periods are a price overview, so their
+amounts can differ from `priceFrom`, and requesting them does not change
+`priceFrom`.
 
 ## Room capacity
 
-Prices are calculated for each request from the room capacity recorded in
+`priceFrom` is calculated for each request from the room capacity recorded in
 SpaPortal at that moment. If the cheapest stay is sold out, the calculation
-selects the next buyable stay. For
+selects the next stay with free rooms. For
 example, a sold-out CZK 3,000 offer does not beat an available CZK 4,500 offer.
 
 The response does not hold a room. A price you cache can be outdated by the
