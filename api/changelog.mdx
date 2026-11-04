@@ -45,86 +45,68 @@ hidden: true
 - Added `max`, `singleUse`, and `infantsExcluded` to `occupancy` in room type
   list, detail, and hotel expansion responses. Each value is `null` when the
   room type has no configured value; an explicit `false` is a configured value.
-- Booking and prices still use only `occupancy.standard`. The new fields are
-  informational.
-
-### Room type category filter
-
-- **Breaking:** `GET /room-types` no longer accepts the `room_bathroom`,
-  `room_equipment`, `room_accessibility`, `room_view`, and `room_kitchen`
-  aliases in `amenityCategory`. Use the room type category codes, such as
-  `view`. Prefixed codes return `400`.
+- Booking and prices use only `occupancy.standard`; the other occupancy fields
+  are informational.
 
 ### Disabled room types
 
 - Added the required boolean `disabled` to room type list, detail, and hotel
   expansion responses.
-- Room type lists now return only enabled rooms by default. Use `disabled=true`
+- Room type lists return only enabled rooms by default. Use `disabled=true`
   for disabled rooms or `disabled=all` for both states.
-- Both hotel endpoints include only enabled, non-draft rooms with `expand=roomTypes`.
-  Room details remain accessible by ID, including disabled rooms.
-- Use `disabled` instead of checking room type codes for `_DELETED`. Disabled
-  room types are excluded from new bookings, prices, and availability results;
-  historical bookings retain their references.
+- Both hotel endpoints include only enabled, non-draft rooms with
+  `expand=roomTypes`. Room type details are available by id, including
+  disabled rooms.
+- Disabled room types are excluded from new bookings, prices, and
+  availability results; past bookings keep their references.
 
 ## 2026-10-28 (v3.2.33)
 
 ### Amenity pricing, hours, and aquapark facilities
 
-- **Breaking:** The `pricing` value changes from a string to `null` or an object with
-  `type` and `schedule`, for both hotel and room type amenities (including
-  room parking). Types are `included`,
-  `included_scheduled`, `included_conditional`, and `paid`. Only
-  `included_scheduled` has a non-null schedule.
-- **Breaking:** `openingHours` is `null` when unknown, otherwise
-  `{ "schedule": [...] }`. This replaces `continuous` and `blocks`.
-  A 24/7 schedule uses all seven days with `00:00`–`24:00`.
-- Added the `includes` detail kind and `includedAmenityCodes` dictionary
+- Amenity `pricing` is `null` or an object with `type` and `schedule`, for
+  hotel and room type amenities, including room parking. The types are
+  `included`, `included_scheduled`, `included_conditional`, and `paid`; only
+  `included_scheduled` has a schedule.
+- `openingHours` is `null` when unknown, otherwise `{ "schedule": [...] }`.
+  A 24/7 schedule lists all seven days from `00:00` to `24:00`.
+- Added the `includes` detail kind and the `includedAmenityCodes` dictionary
   metadata for aquaparks. Nested facilities return resolved conditions and
   support `expand=amenityLabels`.
 - Hotel amenity filters also match facilities in an aquapark's `includes`,
-  before pagination. Own hotel facilities remain separate amenities.
-- Added `note` to aquapark, indoor pool, outdoor pool, sauna, and laundry.
-  Children's pools and whirlpools now support location, pricing, hours, and
-  note instead of presence only. Sauna retains its type options.
-- The amenity dictionary version changes. Refresh cached dictionaries.
-  See [Amenities](/api/amenities) for field meanings and examples.
+  before pagination. The hotel's own facilities are separate amenities.
+- Added `note` to aquapark, indoor pool, outdoor pool, sauna, and laundry, and
+  location, pricing, hours, and note to children's pools and whirlpools. See
+  [Amenities](/api/amenities) for field meanings and examples.
 
 ## 2026-10-21 (v3.2.32)
 
-### Single room type name
+### Room type name
 
-- **Breaking change:** room type `name` is a string instead of a localized
-  object. Read `room.name` directly instead of selecting a language key.
-  This applies to room type lists, details, and hotel `expand=roomTypes`.
-- The name is shared by all languages. Automatic name composition and
-  separate guest-name translations have been removed. `Accept-Language`
-  continues to select description, label, and image `alt` translations.
-- Room type `search` matches the single name. Missing image `alt` values fall
-  back to this name in each requested language.
-  See [Room type names and labels](/api/objects/room-type#names-and-labels).
+- Room type `name` is a single string shared by all languages, in room type
+  lists, details, and hotel `expand=roomTypes`. `Accept-Language` selects the
+  description, label, and image `alt` translations.
+- Room type `search` matches the name. A missing image `alt` falls back to the
+  name in each requested language. See
+  [Room type names and labels](/api/objects/room-type#names-and-labels).
 
 ### Room amenity coverage
 
 - Added the `coverage` detail kind to selected room type amenities. Assigned
   values return `coverage: "all"` or `coverage: "some"` in room type lists,
-  details, and hotel expansions. Existing assignments default to `all`.
-- This is an additive change. Amenities without this detail kind and hotel
-  amenities retain their current fields. Amenity filters match both values.
-- The amenity dictionary version changes. Refresh cached dictionaries.
-  See [Coverage](/api/amenities#coverage).
+  details, and hotel expansions, and amenity filters match both values. See
+  [Coverage](/api/amenities#coverage).
 
 ### Room inclusions
 
 - Added the `inclusions` category in scope `roomType`, containing `parking`,
   `welcome_drink`, and `fruit_bowl`. Room responses return assigned benefits
   through `amenityCategories`, including room types embedded in hotels.
-- Room parking uses the existing `pricing` detail kind. `included` identifies
-  parking included in the room price. Hotel parking and its `note` remain
-  unchanged.
+- Room parking uses the `pricing` detail kind; `included` means that parking
+  is included in the room price.
 - The category supports `amenityCategory=inclusions`, amenity filters, and
-  `expand=amenityLabels`. The dictionary version changes; refresh cached
-  dictionaries. See [Included with this room](/api/amenities#included-with-this-room).
+  `expand=amenityLabels`. See
+  [Included with this room](/api/amenities#included-with-this-room).
 
 ## 2026-10-07 (v3.2.24)
 
@@ -132,136 +114,103 @@ hidden: true
 
 - Added `buildings` to hotel list and detail responses, without requiring
   `expand`. Each item contains `id`, localized `name`, and localized `label`.
-- The array includes all configured buildings in stored order. Hotels without
-  buildings return `[]`; hotels with one building return one item.
+- The array includes all buildings of the hotel in the order set in
+  SpaPortal. Hotels without buildings return `[]`; hotels with one building
+  return one item.
 - Match a building's `id` to `roomType.building.id`. Texts follow
   `Accept-Language`, with `null` for missing translations.
-
-### Image response
-
-- **Breaking:** Removed `thumbnailUrl` from hotel and room type images,
-  including room types embedded in hotels.
-- Use an available `variants` URL for previews and `url` as the fallback.
-  Images now contain `url`, `width`, `height`, `alt`, and `variants`.
 
 ## 2026-09-30 (v3.2.21)
 
 ### Assigned amenity categories
 
-- **Breaking:** Hotel and room type responses omit `amenityCategories[].category.scope`,
-  including embedded room types and `expand=amenityLabels`. Categories contain
-  `code` and, when expanded, `label`.
-- Use the containing resource type to choose the dictionary scope: `hotel`
-  for hotel amenities and `roomType` for room type amenities.
-- Dictionary categories retain `scope`. Dictionary contents, version, ETags,
-  and the `scope` query parameter are unchanged.
+- Assigned amenity categories in hotel and room type responses contain `code`
+  and, with `expand=amenityLabels`, `label`. The resource decides the
+  dictionary scope: `hotel` for hotel amenities and `roomType` for room type
+  amenities.
 
 ## 2026-09-29 (documentation)
 
 ### Room type contract
 
-Room-type endpoints, the `scope=roomType` amenity dictionary, and room-type
-expansions now follow the same [versioning policy](/api/versioning) as hotels.
-Breaking changes require a new major API version.
+Room type endpoints, the `scope=roomType` amenity dictionary, and room type
+expansions follow the [versioning policy](/api/versioning), like hotels.
 
 ## 2026-09-29 (v3.2.20)
 
 ### Amenity category scopes
 
-- **Breaking:** Omitting `scope` on `GET /amenity-categories` now returns both
-  hotel and room type dictionaries. Send `scope=hotel` to keep fetching only
-  the hotel dictionary; `scope=roomType` returns only room categories.
-- Categories now always include `scope: "hotel"` or `scope: "roomType"`, in
-  the dictionary, assigned values, and label expansions. Match categories by
-  `scope` and `code`; both scopes contain `accessibility`.
-- **Breaking (room types):** Category codes no longer use the `room_`
-  prefix: `bathroom`, `equipment`, `accessibility`, `view`, and `kitchen`.
-  Existing prefixed category filters remain accepted as deprecated aliases.
-  Individual amenity codes and labels are unchanged.
-- The dictionary version changes for this contract. Refresh cached dictionaries.
-  Combined and filtered responses have distinct ETags.
+- `GET /amenity-categories` without `scope` returns both the hotel and the
+  room type dictionary. `scope=hotel` or `scope=roomType` returns one of them.
+- Dictionary categories include `scope: "hotel"` or `scope: "roomType"`. Match
+  categories by `scope` and `code`; both scopes contain `accessibility`.
+- Room type categories use the codes `bathroom`, `equipment`,
+  `accessibility`, `view`, and `kitchen`.
+- Combined and filtered dictionary responses have distinct ETags.
 
 ## 2026-09-29
 
 ### Room types and amenities
 
-- **Breaking (room types):** `name` replaces `category`,
-  `occupancy.standard` replaces `beds`, and `amenityCategories` replaces
-  `facilities`. These changes also apply to room types embedded in hotels.
-- **Breaking:** Replace the `beds` query filter with `occupancy`. Requests
-  using `beds` now return `400`.
+- Room types return `name`, `occupancy.standard`, and `amenityCategories`,
+  also when embedded in hotels, and can be filtered by `occupancy`.
 - Added `unitType`, `tier`, `bedConfiguration`, `size`, `renovationYear`,
-  `rules`, and `building`. Enum labels are inline. Missing English and Russian
-  generated names are composed in the response. Custom names keep their saved
-  translations. The pet rule includes the hotel's policy.
+  `rules`, and `building`. Enum values carry their labels, and the pet rule
+  includes the hotel's policy.
 - Added `unitType`, `tier`, `amenities`, and `amenityCategory` filters on room
   types. `expand` accepts `hotel` and `amenityLabels` together.
-- Added `scope=roomType` to the amenity dictionary. The default `scope=hotel`
-  response body is unchanged. `expand=roomTypes,amenityLabels` includes labels
-  on embedded room amenities.
-- The amenity version now covers both scopes and is also returned on room type
-  endpoints. Its value changes once with this release; refresh both cached
-  dictionaries. ETags now include the scope.
+- Added `scope=roomType` to the amenity dictionary.
+  `expand=roomTypes,amenityLabels` includes labels on embedded room amenities.
+- The amenity version covers both scopes and is also returned on room type
+  endpoints. ETags include the scope.
 
 ### Localization
 
-- `Accept-Language: *` now returns every supported locale key, like an omitted
-  header. It previously returned only `cs-CZ`. Node.js `fetch` sends `*` when
-  you do not set the header.
+- `Accept-Language: *` returns every supported locale key, like an omitted
+  header. Node.js `fetch` sends `*` when you do not set the header.
 - Inside a list, `*` adds the locales you do not list, at its own quality
-  value. Locales listed with `q=0` stay excluded.
+  value. Locales listed with `q=0` are excluded.
 
 ## 2026-09-18
 
 ### Hotel and room type images
 
 - Added `width`, `height`, localized `alt`, and `variants` to every image,
-  including room types embedded in a hotel response. Existing `url` and
-  `thumbnailUrl` fields retain their behavior.
+  including room types embedded in a hotel response.
 - `variants` contains available WebP URLs at widths 480, 960, 1440, and 1920.
-  Sizes larger than the original are omitted. When no variant exists, fall back
-  to `thumbnailUrl` and then `url`.
-- Unavailable dimensions are explicitly `null`; unavailable variants are `{}`.
+  Sizes larger than the original are omitted. When no variant exists, use
+  `url`.
+- Unavailable dimensions are `null`; unavailable variants are `{}`.
 - `alt` follows `Accept-Language`. Missing translations fall back to the hotel
-  name or room category. Preserve an explicit empty string for decorative images.
-- `thumbnailUrl` was deprecated in this release. Its removal is listed above.
+  name or the room type name. Preserve an explicit empty string for decorative
+  images.
 
 ## 2026-09-10
 
 ### Hotels
 
-- **Breaking:** `priceFrom` replaces `perNight`, `perNightOriginal`,
-  `minimumStay`, `minimumStayOriginal`, `guests`, and `minimumNights`. Under
-  each currency there is now the hotel-wide price `all` and the categories
-  `health` and `wellness`, each carrying two independent minima:
-  `perPersonPerNight` and `perStay`. Every minimum reports
-  its own `amount`, `original`, `nights`, `occupancy`, and `visitType`. See
+- Hotel `priceFrom` holds, per currency, the hotel-wide price `all` and the
+  categories `health` and `wellness`. Each carries two independent minima,
+  `perPersonPerNight` and `perStay`, and every minimum reports its own
+  `amount`, `original`, `nights`, `occupancy`, and `visitType`. See
   [Prices](/api/prices).
-- A category is omitted when it has no usable price in the currency. `all`
-  also includes visit types without a category. Compare minima using their
-  per-guest selection metric; raw stay totals can refer to different occupancies.
-- A promotion lowers a "from" price only when it covers the whole stay.
-- Visit types whose selling period has ended no longer contribute a "from"
-  price.
+- A category is omitted when it has no price in the currency. The categories
+  follow the visit type
+  [`category`](/api/objects/visit-type#category-payer-and-booking-mode).
 - Send `Accept-Language`: `priceFrom` embeds visit type names, and without the
   header every name is returned in all four locales.
-- The category behind `health` and `wellness` is exposed in API v1 as
-  `stay_category` on every visit type object.
 
 ## 2026-07-28
 
 ### Amenities
 
-- `GET /amenity-categories` always includes each amenity's `options` list. The
-  `expand=options` query parameter is removed; option definitions are returned
-  by default.
-- Hotel amenity values now return the category, the amenity, and each selected
-  option by `code` only; localized labels come from the dictionary. This drops
-  the inline `category.label` and per-option `label` that hotel responses
-  previously carried.
-- `GET /hotels` and `GET /hotels/{hotelId}` accept `expand=amenityLabels`, which
-  inlines the localized `label` on each amenity category, amenity, and selected
-  option for a self-contained response. `expand` accepts a comma-separated list.
+- `GET /amenity-categories` includes each amenity's `options` list.
+- Hotel amenity values return the category, the amenity, and each selected
+  option by `code`; localized labels come from the dictionary.
+- `GET /hotels` and `GET /hotels/{hotelId}` accept `expand=amenityLabels`,
+  which inlines the localized `label` on each amenity category, amenity, and
+  selected option for a self-contained response. `expand` accepts a
+  comma-separated list.
 
 ## 2026-07-27
 
@@ -279,11 +228,9 @@ Breaking changes require a new major API version.
 
 ### Hotels
 
-- `priceFrom` now returns the cheapest available current or future room price
-  for the room's standard occupancy. It includes nightly and minimum-stay
-  totals, occupancy, and minimum nights for each available currency. Hotels
-  without a usable price return `null`. Applicable public-channel promotions
-  are included together with their original prices.
+- Added hotel `priceFrom` with the lowest current and future prices,
+  including applicable promotions and their original prices. It is `null`
+  when the hotel has no price.
 
 ### Amenities
 
@@ -291,21 +238,13 @@ Breaking changes require a new major API version.
   in `data` contains `category` and an `amenities` array.
 - Hotel responses expose assigned amenity values under `amenityCategories`.
   Categories without assigned amenities are omitted.
-- Amenity option definitions are omitted from the dictionary by default. Use
-  `expand=options` to include every supported choice and its localized label.
-- Amenity-specific choices use the generic `options` detail kind and localized
-  `options` objects. This replaces the public `parking_types`, `sauna_types`,
-  and `dietary_options` detail kinds and their corresponding value fields.
-- Hotel amenity values now include only the detail fields mapped from the
-  corresponding amenity dictionary entry's `detailKinds`. The `code` field is
-  always present.
-- Supported fields that are not filled retain their neutral value: scalar
-  fields are `null`, arrays are empty, opening-hour blocks are empty, and
-  requested note translations are `null`.
-- Amenity charge information is returned exclusively through `access` using
-  `included`, `conditional`, or `paid`.
-- Dictionary entries with an empty `detailKinds` array are presence-only. Their
-  hotel values contain only `code`.
+- Amenity-specific choices use the generic `options` detail kind.
+- Hotel amenity values contain `code` and the detail fields listed in the
+  dictionary entry's `detailKinds`.
+- Detail fields that are not filled have neutral values: scalar fields are
+  `null`, arrays are empty, and requested note translations are `null`.
+- Dictionary entries with an empty `detailKinds` array are presence-only.
+  Their hotel values contain only `code`.
 
 ## 2026-07-23
 
@@ -320,8 +259,8 @@ Breaking changes require a new major API version.
 
 ### Room types
 
-- Invalid cursors, cursors created for another sort mode, and cursors belonging to another resource now return `400` instead of silently restarting pagination.
+- Invalid cursors, cursors created for another sort mode, and cursors of
+  another resource return `400`.
 - Empty localized strings are returned as `null`.
-- Empty `code` and `search` query parameters are treated as omitted parameters.
-
-Legacy room-type cursors using `lastSortValue` remain supported.
+- Empty `code` and `search` query parameters are treated as omitted
+  parameters.
