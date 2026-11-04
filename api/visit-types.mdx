@@ -63,12 +63,12 @@ recalculate `priceFrom` for the requested stay: a package matching
 
 ## Hotels and prices
 
-The hotel entries say where the package is sold; an entry stays present when
+`hotelListings` says where the package is sold; a listing stays present when
 its price is `null`.
 [Prices](/api/prices#package-and-package-at-hotel-prices) explains the package
-price and the price of each entry.
+price and the price of each listing.
 
-The optional `priceFromPeriods` shows rates across configured validity and
-price-list coverage, split at applicable promotion changes. Periods include
-history and do not check capacity or arrival rules. See
-[Price periods](/api/objects/price-from-period).
+With `expand=priceFromPeriods`, the detail also returns
+[price periods](/api/objects/price-from-period): the package's prices by
+date, including past dates. Periods do not check free rooms or permitted
+arrival days.

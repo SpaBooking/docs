@@ -1,13 +1,13 @@
 ---
 title: "Price from"
-description: "The lowest complete-stay price of a hotel or package: amount, original price, nights, occupancy, and references."
+description: "The lowest price of a complete stay at a hotel or in a package: amount, original price, nights, occupancy, and references."
 openapi-schema: "/api/v2/openapi.yaml PriceFromMinimum"
 ---
 
 A price minimum describes one complete stay selected by the
 [pricing rules](/api/prices). The same object appears in hotel prices,
 package prices, and package-at-hotel prices.
-[Price periods](/api/objects/price-from-period) use a separate minimum object.
+[Price periods](/api/objects/price-from-period) have their own price object.
 
 ## Minimum fields
 
@@ -67,7 +67,8 @@ rounded average does not change.
 ## Pairs of minima
 
 Prices are grouped by currency (`CZK`, `EUR`). A currency is present only when
-it has a complete-stay price. Each currency holds two independently selected minima:
+a complete stay has a price in it. Each currency holds two independently
+selected minima:
 
 | Minimum | Selection |
 | --- | --- |
@@ -82,14 +83,13 @@ and occupancy. Never derive one from the other; see
 
 | Object | Path | Compared offers |
 | --- | --- | --- |
-| [Hotel](/api/objects/hotel) | `priceFrom.{currency}.all`, `.health`, `.wellness` | All packages the hotel sells, or one category. A category group is omitted when it has no buyable offer. |
+| [Hotel](/api/objects/hotel) | `priceFrom.{currency}.all`, `.health`, `.wellness` | All packages the hotel sells, or one category. A category group is omitted when it has no complete stay. |
 | [Visit type](/api/objects/visit-type) | `priceFrom.{currency}` | The package at all its hotels. |
 | Visit type hotel listing | `hotelListings[].priceFrom.{currency}` | The package at that hotel. |
 
-A whole `priceFrom` is `null` when its scope has no qualifying complete stay.
-Visit type prices are calculated independently of `available` and
-`bookingMode`; request and disabled packages can have prices. Ended packages
-have no future permitted stay and therefore have `priceFrom: null`. Hotel
-prices compare only available packages with `bookingMode: "instant"`.
+A whole `priceFrom` is `null` when no complete stay exists in its scope.
+Visit type prices also cover packages booked on request and packages switched
+off in SpaPortal (`unavailableReason: "disabled"`). Hotel prices include only
+available packages with `bookingMode: "instant"`.
 
 ## Fields

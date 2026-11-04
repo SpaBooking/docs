@@ -277,6 +277,36 @@ function expectSemantics(value, valid, label) {
   else assert.throws(() => assertVisitTypeExample(value), undefined, label);
 }
 expectSemantics(base, true, 'default semantics');
+// The Visit type object page documents every field, so its example carries the
+// optional fields of both expansions and follows the same response rules.
+{
+  const value = schemas.VisitType.example;
+  expectSchema('VisitType', value, true, 'object page example');
+  assertVisitTypeExample(value);
+  checked++;
+  assert('priceFromPeriods' in value, 'object page example shows priceFromPeriods');
+  for (const listing of value.hotelListings) assert('hotel' in listing && 'priceFromPeriods' in listing, 'object page example shows both listing expansions');
+}
+// One identity per hotel across all examples.
+{
+  const namesById = new Map(), idsByName = new Map();
+  (function collect(node) {
+    if (!node || typeof node !== 'object') return;
+    for (const [key, child] of Object.entries(node)) {
+      if (key === 'hotel' && child && typeof child.id === 'string' && child.name && typeof child.name === 'object') {
+        const name = child.name['cs-CZ'];
+        if (!namesById.has(child.id)) namesById.set(child.id, new Set());
+        if (!idsByName.has(name)) idsByName.set(name, new Set());
+        namesById.get(child.id).add(name);
+        idsByName.get(name).add(child.id);
+      }
+      collect(child);
+    }
+  })(doc);
+  for (const [id, names] of namesById) assert.equal(names.size, 1, `hotel ${id} has one name`);
+  for (const [name, ids] of idsByName) assert.equal(ids.size, 1, `${name} has one hotel id`);
+  checked++;
+}
 expectSemantics(changed(v => { v.board.meals[3].included = true; }), false, 'inconsistent all inclusive');
 expectSemantics(changed(v => { v.board.meals[1].meal = 'breakfast'; }), false, 'duplicate meal code');
 expectSemantics(changed(v => { v.stayLength.max = 0; }), false, 'invalid min/max relation');
@@ -446,7 +476,7 @@ for (const field of ['from', 'to', 'activePromotionIds', 'priceFrom']) {
   expectSchema('PriceFromPeriod', value, false, `period requires ${field}`);
 }
 for (const field of ['amount', 'original', 'nights', 'occupancy', 'hotel', 'roomTypeId', 'appliedPromotionIds']) {
-  const value = clone(schemas.PriceFromPeriodMinimum.example); delete value[field];
+  const value = clone(schemas.PriceFromPeriod.example.priceFrom.EUR.perPersonPerStay); delete value[field];
   expectSchema('PriceFromPeriodMinimum', value, false, `period minimum requires ${field}`);
 }
 // Hotel example: the hotel-wide group never exceeds a category group.

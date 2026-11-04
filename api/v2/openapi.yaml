@@ -1371,7 +1371,7 @@ paths:
         rules.
 
         The response examples are `GET /visit-types` without query parameters (`without-expansions`) and
-        the same request with `expand=hotel`, both sent with the company's own
+        the same request with `expand=hotel` (`expand-hotel`), both sent with the company's own
         website key and `Accept-Language: cs-CZ,de` on 2026-11-03.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
@@ -1541,8 +1541,8 @@ paths:
               enum:
                 - hotel
           description: >-
-            hotel adds hotelListings[].hotel. Price periods are available only on the detail;
-            priceFromPeriods returns 400 here. Unknown values return 400.
+            `hotel` adds `hotelListings[].hotel`. `priceFromPeriods` is accepted only by the detail
+            endpoint and returns `400` here. See [Expand](/api/expand).
       responses:
         "200":
           description: A page of visit types.
@@ -1557,8 +1557,8 @@ paths:
                 without-expansions:
                   summary: Every package on one page (default request)
                   description: "Illustrative response for the company's own website channel with `Accept-Language:
-                    cs-CZ,de` and today = 2026-10-30. The three packages fit on the default page;
-                    the package without `webOrder` comes last."
+                    cs-CZ,de` and today = 2026-11-03. The four packages fit on the default page; the
+                    package without `webOrder` comes last."
                   value:
                     data:
                       - id: 6720c0a1b2c3d4e5f6a7b801
@@ -1597,11 +1597,11 @@ paths:
                           min: 1
                           max: 3
                         validity:
-                          - from: 2026-11-01
-                            to: 2027-03-31
+                          - from: "2026-11-01"
+                            to: "2027-03-31"
                             toAppliesTo: departure
-                          - from: 2027-04-01
-                            to: 2027-10-31
+                          - from: "2027-04-01"
+                            to: "2027-10-31"
                             toAppliesTo: arrival
                         arrival:
                           type: weekdays
@@ -1757,8 +1757,8 @@ paths:
                               cs-CZ: Podzimní sleva
                               de: Herbstrabatt
                             percentage: 10
-                            from: 2026-11-01
-                            to: 2026-12-19
+                            from: "2026-11-01"
+                            to: "2026-12-19"
                             appliesTo: null
                         hotelListings:
                           - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -2182,6 +2182,163 @@ paths:
                               w480: https://cdn.example.com/visit-types/wellness-stay/generation-1/w480.webp
                               w960: https://cdn.example.com/visit-types/wellness-stay/generation-1/w960.webp
                               w1440: https://cdn.example.com/visit-types/wellness-stay/generation-1/w1440.webp
+                      - id: 6720c0a1b2c3d4e5f6a7b804
+                        name:
+                          cs-CZ: Zimní lázeňský pobyt
+                          de: Winterkur
+                        shortDescription:
+                          cs-CZ: Lázeňská léčba s lékařskými prohlídkami, přírodními procedurami a polopenzí.
+                          de: Kuraufenthalt mit ärztlichen Untersuchungen, natürlichen Anwendungen und Halbpension.
+                        category: health
+                        payer: guest
+                        bookingMode: instant
+                        available: true
+                        unavailableReason: null
+                        webOrder: 3
+                        channelContent:
+                          collections:
+                            - treatment_stays
+                            - special_offers
+                        board:
+                          meals:
+                            - meal: breakfast
+                              included: true
+                              changeable: false
+                            - meal: lunch
+                              included: false
+                              changeable: true
+                            - meal: dinner
+                              included: true
+                              changeable: false
+                            - meal: all_inclusive
+                              included: false
+                              changeable: false
+                        stayLength:
+                          unit: night
+                          min: 7
+                          max: 7
+                        validity: null
+                        arrival:
+                          type: weekdays
+                          weekdays:
+                            - monday
+                            - tuesday
+                            - wednesday
+                            - thursday
+                            - friday
+                            - saturday
+                            - sunday
+                        treatment:
+                          exams:
+                            entry: true
+                            interim: true
+                            interimFromNights: 14
+                            final: true
+                            finalFromNights: null
+                          procedures:
+                            count: 15
+                            per: week
+                            selection: fixed
+                            items:
+                              - code: carbon_dioxide_bath
+                                label:
+                                  cs-CZ: Kysličníková koupel
+                                  de: Kohlensäurebad
+                                category:
+                                  code: hydrotherapy
+                                  label:
+                                    cs-CZ: Vodoléčba
+                                    de: Hydrotherapie
+                                naturalSource: carbon_dioxide
+                                count: 6
+                              - code: peat_wrap
+                                label:
+                                  cs-CZ: Rašelinový zábal
+                                  de: Moorpackung
+                                category:
+                                  code: thermotherapy
+                                  label:
+                                    cs-CZ: Teploléčba
+                                    de: Thermotherapie
+                                naturalSource: peat
+                                count: 4
+                              - code: classic_full_body_massage
+                                label:
+                                  cs-CZ: Klasická celková masáž
+                                  de: Klassische Ganzkörpermassage
+                                category:
+                                  code: physiotherapy
+                                  label:
+                                    cs-CZ: Fyzioterapie
+                                    de: Physiotherapie
+                                naturalSource: null
+                                count: 3
+                              - code: drinking_cure
+                                label:
+                                  cs-CZ: Pitná kúra
+                                  de: Trinkkur
+                                category:
+                                  code: other
+                                  label:
+                                    cs-CZ: Ostatní
+                                    de: Sonstiges
+                                naturalSource: mineral_water
+                                count: 14
+                        priceFrom: null
+                        promotions:
+                          - id: 6720c0a1b2c3d4e5f6a7d311
+                            name:
+                              cs-CZ: Zimní sleva
+                              de: null
+                            percentage: 15
+                            from: "2026-11-01"
+                            to: "2027-03-31"
+                            appliesTo: null
+                          - id: 6720c0a1b2c3d4e5f6a7d314
+                            name:
+                              cs-CZ: Lednový týden v Bellevue
+                              de: null
+                            percentage: 20
+                            from: "2027-01-05"
+                            to: "2027-01-15"
+                            appliesTo:
+                              - hotelId: 6720c0a1b2c3d4e5f6a7c103
+                                roomTypeIds: null
+                          - id: 6720c0a1b2c3d4e5f6a7d312
+                            name:
+                              cs-CZ: Superior za výhodnou cenu
+                              de: null
+                            percentage: 30
+                            from: "2027-01-10"
+                            to: "2027-01-12"
+                            appliesTo:
+                              - hotelId: 6720c0a1b2c3d4e5f6a7c101
+                                roomTypeIds:
+                                  - 6720c0a1b2c3d4e5f6a7f101
+                          - id: 6720c0a1b2c3d4e5f6a7d313
+                            name:
+                              cs-CZ: Lednová akce
+                              de: null
+                            percentage: 10
+                            from: "2027-01-12"
+                            to: "2027-01-20"
+                            appliesTo: null
+                        hotelListings:
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c103
+                            priceFrom: null
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c101
+                            priceFrom: null
+                        images:
+                          - url: https://cdn.example.com/visit-types/winter-stay.jpg
+                            width: 1600
+                            height: 1066
+                            alt:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
+                            variants:
+                              w480: https://cdn.example.com/visit-types/winter-stay/generation-1/w480.webp
+                              w960: https://cdn.example.com/visit-types/winter-stay/generation-1/w960.webp
+                              w1440: https://cdn.example.com/visit-types/winter-stay/generation-1/w1440.webp
                       - id: 6720c0a1b2c3d4e5f6a7b802
                         name:
                           cs-CZ: Komplexní lázeňská péče
@@ -2217,16 +2374,16 @@ paths:
                           min: 3
                           max: 4
                         validity:
-                          - from: 2026-11-01
-                            to: 2027-06-30
+                          - from: "2026-11-01"
+                            to: "2027-06-30"
                             toAppliesTo: arrival
                         arrival:
                           type: dates
                           dates:
-                            - 2026-11-08
-                            - 2026-11-29
-                            - 2027-01-10
-                            - 2027-02-07
+                            - "2026-11-08"
+                            - "2026-11-29"
+                            - "2027-01-10"
+                            - "2027-02-07"
                         treatment:
                           exams:
                             entry: true
@@ -2335,11 +2492,11 @@ paths:
                       limit: 25
                       nextCursor: null
                       hasMore: false
-                      total: 3
+                      total: 4
                 expand-hotel:
                   summary: The same page with expand=hotel
                   description: Same context as the first example. `expand=hotel` adds the hotel summary to every hotel
-                    entry.
+                    listing.
                   value:
                     data:
                       - id: 6720c0a1b2c3d4e5f6a7b801
@@ -2378,11 +2535,11 @@ paths:
                           min: 1
                           max: 3
                         validity:
-                          - from: 2026-11-01
-                            to: 2027-03-31
+                          - from: "2026-11-01"
+                            to: "2027-03-31"
                             toAppliesTo: departure
-                          - from: 2027-04-01
-                            to: 2027-10-31
+                          - from: "2027-04-01"
+                            to: "2027-10-31"
                             toAppliesTo: arrival
                         arrival:
                           type: weekdays
@@ -2538,8 +2695,8 @@ paths:
                               cs-CZ: Podzimní sleva
                               de: Herbstrabatt
                             percentage: 10
-                            from: 2026-11-01
-                            to: 2026-12-19
+                            from: "2026-11-01"
+                            to: "2026-12-19"
                             appliesTo: null
                         hotelListings:
                           - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -2987,6 +3144,175 @@ paths:
                               w480: https://cdn.example.com/visit-types/wellness-stay/generation-1/w480.webp
                               w960: https://cdn.example.com/visit-types/wellness-stay/generation-1/w960.webp
                               w1440: https://cdn.example.com/visit-types/wellness-stay/generation-1/w1440.webp
+                      - id: 6720c0a1b2c3d4e5f6a7b804
+                        name:
+                          cs-CZ: Zimní lázeňský pobyt
+                          de: Winterkur
+                        shortDescription:
+                          cs-CZ: Lázeňská léčba s lékařskými prohlídkami, přírodními procedurami a polopenzí.
+                          de: Kuraufenthalt mit ärztlichen Untersuchungen, natürlichen Anwendungen und Halbpension.
+                        category: health
+                        payer: guest
+                        bookingMode: instant
+                        available: true
+                        unavailableReason: null
+                        webOrder: 3
+                        channelContent:
+                          collections:
+                            - treatment_stays
+                            - special_offers
+                        board:
+                          meals:
+                            - meal: breakfast
+                              included: true
+                              changeable: false
+                            - meal: lunch
+                              included: false
+                              changeable: true
+                            - meal: dinner
+                              included: true
+                              changeable: false
+                            - meal: all_inclusive
+                              included: false
+                              changeable: false
+                        stayLength:
+                          unit: night
+                          min: 7
+                          max: 7
+                        validity: null
+                        arrival:
+                          type: weekdays
+                          weekdays:
+                            - monday
+                            - tuesday
+                            - wednesday
+                            - thursday
+                            - friday
+                            - saturday
+                            - sunday
+                        treatment:
+                          exams:
+                            entry: true
+                            interim: true
+                            interimFromNights: 14
+                            final: true
+                            finalFromNights: null
+                          procedures:
+                            count: 15
+                            per: week
+                            selection: fixed
+                            items:
+                              - code: carbon_dioxide_bath
+                                label:
+                                  cs-CZ: Kysličníková koupel
+                                  de: Kohlensäurebad
+                                category:
+                                  code: hydrotherapy
+                                  label:
+                                    cs-CZ: Vodoléčba
+                                    de: Hydrotherapie
+                                naturalSource: carbon_dioxide
+                                count: 6
+                              - code: peat_wrap
+                                label:
+                                  cs-CZ: Rašelinový zábal
+                                  de: Moorpackung
+                                category:
+                                  code: thermotherapy
+                                  label:
+                                    cs-CZ: Teploléčba
+                                    de: Thermotherapie
+                                naturalSource: peat
+                                count: 4
+                              - code: classic_full_body_massage
+                                label:
+                                  cs-CZ: Klasická celková masáž
+                                  de: Klassische Ganzkörpermassage
+                                category:
+                                  code: physiotherapy
+                                  label:
+                                    cs-CZ: Fyzioterapie
+                                    de: Physiotherapie
+                                naturalSource: null
+                                count: 3
+                              - code: drinking_cure
+                                label:
+                                  cs-CZ: Pitná kúra
+                                  de: Trinkkur
+                                category:
+                                  code: other
+                                  label:
+                                    cs-CZ: Ostatní
+                                    de: Sonstiges
+                                naturalSource: mineral_water
+                                count: 14
+                        priceFrom: null
+                        promotions:
+                          - id: 6720c0a1b2c3d4e5f6a7d311
+                            name:
+                              cs-CZ: Zimní sleva
+                              de: null
+                            percentage: 15
+                            from: "2026-11-01"
+                            to: "2027-03-31"
+                            appliesTo: null
+                          - id: 6720c0a1b2c3d4e5f6a7d314
+                            name:
+                              cs-CZ: Lednový týden v Bellevue
+                              de: null
+                            percentage: 20
+                            from: "2027-01-05"
+                            to: "2027-01-15"
+                            appliesTo:
+                              - hotelId: 6720c0a1b2c3d4e5f6a7c103
+                                roomTypeIds: null
+                          - id: 6720c0a1b2c3d4e5f6a7d312
+                            name:
+                              cs-CZ: Superior za výhodnou cenu
+                              de: null
+                            percentage: 30
+                            from: "2027-01-10"
+                            to: "2027-01-12"
+                            appliesTo:
+                              - hotelId: 6720c0a1b2c3d4e5f6a7c101
+                                roomTypeIds:
+                                  - 6720c0a1b2c3d4e5f6a7f101
+                          - id: 6720c0a1b2c3d4e5f6a7d313
+                            name:
+                              cs-CZ: Lednová akce
+                              de: null
+                            percentage: 10
+                            from: "2027-01-12"
+                            to: "2027-01-20"
+                            appliesTo: null
+                        hotelListings:
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c103
+                            priceFrom: null
+                            hotel:
+                              id: 6720c0a1b2c3d4e5f6a7c103
+                              name:
+                                cs-CZ: Hotel Bellevue
+                                de: Hotel Bellevue
+                              stars: 3
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c101
+                            priceFrom: null
+                            hotel:
+                              id: 6720c0a1b2c3d4e5f6a7c101
+                              name:
+                                cs-CZ: Hotel Pramen
+                                de: Hotel Pramen
+                              stars: 4
+                        images:
+                          - url: https://cdn.example.com/visit-types/winter-stay.jpg
+                            width: 1600
+                            height: 1066
+                            alt:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
+                            variants:
+                              w480: https://cdn.example.com/visit-types/winter-stay/generation-1/w480.webp
+                              w960: https://cdn.example.com/visit-types/winter-stay/generation-1/w960.webp
+                              w1440: https://cdn.example.com/visit-types/winter-stay/generation-1/w1440.webp
                       - id: 6720c0a1b2c3d4e5f6a7b802
                         name:
                           cs-CZ: Komplexní lázeňská péče
@@ -3022,16 +3348,16 @@ paths:
                           min: 3
                           max: 4
                         validity:
-                          - from: 2026-11-01
-                            to: 2027-06-30
+                          - from: "2026-11-01"
+                            to: "2027-06-30"
                             toAppliesTo: arrival
                         arrival:
                           type: dates
                           dates:
-                            - 2026-11-08
-                            - 2026-11-29
-                            - 2027-01-10
-                            - 2027-02-07
+                            - "2026-11-08"
+                            - "2026-11-29"
+                            - "2027-01-10"
+                            - "2027-02-07"
                         treatment:
                           exams:
                             entry: true
@@ -3152,7 +3478,7 @@ paths:
                       limit: 25
                       nextCursor: null
                       hasMore: false
-                      total: 3
+                      total: 4
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -3172,19 +3498,20 @@ paths:
         [Authentication](/api/authentication) determines the channel and the
         companies in scope.
 
-        Use `expand=priceFromPeriods` for the package and hotel listings’
-        [price periods](/api/objects/price-from-period); see the
+        Use `expand=priceFromPeriods` to add [price periods](/api/objects/price-from-period)
+        to the package and its hotel listings; see the
         [package page guide](/guides/visit-types#price-periods).
 
-        The response examples use the company's own website key, `Accept-Language: cs-CZ,de` and today = 2026-11-03:
+        The response examples are sent with the company's own website key and
+        `Accept-Language: cs-CZ,de` on 2026-11-03:
 
         - `without-expansions`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b801`
         - `expand-hotel`: the same request with `expand=hotel`
-        - `on-request`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b802`; a request can have a calculated price
-        - `expand-hotel-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=hotel,priceFromPeriods`; no room capacity, but configured period rates
-        - `one-hotel-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=priceFromPeriods&hotelId=6720c0a1b2c3d4e5f6a7c101`
-        - `disabled-with-price`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b805`
-        - `ended-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b806?expand=priceFromPeriods`; October validity and historical rates.
+        - `on-request`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b802`, a package booked on request, with its price
+        - `expand-hotel-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=hotel,priceFromPeriods`, a package with promotions at two hotels and no free rooms
+        - `one-hotel-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=priceFromPeriods&hotelId=6720c0a1b2c3d4e5f6a7c101`, with only the Hotel Pramen listing; the package's prices, periods, and promotions still cover both hotels
+        - `disabled-with-price`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b805`, a package switched off in SpaPortal, with its price
+        - `ended-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b806?expand=priceFromPeriods`, an ended package with its past price periods
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -3207,9 +3534,9 @@ paths:
                 - hotel
                 - priceFromPeriods
           description: >-
-            hotel adds hotelListings[].hotel; priceFromPeriods adds root and listing price periods,
-            including past periods and ended promotions. Values can be combined. Unknown values
-            return 400.
+            Comma-separated expansions. `hotel` adds `hotelListings[].hotel`; `priceFromPeriods`
+            adds price periods to the package and to each listing, and also returns ended
+            promotions. See [Expand](/api/expand).
         - name: hotelId
           in: query
           schema:
@@ -3218,8 +3545,9 @@ paths:
           description: >-
             Return only this hotel's `hotelListings[]` entry, for example together with
             `expand=priceFromPeriods`. `priceFrom`, `priceFromPeriods`, availability,
-            `channelContent` and `promotions` describe the whole package and do not change. An
-            unlinked or unauthorized id returns `200` with `hotelListings: []`.
+            `channelContent` and `promotions` describe the whole package and do not change. The id
+            of a hotel that does not sell the package, or that your key cannot access, returns `200`
+            with `hotelListings: []`.
       responses:
         "200":
           description: The visit type.
@@ -3234,8 +3562,8 @@ paths:
                 without-expansions:
                   summary: Package without expansions
                   description: "Illustrative response for the company's own website channel with `Accept-Language:
-                    cs-CZ,de` and today = 2026-10-30. Hotel Bellevue sells the package but has no
-                    qualifying complete stay; Hotel Pramen has one."
+                    cs-CZ,de` and today = 2026-11-03. Hotel Bellevue sells the package but has no
+                    complete stay; Hotel Pramen has one."
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b801
                     name:
@@ -3273,11 +3601,11 @@ paths:
                       min: 1
                       max: 3
                     validity:
-                      - from: 2026-11-01
-                        to: 2027-03-31
+                      - from: "2026-11-01"
+                        to: "2027-03-31"
                         toAppliesTo: departure
-                      - from: 2027-04-01
-                        to: 2027-10-31
+                      - from: "2027-04-01"
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -3433,8 +3761,8 @@ paths:
                           cs-CZ: Podzimní sleva
                           de: Herbstrabatt
                         percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
+                        from: "2026-11-01"
+                        to: "2026-12-19"
                         appliesTo: null
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -3540,8 +3868,7 @@ paths:
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
                 expand-hotel:
                   summary: "expand=hotel: hotel summaries added"
-                  description: Same context as the first example. The hotel entries additionally carry the hotel
-                    summary.
+                  description: Same context as the first example. Each hotel listing also carries the hotel summary.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b801
                     name:
@@ -3579,11 +3906,11 @@ paths:
                       min: 1
                       max: 3
                     validity:
-                      - from: 2026-11-01
-                        to: 2027-03-31
+                      - from: "2026-11-01"
+                        to: "2027-03-31"
                         toAppliesTo: departure
-                      - from: 2027-04-01
-                        to: 2027-10-31
+                      - from: "2027-04-01"
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -3739,8 +4066,8 @@ paths:
                           cs-CZ: Podzimní sleva
                           de: Herbstrabatt
                         percentage: 10
-                        from: 2026-11-01
-                        to: 2026-12-19
+                        from: "2026-11-01"
+                        to: "2026-12-19"
                         appliesTo: null
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -3858,8 +4185,8 @@ paths:
                           w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
                 on-request:
                   summary: Insurer-paid package booked on request
-                  description: Same context as the first example. The request package has a calculated price for a
-                    21-night stay; its arrivals are fixed dates.
+                  description: Same context as the first example. The package is booked on request and has a price for
+                    a 21-night stay; its arrivals are fixed dates.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b802
                     name:
@@ -3896,16 +4223,16 @@ paths:
                       min: 3
                       max: 4
                     validity:
-                      - from: 2026-11-01
-                        to: 2027-06-30
+                      - from: "2026-11-01"
+                        to: "2027-06-30"
                         toAppliesTo: arrival
                     arrival:
                       type: dates
                       dates:
-                        - 2026-11-08
-                        - 2026-11-29
-                        - 2027-01-10
-                        - 2027-02-07
+                        - "2026-11-08"
+                        - "2026-11-29"
+                        - "2027-01-10"
+                        - "2027-02-07"
                     treatment:
                       exams:
                         entry: true
@@ -4011,10 +4338,10 @@ paths:
                           w960: https://cdn.example.com/visit-types/insurer-cure/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/insurer-cure/generation-1/w1440.webp
                 expand-hotel-price-periods:
-                  summary: Two hotels, promotion scopes and separate price winners
-                  description: Package 6720c0a1b2c3d4e5f6a7b804 has no room capacity for a complete stay. Its
-                    priceFrom is null; periods still show configured rates. The season covers
-                    2026-11-01 through 2027-03-31 and validity is unbounded.
+                  summary: Two hotels with promotions and price periods
+                  description: Same context as the first example. No room is free for a complete stay, so `priceFrom`
+                    is null. The price periods show the season from 2026-11-01 to 2027-03-31 and
+                    four promotions; the package has no validity limits.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b804
                     name:
@@ -4028,7 +4355,7 @@ paths:
                     bookingMode: instant
                     available: true
                     unavailableReason: null
-                    webOrder: 1
+                    webOrder: 3
                     channelContent:
                       collections:
                         - treatment_stays
@@ -4120,8 +4447,8 @@ paths:
                             count: 14
                     priceFrom: null
                     priceFromPeriods:
-                      - from: 2026-11-01
-                        to: 2027-01-04
+                      - from: "2026-11-01"
+                        to: "2027-01-04"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                         priceFrom:
@@ -4183,8 +4510,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
-                      - from: 2027-01-05
-                        to: 2027-01-09
+                      - from: "2027-01-05"
+                        to: "2027-01-09"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -4202,7 +4529,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4222,7 +4549,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4249,8 +4576,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
-                      - from: 2027-01-10
-                        to: 2027-01-11
+                      - from: "2027-01-10"
+                        to: "2027-01-11"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -4269,7 +4596,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4289,7 +4616,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4316,8 +4643,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
-                      - from: 2027-01-12
-                        to: 2027-01-12
+                      - from: "2027-01-12"
+                        to: "2027-01-12"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -4337,7 +4664,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4358,7 +4685,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4387,8 +4714,8 @@ paths:
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
                                 - 6720c0a1b2c3d4e5f6a7d313
-                      - from: 2027-01-13
-                        to: 2027-01-15
+                      - from: "2027-01-13"
+                        to: "2027-01-15"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -4407,7 +4734,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4428,7 +4755,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -4457,8 +4784,8 @@ paths:
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
                                 - 6720c0a1b2c3d4e5f6a7d313
-                      - from: 2027-01-16
-                        to: 2027-01-20
+                      - from: "2027-01-16"
+                        to: "2027-01-20"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d313
@@ -4524,8 +4851,8 @@ paths:
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
                                 - 6720c0a1b2c3d4e5f6a7d313
-                      - from: 2027-01-21
-                        to: 2027-03-31
+                      - from: "2027-01-21"
+                        to: "2027-03-31"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                         priceFrom:
@@ -4593,26 +4920,26 @@ paths:
                           cs-CZ: Zimní sleva
                           de: null
                         percentage: 15
-                        from: 2026-11-01
-                        to: 2027-03-31
+                        from: "2026-11-01"
+                        to: "2027-03-31"
                         appliesTo: null
                       - id: 6720c0a1b2c3d4e5f6a7d314
                         name:
                           cs-CZ: Lednový týden v Bellevue
                           de: null
                         percentage: 20
-                        from: 2027-01-05
-                        to: 2027-01-15
+                        from: "2027-01-05"
+                        to: "2027-01-15"
                         appliesTo:
-                          - hotelId: 6720c0a1b2c3d4e5f6a7c102
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c103
                             roomTypeIds: null
                       - id: 6720c0a1b2c3d4e5f6a7d312
                         name:
                           cs-CZ: Superior za výhodnou cenu
                           de: null
                         percentage: 30
-                        from: 2027-01-10
-                        to: 2027-01-12
+                        from: "2027-01-10"
+                        to: "2027-01-12"
                         appliesTo:
                           - hotelId: 6720c0a1b2c3d4e5f6a7c101
                             roomTypeIds:
@@ -4622,21 +4949,21 @@ paths:
                           cs-CZ: Lednová akce
                           de: null
                         percentage: 10
-                        from: 2027-01-12
-                        to: 2027-01-20
+                        from: "2027-01-12"
+                        to: "2027-01-20"
                         appliesTo: null
                     hotelListings:
-                      - hotelId: 6720c0a1b2c3d4e5f6a7c102
+                      - hotelId: 6720c0a1b2c3d4e5f6a7c103
                         priceFrom: null
                         hotel:
-                          id: 6720c0a1b2c3d4e5f6a7c102
+                          id: 6720c0a1b2c3d4e5f6a7c103
                           name:
                             cs-CZ: Hotel Bellevue
                             de: Hotel Bellevue
                           stars: 3
                         priceFromPeriods:
-                          - from: 2026-11-01
-                            to: 2027-01-04
+                          - from: "2026-11-01"
+                            to: "2027-01-04"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                             priceFrom:
@@ -4653,7 +4980,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4672,7 +4999,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4691,15 +5018,15 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f201
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
-                          - from: 2027-01-05
-                            to: 2027-01-11
+                          - from: "2027-01-05"
+                            to: "2027-01-11"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d314
@@ -4717,7 +5044,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4737,7 +5064,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4757,7 +5084,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4765,8 +5092,8 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d314
-                          - from: 2027-01-12
-                            to: 2027-01-15
+                          - from: "2027-01-12"
+                            to: "2027-01-15"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d314
@@ -4785,7 +5112,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4806,7 +5133,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4827,7 +5154,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4836,8 +5163,8 @@ paths:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d314
                                     - 6720c0a1b2c3d4e5f6a7d313
-                          - from: 2027-01-16
-                            to: 2027-01-20
+                          - from: "2027-01-16"
+                            to: "2027-01-20"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d313
@@ -4855,7 +5182,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4875,7 +5202,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4895,7 +5222,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4903,8 +5230,8 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d313
-                          - from: 2027-01-21
-                            to: 2027-03-31
+                          - from: "2027-01-21"
+                            to: "2027-03-31"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                             priceFrom:
@@ -4921,7 +5248,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4940,7 +5267,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4959,7 +5286,7 @@ paths:
                                   nights: 7
                                   occupancy: 2
                                   hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c102
+                                    id: 6720c0a1b2c3d4e5f6a7c103
                                     name:
                                       cs-CZ: Hotel Bellevue
                                       de: Hotel Bellevue
@@ -4973,10 +5300,10 @@ paths:
                           name:
                             cs-CZ: Hotel Pramen
                             de: Hotel Pramen
-                          stars: 3
+                          stars: 4
                         priceFromPeriods:
-                          - from: 2026-11-01
-                            to: 2027-01-09
+                          - from: "2026-11-01"
+                            to: "2027-01-09"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                             priceFrom:
@@ -5038,8 +5365,8 @@ paths:
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
-                          - from: 2027-01-10
-                            to: 2027-01-11
+                          - from: "2027-01-10"
+                            to: "2027-01-11"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d312
@@ -5102,8 +5429,8 @@ paths:
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
-                          - from: 2027-01-12
-                            to: 2027-01-12
+                          - from: "2027-01-12"
+                            to: "2027-01-12"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d312
@@ -5170,8 +5497,8 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d313
-                          - from: 2027-01-13
-                            to: 2027-01-20
+                          - from: "2027-01-13"
+                            to: "2027-01-20"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d313
@@ -5237,8 +5564,8 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d313
-                          - from: 2027-01-21
-                            to: 2027-03-31
+                          - from: "2027-01-21"
+                            to: "2027-03-31"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                             priceFrom:
@@ -5301,18 +5628,20 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                     images:
-                      - url: https://cdn.example.com/visit-types/classic-cure.jpg
+                      - url: https://cdn.example.com/visit-types/winter-stay.jpg
                         width: 1600
                         height: 1066
                         alt:
-                          cs-CZ: Klasická lázeňská léčba
-                          de: Klassische Kur
+                          cs-CZ: Zimní lázeňský pobyt
+                          de: Winterkur
                         variants:
-                          w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
-                          w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
-                          w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                          w480: https://cdn.example.com/visit-types/winter-stay/generation-1/w480.webp
+                          w960: https://cdn.example.com/visit-types/winter-stay/generation-1/w960.webp
+                          w1440: https://cdn.example.com/visit-types/winter-stay/generation-1/w1440.webp
                 one-hotel-with-price-periods:
-                  summary: Hotel filter preserves root prices and promotions
+                  summary: Hotel filter keeps the package prices and promotions
+                  description: Same package as `expand-hotel-price-periods`, requested with the `hotelId` of Hotel
+                    Pramen.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b804
                     name:
@@ -5326,7 +5655,7 @@ paths:
                     bookingMode: instant
                     available: true
                     unavailableReason: null
-                    webOrder: 1
+                    webOrder: 3
                     channelContent:
                       collections:
                         - treatment_stays
@@ -5418,8 +5747,8 @@ paths:
                             count: 14
                     priceFrom: null
                     priceFromPeriods:
-                      - from: 2026-11-01
-                        to: 2027-01-04
+                      - from: "2026-11-01"
+                        to: "2027-01-04"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                         priceFrom:
@@ -5481,8 +5810,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
-                      - from: 2027-01-05
-                        to: 2027-01-09
+                      - from: "2027-01-05"
+                        to: "2027-01-09"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -5500,7 +5829,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5520,7 +5849,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5547,8 +5876,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
-                      - from: 2027-01-10
-                        to: 2027-01-11
+                      - from: "2027-01-10"
+                        to: "2027-01-11"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -5567,7 +5896,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5587,7 +5916,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5614,8 +5943,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
-                      - from: 2027-01-12
-                        to: 2027-01-12
+                      - from: "2027-01-12"
+                        to: "2027-01-12"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -5635,7 +5964,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5656,7 +5985,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5685,8 +6014,8 @@ paths:
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
                                 - 6720c0a1b2c3d4e5f6a7d313
-                      - from: 2027-01-13
-                        to: 2027-01-15
+                      - from: "2027-01-13"
+                        to: "2027-01-15"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d314
@@ -5705,7 +6034,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5726,7 +6055,7 @@ paths:
                               nights: 7
                               occupancy: 2
                               hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c102
+                                id: 6720c0a1b2c3d4e5f6a7c103
                                 name:
                                   cs-CZ: Hotel Bellevue
                                   de: Hotel Bellevue
@@ -5755,8 +6084,8 @@ paths:
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
                                 - 6720c0a1b2c3d4e5f6a7d313
-                      - from: 2027-01-16
-                        to: 2027-01-20
+                      - from: "2027-01-16"
+                        to: "2027-01-20"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                           - 6720c0a1b2c3d4e5f6a7d313
@@ -5822,8 +6151,8 @@ paths:
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d311
                                 - 6720c0a1b2c3d4e5f6a7d313
-                      - from: 2027-01-21
-                        to: 2027-03-31
+                      - from: "2027-01-21"
+                        to: "2027-03-31"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d311
                         priceFrom:
@@ -5891,26 +6220,26 @@ paths:
                           cs-CZ: Zimní sleva
                           de: null
                         percentage: 15
-                        from: 2026-11-01
-                        to: 2027-03-31
+                        from: "2026-11-01"
+                        to: "2027-03-31"
                         appliesTo: null
                       - id: 6720c0a1b2c3d4e5f6a7d314
                         name:
                           cs-CZ: Lednový týden v Bellevue
                           de: null
                         percentage: 20
-                        from: 2027-01-05
-                        to: 2027-01-15
+                        from: "2027-01-05"
+                        to: "2027-01-15"
                         appliesTo:
-                          - hotelId: 6720c0a1b2c3d4e5f6a7c102
+                          - hotelId: 6720c0a1b2c3d4e5f6a7c103
                             roomTypeIds: null
                       - id: 6720c0a1b2c3d4e5f6a7d312
                         name:
                           cs-CZ: Superior za výhodnou cenu
                           de: null
                         percentage: 30
-                        from: 2027-01-10
-                        to: 2027-01-12
+                        from: "2027-01-10"
+                        to: "2027-01-12"
                         appliesTo:
                           - hotelId: 6720c0a1b2c3d4e5f6a7c101
                             roomTypeIds:
@@ -5920,15 +6249,15 @@ paths:
                           cs-CZ: Lednová akce
                           de: null
                         percentage: 10
-                        from: 2027-01-12
-                        to: 2027-01-20
+                        from: "2027-01-12"
+                        to: "2027-01-20"
                         appliesTo: null
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
                         priceFrom: null
                         priceFromPeriods:
-                          - from: 2026-11-01
-                            to: 2027-01-09
+                          - from: "2026-11-01"
+                            to: "2027-01-09"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                             priceFrom:
@@ -5990,8 +6319,8 @@ paths:
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
-                          - from: 2027-01-10
-                            to: 2027-01-11
+                          - from: "2027-01-10"
+                            to: "2027-01-11"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d312
@@ -6054,8 +6383,8 @@ paths:
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f103
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
-                          - from: 2027-01-12
-                            to: 2027-01-12
+                          - from: "2027-01-12"
+                            to: "2027-01-12"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d312
@@ -6122,8 +6451,8 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d313
-                          - from: 2027-01-13
-                            to: 2027-01-20
+                          - from: "2027-01-13"
+                            to: "2027-01-20"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                               - 6720c0a1b2c3d4e5f6a7d313
@@ -6189,8 +6518,8 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                                     - 6720c0a1b2c3d4e5f6a7d313
-                          - from: 2027-01-21
-                            to: 2027-03-31
+                          - from: "2027-01-21"
+                            to: "2027-03-31"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d311
                             priceFrom:
@@ -6253,18 +6582,20 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                     images:
-                      - url: https://cdn.example.com/visit-types/classic-cure.jpg
+                      - url: https://cdn.example.com/visit-types/winter-stay.jpg
                         width: 1600
                         height: 1066
                         alt:
-                          cs-CZ: Klasická lázeňská léčba
-                          de: Klassische Kur
+                          cs-CZ: Zimní lázeňský pobyt
+                          de: Winterkur
                         variants:
-                          w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
-                          w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
-                          w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                          w480: https://cdn.example.com/visit-types/winter-stay/generation-1/w480.webp
+                          w960: https://cdn.example.com/visit-types/winter-stay/generation-1/w960.webp
+                          w1440: https://cdn.example.com/visit-types/winter-stay/generation-1/w1440.webp
                 disabled-with-price:
-                  summary: Disabled package with a calculated stay price
+                  summary: Package switched off in SpaPortal, with its price
+                  description: "Same context as the first example. The package is unavailable with `unavailableReason:
+                    disabled` and still has a price."
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b805
                     name:
@@ -6278,7 +6609,7 @@ paths:
                     bookingMode: instant
                     available: false
                     unavailableReason: disabled
-                    webOrder: 1
+                    webOrder: null
                     channelContent:
                       collections:
                         - treatment_stays
@@ -6301,11 +6632,11 @@ paths:
                       min: 7
                       max: 7
                     validity:
-                      - from: 2026-11-01
-                        to: 2027-03-31
+                      - from: "2026-11-01"
+                        to: "2027-03-31"
                         toAppliesTo: departure
-                      - from: 2027-04-01
-                        to: 2027-10-31
+                      - from: "2027-04-01"
+                        to: "2027-10-31"
                         toAppliesTo: arrival
                     arrival:
                       type: weekdays
@@ -6448,21 +6779,22 @@ paths:
                                   cs-CZ: Pozastavený lázeňský pobyt
                                   de: Pozastavený lázeňský pobyt
                     images:
-                      - url: https://cdn.example.com/visit-types/classic-cure.jpg
+                      - url: https://cdn.example.com/visit-types/paused-stay.jpg
                         width: 1600
                         height: 1066
                         alt:
-                          cs-CZ: Klasická lázeňská léčba
-                          de: Klassische Kur
+                          cs-CZ: Pozastavený lázeňský pobyt
+                          de: Pozastavený lázeňský pobyt
                         variants:
-                          w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
-                          w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
-                          w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                          w480: https://cdn.example.com/visit-types/paused-stay/generation-1/w480.webp
+                          w960: https://cdn.example.com/visit-types/paused-stay/generation-1/w960.webp
+                          w1440: https://cdn.example.com/visit-types/paused-stay/generation-1/w1440.webp
                 ended-with-price-periods:
-                  summary: Ended package retains its configured historical prices
-                  description: Stored validity is 2026-10-01 through 2026-10-31 with the end applying to arrival. The
-                    current price list covers October through December. Public validity is empty;
-                    periods cover only October.
+                  summary: Ended package with its past price periods
+                  description: Same context as the first example. The package was valid for arrivals from 2026-10-01
+                    to 2026-10-31, so `validity` is empty and `priceFrom` is null. Its price list
+                    continues until December, but the periods cover only the October nights of the
+                    validity.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b806
                     name:
@@ -6476,7 +6808,7 @@ paths:
                     bookingMode: instant
                     available: false
                     unavailableReason: ended
-                    webOrder: 1
+                    webOrder: null
                     channelContent:
                       collections:
                         - treatment_stays
@@ -6562,8 +6894,8 @@ paths:
                             count: 14
                     priceFrom: null
                     priceFromPeriods:
-                      - from: 2026-10-01
-                        to: 2026-10-15
+                      - from: "2026-10-01"
+                        to: "2026-10-15"
                         activePromotionIds:
                           - 6720c0a1b2c3d4e5f6a7d315
                         priceFrom:
@@ -6625,8 +6957,8 @@ paths:
                               roomTypeId: 6720c0a1b2c3d4e5f6a7f102
                               appliedPromotionIds:
                                 - 6720c0a1b2c3d4e5f6a7d315
-                      - from: 2026-10-16
-                        to: 2026-10-31
+                      - from: "2026-10-16"
+                        to: "2026-10-31"
                         activePromotionIds: []
                         priceFrom:
                           EUR:
@@ -6681,15 +7013,15 @@ paths:
                           cs-CZ: Říjnová sleva
                           de: null
                         percentage: 10
-                        from: 2026-10-01
-                        to: 2026-10-15
+                        from: "2026-10-01"
+                        to: "2026-10-15"
                         appliesTo: null
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
                         priceFrom: null
                         priceFromPeriods:
-                          - from: 2026-10-01
-                            to: 2026-10-15
+                          - from: "2026-10-01"
+                            to: "2026-10-15"
                             activePromotionIds:
                               - 6720c0a1b2c3d4e5f6a7d315
                             priceFrom:
@@ -6751,8 +7083,8 @@ paths:
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f102
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d315
-                          - from: 2026-10-16
-                            to: 2026-10-31
+                          - from: "2026-10-16"
+                            to: "2026-10-31"
                             activePromotionIds: []
                             priceFrom:
                               EUR:
@@ -6802,16 +7134,16 @@ paths:
                                   roomTypeId: 6720c0a1b2c3d4e5f6a7f102
                                   appliedPromotionIds: []
                     images:
-                      - url: https://cdn.example.com/visit-types/classic-cure.jpg
+                      - url: https://cdn.example.com/visit-types/october-stay.jpg
                         width: 1600
                         height: 1066
                         alt:
-                          cs-CZ: Klasická lázeňská léčba
-                          de: Klassische Kur
+                          cs-CZ: Říjnový lázeňský pobyt
+                          de: Říjnový lázeňský pobyt
                         variants:
-                          w480: https://cdn.example.com/visit-types/classic-cure/generation-1/w480.webp
-                          w960: https://cdn.example.com/visit-types/classic-cure/generation-1/w960.webp
-                          w1440: https://cdn.example.com/visit-types/classic-cure/generation-1/w1440.webp
+                          w480: https://cdn.example.com/visit-types/october-stay/generation-1/w480.webp
+                          w960: https://cdn.example.com/visit-types/october-stay/generation-1/w960.webp
+                          w1440: https://cdn.example.com/visit-types/october-stay/generation-1/w1440.webp
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -8322,9 +8654,8 @@ components:
       description: A `Money` amount, or null.
     PriceFromMinimum:
       type: object
-      description: One complete stay selected by the [pricing rules](/api/prices). Visit Types can return
-        its price for disabled packages and packages booked on request; hotel endpoints include only
-        available packages with instant booking. See [Price from](/api/objects/price-from).
+      description: One complete stay selected by the [pricing rules](/api/prices). See [Price
+        from](/api/objects/price-from).
       required: [ amount, original, nights, occupancy, hotel, visitType ]
       properties:
         amount:
@@ -8528,34 +8859,34 @@ components:
               $ref: "#/components/schemas/PriceFromPair"
             EUR:
               $ref: "#/components/schemas/PriceFromPair"
-          description: Lowest complete-stay prices across the package's hotels, per currency. Searches current
-            or future stays meeting validity, arrival, length and room-capacity rules. Availability
-            and booking mode do not suppress a price. Null when no qualifying stay is found. Use
-            available and bookingMode to decide how to order. See [Prices](/api/prices).
+          description: Lowest prices of a complete stay from today onward across the package's hotels, per
+            currency. A currency is present only when a complete stay has a price in it. Packages
+            booked on request and packages switched off in SpaPortal also have a price; check
+            `available` and `bookingMode` before you offer a booking. Null when no complete stay
+            exists. See [Prices](/api/prices).
         priceFromPeriods:
           type: array
           nullable: true
           items:
             $ref: "#/components/schemas/PriceFromPeriod"
-          description: Price periods within the stored package validity, including past periods, ordered by
-            from. Present only on the detail with expand=priceFromPeriods. Empty when there are no
-            configured covered nights; null when the source cannot be used. Period prices do not
-            check capacity or find a stay inside the period. See [Price from
+          description: Price periods of the package across all its hotels, including past periods, ordered by
+            `from`. Present only on the detail with `expand=priceFromPeriods`. Empty when the
+            package has no price list for the nights of its validity; null when SpaPortal cannot
+            calculate the periods. Free rooms and permitted arrival days are not checked. See [Price
             period](/api/objects/price-from-period).
         promotions:
           type: array
           items:
             $ref: "#/components/schemas/Promotion"
-          description: Promotions for your channel, ordered by from, then id. Normally includes current and
-            future promotions; with expand=priceFromPeriods also includes ended promotions under the
-            same channel, hotel and room scope rules. Ended promotions do not add special_offers to
-            channelContent.collections. Empty when none applies.
+          description: Current and future promotions that apply to your channel, ordered by `from`, then `id`.
+            With `expand=priceFromPeriods`, also ended promotions, so every id in a period can be
+            looked up. Empty when none applies.
         hotelListings:
           type: array
           items:
             $ref: "#/components/schemas/HotelListing"
-          description: Offers at active hotels assigned to the package, ordered by Czech hotel name, then id.
-            A listing remains present when its priceFrom is null.
+          description: Active hotels selling the package, each with the package's price at that hotel, ordered
+            by Czech hotel name, then id. A listing is present even when its `priceFrom` is null.
         images:
           type: array
           items:
@@ -8644,11 +8975,11 @@ components:
           min: 1
           max: 3
         validity:
-          - from: 2026-11-01
-            to: 2027-03-31
+          - from: "2026-11-01"
+            to: "2027-03-31"
             toAppliesTo: departure
-          - from: 2027-04-01
-            to: 2027-10-31
+          - from: "2027-04-01"
+            to: "2027-10-31"
             toAppliesTo: arrival
         arrival:
           type: weekdays
@@ -8798,14 +9129,328 @@ components:
                 name:
                   cs-CZ: Klasická lázeňská léčba
                   de: Klassische Kur
+        priceFromPeriods:
+          - from: "2026-11-01"
+            to: "2026-12-19"
+            activePromotionIds:
+              - 6720c0a1b2c3d4e5f6a7d301
+            priceFrom:
+              CZK:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 144000
+                    currency: CZK
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 160000
+                    currency: CZK
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds:
+                    - 6720c0a1b2c3d4e5f6a7d301
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 1008000
+                    currency: CZK
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 1120000
+                    currency: CZK
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds:
+                    - 6720c0a1b2c3d4e5f6a7d301
+                perStay:
+                  amount:
+                    amountMinor: 1260000
+                    currency: CZK
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 1400000
+                    currency: CZK
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                  appliedPromotionIds:
+                    - 6720c0a1b2c3d4e5f6a7d301
+              EUR:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 5760
+                    currency: EUR
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 6400
+                    currency: EUR
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds:
+                    - 6720c0a1b2c3d4e5f6a7d301
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 40320
+                    currency: EUR
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 44800
+                    currency: EUR
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds:
+                    - 6720c0a1b2c3d4e5f6a7d301
+                perStay:
+                  amount:
+                    amountMinor: 50400
+                    currency: EUR
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 56000
+                    currency: EUR
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                  appliedPromotionIds:
+                    - 6720c0a1b2c3d4e5f6a7d301
+          - from: "2026-12-20"
+            to: "2027-03-30"
+            activePromotionIds: []
+            priceFrom:
+              CZK:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 160000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 1120000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perStay:
+                  amount:
+                    amountMinor: 1400000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                  appliedPromotionIds: []
+              EUR:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 6400
+                    currency: EUR
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 44800
+                    currency: EUR
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perStay:
+                  amount:
+                    amountMinor: 56000
+                    currency: EUR
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                  appliedPromotionIds: []
+          - from: "2027-04-01"
+            to: "2027-10-31"
+            activePromotionIds: []
+            priceFrom:
+              CZK:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 150000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 1050000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perStay:
+                  amount:
+                    amountMinor: 1330000
+                    currency: CZK
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                  appliedPromotionIds: []
+              EUR:
+                perPersonPerNight:
+                  amount:
+                    amountMinor: 6000
+                    currency: EUR
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 42000
+                    currency: EUR
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                  appliedPromotionIds: []
+                perStay:
+                  amount:
+                    amountMinor: 53200
+                    currency: EUR
+                    currencyExponent: 2
+                  original: null
+                  nights: 7
+                  occupancy: 1
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                  appliedPromotionIds: []
         promotions:
           - id: 6720c0a1b2c3d4e5f6a7d301
             name:
               cs-CZ: Podzimní sleva
               de: Herbstrabatt
             percentage: 10
-            from: 2026-11-01
-            to: 2026-12-19
+            from: "2026-11-01"
+            to: "2026-12-19"
             appliesTo: null
         hotelListings:
           - hotelId: 6720c0a1b2c3d4e5f6a7c103
@@ -8816,6 +9461,15 @@ components:
                 cs-CZ: Hotel Bellevue
                 de: Hotel Bellevue
               stars: 3
+            priceFromPeriods:
+              - from: "2026-11-01"
+                to: "2027-03-30"
+                activePromotionIds: []
+                priceFrom: null
+              - from: "2027-04-01"
+                to: "2027-10-31"
+                activePromotionIds: []
+                priceFrom: null
           - hotelId: 6720c0a1b2c3d4e5f6a7c101
             priceFrom:
               CZK:
@@ -8910,6 +9564,320 @@ components:
                 cs-CZ: Hotel Pramen
                 de: Hotel Pramen
               stars: 4
+            priceFromPeriods:
+              - from: "2026-11-01"
+                to: "2026-12-19"
+                activePromotionIds:
+                  - 6720c0a1b2c3d4e5f6a7d301
+                priceFrom:
+                  CZK:
+                    perPersonPerNight:
+                      amount:
+                        amountMinor: 144000
+                        currency: CZK
+                        currencyExponent: 2
+                      original:
+                        amountMinor: 160000
+                        currency: CZK
+                        currencyExponent: 2
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds:
+                        - 6720c0a1b2c3d4e5f6a7d301
+                    perPersonPerStay:
+                      amount:
+                        amountMinor: 1008000
+                        currency: CZK
+                        currencyExponent: 2
+                      original:
+                        amountMinor: 1120000
+                        currency: CZK
+                        currencyExponent: 2
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds:
+                        - 6720c0a1b2c3d4e5f6a7d301
+                    perStay:
+                      amount:
+                        amountMinor: 1260000
+                        currency: CZK
+                        currencyExponent: 2
+                      original:
+                        amountMinor: 1400000
+                        currency: CZK
+                        currencyExponent: 2
+                      nights: 7
+                      occupancy: 1
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                      appliedPromotionIds:
+                        - 6720c0a1b2c3d4e5f6a7d301
+                  EUR:
+                    perPersonPerNight:
+                      amount:
+                        amountMinor: 5760
+                        currency: EUR
+                        currencyExponent: 2
+                      original:
+                        amountMinor: 6400
+                        currency: EUR
+                        currencyExponent: 2
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds:
+                        - 6720c0a1b2c3d4e5f6a7d301
+                    perPersonPerStay:
+                      amount:
+                        amountMinor: 40320
+                        currency: EUR
+                        currencyExponent: 2
+                      original:
+                        amountMinor: 44800
+                        currency: EUR
+                        currencyExponent: 2
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds:
+                        - 6720c0a1b2c3d4e5f6a7d301
+                    perStay:
+                      amount:
+                        amountMinor: 50400
+                        currency: EUR
+                        currencyExponent: 2
+                      original:
+                        amountMinor: 56000
+                        currency: EUR
+                        currencyExponent: 2
+                      nights: 7
+                      occupancy: 1
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                      appliedPromotionIds:
+                        - 6720c0a1b2c3d4e5f6a7d301
+              - from: "2026-12-20"
+                to: "2027-03-30"
+                activePromotionIds: []
+                priceFrom:
+                  CZK:
+                    perPersonPerNight:
+                      amount:
+                        amountMinor: 160000
+                        currency: CZK
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perPersonPerStay:
+                      amount:
+                        amountMinor: 1120000
+                        currency: CZK
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perStay:
+                      amount:
+                        amountMinor: 1400000
+                        currency: CZK
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 1
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                      appliedPromotionIds: []
+                  EUR:
+                    perPersonPerNight:
+                      amount:
+                        amountMinor: 6400
+                        currency: EUR
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perPersonPerStay:
+                      amount:
+                        amountMinor: 44800
+                        currency: EUR
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perStay:
+                      amount:
+                        amountMinor: 56000
+                        currency: EUR
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 1
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                      appliedPromotionIds: []
+              - from: "2027-04-01"
+                to: "2027-10-31"
+                activePromotionIds: []
+                priceFrom:
+                  CZK:
+                    perPersonPerNight:
+                      amount:
+                        amountMinor: 150000
+                        currency: CZK
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perPersonPerStay:
+                      amount:
+                        amountMinor: 1050000
+                        currency: CZK
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perStay:
+                      amount:
+                        amountMinor: 1330000
+                        currency: CZK
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 1
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                      appliedPromotionIds: []
+                  EUR:
+                    perPersonPerNight:
+                      amount:
+                        amountMinor: 6000
+                        currency: EUR
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perPersonPerStay:
+                      amount:
+                        amountMinor: 42000
+                        currency: EUR
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 2
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f102
+                      appliedPromotionIds: []
+                    perStay:
+                      amount:
+                        amountMinor: 53200
+                        currency: EUR
+                        currencyExponent: 2
+                      original: null
+                      nights: 7
+                      occupancy: 1
+                      hotel:
+                        id: 6720c0a1b2c3d4e5f6a7c101
+                        name:
+                          cs-CZ: Hotel Pramen
+                          de: Hotel Pramen
+                      roomTypeId: 6720c0a1b2c3d4e5f6a7f103
+                      appliedPromotionIds: []
         images:
           - url: https://cdn.example.com/visit-types/classic-cure.jpg
             width: 1600
@@ -9270,7 +10238,7 @@ components:
         id:
           type: string
           pattern: ^[0-9a-fA-F]{24}$
-          description: Hotel id, equal to the entry's `hotelId`.
+          description: Hotel id, equal to the listing's `hotelId`.
         name:
           allOf:
             - $ref: "#/components/schemas/HotelNameLocalizedString"
@@ -10098,7 +11066,7 @@ components:
         hotelId:
           type: string
           pattern: ^[0-9a-fA-F]{24}$
-          description: Active hotel assigned to the package. Present even when the listing has no price.
+          description: Active hotel selling the package. Present even when `priceFrom` is null.
         priceFrom:
           type: object
           nullable: true
@@ -10109,9 +11077,8 @@ components:
               $ref: "#/components/schemas/PriceFromPair"
             EUR:
               $ref: "#/components/schemas/PriceFromPair"
-          description: Lowest complete-stay prices of the package at this hotel. Availability and booking mode
-            do not suppress a price. Null when no current or future stay meeting validity, arrival,
-            length and capacity rules is found.
+          description: Lowest prices of a complete stay from today onward for the package at this hotel, per
+            currency. Null when no complete stay exists.
         hotel:
           allOf:
             - $ref: "#/components/schemas/VisitTypeHotel"
@@ -10121,12 +11088,11 @@ components:
           nullable: true
           items:
             $ref: "#/components/schemas/PriceFromPeriod"
-          description: Price periods within the stored package validity, including past periods, ordered by
-            from. Present only on the detail with expand=priceFromPeriods. Empty when there are no
-            configured covered nights; null when the source cannot be used. Period prices do not
-            check capacity or find a stay inside the period. See [Price from
-            period](/api/objects/price-from-period).
-      description: The package's offer at one hotel. See [Hotel
+          description: Price periods of the package at this hotel, including past periods, ordered by `from`.
+            Present only on the detail with `expand=priceFromPeriods`. Empty when the package has no
+            price list for the nights of its validity; null when SpaPortal cannot calculate the
+            periods. See [Price period](/api/objects/price-from-period).
+      description: The package at one hotel, with its price there. See [Hotel
         listings](/api/objects/visit-type#hotel-listings).
     PromotionHotelScope:
       type: object
@@ -10198,8 +11164,8 @@ components:
           cs-CZ: Zimní nabídka vybraných pokojů
           de: Winterangebot für ausgewählte Zimmer
         percentage: 15
-        from: 2027-01-04
-        to: 2027-02-28
+        from: "2027-01-04"
+        to: "2027-02-28"
         appliesTo:
           - hotelId: 6720c0a1b2c3d4e5f6a7c101
             roomTypeIds:
@@ -10220,60 +11186,41 @@ components:
         amount:
           allOf:
             - $ref: "#/components/schemas/Money"
-          description: Calculated amount after promotions. Do not apply promotions again.
+          description: Price after promotions. Do not apply promotions again.
         original:
           allOf:
             - $ref: "#/components/schemas/MoneyOrNull"
-          description: The same winner before promotions; null unless its rounded original amount exceeds
-            amount.
+          description: Price of the same room before promotions; null when promotions do not lower the rounded
+            price.
         nights:
           type: integer
           minimum: 1
-          description: Minimum or fixed number of package nights used in the calculation; not the length of
-            this period.
+          description: "Length of the priced stay: the package's minimum or fixed number of nights, not the
+            length of the period."
         occupancy:
           type: integer
           minimum: 1
-          description: Standard occupancy of the winning room type.
+          description: Standard occupancy of the room type the price comes from.
         hotel:
           allOf:
             - $ref: "#/components/schemas/PriceFromHotel"
-          description: Hotel of the winning rate.
+          description: Hotel of the room type the price comes from.
         roomTypeId:
           type: string
           pattern: ^[0-9a-fA-F]{24}$
-          description: Room type of the winning rate.
+          description: Room type the price comes from.
         appliedPromotionIds:
           type: array
           uniqueItems: true
           items:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
-          description: Promotions applied to this winner, in promotions order. A subset of the period's
-            activePromotionIds. Empty when none changes the calculation.
-      description: A price calculated using the conditions of one period for the package's minimum or
-        fixed number of nights. It does not promise a bookable stay. See [Price from
-        period](/api/objects/price-from-period).
-      example:
-        amount:
-          amountMinor: 52360
-          currency: EUR
-          currencyExponent: 2
-        original:
-          amountMinor: 77000
-          currency: EUR
-          currencyExponent: 2
-        nights: 7
-        occupancy: 2
-        hotel:
-          id: 6720c0a1b2c3d4e5f6a7c102
-          name:
-            cs-CZ: Hotel Bellevue
-            de: Hotel Bellevue
-        roomTypeId: 6720c0a1b2c3d4e5f6a7f201
-        appliedPromotionIds:
-          - 6720c0a1b2c3d4e5f6a7d311
-          - 6720c0a1b2c3d4e5f6a7d314
+          description: Promotions included in this price, in the order of the package's `promotions`. Each is
+            also listed in the period's `activePromotionIds`. Empty when no promotion changes the
+            price.
+      description: "The price of the package's shortest stay with the prices and promotions of one period.
+        It is not a bookable offer: free rooms and permitted arrival days are not checked. See
+        [Price period](/api/objects/price-from-period)."
     PriceFromPeriodCurrency:
       type: object
       additionalProperties: false
@@ -10285,76 +11232,17 @@ components:
         perPersonPerNight:
           allOf:
             - $ref: "#/components/schemas/PriceFromPeriodMinimum"
-          description: Lowest calculated rate per guest per night.
+          description: Lowest price per guest per night.
         perPersonPerStay:
           allOf:
             - $ref: "#/components/schemas/PriceFromPeriodMinimum"
-          description: The same winner per guest for the full stay. Rounded independently; do not multiply the
-            rounded nightly rate.
+          description: Price per guest for the whole stay, in the same room as `perPersonPerNight`. Rounded
+            separately; do not multiply the nightly price.
         perStay:
           allOf:
             - $ref: "#/components/schemas/PriceFromPeriodMinimum"
-          description: Lowest calculated total for the room at standard occupancy. May have a different winner.
-      example:
-        perPersonPerNight:
-          amount:
-            amountMinor: 7480
-            currency: EUR
-            currencyExponent: 2
-          original:
-            amountMinor: 11000
-            currency: EUR
-            currencyExponent: 2
-          nights: 7
-          occupancy: 2
-          hotel:
-            id: 6720c0a1b2c3d4e5f6a7c102
-            name:
-              cs-CZ: Hotel Bellevue
-              de: Hotel Bellevue
-          roomTypeId: 6720c0a1b2c3d4e5f6a7f201
-          appliedPromotionIds:
-            - 6720c0a1b2c3d4e5f6a7d311
-            - 6720c0a1b2c3d4e5f6a7d314
-        perPersonPerStay:
-          amount:
-            amountMinor: 52360
-            currency: EUR
-            currencyExponent: 2
-          original:
-            amountMinor: 77000
-            currency: EUR
-            currencyExponent: 2
-          nights: 7
-          occupancy: 2
-          hotel:
-            id: 6720c0a1b2c3d4e5f6a7c102
-            name:
-              cs-CZ: Hotel Bellevue
-              de: Hotel Bellevue
-          roomTypeId: 6720c0a1b2c3d4e5f6a7f201
-          appliedPromotionIds:
-            - 6720c0a1b2c3d4e5f6a7d311
-            - 6720c0a1b2c3d4e5f6a7d314
-        perStay:
-          amount:
-            amountMinor: 71400
-            currency: EUR
-            currencyExponent: 2
-          original:
-            amountMinor: 84000
-            currency: EUR
-            currencyExponent: 2
-          nights: 7
-          occupancy: 1
-          hotel:
-            id: 6720c0a1b2c3d4e5f6a7c101
-            name:
-              cs-CZ: Hotel Pramen
-              de: Hotel Pramen
-          roomTypeId: 6720c0a1b2c3d4e5f6a7f103
-          appliedPromotionIds:
-            - 6720c0a1b2c3d4e5f6a7d311
+          description: Lowest price of a whole room for the whole stay, at its standard occupancy. It can come
+            from a different room or hotel.
     PriceFromPeriod:
       type: object
       additionalProperties: false
@@ -10367,7 +11255,7 @@ components:
         from:
           type: string
           format: date
-          description: First night of the period, inclusive.
+          description: First night of the period.
         to:
           type: string
           format: date
@@ -10378,8 +11266,9 @@ components:
           items:
             type: string
             pattern: ^[0-9a-fA-F]{24}$
-          description: Public promotions relevant to at least one eligible room in the period, in promotions
-            order. A promotion need not discount the winning room.
+          description: Promotions that apply in the period to at least one room with a price, in the order of
+            the package's `promotions`. A promotion can be active without lowering the displayed
+            price.
         priceFrom:
           type: object
           nullable: true
@@ -10390,14 +11279,13 @@ components:
               $ref: "#/components/schemas/PriceFromPeriodCurrency"
             EUR:
               $ref: "#/components/schemas/PriceFromPeriodCurrency"
-          description: Calculated rates by currency. Null when no room has a safely calculable candidate; the
-            period and its promotion ids remain present.
-      description: Consecutive nights with the same configured price conditions inside package validity.
-        Prices use the currently stored rates, even for past periods. See [Price from
-        period](/api/objects/price-from-period).
+          description: Prices by currency. Null when no room has a price for the period; the period and its
+            promotion ids are still returned.
+      description: A range of nights in which the package has the same prices. Past periods use today's
+        price list. See [Price period](/api/objects/price-from-period).
       example:
-        from: 2027-01-10
-        to: 2027-01-11
+        from: "2027-01-10"
+        to: "2027-01-11"
         activePromotionIds:
           - 6720c0a1b2c3d4e5f6a7d311
           - 6720c0a1b2c3d4e5f6a7d314
@@ -10416,7 +11304,7 @@ components:
               nights: 7
               occupancy: 2
               hotel:
-                id: 6720c0a1b2c3d4e5f6a7c102
+                id: 6720c0a1b2c3d4e5f6a7c103
                 name:
                   cs-CZ: Hotel Bellevue
                   de: Hotel Bellevue
@@ -10436,7 +11324,7 @@ components:
               nights: 7
               occupancy: 2
               hotel:
-                id: 6720c0a1b2c3d4e5f6a7c102
+                id: 6720c0a1b2c3d4e5f6a7c103
                 name:
                   cs-CZ: Hotel Bellevue
                   de: Hotel Bellevue

@@ -7,9 +7,8 @@ openapi-schema: "/api/v2/openapi.yaml Promotion"
 A visit type's `promotions` lists its current and future promotions that apply
 to the channel of your [public key](/api/authentication#channels-and-scope).
 The API returns only applicable promotions; you do not filter them by channel.
-With `expand=priceFromPeriods`, the detail also includes ended promotions so
-you can explain historical periods. Ended promotions do not add the package
-to the `special_offers` collection.
+With `expand=priceFromPeriods`, the detail also includes ended promotions, so
+you can explain past [price periods](/api/objects/price-from-period).
 
 A listed promotion does not guarantee a discounted stay: it can lie outside
 the package's permitted stays, or the discounted rooms can be sold out. [Prices](/api/prices#promotions) explains how promotions change the
@@ -36,12 +35,10 @@ nights.
 Each `appliesTo` entry has `hotelId` and `roomTypeIds`. `roomTypeIds: null` means
 every room type of that hotel; otherwise it lists the room type ids it applies to.
 Entries reference only hotels that sell the package, and a detail request with
-`hotelId` does not narrow them. A disabled room type can remain referenced,
-but it is not offered for new bookings.
-
-A promotion targeting only disabled rooms does not appear in any period's
-`activePromotionIds`; a scope that also includes an eligible room can still
-be active. See [Price periods](/api/objects/price-from-period#fields-and-night-bounds).
+`hotelId` does not narrow them. `roomTypeIds` can contain a disabled room
+type. It is not offered for new bookings, is missing from the hotel's room
+catalog, and does not count in price periods. Skip ids that you cannot find in
+the catalog.
 
 Promotions are ordered by `from`, then `id`.
 

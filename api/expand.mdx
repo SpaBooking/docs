@@ -26,7 +26,7 @@ GET /api/v2/room-types?expand=hotel
 # Include the hotel and localized amenity labels
 GET /api/v2/room-types?expand=hotel,amenityLabels
 
-# Add hotel summaries to visit type entries
+# Add hotel summaries to the hotel listings of visit types
 GET /api/v2/visit-types?expand=hotel
 ```
 
@@ -191,12 +191,13 @@ The paginated `/room-types` endpoint keeps its requested `createdAt` order.
 Hotel [`buildings`](/api/objects/hotel#buildings) are always included in hotel
 list and detail responses, independently of `expand=roomTypes`.
 
-The [visit type](/api/objects/visit-type) endpoints always return hotel
-entries with the hotel id and the price of the package at that hotel.
-`expand=hotel` adds each entry's hotel summary. The detail endpoint also
-accepts `expand=priceFromPeriods`, independently of `hotel`, which adds
-price periods to the package and every returned `hotelListings` entry.
-The list endpoint accepts only `hotel` and rejects `priceFromPeriods` with `400`. The
+The [visit type](/api/objects/visit-type) endpoints always return
+`hotelListings` with the hotel id and the price of the package at that hotel.
+`expand=hotel` adds each listing's hotel summary. The detail endpoint also
+accepts `expand=priceFromPeriods`, which adds
+[price periods](/api/objects/price-from-period) to the package and to every
+listing. Both values can be combined. The list endpoint returns `400` for
+`priceFromPeriods`. The
 [list](/api/v2/reference/visit-types/list-visit-types) and
 [detail](/api/v2/reference/visit-types/get-a-visit-type) references show
 complete examples of each variant.

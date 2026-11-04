@@ -1,142 +1,123 @@
 ---
-title: "Price from period"
-description: "Price-list rates over time, including historical periods, winning rooms, and applied promotions."
+title: "Price period"
+description: "A range of nights with the same package prices: prices per guest and per room, and the promotions that apply."
 openapi-schema: "/api/v2/openapi.yaml PriceFromPeriod"
 ---
 
-Request a visit type detail with `expand=priceFromPeriods` to receive
-`priceFromPeriods` on the package and every `hotelListings` entry. The
-expansion is independent of `expand=hotel` and is unavailable on the list.
+A price period is a range of nights in which a package has the same prices.
+Use periods for a price table on a package page, for example "10 to 11 January:
+from EUR 523.60 per guest for 7 nights".
 
-A period describes a price-list rate. Its price uses the package's shortest
-stay, as if every night had the rates and promotions of that period. It does
-not check room capacity, permitted arrival days, or whether the full stay
-fits inside the period. A sold-out room can provide the lowest rate, and a
-one-night period can show a seven-night price. Check the guest's chosen stay
+Request the [visit type detail](/api/v2/reference/visit-types/get-a-visit-type)
+with `expand=priceFromPeriods`. The package's `priceFromPeriods` compares all
+its hotels, and each `hotelListings[]` entry has the periods of that hotel.
+With `hotelId`, the detail returns only that hotel's listing, and the
+package's periods still compare all hotels. The list endpoint does not return
+periods.
+
+Each period prices the package's shortest stay as if every night of the stay
+had the prices and promotions of that period. Free rooms and permitted
+arrival days are not checked, and the stay does not have to fit into the
+period: a sold-out room can set the lowest price, and a one-night period
+can show a price for seven nights. When the guest chooses dates, test them
 against the [stay rules](/api/visit-types#testing-a-stay-against-its-rules)
-and show its room availability separately.
+and check that a room is free.
 
 ## Fields and night bounds
 
 | Field | Meaning |
 | --- | --- |
-| `from` | First night of the period, inclusive. |
+| `from` | First night of the period. |
 | `to` | Last night of the period, inclusive. |
-| `activePromotionIds` | Promotions relevant to at least one eligible room in this period, in the order of the package's `promotions`. |
-| `priceFrom` | Calculated rates by currency, or `null` when no room has a safely calculable price. |
+| `activePromotionIds` | Promotions that apply in the period to at least one room with a price, in the order of the package's `promotions`. |
+| `priceFrom` | Prices by currency, or `null` when no room has a price for the period. |
 
-Periods are ordered, do not overlap, and have no id. The date identifies the
-night starting on that date: `to: "2027-01-11"` includes the night of
-11 January and its checkout on 12 January.
+A night is identified by the date it starts on: `to: "2027-01-11"` includes
+the night of 11 January, with checkout on 12 January. Periods are sorted by
+date and do not overlap. Nights outside the package's validity or its price
+list have no period, so the list can have gaps. Periods have no id.
 
-Periods cover the intersection of configured package validity and price-list
-coverage. Season changes and applicable promotion starts and ends split them
-where price conditions change. A promotion affecting another eligible room
-can split a period even when the cheapest room and displayed amount stay the
-same. Equal amounts do not merge periods with different conditions.
+## Where periods start and end
 
-Eligible rooms are active, non-draft room types at an active hotel listing,
-with usable price data for that period. Disabled rooms can remain referenced
-in a promotion's `appliesTo`, but do not contribute to `activePromotionIds`
-or split a period.
+Periods cover the nights on which the package is valid and its price list
+has a season, including past nights. A new period starts where a season
+starts or ends, or where a promotion starts or ends for a room with a price.
+Two neighboring periods can therefore have the same prices, for example when
+a promotion changes only the price of a more expensive room.
 
-An arrival-limited validity includes its `to` date. A departure-limited
-validity ends on the night before `to`. For example, validity through
-31 March produces a last night of 31 March with `toAppliesTo: "arrival"`,
-or 30 March with `toAppliesTo: "departure"`. These bounds are not shifted
-back by the package's minimum stay length. Overlapping or adjacent validity
-intervals form continuous coverage; a gap stays a gap. No configured validity
-means no date restriction.
+The package's periods combine all its hotels: a new period at one hotel also
+starts a new period of the package. Disabled room types are ignored: they set
+no prices and start no periods.
 
-The package's periods combine all its hotel listings. A change relevant to
-one hotel can split the package's period without splitting another hotel's
-period. A detail `hotelId` filter narrows only `hotelListings`; package-level
-periods and promotions continue to describe all hotels.
+Periods also end with each [validity](/api/objects/visit-type#validity)
+period of the package. With `toAppliesTo: "departure"`, the last night is
+the night before `to`; with `toAppliesTo: "arrival"`, it is the night of
+`to`.
 
 ## Price metrics
 
-A non-null `priceFrom` has one or both currency keys, `CZK` and `EUR`. Each
-currency has all three metrics:
+A non-null `priceFrom` has one or both currencies, `CZK` and `EUR`. Each
+currency has three prices:
 
 | Metric | Meaning |
 | --- | --- |
-| `perPersonPerNight` | Lowest rate per guest per night. |
-| `perPersonPerStay` | Price per guest for the full stay, from the same winning room as `perPersonPerNight`. |
-| `perStay` | Lowest total for the whole room at its standard occupancy. This can select a different room or hotel. |
+| `perPersonPerNight` | Lowest price per guest per night. |
+| `perPersonPerStay` | Price per guest for the whole stay, in the same room as `perPersonPerNight`. |
+| `perStay` | Lowest price of a whole room for the whole stay. It can come from a different room or hotel. |
 
-Every metric contains:
+Every metric has these fields:
 
 | Field | Meaning |
 | --- | --- |
-| `amount` | [`Money`](/api/currencies) after promotions. Display it directly. |
-| `original` | The same winning room's amount before promotions; `null` unless its rounded original exceeds `amount`. |
-| `nights` | The package's minimum or fixed stay length in nights, independent of the period's length. |
-| `occupancy` | Standard occupancy of the winning room. |
-| `hotel` | The winning hotel's `id` and localized `name`. |
-| `roomTypeId` | The winning room type. |
-| `appliedPromotionIds` | Promotions applied to this winner, in the order of the package's `promotions`; a subset of `activePromotionIds`. |
+| `amount` | Price after promotions, as [`Money`](/api/currencies). Display it directly. |
+| `original` | Price of the same room before promotions, or `null` when promotions do not lower the rounded price. |
+| `nights` | Length of the priced stay: the package's minimum or fixed number of nights, not the length of the period. |
+| `occupancy` | Standard occupancy of the room the price comes from. |
+| `hotel` | Hotel of that room: `id` and localized `name`. |
+| `roomTypeId` | Room type the price comes from. |
+| `appliedPromotionIds` | Promotions included in this price, in the order of the package's `promotions`. |
 
-Prices use full standard occupancy and the same seasonal rates and discount
-calculation as a stay. When price-list seasons overlap, their nightly rates
-are added. Overlapping promotions apply successively as explained in
-[Prices](/api/prices#promotions).
+Prices assume a room at its standard occupancy and use the same nightly
+prices and discounts as a booking. Overlapping promotions combine as
+described in [Prices](/api/prices#promotions).
 
-The per-person metrics share their winning room, hotel, nights, occupancy,
-and applied promotions. Their amounts are rounded independently from the
-unrounded room total. A EUR 100 nightly room rate for three guests gives
-EUR 33.33 per guest per night and EUR 233.33 per guest for seven nights.
-Do not multiply the rounded nightly rate to obtain the stay amount.
+Per-person amounts are rounded separately. A room at EUR 100 per night for
+three guests gives EUR 33.33 per guest per night and EUR 233.33 per guest for
+seven nights. Take each amount from the API instead of multiplying rounded
+values.
 
-The per-person winner has the lowest rounded `perPersonPerStay` amount,
-then the lowest rounded `perPersonPerNight` amount, then the lower occupancy,
-hotel id, and room type id. Equal `perStay` totals prefer lower occupancy,
-hotel id, and room type id. Per-person amounts are rounded half up from the
-room total in integer minor units.
+For a price per guest, display `perPersonPerStay.amount` with its `nights`.
+For a room price, display `perStay.amount` with its `nights` and
+`occupancy`.
 
-For a per-person package price, display `perPersonPerStay.amount` with its
-`nights`. For a room price, display `perStay.amount` with both `nights` and
-`occupancy`. Do not derive one metric from another.
+## Promotions in a period
 
-## Promotions and discounted amounts
+Look up promotion ids in the package's [`promotions`](/api/objects/promotion).
+`activePromotionIds` lists the promotions that apply in the period, and
+`appliedPromotionIds` lists the promotions included in one price. A promotion
+can be active without lowering the displayed price, for example when it
+discounts only a more expensive room.
 
-Resolve promotion ids against the package's
-[`promotions`](/api/objects/promotion). `activePromotionIds` describes the
-period's relevant promotions; `appliedPromotionIds` explains the particular
-winning price. A promotion on another room need not reduce that minimum.
+Show `original` struck through next to the `amount` of the same metric, and
+do not apply the promotions to `amount` again.
+[Building package pages](/guides/visit-types#displaying-discounts) shows how
+to display a saving.
 
-Take the discounted and original amount from the same metric. If you show
-a savings percentage, calculate `100 × (1 − amountMinor / originalMinor)`
-from that metric before rounding for display, and only when `original` is
-non-null. Do not apply the listed promotions to `amount` again or copy one
-promotion's percentage onto every price in a period.
+## Past periods and empty values
 
-## History and empty states
+Past periods use today's price list and promotions, so they do not show what
+past bookings paid. With `expand=priceFromPeriods`, the detail also returns
+ended promotions, so every id in a past period can be looked up.
 
-Periods include past dates within configured validity. They use the price
-list and promotions currently stored, so a historical period is not a record
-of a past booking's price. An expanded detail includes ended promotions so
-their ids can be resolved. Ended promotions follow the same scope rules as
-current promotions; they can be listed even when no returned period uses them.
-Historical promotions do not add `special_offers`
-to `channelContent.collections`.
-
-`available` and `bookingMode` do not suppress period prices. Request,
-disabled, and ended packages can all have priced periods. Public `validity`
-contains only current and future intervals, so an ended package can have
-`validity: []` and non-empty historical periods. Its current `priceFrom`
-remains `null` because it has no future permitted stay.
+Periods are returned for every package, including packages booked on request
+and unavailable packages. An ended package has `validity: []` and
+`priceFrom: null`, and its periods still show its past prices.
 
 | Value | Meaning |
 | --- | --- |
-| Field omitted | The detail was requested without this expansion, or this is a list response. |
-| `priceFromPeriods: null` | The source price list cannot be safely interpreted. |
-| `priceFromPeriods: []` | No price-list periods intersect configured validity, including when no price list exists. |
-| A period with `priceFrom: null` | The period exists, but no eligible room has a calculable price. Keep its dates and promotion ids. |
-
-A package without active hotels can retain periods with `priceFrom: null`
-and empty `activePromotionIds`, while `hotelListings` is empty. A minimum
-stay longer than 4,096 nights also retains periods but has no period prices.
-Periods do not set availability flags; read `available` and
-`unavailableReason` independently.
+| Field missing | The detail was requested without `expand=priceFromPeriods`, or the response is a list. |
+| `priceFromPeriods: null` | SpaPortal cannot calculate the periods for this package. Do not show a price table. |
+| `priceFromPeriods: []` | The package has no price list for the nights of its validity. Do not show a price table. |
+| A period with `priceFrom: null` | The period exists, but none of its rooms has a price. Show the row without a price. |
 
 ## Fields

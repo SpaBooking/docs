@@ -4,11 +4,12 @@ description: "Understand indicative prices, complete-stay selection, and applica
 icon: "tag"
 ---
 
-Use indicative prices for teasers and comparisons. `priceFrom` selects a
-complete stay with capacity; `priceFromPeriods` shows price-list rates over
-time. Neither reserves a room or quotes a chosen set of guests and dates.
-The [Price from object](/api/objects/price-from) and
-[Price from period object](/api/objects/price-from-period) define their fields.
+Use indicative prices for teasers and comparisons. `priceFrom` is the lowest
+price of a complete stay with free rooms from today onward.
+`priceFromPeriods` shows how a package's prices change over time. Neither
+reserves a room or quotes a chosen set of guests and dates. The
+[Price from object](/api/objects/price-from) and
+[Price period object](/api/objects/price-from-period) define their fields.
 
 ## Two independent minima
 
@@ -42,8 +43,9 @@ conditions hold:
   type has remaining capacity for every night.
 - The package is in the
   [visit type catalog](/api/visit-types#publication-and-availability) of your
-  public key. Hotel prices additionally require `available: true` and
-  `bookingMode: "instant"`. Visit type prices do not use these two gates.
+  public key. Hotel prices include only packages with `available: true` and
+  `bookingMode: "instant"`. Visit type prices also include packages booked
+  on request and packages switched off in SpaPortal.
 - Its hotel, package, and room type belong to the scope of the calculation:
   the hotel's packages for a hotel price, the package's hotels for a package
   price.
@@ -111,8 +113,8 @@ discounted.
 ## Package and package-at-hotel prices
 
 The package's `priceFrom` compares complete stays across all hotels that sell
-it. Each `hotelListings[]` entry's `priceFrom` limits the comparison to that hotel. Both
-use the selection rules above and the same
+it. The `priceFrom` of each `hotelListings[]` entry compares only that hotel.
+Both use the selection rules above and the same
 [Price from](/api/objects/price-from) object.
 
 Requesting one hotel with `hotelId` on the
@@ -121,32 +123,20 @@ change the package's `priceFrom`.
 
 ## Price periods
 
-Request `GET /api/v2/visit-types/{visitTypeId}?expand=priceFromPeriods` to
-receive the package's `priceFromPeriods` and each hotel listing's periods.
-They cover the nights where configured package validity and price-list
-coverage intersect, including history. Applicable promotion starts and ends
-split them further; a period without a promotion has the regular rate.
-
-Each period prices the package's shortest stay as if all its nights used
-that period's rates and promotions. It does not search for an actual stay,
-check room capacity or arrival weekdays, or require the full stay to fit
-inside the period. A one-night period can therefore show a seven-night price.
-The [period object](/api/objects/price-from-period) defines the three metrics,
-night bounds, validity limits, promotion ids, and empty states.
-
-Display the returned amounts directly, without applying promotions again.
-Period rates and `priceFrom` answer different questions; their minima need
-not match. Expanding periods does not change `priceFrom`.
+Request the detail with `expand=priceFromPeriods` to receive
+[price periods](/api/objects/price-from-period): ranges of nights with the
+package's prices, including past nights. Each period prices the package's
+shortest stay with that period's prices and promotions, without checking free
+rooms or permitted arrival days. Periods are a price overview, so their
+amounts can differ from `priceFrom`, and requesting them does not change
+`priceFrom`.
 
 ## Room capacity
 
 `priceFrom` is calculated for each request from the room capacity recorded in
 SpaPortal at that moment. If the cheapest stay is sold out, the calculation
-selects the next buyable stay. For
+selects the next stay with free rooms. For
 example, a sold-out CZK 3,000 offer does not beat an available CZK 4,500 offer.
-
-`priceFromPeriods` ignores room capacity: its cheapest room can be sold out.
-Show the actual availability when the guest chooses dates.
 
 The response does not hold a room. A price you cache can be outdated by the
 next request, because prices and recorded capacity change. An absent
