@@ -1,6 +1,6 @@
 ---
 title: "API versioning"
-description: "Understand SpaPortal API versioning."
+description: "How the API version is set and how API v2 changes."
 icon: "git-branch"
 ---
 
@@ -15,18 +15,16 @@ The API version is explicit in the URL path:
 https://spaportal.cz/api/v2
 ```
 
-## Breaking changes
+## Changes to API v2
 
-Breaking changes to published contracts require a new major API version. This
-applies to every resource in the reference.
+API v2 is still in development. Its contracts can change in ways that are not
+backward compatible, for example renamed fields or changed query parameters.
+Such changes keep the `/api/v2` path. The documentation always describes the
+current behavior.
 
-Examples include renamed fields, changed ID semantics, changed pagination, or
-changed authentication requirements.
-
-Additive changes can be made inside the same major version.
-
-Examples include new optional fields, new optional query parameters, new
-endpoints, or new enum values that clients can ignore safely.
+New fields, query parameters, endpoints, and values can be added at any time.
+Ignore response fields that you do not use, so that additions do not break
+your client.
 
 ## Catalog codes
 

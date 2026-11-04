@@ -32,7 +32,7 @@ the label languages.
 | `GET /api/v2/amenity-categories?scope=roomType` | Room type categories |
 
 A category is identified by `scope` and `code`; a code is unique only within
-its scope. Each amenity has a stable `code`, a localized `label`, and
+its scope. Each amenity has a `code` that identifies it, a localized `label`, and
 `detailKinds`, the details that can be specified for it. Amenities with the
 `options` detail kind list their choices in `options`.
 
@@ -201,8 +201,6 @@ them, either:
   Then match `category.code`, the amenity `code`, and each option `code`.
 - Request [`expand=amenityLabels`](/api/expand). The response then includes a
   localized `label` on each category, amenity, and option.
-
-Codes are stable within API v2.
 
 ## Included with this room
 
