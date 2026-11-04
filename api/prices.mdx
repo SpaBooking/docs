@@ -123,9 +123,9 @@ change the package's `priceFrom`.
 
 Request `GET /api/v2/visit-types/{visitTypeId}?expand=priceFromPeriods` to
 receive the package's `priceFromPeriods` and each hotel listing's periods.
-These describe the intersection of configured package validity, price-list
-coverage, and applicable promotion windows, including history. Promotions
-split periods where their conditions change.
+They cover the nights where configured package validity and price-list
+coverage intersect, including history. Applicable promotion starts and ends
+split them further; a period without a promotion has the regular rate.
 
 Each period prices the package's shortest stay as if all its nights used
 that period's rates and promotions. It does not search for an actual stay,

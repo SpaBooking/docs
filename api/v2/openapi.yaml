@@ -3235,7 +3235,7 @@ paths:
                   summary: Package without expansions
                   description: "Illustrative response for the company's own website channel with `Accept-Language:
                     cs-CZ,de` and today = 2026-10-30. Hotel Bellevue sells the package but has no
-                    buyable offer; Hotel Pramen has one."
+                    qualifying complete stay; Hotel Pramen has one."
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b801
                     name:
@@ -10207,6 +10207,7 @@ components:
               - 6720c0a1b2c3d4e5f6a7f102
     PriceFromPeriodMinimum:
       type: object
+      additionalProperties: false
       required:
         - amount
         - original
@@ -10275,6 +10276,7 @@ components:
           - 6720c0a1b2c3d4e5f6a7d314
     PriceFromPeriodCurrency:
       type: object
+      additionalProperties: false
       required:
         - perPersonPerNight
         - perPersonPerStay
@@ -10355,6 +10357,7 @@ components:
             - 6720c0a1b2c3d4e5f6a7d311
     PriceFromPeriod:
       type: object
+      additionalProperties: false
       required:
         - from
         - to
