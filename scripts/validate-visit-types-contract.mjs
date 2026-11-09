@@ -417,7 +417,12 @@ function assertDocumentedPrices(name, value) {
     assert.deepEqual(value.hotelListings[0].priceFromPeriods, value.priceFromPeriods);
   }
   if (name === 'expand-hotel-price-periods' || name === 'one-hotel-with-price-periods') {
-    assert.equal(value.priceFrom, null, 'capacity is absent in the period example');
+    assert(value.priceFrom, 'sold-out rooms still produce indicative prices');
+    assert.deepEqual(['perPersonPerNight', 'perStay'].map(k => value.priceFrom.EUR[k].amount.amountMinor), [7053, 64260], 'complete-stay minima retain nightly promotion boundaries');
+    for (const listing of value.hotelListings) {
+      const pramen = listing.hotelId.endsWith('101');
+      assert.deepEqual(['perPersonPerNight', 'perStay'].map(k => listing.priceFrom.EUR[k].amount.amountMinor), pramen ? [7650, 64260] : [7053, 98736], 'sold-out listing uses complete-stay prices');
+    }
     assert.deepEqual(value.priceFromPeriods.map(p => [p.from, p.to]), [
       ['2026-11-01', '2027-01-04'], ['2027-01-05', '2027-01-09'], ['2027-01-10', '2027-01-11'],
       ['2027-01-12', '2027-01-12'], ['2027-01-13', '2027-01-15'], ['2027-01-16', '2027-01-20'], ['2027-01-21', '2027-03-31'],
@@ -453,6 +458,7 @@ assertPromotionIdentities(doc);
 for (const [name, mutate, label] of [
   ['on-request', v => { v.priceFrom = null; v.hotelListings.forEach(h => { h.priceFrom = null; }); }, 'request prices cannot be suppressed'],
   ['disabled-with-price', v => { v.priceFrom = null; v.hotelListings.forEach(h => { h.priceFrom = null; }); }, 'disabled prices cannot be suppressed'],
+  ['expand-hotel-price-periods', v => { v.priceFrom = null; }, 'capacity cannot suppress indicative prices'],
   ['ended-with-price-periods', v => { v.priceFromPeriods = []; v.hotelListings.forEach(h => { h.priceFromPeriods = []; }); }, 'historical periods cannot be dropped'],
   ['ended-with-price-periods', v => { v.channelContent.collections.push('special_offers'); }, 'history cannot add special_offers'],
   ['expand-hotel-price-periods', v => { v.priceFromPeriods[2].priceFrom.EUR.perPersonPerStay.amount.amountMinor++; }, 'documented arithmetic cannot drift'],

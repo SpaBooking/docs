@@ -136,7 +136,7 @@ paths:
 
         `priceFrom` holds the lowest prices the hotel sells for arrivals from today onward, per currency, across all packages (`all`) and per category (`health`,
         `wellness`), each with two independent minima that name the hotel and
-        the package. It is null when no buyable offer exists. See
+        the package. It is null when no eligible priced stay exists. See
         [Prices](/api/prices).
 
         See the [Hotel](/api/objects/hotel) object for the full field
@@ -231,7 +231,7 @@ paths:
                 without-expansions:
                   summary: Both hotels on one page (default request)
                   description: "Illustrative response for the company's own website channel with `Accept-Language:
-                    cs-CZ,de` and today = 2026-10-30. Hotel Bellevue has a buyable offer only for
+                    cs-CZ,de` and today = 2026-10-30. Hotel Bellevue has an eligible priced stay only for
                     the wellness package; Hotel Pramen also sells the health package."
                   value:
                     data:
@@ -3508,7 +3508,7 @@ paths:
         - `without-expansions`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b801`
         - `expand-hotel`: the same request with `expand=hotel`
         - `on-request`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b802`, a package booked on request, with its price
-        - `expand-hotel-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=hotel,priceFromPeriods`, a package with promotions at two hotels and no free rooms
+        - `expand-hotel-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=hotel,priceFromPeriods`, a package with promotions at two sold-out hotels; indicative prices are still returned
         - `one-hotel-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=priceFromPeriods&hotelId=6720c0a1b2c3d4e5f6a7c101`, with only the Hotel Pramen listing; the package's prices, periods, and promotions still cover both hotels
         - `disabled-with-price`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b805`, a package switched off in SpaPortal, with its price
         - `ended-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b806?expand=priceFromPeriods`, an ended package with its past price periods
@@ -4445,7 +4445,50 @@ paths:
                                 de: Sonstiges
                             naturalSource: mineral_water
                             count: 14
-                    priceFrom: null
+                    priceFrom:
+                      EUR:
+                        perPersonPerNight:
+                          amount:
+                            amountMinor: 7053
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 11000
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c103
+                            name:
+                              cs-CZ: Hotel Bellevue
+                              de: Hotel Bellevue
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b804
+                            name:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
+                        perStay:
+                          amount:
+                            amountMinor: 64260
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 84000
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 1
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b804
+                            name:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
                     priceFromPeriods:
                       - from: "2026-11-01"
                         to: "2027-01-04"
@@ -4954,7 +4997,50 @@ paths:
                         appliesTo: null
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c103
-                        priceFrom: null
+                        priceFrom:
+                          EUR:
+                            perPersonPerNight:
+                              amount:
+                                amountMinor: 7053
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 11000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
+                            perStay:
+                              amount:
+                                amountMinor: 98736
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 154000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
                         hotel:
                           id: 6720c0a1b2c3d4e5f6a7c103
                           name:
@@ -5294,7 +5380,50 @@ paths:
                                   appliedPromotionIds:
                                     - 6720c0a1b2c3d4e5f6a7d311
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
-                        priceFrom: null
+                        priceFrom:
+                          EUR:
+                            perPersonPerNight:
+                              amount:
+                                amountMinor: 7650
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 10000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
+                            perStay:
+                              amount:
+                                amountMinor: 64260
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 84000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 1
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
                         hotel:
                           id: 6720c0a1b2c3d4e5f6a7c101
                           name:
@@ -5745,7 +5874,50 @@ paths:
                                 de: Sonstiges
                             naturalSource: mineral_water
                             count: 14
-                    priceFrom: null
+                    priceFrom:
+                      EUR:
+                        perPersonPerNight:
+                          amount:
+                            amountMinor: 7053
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 11000
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c103
+                            name:
+                              cs-CZ: Hotel Bellevue
+                              de: Hotel Bellevue
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b804
+                            name:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
+                        perStay:
+                          amount:
+                            amountMinor: 64260
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 84000
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 1
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b804
+                            name:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
                     priceFromPeriods:
                       - from: "2026-11-01"
                         to: "2027-01-04"
@@ -6254,7 +6426,50 @@ paths:
                         appliesTo: null
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
-                        priceFrom: null
+                        priceFrom:
+                          EUR:
+                            perPersonPerNight:
+                              amount:
+                                amountMinor: 7650
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 10000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
+                            perStay:
+                              amount:
+                                amountMinor: 64260
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 84000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 1
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
                         priceFromPeriods:
                           - from: "2026-11-01"
                             to: "2027-01-09"
@@ -8101,7 +8316,7 @@ components:
           description: >-
             Lowest prices the hotel sells for arrivals from today onward, per currency: across all
             packages (`all`) and per category (`health`, `wellness`), each with two independent
-            minima. A currency is present only when it has a buyable offer. Null when the hotel has
+            minima. A currency is present only when it has an eligible priced stay. Null when the hotel has
             none. See [Prices](/api/prices).
         roomTypes:
           type: array
@@ -8654,8 +8869,8 @@ components:
       description: A `Money` amount, or null.
     PriceFromMinimum:
       type: object
-      description: One complete stay selected by the [pricing rules](/api/prices). See [Price
-        from](/api/objects/price-from).
+      description: One complete stay selected without checking room capacity (**Draft**); see the
+        [pricing rules](/api/prices) and [Price from](/api/objects/price-from).
       required: [ amount, original, nights, occupancy, hotel, visitType ]
       properties:
         amount:
@@ -8734,12 +8949,12 @@ components:
         health:
           allOf:
             - $ref: "#/components/schemas/PriceFromPair"
-          description: Minima across health packages only. Omitted when none has a buyable offer in this
+          description: Minima across health packages only. Omitted when none has an eligible priced stay in this
             currency.
         wellness:
           allOf:
             - $ref: "#/components/schemas/PriceFromPair"
-          description: Minima across wellness packages only. Omitted when none has a buyable offer in this
+          description: Minima across wellness packages only. Omitted when none has an eligible priced stay in this
             currency.
       description: Hotel-wide and per-category minima for one currency. See [Comparing hotel
         groups](/api/prices#comparing-hotel-groups).

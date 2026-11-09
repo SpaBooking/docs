@@ -5,6 +5,19 @@ icon: "clock-rotate-left"
 hidden: true
 ---
 
+## Unreleased (Draft)
+
+### Indicative prices without room-capacity checks
+
+- Hotel, visit type, and hotel listing `priceFrom` minima do not check room
+  capacity. Sold-out rooms can set either minimum, and capacity updates alone
+  do not change the price. Check the calendar and booking quote for the
+  guest's selected stay.
+- Complete-stay selection, catalog scope, enabled room types, currencies,
+  promotions, and original prices retain their existing rules. Price periods
+  retain their historical and period-rate calculation. See
+  [Prices](/api/prices) for how these indicative prices differ.
+
 ## 2026-11-03
 
 ### Visit type price periods

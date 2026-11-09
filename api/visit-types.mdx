@@ -4,6 +4,10 @@ description: "Understand the availability and stay rules of a stay package."
 icon: "suitcase"
 ---
 
+<Warning>
+**Draft:** `priceFrom` without capacity checks is not released yet.
+</Warning>
+
 A [visit type](/api/objects/visit-type) is a stay package sold by one or more
 hotels. Its availability, stay rules, and prices are independent: an available
 package can have no permitted stay in your dates, and a permitted stay can
@@ -28,8 +32,8 @@ unavailable package.
 
 Availability does not promise a price or a free room on a particular date. A
 permitted arrival with no free room still satisfies the catalog date filters.
-`priceFrom` also needs a nightly price and a free room for every
-night; see [Prices](/api/prices).
+`priceFrom` needs a nightly price for every occupied night, but does not
+check free rooms; see [Prices](/api/prices).
 
 ## Testing a stay against its rules
 
@@ -62,6 +66,9 @@ recalculate `priceFrom` for the requested stay: a package matching
 `nights=14` can still report a seven-night minimum.
 
 ## Hotels and prices
+
+Indicative prices ignore room capacity. Use the calendar and booking quote
+for the guest's chosen dates.
 
 `hotelListings` says where the package is sold; a listing stays present when
 its price is `null`.

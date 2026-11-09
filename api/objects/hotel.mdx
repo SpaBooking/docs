@@ -154,13 +154,18 @@ Join the two by `code`.
 
 ## Prices
 
+<Warning>
+**Draft:** `priceFrom` without capacity checks is not released yet.
+</Warning>
+
 `priceFrom` holds the lowest prices the hotel sells for arrivals from today
 onward, per currency.
 Each currency has the hotel-wide group `all` and the category groups `health`
 and `wellness`, each with the two independent
 [Price from](/api/objects/price-from) minima. A category group is omitted
-when it has no buyable offer; `all` is present whenever the currency is.
-`priceFrom` is `null` when the hotel has no buyable offer at all.
+when it has no eligible priced stay; `all` is present whenever the currency is.
+`priceFrom` is `null` when the hotel has no eligible priced stay. Room
+capacity does not affect these minima.
 
 Every minimum names its `hotel` and `visitType`. Open the package with the
 same public key to show its details. [Prices](/api/prices) defines which
