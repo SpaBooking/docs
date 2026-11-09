@@ -71,8 +71,11 @@ Two neighboring periods can therefore have the same prices, for example when
 a promotion changes only the price of a more expensive room.
 
 The package's periods combine all its hotels: a new period at one hotel also
-starts a new period of the package. Disabled room types are ignored: they set
-no prices and start no periods.
+starts a new period of the package. Each resulting period selects eligible
+rooms for its own dates. A narrower package period can therefore have a
+different minimum or fewer currencies than a wider hotel period, or be omitted
+when no permitted stay reaches it. Display the values of the selected table.
+Disabled room types are ignored: they set no prices and start no periods.
 
 Periods also end with each [validity](/api/objects/visit-type#validity)
 period of the package. With `toAppliesTo: "departure"`, the last night is
