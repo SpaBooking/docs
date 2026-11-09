@@ -188,9 +188,10 @@ complete stay exists from today onward. [Prices](/api/prices) explains how
 stays are selected.
 
 `priceFromPeriods` lists the package's [price periods](/api/objects/price-from-period):
-ranges of nights with their prices across all hotels, including past nights.
-The detail returns it only with `expand=priceFromPeriods`. Periods do not
-check free rooms or permitted arrival days.
+ranges of nights with their prices across all hotels.
+The detail returns it only with `expand=priceFromPeriods`. **Draft:** Only
+periods overlapping a future permitted stay with price coverage are returned.
+Periods do not check room capacity.
 
 `promotions` lists the current and future [promotions](/api/objects/promotion)
 that apply to your channel, ordered by `from`, then `id`. With

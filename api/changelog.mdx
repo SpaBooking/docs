@@ -7,6 +7,17 @@ hidden: true
 
 ## Unreleased (Draft)
 
+### Relevant price periods
+
+- Price periods now include only rows overlapping a permitted stay arriving
+  today or later, using Europe/Prague. Selection checks arrivals, minimum and
+  maximum length, validity, and price coverage for the same room and currency.
+- Omit ended periods, periods beyond the last possible stay, and rows without
+  prices. Keep periods crossed by a stay that starts in an earlier season.
+- Keep the period-rate calculation, promotions, and capacity-independent
+  pricing. An ended package returns an empty period array. Retained rows keep
+  their season and promotion boundaries.
+
 ### Indicative prices without room-capacity checks
 
 - Hotel, visit type, and hotel listing `priceFrom` minima do not check room
@@ -15,7 +26,7 @@ hidden: true
   guest's selected stay.
 - Complete-stay selection, catalog scope, enabled room types, currencies,
   promotions, and original prices retain their existing rules. Price periods
-  retain their historical and period-rate calculation. See
+  retain their period-rate calculation. See
   [Prices](/api/prices) for how these indicative prices differ.
 
 ## 2026-11-03

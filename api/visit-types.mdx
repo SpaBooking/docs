@@ -77,5 +77,6 @@ price and the price of each listing.
 
 With `expand=priceFromPeriods`, the detail also returns
 [price periods](/api/objects/price-from-period): the package's prices by
-date, including past dates. Periods do not check free rooms or permitted
-arrival days.
+date. **Draft:** Periods are selected by future permitted stays and price
+coverage. They do not check room capacity. See the
+[period selection rules](/api/objects/price-from-period#which-periods-are-returned).

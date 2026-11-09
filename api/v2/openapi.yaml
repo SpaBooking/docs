@@ -3499,7 +3499,8 @@ paths:
         companies in scope.
 
         Use `expand=priceFromPeriods` to add [price periods](/api/objects/price-from-period)
-        to the package and its hotel listings; see the
+        to the package and its hotel listings. Draft — only periods overlapping a future permitted
+        stay with price coverage are returned; room capacity is not checked. See the
         [package page guide](/guides/visit-types#price-periods).
 
         The response examples are sent with the company's own website key and
@@ -3511,7 +3512,7 @@ paths:
         - `expand-hotel-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=hotel,priceFromPeriods`, a package with promotions at two sold-out hotels; indicative prices are still returned
         - `one-hotel-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b804?expand=priceFromPeriods&hotelId=6720c0a1b2c3d4e5f6a7c101`, with only the Hotel Pramen listing; the package's prices, periods, and promotions still cover both hotels
         - `disabled-with-price`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b805`, a package switched off in SpaPortal, with its price
-        - `ended-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b806?expand=priceFromPeriods`, an ended package with its past price periods
+        - `ended-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b806?expand=priceFromPeriods`, an ended package with empty price-period arrays
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -7005,11 +7006,11 @@ paths:
                           w960: https://cdn.example.com/visit-types/paused-stay/generation-1/w960.webp
                           w1440: https://cdn.example.com/visit-types/paused-stay/generation-1/w1440.webp
                 ended-with-price-periods:
-                  summary: Ended package with its past price periods
+                  summary: Ended package with empty price-period arrays
                   description: Same context as the first example. The package was valid for arrivals from 2026-10-01
                     to 2026-10-31, so `validity` is empty and `priceFrom` is null. Its price list
-                    continues until December, but the periods cover only the October nights of the
-                    validity.
+                    continues until December, but there is no future permitted arrival, so the period
+                    arrays are empty.
                   value:
                     id: 6720c0a1b2c3d4e5f6a7b806
                     name:
@@ -7108,120 +7109,7 @@ paths:
                             naturalSource: mineral_water
                             count: 14
                     priceFrom: null
-                    priceFromPeriods:
-                      - from: "2026-10-01"
-                        to: "2026-10-15"
-                        activePromotionIds:
-                          - 6720c0a1b2c3d4e5f6a7d315
-                        priceFrom:
-                          EUR:
-                            perPersonPerNight:
-                              amount:
-                                amountMinor: 9000
-                                currency: EUR
-                                currencyExponent: 2
-                              original:
-                                amountMinor: 10000
-                                currency: EUR
-                                currencyExponent: 2
-                              nights: 7
-                              occupancy: 2
-                              hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c101
-                                name:
-                                  cs-CZ: Hotel Pramen
-                                  de: Hotel Pramen
-                              roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                              appliedPromotionIds:
-                                - 6720c0a1b2c3d4e5f6a7d315
-                            perPersonPerStay:
-                              amount:
-                                amountMinor: 63000
-                                currency: EUR
-                                currencyExponent: 2
-                              original:
-                                amountMinor: 70000
-                                currency: EUR
-                                currencyExponent: 2
-                              nights: 7
-                              occupancy: 2
-                              hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c101
-                                name:
-                                  cs-CZ: Hotel Pramen
-                                  de: Hotel Pramen
-                              roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                              appliedPromotionIds:
-                                - 6720c0a1b2c3d4e5f6a7d315
-                            perStay:
-                              amount:
-                                amountMinor: 126000
-                                currency: EUR
-                                currencyExponent: 2
-                              original:
-                                amountMinor: 140000
-                                currency: EUR
-                                currencyExponent: 2
-                              nights: 7
-                              occupancy: 2
-                              hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c101
-                                name:
-                                  cs-CZ: Hotel Pramen
-                                  de: Hotel Pramen
-                              roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                              appliedPromotionIds:
-                                - 6720c0a1b2c3d4e5f6a7d315
-                      - from: "2026-10-16"
-                        to: "2026-10-31"
-                        activePromotionIds: []
-                        priceFrom:
-                          EUR:
-                            perPersonPerNight:
-                              amount:
-                                amountMinor: 10000
-                                currency: EUR
-                                currencyExponent: 2
-                              original: null
-                              nights: 7
-                              occupancy: 2
-                              hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c101
-                                name:
-                                  cs-CZ: Hotel Pramen
-                                  de: Hotel Pramen
-                              roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                              appliedPromotionIds: []
-                            perPersonPerStay:
-                              amount:
-                                amountMinor: 70000
-                                currency: EUR
-                                currencyExponent: 2
-                              original: null
-                              nights: 7
-                              occupancy: 2
-                              hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c101
-                                name:
-                                  cs-CZ: Hotel Pramen
-                                  de: Hotel Pramen
-                              roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                              appliedPromotionIds: []
-                            perStay:
-                              amount:
-                                amountMinor: 140000
-                                currency: EUR
-                                currencyExponent: 2
-                              original: null
-                              nights: 7
-                              occupancy: 2
-                              hotel:
-                                id: 6720c0a1b2c3d4e5f6a7c101
-                                name:
-                                  cs-CZ: Hotel Pramen
-                                  de: Hotel Pramen
-                              roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                              appliedPromotionIds: []
+                    priceFromPeriods: []
                     promotions:
                       - id: 6720c0a1b2c3d4e5f6a7d315
                         name:
@@ -7234,120 +7122,7 @@ paths:
                     hotelListings:
                       - hotelId: 6720c0a1b2c3d4e5f6a7c101
                         priceFrom: null
-                        priceFromPeriods:
-                          - from: "2026-10-01"
-                            to: "2026-10-15"
-                            activePromotionIds:
-                              - 6720c0a1b2c3d4e5f6a7d315
-                            priceFrom:
-                              EUR:
-                                perPersonPerNight:
-                                  amount:
-                                    amountMinor: 9000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  original:
-                                    amountMinor: 10000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  nights: 7
-                                  occupancy: 2
-                                  hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c101
-                                    name:
-                                      cs-CZ: Hotel Pramen
-                                      de: Hotel Pramen
-                                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                                  appliedPromotionIds:
-                                    - 6720c0a1b2c3d4e5f6a7d315
-                                perPersonPerStay:
-                                  amount:
-                                    amountMinor: 63000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  original:
-                                    amountMinor: 70000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  nights: 7
-                                  occupancy: 2
-                                  hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c101
-                                    name:
-                                      cs-CZ: Hotel Pramen
-                                      de: Hotel Pramen
-                                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                                  appliedPromotionIds:
-                                    - 6720c0a1b2c3d4e5f6a7d315
-                                perStay:
-                                  amount:
-                                    amountMinor: 126000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  original:
-                                    amountMinor: 140000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  nights: 7
-                                  occupancy: 2
-                                  hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c101
-                                    name:
-                                      cs-CZ: Hotel Pramen
-                                      de: Hotel Pramen
-                                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                                  appliedPromotionIds:
-                                    - 6720c0a1b2c3d4e5f6a7d315
-                          - from: "2026-10-16"
-                            to: "2026-10-31"
-                            activePromotionIds: []
-                            priceFrom:
-                              EUR:
-                                perPersonPerNight:
-                                  amount:
-                                    amountMinor: 10000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  original: null
-                                  nights: 7
-                                  occupancy: 2
-                                  hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c101
-                                    name:
-                                      cs-CZ: Hotel Pramen
-                                      de: Hotel Pramen
-                                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                                  appliedPromotionIds: []
-                                perPersonPerStay:
-                                  amount:
-                                    amountMinor: 70000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  original: null
-                                  nights: 7
-                                  occupancy: 2
-                                  hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c101
-                                    name:
-                                      cs-CZ: Hotel Pramen
-                                      de: Hotel Pramen
-                                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                                  appliedPromotionIds: []
-                                perStay:
-                                  amount:
-                                    amountMinor: 140000
-                                    currency: EUR
-                                    currencyExponent: 2
-                                  original: null
-                                  nights: 7
-                                  occupancy: 2
-                                  hotel:
-                                    id: 6720c0a1b2c3d4e5f6a7c101
-                                    name:
-                                      cs-CZ: Hotel Pramen
-                                      de: Hotel Pramen
-                                  roomTypeId: 6720c0a1b2c3d4e5f6a7f102
-                                  appliedPromotionIds: []
+                        priceFromPeriods: []
                     images:
                       - url: https://cdn.example.com/visit-types/october-stay.jpg
                         width: 1600
@@ -9084,11 +8859,11 @@ components:
           nullable: true
           items:
             $ref: "#/components/schemas/PriceFromPeriod"
-          description: Price periods of the package across all its hotels, including past periods, ordered by
-            `from`. Present only on the detail with `expand=priceFromPeriods`. Empty when the
-            package has no price list for the nights of its validity; null when SpaPortal cannot
-            calculate the periods. Free rooms and permitted arrival days are not checked. See [Price
-            period](/api/objects/price-from-period).
+          description: Price periods of the package across all its hotels, ordered by `from`. Present only
+            on the detail with `expand=priceFromPeriods`. Draft — only periods overlapping a future
+            permitted stay with prices in the same room and currency are returned. Empty when none
+            remain; null when SpaPortal cannot calculate the periods. Room capacity is not checked.
+            See [Price period](/api/objects/price-from-period).
         promotions:
           type: array
           items:
@@ -9676,15 +9451,7 @@ components:
                 cs-CZ: Hotel Bellevue
                 de: Hotel Bellevue
               stars: 3
-            priceFromPeriods:
-              - from: "2026-11-01"
-                to: "2027-03-30"
-                activePromotionIds: []
-                priceFrom: null
-              - from: "2027-04-01"
-                to: "2027-10-31"
-                activePromotionIds: []
-                priceFrom: null
+            priceFromPeriods: []
           - hotelId: 6720c0a1b2c3d4e5f6a7c101
             priceFrom:
               CZK:
@@ -11303,10 +11070,10 @@ components:
           nullable: true
           items:
             $ref: "#/components/schemas/PriceFromPeriod"
-          description: Price periods of the package at this hotel, including past periods, ordered by `from`.
-            Present only on the detail with `expand=priceFromPeriods`. Empty when the package has no
-            price list for the nights of its validity; null when SpaPortal cannot calculate the
-            periods. See [Price period](/api/objects/price-from-period).
+          description: Price periods of the package at this hotel, ordered by `from`. Present only on the
+            detail with `expand=priceFromPeriods`. Draft — only periods overlapping a future permitted
+            stay with prices in the same room and currency are returned. Empty when none remain;
+            null when SpaPortal cannot calculate the periods. See [Price period](/api/objects/price-from-period).
       description: The package at one hotel, with its price there. See [Hotel
         listings](/api/objects/visit-type#hotel-listings).
     PromotionHotelScope:
@@ -11434,7 +11201,8 @@ components:
             also listed in the period's `activePromotionIds`. Empty when no promotion changes the
             price.
       description: "The price of the package's shortest stay with the prices and promotions of one period.
-        It is not a bookable offer: free rooms and permitted arrival days are not checked. See
+        The amount applies the period rate to every night; it is not a quote for chosen dates.
+        Room capacity is not checked. See
         [Price period](/api/objects/price-from-period)."
     PriceFromPeriodCurrency:
       type: object
@@ -11486,7 +11254,6 @@ components:
             price.
         priceFrom:
           type: object
-          nullable: true
           additionalProperties: false
           minProperties: 1
           properties:
@@ -11494,10 +11261,9 @@ components:
               $ref: "#/components/schemas/PriceFromPeriodCurrency"
             EUR:
               $ref: "#/components/schemas/PriceFromPeriodCurrency"
-          description: Prices by currency. Null when no room has a price for the period; the period and its
-            promotion ids are still returned.
-      description: A range of nights in which the package has the same prices. Past periods use today's
-        price list. See [Price period](/api/objects/price-from-period).
+          description: Prices by currency. Draft — periods without any price are omitted.
+      description: A range of nights with the same package prices. Draft — only periods overlapping a
+        future permitted stay with price coverage are returned. See [Price period](/api/objects/price-from-period).
       example:
         from: "2027-01-10"
         to: "2027-01-11"

@@ -4,6 +4,10 @@ description: "A range of nights with the same package prices: prices per guest a
 openapi-schema: "/api/v2/openapi.yaml PriceFromPeriod"
 ---
 
+<Warning>
+**Draft:** Filtering price periods by future permitted stays is not released yet.
+</Warning>
+
 A price period is a range of nights in which a package has the same prices.
 Use periods for a price table on a package page, for example "10 to 11 January:
 from EUR 523.60 per guest for 7 nights".
@@ -16,12 +20,33 @@ package's periods still compare all hotels. The list endpoint does not return
 periods.
 
 Each period prices the package's shortest stay as if every night of the stay
-had the prices and promotions of that period. Free rooms and permitted
-arrival days are not checked, and the stay does not have to fit into the
-period: a sold-out room can set the lowest price, and a one-night period
-can show a price for seven nights. When the guest chooses dates, test them
+had the prices and promotions of that period. Room capacity is not checked,
+and the stay does not have to fit into the period. A sold-out room can set
+the lowest price, and a one-night period can show a price for seven nights. When the guest chooses dates, test them
 against the [stay rules](/api/visit-types#testing-a-stay-against-its-rules)
 and check that a room is free.
+
+## Which periods are returned
+
+SpaPortal keeps a period only if a permitted stay arriving today or later
+can occupy at least one of its nights. Today uses Europe/Prague. Selection
+checks arrival weekdays or fixed dates, minimum and maximum stay length,
+and the package's validity. Every night of that stay must have a price for
+the same enabled room type and currency. A price of zero counts as a price.
+
+For example, a season ending on Saturday is omitted when the next permitted
+arrival is Sunday. If the last arrival is 20 December and the maximum stay
+is 21 nights, periods starting on or after 10 January are omitted. A Christmas
+period can remain because a stay starting earlier can include Christmas nights.
+
+Selection applies separately to each hotel, room type, and currency.
+The package table combines the remaining hotel periods. Periods without any
+price are omitted. Room capacity does not affect selection.
+
+The retained rows keep their season and promotion boundaries; they are not
+trimmed to the next arrival or to today. A period can therefore start before
+today. Its indicative amount still uses the period's rate for the shortest
+stay, even if a permitted stay crossing that period has different nightly rates.
 
 ## Fields and night bounds
 
@@ -30,7 +55,7 @@ and check that a room is free.
 | `from` | First night of the period. |
 | `to` | Last night of the period, inclusive. |
 | `activePromotionIds` | Promotions that apply in the period to at least one room with a price, in the order of the package's `promotions`. |
-| `priceFrom` | Prices by currency, or `null` when no room has a price for the period. |
+| `priceFrom` | Prices in one or both currencies. Periods without a price are omitted. |
 
 A night is identified by the date it starts on: `to: "2027-01-11"` includes
 the night of 11 January, with checkout on 12 January. Periods are sorted by
@@ -39,20 +64,23 @@ list have no period, so the list can have gaps. Periods have no id.
 
 ## Where periods start and end
 
-Periods cover the nights on which the package is valid and its price list
-has a season, including past nights. A new period starts where a season
+Periods come from the package's price list and validity, filtered by the
+permitted stays described above. A new period starts where a season
 starts or ends, or where a promotion starts or ends for a room with a price.
 Two neighboring periods can therefore have the same prices, for example when
 a promotion changes only the price of a more expensive room.
 
 The package's periods combine all its hotels: a new period at one hotel also
-starts a new period of the package. Disabled room types are ignored: they set
-no prices and start no periods.
+starts a new period of the package. Each resulting period selects eligible
+rooms for its own dates. A narrower package period can therefore have a
+different minimum or fewer currencies than a wider hotel period, or be omitted
+when no permitted stay reaches it. Display the values of the selected table.
+Disabled room types are ignored: they set no prices and start no periods.
 
 Periods also end with each [validity](/api/objects/visit-type#validity)
 period of the package. With `toAppliesTo: "departure"`, the last night is
-the night before `to`; with `toAppliesTo: "arrival"`, it is the night of
-`to`.
+the night before `to`. With `toAppliesTo: "arrival"`, stays may continue
+after `to`, up to the maximum stay length and the available price coverage.
 
 ## Price metrics
 
@@ -103,21 +131,18 @@ do not apply the promotions to `amount` again.
 [Building package pages](/guides/visit-types#displaying-discounts) shows how
 to display a saving.
 
-## Past periods and empty values
+## Empty values
 
-Past periods use today's price list and promotions, so they do not show what
-past bookings paid. With `expand=priceFromPeriods`, the detail also returns
-ended promotions, so every id in a past period can be looked up.
-
-Periods are returned for every package, including packages booked on request
-and unavailable packages. An ended package has `validity: []` and
-`priceFrom: null`, and its periods still show its past prices.
+Packages booked on request and packages switched off in SpaPortal can still
+have periods. Check `available` and `bookingMode` before offering a booking.
+An ended package or a package without a future permitted stay returns an
+empty array. The expanded detail also returns ended promotions; that does
+not cause past periods to appear.
 
 | Value | Meaning |
 | --- | --- |
 | Field missing | The detail was requested without `expand=priceFromPeriods`, or the response is a list. |
 | `priceFromPeriods: null` | SpaPortal cannot calculate the periods for this package. Do not show a price table. |
-| `priceFromPeriods: []` | The package has no price list for the nights of its validity. Do not show a price table. |
-| A period with `priceFrom: null` | The period exists, but none of its rooms has a price. Show the row without a price. |
+| `priceFromPeriods: []` | No period has a price and overlaps a future permitted stay. Do not show a price table. |
 
 ## Fields
