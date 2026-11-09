@@ -11,6 +11,10 @@ the page displays.
 
 ## Package cards
 
+<Warning>
+**Draft:** `priceFrom` without capacity checks is not released yet.
+</Warning>
+
 Load the [package list](/api/v2/reference/visit-types/list-visit-types) and
 follow its [pagination](/api/pagination). A card typically shows the name,
 `shortDescription`, the first image, the category, the board, and the stay
@@ -22,6 +26,9 @@ For a "from" price, show `priceFrom.{currency}.perStay.amount` with the
 7 nights, 1 guest". Keep every displayed value from the same minimum; the
 `perPersonPerNight` minimum can be a different offer. When the minimum has a
 non-null `original`, show it struck through.
+
+A sold-out room can set this price. Do not use it as an availability signal;
+check the calendar and booking quote when the guest selects dates.
 
 When `priceFrom` is `null`, show the card without a price. Label a `request`
 package as available on request, even when it has a price. The list returns

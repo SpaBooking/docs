@@ -4,8 +4,13 @@ description: "Understand indicative prices, complete-stay selection, and applica
 icon: "tag"
 ---
 
+<Warning>
+**Draft:** `priceFrom` without capacity checks is not released yet.
+</Warning>
+
 Use indicative prices for teasers and comparisons. `priceFrom` is the lowest
-price of a complete stay with free rooms from today onward.
+price of a permitted complete stay from today onward, without checking room
+capacity.
 `priceFromPeriods` shows how a package's prices change over time. Neither
 reserves a room or quotes a chosen set of guests and dates. The
 [Price from object](/api/objects/price-from) and
@@ -21,7 +26,7 @@ Do not derive one minimum from the other: they can select different offers.
 Even for the same offer, independently rounded values can make
 `perStay.amount` differ from `perPersonPerNight.amount × occupancy × nights`.
 
-For two available seven-night offers without a promotion:
+For two priced seven-night offers without a promotion:
 
 | Room | Occupancy | Price per guest per night | Full stay total |
 | --- | --- | --- | --- |
@@ -31,7 +36,7 @@ For two available seven-night offers without a promotion:
 `perPersonPerNight` selects the double room. `perStay` selects the single
 room. To display the cheapest whole package, use `perStay.amount` with its
 reported occupancy and nights. Dividing the double-room total by two does
-not produce a buyable single-room offer.
+not produce the price of a single-room stay.
 
 ## Selecting a complete stay
 
@@ -39,8 +44,8 @@ A complete stay can become a `priceFrom` minimum only when all of these
 conditions hold:
 
 - Its arrival and checkout satisfy the applicable stay rules.
-- Every occupied night has a price in the same currency and the same room
-  type has remaining capacity for every night.
+- Every occupied night has a price in the same currency for the same enabled,
+  non-draft room type. Free rooms are not required.
 - The package is in the
   [visit type catalog](/api/visit-types#publication-and-availability) of your
   public key. Hotel prices include only packages with `available: true` and
@@ -59,9 +64,8 @@ Package and hotel minima compare every arrival from today in Europe/Prague
 onward.
 
 The total uses each occupied night's seasonal rate. The checkout date needs
-neither a nightly price nor room capacity. A gap in prices or capacity makes
-that complete stay ineligible; the calculation does not combine rooms or
-currencies to fill the gap.
+no nightly price. A gap in prices makes that complete stay ineligible; the
+calculation does not combine rooms or currencies to fill the gap.
 
 Equal amounts prefer the shorter stay, then the lower occupancy, then the
 lower `visitType.id`, hotel id, and room type id, then the earlier arrival.
@@ -69,7 +73,7 @@ Query parameters do not change indicative prices.
 
 ## Comparing hotel groups
 
-The hotel-wide `all` group compares all buyable offers. The `health` and
+The hotel-wide `all` group compares all eligible priced stays. The `health` and
 `wellness` groups compare offers from one category. Every package that a
 hotel price names can be opened with the same public key.
 
@@ -127,21 +131,29 @@ Request the detail with `expand=priceFromPeriods` to receive
 [price periods](/api/objects/price-from-period): ranges of nights with the
 package's prices, including past nights. Each period prices the package's
 shortest stay with that period's prices and promotions, without checking free
-rooms or permitted arrival days. Periods are a price overview, so their
-amounts can differ from `priceFrom`, and requesting them does not change
-`priceFrom`.
+rooms or permitted arrival days. Neither indicative price checks capacity.
+
+Period amounts can still differ from `priceFrom`: periods include past nights
+and price every night of the shortest stay at the period's rate, even when
+the stay is longer than the period. `priceFrom` uses permitted arrivals from
+today and the actual rate and promotions of each night. Requesting periods
+does not change `priceFrom`.
 
 ## Room capacity
 
-`priceFrom` is calculated for each request from the room capacity recorded in
-SpaPortal at that moment. If the cheapest stay is sold out, the calculation
-selects the next stay with free rooms. For
-example, a sold-out CZK 3,000 offer does not beat an available CZK 4,500 offer.
+`priceFrom` and `priceFromPeriods` do not check room capacity. A sold-out
+CZK 3,000 stay can set `priceFrom` even when another stay with free rooms
+costs CZK 4,500. Reservations and capacity updates alone do not change
+indicative prices.
 
-The response does not hold a room. A price you cache can be outdated by the
-next request, because prices and recorded capacity change. An absent
-indicative price does not
-mean the package is unavailable; check its catalog availability separately.
+Check room availability in the calendar and obtain a booking quote for the
+guest's chosen dates and party. An indicative price does not reserve a room
+or guarantee availability.
+
+Prices are calculated for each request. Cached values can change when rates,
+promotions, package rules, or the business date change. An absent indicative
+price does not mean the package is unavailable; check catalog availability
+separately.
 
 ## Payer and the quoted amount
 

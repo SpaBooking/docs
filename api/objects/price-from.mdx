@@ -4,8 +4,13 @@ description: "The lowest price of a complete stay at a hotel or in a package: am
 openapi-schema: "/api/v2/openapi.yaml PriceFromMinimum"
 ---
 
+<Warning>
+**Draft:** `priceFrom` without capacity checks is not released yet.
+</Warning>
+
 A price minimum describes one complete stay selected by the
-[pricing rules](/api/prices). The same object appears in hotel prices,
+[pricing rules](/api/prices), without checking free rooms. A sold-out room
+can set either minimum. The same object appears in hotel prices,
 package prices, and package-at-hotel prices.
 [Price periods](/api/objects/price-from-period) have their own price object.
 
