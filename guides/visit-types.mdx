@@ -68,12 +68,13 @@ Build the table from `hotelListings[0].priceFromPeriods`. The package's own
 `priceFromPeriods` compares all hotels, even when you send `hotelId`.
 
 Show one row per [price period](/api/objects/price-from-period), labeled with
-its `from` and `to` night dates. Keep periods whose `priceFrom` is `null` as
-rows without a price. When `priceFromPeriods` is `null` or an empty array,
-hide the table.
+its `from` and `to` night dates. When `priceFromPeriods` is `null` or an empty
+array, hide the table.
 
-Periods include past nights. For a page with current prices, hide periods
-whose `to` is before today in Europe/Prague.
+**Draft:** The API selects periods that overlap a future permitted stay and
+have prices, without checking room capacity. Display the returned rows; you
+do not need to repeat the arrival, stay-length, or price-coverage filtering.
+A row may start before today when its season still applies to a future stay.
 
 Use the same price in every row:
 

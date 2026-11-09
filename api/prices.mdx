@@ -5,7 +5,8 @@ icon: "tag"
 ---
 
 <Warning>
-**Draft:** `priceFrom` without capacity checks is not released yet.
+**Draft:** Capacity-independent `priceFrom` and filtering price periods by future
+permitted stays are not released yet.
 </Warning>
 
 Use indicative prices for teasers and comparisons. `priceFrom` is the lowest
@@ -129,12 +130,13 @@ change the package's `priceFrom`.
 
 Request the detail with `expand=priceFromPeriods` to receive
 [price periods](/api/objects/price-from-period): ranges of nights with the
-package's prices, including past nights. Each period prices the package's
-shortest stay with that period's prices and promotions, without checking free
-rooms or permitted arrival days. Neither indicative price checks capacity.
+package's prices. Only periods overlapping a future permitted stay with prices
+for every night remain. The [period selection rules](/api/objects/price-from-period#which-periods-are-returned)
+account for arrivals, stay length, validity, and price coverage. Neither
+indicative price checks room capacity.
 
-Period amounts can still differ from `priceFrom`: periods include past nights
-and price every night of the shortest stay at the period's rate, even when
+Period amounts can still differ from `priceFrom`: periods price every night
+of the shortest stay at the period's rate, even when
 the stay is longer than the period. `priceFrom` uses permitted arrivals from
 today and the actual rate and promotions of each night. Requesting periods
 does not change `priceFrom`.

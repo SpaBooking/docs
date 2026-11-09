@@ -165,6 +165,7 @@ function assertPricePeriods(value, hotelFiltered) {
       const period = periods[i];
       assert(period.from <= period.to, 'period has at least one night');
       if (i) assert(periods[i - 1].to < period.from, 'periods are sorted and disjoint');
+      assert(period.priceFrom && Object.keys(period.priceFrom).length, 'unpriced periods are omitted');
       orderedIds(period.activePromotionIds, publicIds, 'active promotions');
       for (const id of period.activePromotionIds) {
         const promotion = promotionById.get(id);
@@ -200,16 +201,17 @@ function assertPricePeriods(value, hotelFiltered) {
   let previousGroups;
   for (const [index, period] of root.entries()) {
     const hotelPeriods = value.hotelListings.map(listing => listing.priceFromPeriods.find(p => p.from <= period.from && p.to >= period.to));
-    assert(hotelPeriods.every(Boolean), 'root refines every listing');
+    assert(hotelPeriods.some(Boolean), 'root refines at least one priced listing');
     if (hotelPeriods.length && index && dayIndex(root[index - 1].to) + 1 === dayIndex(period.from)) {
       assert(hotelPeriods.some((p, i) => p !== previousGroups[i]), 'root does not split unchanged listing periods');
     }
     previousGroups = hotelPeriods;
-    const activeIds = new Set(hotelPeriods.flatMap(p => p.activePromotionIds));
+    const pricedHotelPeriods = hotelPeriods.filter(Boolean);
+    const activeIds = new Set(pricedHotelPeriods.flatMap(p => p.activePromotionIds));
     assert.deepEqual(period.activePromotionIds, publicIds.filter(id => activeIds.has(id)), 'root active promotions are the union');
-    assert.deepEqual(currencyKeys(period.priceFrom), unionCurrencies(hotelPeriods), 'root has exactly period currencies');
+    assert.deepEqual(currencyKeys(period.priceFrom), unionCurrencies(pricedHotelPeriods), 'root has exactly period currencies');
     for (const [currency, prices] of Object.entries(period.priceFrom ?? {})) for (const key of periodMetrics) {
-      const candidates = hotelPeriods.flatMap(p => p.priceFrom?.[currency] ? [p.priceFrom[currency]] : []);
+      const candidates = pricedHotelPeriods.flatMap(p => p.priceFrom?.[currency] ? [p.priceFrom[currency]] : []);
       assert.deepEqual(prices[key], winner(candidates, key), 'root copies the whole winning metric using the defined tie-breaks');
     }
   }
@@ -407,12 +409,7 @@ function assertDocumentedPrices(name, value) {
     assert.equal(value.unavailableReason, 'ended');
     assert.deepEqual(value.validity, []);
     assert.equal(value.priceFrom, null);
-    assert.deepEqual(value.priceFromPeriods.map(p => [p.from, p.to]), [
-      ['2026-10-01', '2026-10-15'], ['2026-10-16', '2026-10-31'],
-    ], 'ended example retains both configured periods');
-    assert.deepEqual(value.priceFromPeriods.map(p => periodMetrics.map(k => p.priceFrom.EUR[k].amount.amountMinor)), [[9000, 63000, 126000], [10000, 70000, 140000]]);
-    assert.deepEqual(value.priceFromPeriods.map(p => periodMetrics.map(k => p.priceFrom.EUR[k].original?.amountMinor ?? null)), [[10000, 70000, 140000], [null, null, null]]);
-    assert.deepEqual(value.priceFromPeriods.map(p => p.activePromotionIds), [['6720c0a1b2c3d4e5f6a7d315'], []]);
+    assert.deepEqual(value.priceFromPeriods, [], 'ended example has no relevant periods');
     assert(!value.channelContent.collections.includes('special_offers'), 'past promotion does not create a current offer');
     assert.deepEqual(value.hotelListings[0].priceFromPeriods, value.priceFromPeriods);
   }
@@ -459,12 +456,12 @@ for (const [name, mutate, label] of [
   ['on-request', v => { v.priceFrom = null; v.hotelListings.forEach(h => { h.priceFrom = null; }); }, 'request prices cannot be suppressed'],
   ['disabled-with-price', v => { v.priceFrom = null; v.hotelListings.forEach(h => { h.priceFrom = null; }); }, 'disabled prices cannot be suppressed'],
   ['expand-hotel-price-periods', v => { v.priceFrom = null; }, 'capacity cannot suppress indicative prices'],
-  ['ended-with-price-periods', v => { v.priceFromPeriods = []; v.hotelListings.forEach(h => { h.priceFromPeriods = []; }); }, 'historical periods cannot be dropped'],
+  ['ended-with-price-periods', v => { v.priceFromPeriods = [clone(schemas.PriceFromPeriod.example)]; }, 'ended periods cannot be returned'],
   ['ended-with-price-periods', v => { v.channelContent.collections.push('special_offers'); }, 'history cannot add special_offers'],
   ['expand-hotel-price-periods', v => { v.priceFromPeriods[2].priceFrom.EUR.perPersonPerStay.amount.amountMinor++; }, 'documented arithmetic cannot drift'],
-  ['ended-with-price-periods', v => { v.promotions[0].to = '2026-10-14'; }, 'active promotion covers every period night'],
-  ['ended-with-price-periods', v => { v.priceFromPeriods[0].priceFrom.EUR.perStay.appliedPromotionIds = []; }, 'original needs an applied discount'],
-  ['ended-with-price-periods', v => { v.promotions[0].appliesTo = [{ hotelId: v.hotelListings[0].hotelId, roomTypeIds: ['6720c0a1b2c3d4e5f6a7f999'] }]; }, 'discount scope includes winning room'],
+  ['expand-hotel-price-periods', v => { v.promotions[0].to = '2026-10-14'; }, 'active promotion covers every period night'],
+  ['expand-hotel-price-periods', v => { v.priceFromPeriods[0].priceFrom.EUR.perStay.appliedPromotionIds = []; }, 'original needs an applied discount'],
+  ['expand-hotel-price-periods', v => { v.promotions[0].appliesTo = [{ hotelId: v.hotelListings[0].hotelId, roomTypeIds: ['6720c0a1b2c3d4e5f6a7f999'] }]; }, 'discount scope includes winning room'],
 ]) {
   const value = clone(detailExamples[name].value);
   mutate(value);
@@ -527,4 +524,10 @@ for (const [name, example] of listExamples('/hotels')) {
 }
 // Independent arithmetic oracle for the documented composition example.
 assert.equal(1000 * (1 - 0.10) * (1 - 0.15), 765);
+
+{
+  const empty = clone(schemas.PriceFromPeriod.example);
+  empty.priceFrom = null;
+  expectSchema('PriceFromPeriod', empty, false, 'unpriced periods are omitted');
+}
 console.log(`Visit type contract: ${checked} schema/semantic cases passed.`);
