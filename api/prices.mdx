@@ -5,8 +5,8 @@ icon: "tag"
 ---
 
 <Warning>
-**Draft:** Capacity-independent `priceFrom` and filtering price periods by future
-permitted stays are not released yet.
+**Draft:** Capacity-independent `priceFrom`, its `perPersonPerStay` minimum,
+and filtering price periods by future permitted stays are not released yet.
 </Warning>
 
 Use indicative prices for teasers and comparisons. `priceFrom` is the lowest
@@ -17,13 +17,14 @@ reserves a room or quotes a chosen set of guests and dates. The
 [Price from object](/api/objects/price-from) and
 [Price period object](/api/objects/price-from-period) define their fields.
 
-## Two independent minima
+## Three independent minima
 
 `perPersonPerNight` selects the lowest average price per guest per night for
-a complete stay. `perStay` independently selects the lowest total for the
+a complete stay. `perPersonPerStay` independently selects the lowest price
+per guest for the whole stay. `perStay` selects the lowest total for the
 whole room and stay. Each uses the room type's full standard occupancy.
 
-Do not derive one minimum from the other: they can select different offers.
+Do not derive one minimum from another: they can select different offers.
 Even for the same offer, independently rounded values can make
 `perStay.amount` differ from `perPersonPerNight.amount × occupancy × nights`.
 
@@ -34,10 +35,16 @@ For two priced seven-night offers without a promotion:
 | Single | 1 | CZK 2,000 | CZK 14,000 |
 | Double | 2 | CZK 1,600 | CZK 22,400 |
 
-`perPersonPerNight` selects the double room. `perStay` selects the single
-room. To display the cheapest whole package, use `perStay.amount` with its
-reported occupancy and nights. Dividing the double-room total by two does
-not produce the price of a single-room stay.
+`perPersonPerStay` selects the double room at CZK 11,200 per guest for
+7 nights and reports `occupancy: 2`. `perPersonPerNight` also selects the
+double room. `perStay` selects the single room at CZK 14,000 for the whole
+stay. Display the price per guest together with the occupancy it assumes.
+
+Across packages, the nightly minimum can belong to a longer stay. A
+21-night package at CZK 1,000 per guest per night costs CZK 21,000 per guest;
+the seven-night double-room offer above is cheaper per guest for the whole
+stay. Take `perPersonPerStay` directly instead of multiplying the nightly
+minimum or dividing the whole-room minimum.
 
 ## Selecting a complete stay
 
@@ -57,7 +64,8 @@ conditions hold:
   price.
 
 Each candidate uses the shortest stay its package permits. A package with a
-longer minimum stay can still win: `perStay` compares totals, and
+longer minimum stay can still win: `perStay` compares room totals,
+`perPersonPerStay` compares per-guest totals, and
 `perPersonPerNight` compares averages per guest per night. Different
 currencies can select different offers.
 
@@ -79,8 +87,9 @@ The hotel-wide `all` group compares all eligible priced stays. The `health` and
 hotel price names can be opened with the same public key.
 
 For the same currency and minimum, the hotel-wide amount cannot exceed the
-amount in a category group. Compare the two `perStay` values or the two
-`perPersonPerNight` values; comparing across those metrics is not meaningful.
+amount in a category group. Compare the same metric in both groups; for
+example, compare their `perPersonPerStay` values when showing per-guest
+stay prices.
 
 An omitted category price does not prove the hotel has no packages in that
 category. Do not present a hotel-wide price as a category-specific offer.
@@ -140,6 +149,13 @@ of the shortest stay at the period's rate, even when
 the stay is longer than the period. `priceFrom` uses permitted arrivals from
 today and the actual rate and promotions of each night. Requesting periods
 does not change `priceFrom`.
+
+For example, a seven-night stay with its only permitted arrival has two
+nights at EUR 50 per guest and five at EUR 100. Its `perPersonPerStay` is
+EUR 600. The cheaper period still shows EUR 350 for seven nights at its
+EUR 50 rate. A listing's minimum can therefore be higher than its cheapest
+period row. Use the listing's `priceFrom` for cards and modal footers; use
+its `priceFromPeriods` for the price table.
 
 ## Room capacity
 

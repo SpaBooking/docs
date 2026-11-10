@@ -180,12 +180,13 @@ examinations and the procedure allowance with its selection mode.
 ## Prices and promotions
 
 `priceFrom` holds the package's lowest prices across all its hotels, per
-currency, as two independent [Price from](/api/objects/price-from) minima.
+currency, as three independent [Price from](/api/objects/price-from) minima.
 Packages booked on request and packages switched off in SpaPortal
 (`unavailableReason: "disabled"`) also have a `priceFrom`; check `available`
 and `bookingMode` before you offer a booking. `priceFrom` is `null` when no
 complete stay exists from today onward. [Prices](/api/prices) explains how
-stays are selected.
+stays are selected. **Draft:** The `perPersonPerStay` minimum is not released
+yet. Use it with its own `nights` and `occupancy` for a per-guest stay price.
 
 `priceFromPeriods` lists the package's [price periods](/api/objects/price-from-period):
 ranges of nights with their prices across all hotels.

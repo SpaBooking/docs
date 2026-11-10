@@ -104,6 +104,14 @@ for (const exam of ['interim', 'final']) for (const [included, threshold, valid]
 }
 const minimum = base.priceFrom.CZK.perStay;
 expectSchema('PriceFromMinimum', minimum, true, 'price minimum');
+for (const metric of ['perPersonPerNight', 'perPersonPerStay', 'perStay']) {
+  const value = clone(base.priceFrom.CZK); delete value[metric];
+  expectSchema('PriceFromPair', value, false, 'all three minima are required: ' + metric);
+}
+for (const field of ['amount', 'original', 'nights', 'occupancy', 'hotel', 'visitType']) {
+  const value = clone(base.priceFrom.CZK.perPersonPerStay); delete value[field];
+  expectSchema('PriceFromMinimum', value, false, 'personal stay minimum requires ' + field);
+}
 for (const field of ['hotel', 'visitType', 'original']) {
   const value = clone(minimum); delete value[field];
   expectSchema('PriceFromMinimum', value, false, `minimum requires ${field}`);
@@ -263,12 +271,12 @@ export function assertVisitTypeExample(value, { hotelFiltered = false, collectio
     }
   };
   if (!hotelFiltered) assert.deepEqual(currencyKeys(value.priceFrom), unionCurrencies(value.hotelListings), 'aggregate has exactly hotel currencies');
-  for (const [currency, pair] of Object.entries(value.priceFrom ?? {})) for (const metric of ['perPersonPerNight', 'perStay']) checkMinimum(pair[metric], currency);
+  for (const [currency, pair] of Object.entries(value.priceFrom ?? {})) for (const metric of ['perPersonPerNight', 'perPersonPerStay', 'perStay']) checkMinimum(pair[metric], currency);
   for (const h of value.hotelListings) {
     if (h.hotel) assert.equal(h.hotel.id, h.hotelId, 'expanded hotel identity');
-    for (const [currency, pair] of Object.entries(h.priceFrom ?? {})) for (const metric of ['perPersonPerNight', 'perStay']) checkMinimum(pair[metric], currency, h.hotelId);
+    for (const [currency, pair] of Object.entries(h.priceFrom ?? {})) for (const metric of ['perPersonPerNight', 'perPersonPerStay', 'perStay']) checkMinimum(pair[metric], currency, h.hotelId);
   }
-  if (!hotelFiltered) for (const [currency, pair] of Object.entries(value.priceFrom ?? {})) for (const metric of ['perPersonPerNight', 'perStay']) {
+  if (!hotelFiltered) for (const [currency, pair] of Object.entries(value.priceFrom ?? {})) for (const metric of ['perPersonPerNight', 'perPersonPerStay', 'perStay']) {
     const amounts = value.hotelListings.flatMap(h => h.priceFrom?.[currency] ? [h.priceFrom[currency][metric].amount.amountMinor] : []);
     assert(amounts.length > 0, 'aggregate offer has a hotel');
     assert.equal(pair[metric].amount.amountMinor, Math.min(...amounts), 'aggregate is hotel minimum');
@@ -426,10 +434,10 @@ function assertDocumentedPrices(name, value) {
   }
   if (name === 'expand-hotel-price-periods' || name === 'one-hotel-with-price-periods') {
     assert(value.priceFrom, 'sold-out rooms still produce indicative prices');
-    assert.deepEqual(['perPersonPerNight', 'perStay'].map(k => value.priceFrom.EUR[k].amount.amountMinor), [7053, 64260], 'complete-stay minima retain nightly promotion boundaries');
+    assert.deepEqual(['perPersonPerNight', 'perPersonPerStay', 'perStay'].map(k => value.priceFrom.EUR[k].amount.amountMinor), [7053, 49368, 64260], 'complete-stay minima retain nightly promotion boundaries');
     for (const listing of value.hotelListings) {
       const pramen = listing.hotelId.endsWith('101');
-      assert.deepEqual(['perPersonPerNight', 'perStay'].map(k => listing.priceFrom.EUR[k].amount.amountMinor), pramen ? [7650, 64260] : [7053, 98736], 'sold-out listing uses complete-stay prices');
+      assert.deepEqual(['perPersonPerNight', 'perPersonPerStay', 'perStay'].map(k => listing.priceFrom.EUR[k].amount.amountMinor), pramen ? [7650, 53550, 64260] : [7053, 49368, 98736], 'sold-out listing uses complete-stay prices');
     }
     assert.deepEqual(value.priceFromPeriods.map(p => [p.from, p.to]), [
       ['2026-11-01', '2027-01-04'], ['2027-01-05', '2027-01-09'], ['2027-01-10', '2027-01-11'],
@@ -464,6 +472,11 @@ function assertPromotionIdentities(node) {
 }
 assertPromotionIdentities(doc);
 for (const [name, mutate, label] of [
+  ['expand-hotel-price-periods', v => { v.priceFrom.EUR.perPersonPerStay.amount.amountMinor++; }, 'personal stay aggregate is independent and minimal'],
+  ['expand-hotel-price-periods', v => { v.hotelListings[0].priceFrom.EUR.perPersonPerStay.hotel.id = '6720c0a1b2c3d4e5f6a7f999'; }, 'personal stay belongs to its listing'],
+  ['expand-hotel-price-periods', v => { v.priceFrom.EUR.perPersonPerStay.nights++; }, 'personal stay uses the shortest permitted stay'],
+  ['expand-hotel-price-periods', v => { v.priceFrom.EUR.perPersonPerStay.amount.currency = 'CZK'; }, 'personal stay currency matches its key'],
+  ['expand-hotel-price-periods', v => { v.priceFrom.EUR.perPersonPerStay.original = clone(v.priceFrom.EUR.perPersonPerStay.amount); }, 'personal stay original must exceed the discounted price'],
   ['on-request', v => { v.priceFrom = null; v.hotelListings.forEach(h => { h.priceFrom = null; }); }, 'request prices cannot be suppressed'],
   ['disabled-with-price', v => { v.priceFrom = null; v.hotelListings.forEach(h => { h.priceFrom = null; }); }, 'disabled prices cannot be suppressed'],
   ['expand-hotel-price-periods', v => { v.priceFrom = null; }, 'capacity cannot suppress indicative prices'],
@@ -494,7 +507,7 @@ for (const field of ['amount', 'original', 'nights', 'occupancy', 'hotel', 'room
   expectSchema('PriceFromPeriodMinimum', value, false, `period minimum requires ${field}`);
 }
 // Hotel example: the hotel-wide group never exceeds a category group.
-for (const [currency, groups] of Object.entries(schemas.Hotel.example.priceFrom)) for (const group of ['health', 'wellness']) for (const metric of ['perPersonPerNight', 'perStay']) {
+for (const [currency, groups] of Object.entries(schemas.Hotel.example.priceFrom)) for (const group of ['health', 'wellness']) for (const metric of ['perPersonPerNight', 'perPersonPerStay', 'perStay']) {
   if (groups[group]) assert(groups.all[metric].amount.amountMinor <= groups[group][metric].amount.amountMinor, `${currency} all ${metric} is a minimum`);
   checked++;
 }
@@ -524,7 +537,7 @@ for (const [name, example] of listExamples('/hotels')) {
         .filter(p => group === 'all' || p.category === group)
         .flatMap(p => p.hotelListings.filter(h => h.hotelId === hotel.id && h.priceFrom?.[currency]).map(h => h.priceFrom[currency]));
       for (const group of ['health', 'wellness']) assert.equal(group in groups, entries(group).length > 0, `${name}: ${hotel.id} ${currency} ${group} only with a priced package`);
-      for (const [group, pair] of Object.entries(groups)) for (const metric of ['perPersonPerNight', 'perStay']) {
+      for (const [group, pair] of Object.entries(groups)) for (const metric of ['perPersonPerNight', 'perPersonPerStay', 'perStay']) {
         const cheapest = entries(group).map(e => e[metric]).reduce((a, b) => b.amount.amountMinor < a.amount.amountMinor ? b : a);
         assert.deepEqual(pair[metric], cheapest, `${name}: ${hotel.id} ${currency} ${group} ${metric} is the cheapest package entry`);
         checked++;
