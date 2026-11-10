@@ -4,11 +4,6 @@ description: "Understand indicative prices, complete-stay selection, and applica
 icon: "tag"
 ---
 
-<Warning>
-**Draft:** Capacity-independent `priceFrom`, its `perPersonPerStay` minimum,
-and filtering price periods by future permitted stays are not released yet.
-</Warning>
-
 Use indicative prices for teasers and comparisons. `priceFrom` is the lowest
 price of a permitted complete stay from today onward, without checking room
 capacity.
@@ -64,7 +59,7 @@ conditions hold:
   price.
 
 Each candidate uses the shortest stay its package permits. A package with a
-longer minimum stay can still win: `perStay` compares room totals,
+longer minimum stay can win: `perStay` compares room totals,
 `perPersonPerStay` compares per-guest totals, and
 `perPersonPerNight` compares averages per guest per night. Different
 currencies can select different offers.
@@ -139,12 +134,12 @@ change the package's `priceFrom`.
 
 Request the detail with `expand=priceFromPeriods` to receive
 [price periods](/api/objects/price-from-period): ranges of nights with the
-package's prices. Only periods overlapping a future permitted stay with prices
-for every night remain. The [period selection rules](/api/objects/price-from-period#which-periods-are-returned)
+package's prices. The API returns only periods overlapping a future permitted stay with prices
+for every night. The [period selection rules](/api/objects/price-from-period#which-periods-are-returned)
 account for arrivals, stay length, validity, and price coverage. Neither
 indicative price checks room capacity.
 
-Period amounts can still differ from `priceFrom`: periods price every night
+Period amounts can differ from `priceFrom`: periods price every night
 of the shortest stay at the period's rate, even when
 the stay is longer than the period. `priceFrom` uses permitted arrivals from
 today and the actual rate and promotions of each night. Requesting periods
@@ -152,7 +147,7 @@ does not change `priceFrom`.
 
 For example, a seven-night stay with its only permitted arrival has two
 nights at EUR 50 per guest and five at EUR 100. Its `perPersonPerStay` is
-EUR 600. The cheaper period still shows EUR 350 for seven nights at its
+EUR 600. The cheaper period shows EUR 350 for seven nights at its
 EUR 50 rate. A listing's minimum can therefore be higher than its cheapest
 period row. Use the listing's `priceFrom` for cards and modal footers; use
 its `priceFromPeriods` for the price table.

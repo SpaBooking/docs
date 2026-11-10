@@ -185,12 +185,12 @@ Packages booked on request and packages switched off in SpaPortal
 (`unavailableReason: "disabled"`) also have a `priceFrom`; check `available`
 and `bookingMode` before you offer a booking. `priceFrom` is `null` when no
 complete stay exists from today onward. [Prices](/api/prices) explains how
-stays are selected. **Draft:** The `perPersonPerStay` minimum is not released
-yet. Use it with its own `nights` and `occupancy` for a per-guest stay price.
+stays are selected. Use `perPersonPerStay` with its own `nights` and
+`occupancy` for a per-guest stay price.
 
 `priceFromPeriods` lists the package's [price periods](/api/objects/price-from-period):
 ranges of nights with their prices across all hotels.
-The detail returns it only with `expand=priceFromPeriods`. **Draft:** Only
+The detail returns it only with `expand=priceFromPeriods`. Only
 periods overlapping a future permitted stay with price coverage are returned.
 Periods do not check room capacity.
 

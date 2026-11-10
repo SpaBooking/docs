@@ -4,11 +4,6 @@ description: "Understand the availability and stay rules of a stay package."
 icon: "suitcase"
 ---
 
-<Warning>
-**Draft:** Capacity-independent `priceFrom` and its `perPersonPerStay`
-minimum are not released yet.
-</Warning>
-
 A [visit type](/api/objects/visit-type) is a stay package sold by one or more
 hotels. Its availability, stay rules, and prices are independent: an available
 package can have no permitted stay in your dates, and a permitted stay can
@@ -78,6 +73,6 @@ price and the price of each listing.
 
 With `expand=priceFromPeriods`, the detail also returns
 [price periods](/api/objects/price-from-period): the package's prices by
-date. **Draft:** Periods are selected by future permitted stays and price
+date. Periods are selected by future permitted stays and price
 coverage. They do not check room capacity. See the
 [period selection rules](/api/objects/price-from-period#which-periods-are-returned).

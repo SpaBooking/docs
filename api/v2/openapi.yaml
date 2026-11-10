@@ -4141,7 +4141,7 @@ paths:
         companies in scope.
 
         Use `expand=priceFromPeriods` to add [price periods](/api/objects/price-from-period)
-        to the package and its hotel listings. Draft — only periods overlapping a future permitted
+        to the package and its hotel listings. Only periods overlapping a future permitted
         stay with price coverage are returned; room capacity is not checked. See the
         [package page guide](/guides/visit-types#price-periods).
 
@@ -9745,7 +9745,7 @@ components:
       description: A `Money` amount, or null.
     PriceFromMinimum:
       type: object
-      description: One complete stay selected without checking room capacity (**Draft**); see the
+      description: One complete stay selected without checking room capacity; see the
         [pricing rules](/api/prices) and [Price from](/api/objects/price-from).
       required: [ amount, original, nights, occupancy, hotel, visitType ]
       properties:
@@ -9812,7 +9812,7 @@ components:
             - $ref: "#/components/schemas/PriceFromMinimum"
           description: >-
             The offer with the lowest price per guest for the whole shortest permitted stay,
-            at standard room occupancy. Selected independently of both other minima (**Draft**).
+            at standard room occupancy. Selected independently of both other minima.
         perStay:
           allOf:
             - $ref: "#/components/schemas/PriceFromMinimum"
@@ -9968,7 +9968,7 @@ components:
           items:
             $ref: "#/components/schemas/PriceFromPeriod"
           description: Price periods of the package across all its hotels, ordered by `from`. Present only
-            on the detail with `expand=priceFromPeriods`. Draft — only periods overlapping a future
+            on the detail with `expand=priceFromPeriods`. Only periods overlapping a future
             permitted stay with prices in the same room and currency are returned. Empty when none
             remain; null when SpaPortal cannot calculate the periods. Room capacity is not checked.
             See [Price period](/api/objects/price-from-period).
@@ -12263,7 +12263,7 @@ components:
           items:
             $ref: "#/components/schemas/PriceFromPeriod"
           description: Price periods of the package at this hotel, ordered by `from`. Present only on the
-            detail with `expand=priceFromPeriods`. Draft — only periods overlapping a future permitted
+            detail with `expand=priceFromPeriods`. Only periods overlapping a future permitted
             stay with prices in the same room and currency are returned. Empty when none remain;
             null when SpaPortal cannot calculate the periods. See [Price period](/api/objects/price-from-period).
       description: The package at one hotel, with its price there. See [Hotel
@@ -12453,8 +12453,8 @@ components:
               $ref: "#/components/schemas/PriceFromPeriodCurrency"
             EUR:
               $ref: "#/components/schemas/PriceFromPeriodCurrency"
-          description: Prices by currency. Draft — periods without any price are omitted.
-      description: A range of nights with the same package prices. Draft — only periods overlapping a
+          description: Prices by currency. Periods without any price are omitted.
+      description: A range of nights with the same package prices. Only periods overlapping a
         future permitted stay with price coverage are returned. See [Price period](/api/objects/price-from-period).
       example:
         from: "2027-01-10"

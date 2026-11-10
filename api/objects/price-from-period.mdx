@@ -4,10 +4,6 @@ description: "A range of nights with the same package prices: prices per guest a
 openapi-schema: "/api/v2/openapi.yaml PriceFromPeriod"
 ---
 
-<Warning>
-**Draft:** Filtering price periods by future permitted stays is not released yet.
-</Warning>
-
 A price period is a range of nights in which a package has the same prices.
 Use periods for a price table on a package page, for example "10 to 11 January:
 from EUR 523.60 per guest for 7 nights".
@@ -43,8 +39,8 @@ Selection applies separately to each hotel, room type, and currency.
 The package table combines the remaining hotel periods. Periods without any
 price are omitted. Room capacity does not affect selection.
 
-The retained rows keep their season and promotion boundaries; they are not
-trimmed to the next arrival or to today. A period can therefore start before
+Each row follows its season and promotion boundaries, without trimming
+them to the next arrival or to today. A period can therefore start before
 today. Its indicative amount still uses the period's rate for the shortest
 stay, even if a permitted stay crossing that period has different nightly rates.
 
