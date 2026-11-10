@@ -11,11 +11,6 @@ the page displays.
 
 ## Package cards
 
-<Warning>
-**Draft:** Capacity-independent `priceFrom` and its `perPersonPerStay`
-minimum are not released yet.
-</Warning>
-
 Load the [package list](/api/v2/reference/visit-types/list-visit-types) and
 follow its [pagination](/api/pagination). A card typically shows the name,
 `shortDescription`, the first image, the category, the board, and the stay
@@ -77,7 +72,7 @@ Show one row per [price period](/api/objects/price-from-period), labeled with
 its `from` and `to` night dates. When `priceFromPeriods` is `null` or an empty
 array, hide the table.
 
-**Draft:** The API selects periods that overlap a future permitted stay and
+The API selects periods that overlap a future permitted stay and
 have prices, without checking room capacity. Display the returned rows; you
 do not need to repeat the arrival, stay-length, or price-coverage filtering.
 A row may start before today when its season still applies to a future stay.

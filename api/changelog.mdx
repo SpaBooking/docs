@@ -5,39 +5,31 @@ icon: "clock-rotate-left"
 hidden: true
 ---
 
-## Unreleased (Draft)
+## 2026-11-10 (v3.2.38)
 
-### Price per guest for a whole stay
+### Indicative prices
 
-- Added the independently selected `perPersonPerStay` minimum to hotel
-  all/health/wellness prices, visit type prices, and hotel listing prices.
-- The amount is per guest for the package's shortest permitted stay at
-  standard room occupancy. Display it with its own nights and occupancy.
-- Existing `perStay`, `perPersonPerNight`, and price-period calculations
-  retain their selection and rounding. See [Prices](/api/prices) for why
-  a complete-stay minimum can differ from a period's indicative rate.
+- Hotel all/health/wellness groups, visit types, and hotel listings expose
+  three independent minima per currency: `perPersonPerNight`,
+  `perPersonPerStay`, and `perStay`.
+- Each minimum selects a complete stay at the package's shortest permitted
+  length and the room's standard occupancy. Display its amount together
+  with its own nights, occupancy, and original price.
+- Indicative prices do not check room capacity. Sold-out rooms can set any
+  minimum; use the calendar and booking quote for the guest's chosen stay.
+- Complete stays use the rate and promotions of each occupied night.
+  [Prices](/api/prices) defines eligibility, selection, and rounding.
 
-### Relevant price periods
+### Price periods
 
-- Price periods now include only rows overlapping a permitted stay arriving
-  today or later, using Europe/Prague. Selection checks arrivals, minimum and
-  maximum length, validity, and price coverage for the same room and currency.
-- Omit ended periods, periods beyond the last possible stay, and rows without
-  prices. Keep periods crossed by a stay that starts in an earlier season.
-- Keep the period-rate calculation, promotions, and capacity-independent
-  pricing. An ended package returns an empty period array. Retained rows keep
-  their season and promotion boundaries.
-
-### Indicative prices without room-capacity checks
-
-- Hotel, visit type, and hotel listing `priceFrom` minima do not check room
-  capacity. Sold-out rooms can set either minimum, and capacity updates alone
-  do not change the price. Check the calendar and booking quote for the
-  guest's selected stay.
-- Complete-stay selection, catalog scope, enabled room types, currencies,
-  promotions, and original prices retain their existing rules. Price periods
-  retain their period-rate calculation. See
-  [Prices](/api/prices) for how these indicative prices differ.
+- The API returns periods overlapping a permitted stay arriving today or
+  later in Europe/Prague. Selection checks arrivals, minimum and maximum
+  length, validity, and prices for the same enabled room and currency.
+- Each row follows season and promotion boundaries. Its amounts price
+  every night of the shortest stay at that period's rate. A stay crossing
+  periods can have a different total in `priceFrom`.
+- Periods without a qualifying priced stay are omitted. An ended package
+  returns an empty period array. See [Price period](/api/objects/price-from-period).
 
 ## 2026-11-03
 
