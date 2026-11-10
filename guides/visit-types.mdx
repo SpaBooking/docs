@@ -12,7 +12,8 @@ the page displays.
 ## Package cards
 
 <Warning>
-**Draft:** `priceFrom` without capacity checks is not released yet.
+**Draft:** Capacity-independent `priceFrom` and its `perPersonPerStay`
+minimum are not released yet.
 </Warning>
 
 Load the [package list](/api/v2/reference/visit-types/list-visit-types) and
@@ -21,11 +22,14 @@ follow its [pagination](/api/pagination). A card typically shows the name,
 length from the [Visit type](/api/objects/visit-type) object. Use
 `channelContent.collections` to group the cards of your own website.
 
-For a "from" price, show `priceFrom.{currency}.perStay.amount` with the
-`nights` and `occupancy` of that minimum, for example "from CZK 12,600 for
-7 nights, 1 guest". Keep every displayed value from the same minimum; the
-`perPersonPerNight` minimum can be a different offer. When the minimum has a
-non-null `original`, show it struck through.
+For a per-guest "from" price, show
+`priceFrom.{currency}.perPersonPerStay.amount` with the `nights` and
+`occupancy` of that minimum, for example "from CZK 11,200 per guest for
+7 nights, based on 2 guests sharing a room". Keep every displayed value
+from the same minimum, including its non-null `original` struck through.
+The other minima can select different offers; do not divide `perStay` by
+occupancy or multiply `perPersonPerNight` by nights. For a whole-room price,
+use `perStay` with its own nights and occupancy.
 
 A sold-out room can set this price. Do not use it as an availability signal;
 check the calendar and booking quote when the guest selects dates.
@@ -44,7 +48,9 @@ stay has `priceFrom: null` but remains a hotel that sells the package. Fetch
 the [Hotel](/api/objects/hotel) detail for the full profile and room
 catalog.
 
-When the website visitor chooses a hotel, show that listing's price. The
+When the website visitor chooses a hotel, use that listing's
+`priceFrom.{currency}.perPersonPerStay` on both the package card and the
+modal footer. The
 package's top-level `priceFrom` compares all hotels and can belong to a
 different hotel than the selected one.
 
@@ -80,7 +86,7 @@ Use the same price in every row:
 
 | Price shown | Use |
 | --- | --- |
-| Per guest for the whole stay, such as "per person, 7 nights" | `perPersonPerStay.amount` with its `nights` |
+| Per guest for the whole stay, such as "per person, 7 nights" | `perPersonPerStay.amount` with its `nights` and `occupancy` |
 | Per guest per night | `perPersonPerNight.amount` |
 | Whole room for the whole stay | `perStay.amount` with its `nights` and `occupancy` |
 
@@ -148,7 +154,9 @@ period, and do not apply it to `amount` again.
 
 A hotel's `priceFrom` minima name their `visitType` and `hotel`. Take
 `visitType.id` and `hotel.id` from the exact minimum you displayed (currency,
-group, and metric); the two minima of one group can name different packages.
+group, and metric); the three minima of one group can name different packages.
+For a per-guest stay teaser use `priceFrom.{currency}.all.perPersonPerStay`,
+or `.health` / `.wellness` for the category you display.
 Then load:
 
 ```http

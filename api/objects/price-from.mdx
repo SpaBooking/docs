@@ -5,12 +5,13 @@ openapi-schema: "/api/v2/openapi.yaml PriceFromMinimum"
 ---
 
 <Warning>
-**Draft:** `priceFrom` without capacity checks is not released yet.
+**Draft:** Capacity-independent `priceFrom` and its `perPersonPerStay`
+minimum are not released yet.
 </Warning>
 
 A price minimum describes one complete stay selected by the
 [pricing rules](/api/prices), without checking free rooms. A sold-out room
-can set either minimum. The same object appears in hotel prices,
+can set any minimum. The same object appears in hotel prices,
 package prices, and package-at-hotel prices.
 [Price periods](/api/objects/price-from-period) have their own price object.
 
@@ -21,13 +22,17 @@ package prices, and package-at-hotel prices.
 | `amount` | [`Money`](/api/currencies) amount of the offer after its promotions. |
 | `original` | Amount of the same offer before its promotions, or `null` when no promotion lowers this minimum's rounded amount. |
 | `nights` | Number of nights of the offer. |
-| `occupancy` | Standard occupancy of the offer's room type. `perStay` amounts cover this many guests. |
+| `occupancy` | Standard occupancy of the offer's room type. `perStay` covers this many guests; per-person prices assume they share the room. |
 | `hotel` | The offer's hotel: `id` and localized `name`. |
 | `visitType` | The offer's visit type: `id` and localized `name`. |
 
 A minimum identifies the hotel and package of the offer. It does not include
 its room type, arrival date, or applied promotion ids. Display the amount
 together with its `nights` and `occupancy`.
+For example, `perPersonPerStay` with `occupancy: 2` is a price per guest
+when two guests share the room. It is not the price for one guest occupying
+the room alone. `occupancy` identifies the guest count, not a room category.
+
 Both names follow [Localization](/api/localization) and fall back to Czech.
 
 The following minimum is a seven-night stay for one guest at EUR 504.00,
@@ -69,20 +74,28 @@ each minimum separately: a small discount can produce an `original` on
 `perStay` while `perPersonPerNight.original` stays `null`, because the
 rounded average does not change.
 
-## Pairs of minima
+## Three minima
 
 Prices are grouped by currency (`CZK`, `EUR`). A currency is present only when
-a complete stay has a price in it. Each currency holds two independently
+a complete stay has a price in it. Each currency holds three independently
 selected minima:
 
 | Minimum | Selection |
 | --- | --- |
 | `perPersonPerNight` | The lowest average price per guest per night. |
+| `perPersonPerStay` | The lowest price per guest for the whole stay, assuming standard room occupancy. |
 | `perStay` | The lowest total for the whole room and stay at its standard occupancy. |
 
-The two minima can be different offers with different hotels, rooms, nights,
-and occupancy. Never derive one from the other; see
-[Two independent minima](/api/prices#two-independent-minima).
+The three minima can be different offers with different hotels, rooms, nights,
+and occupancy. Never derive one from another; see
+[Three independent minima](/api/prices#three-independent-minima).
+
+`perPersonPerStay` uses the same rounding as price periods: round the
+whole-room total to minor units, divide by standard occupancy, and round
+half up to a whole minor unit. Apply this separately to `amount` and
+`original` of each candidate before comparing per-person stay prices.
+Do not divide the already selected `perStay`: another room can have a
+lower per-person price.
 
 ## Where minima appear
 

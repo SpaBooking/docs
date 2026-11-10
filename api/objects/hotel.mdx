@@ -155,13 +155,14 @@ Join the two by `code`.
 ## Prices
 
 <Warning>
-**Draft:** `priceFrom` without capacity checks is not released yet.
+**Draft:** Capacity-independent `priceFrom` and its `perPersonPerStay`
+minimum are not released yet.
 </Warning>
 
 `priceFrom` holds the lowest prices the hotel sells for arrivals from today
 onward, per currency.
 Each currency has the hotel-wide group `all` and the category groups `health`
-and `wellness`, each with the two independent
+and `wellness`, each with the three independent
 [Price from](/api/objects/price-from) minima. A category group is omitted
 when it has no eligible priced stay; `all` is present whenever the currency is.
 `priceFrom` is `null` when the hotel has no eligible priced stay. Room

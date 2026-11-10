@@ -7,6 +7,16 @@ hidden: true
 
 ## Unreleased (Draft)
 
+### Price per guest for a whole stay
+
+- Added the independently selected `perPersonPerStay` minimum to hotel
+  all/health/wellness prices, visit type prices, and hotel listing prices.
+- The amount is per guest for the package's shortest permitted stay at
+  standard room occupancy. Display it with its own nights and occupancy.
+- Existing `perStay`, `perPersonPerNight`, and price-period calculations
+  retain their selection and rounding. See [Prices](/api/prices) for why
+  a complete-stay minimum can differ from a period's indicative rate.
+
 ### Relevant price periods
 
 - Price periods now include only rows overlapping a permitted stay arriving

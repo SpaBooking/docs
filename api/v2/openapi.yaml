@@ -135,7 +135,7 @@ paths:
         the locale keys selected by `Accept-Language`. `name` falls back to Czech, image `alt` to the hotel name, and other missing translations are null.
 
         `priceFrom` holds the lowest prices the hotel sells for arrivals from today onward, per currency, across all packages (`all`) and per category (`health`,
-        `wellness`), each with two independent minima that name the hotel and
+        `wellness`), each with three independent minima that name the hotel and
         the package. It is null when no eligible priced stay exists. See
         [Prices](/api/prices).
 
@@ -440,6 +440,24 @@ paths:
                                   name:
                                     cs-CZ: Relaxační wellness pobyt
                                     de: Wellness-Erholungsaufenthalt
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 390000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
                               perStay:
                                 amount:
                                   amountMinor: 780000
@@ -462,6 +480,24 @@ paths:
                               perPersonPerNight:
                                 amount:
                                   amountMinor: 195000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 390000
                                   currency: CZK
                                   currencyExponent: 2
                                 original: null
@@ -515,6 +551,24 @@ paths:
                                   name:
                                     cs-CZ: Relaxační wellness pobyt
                                     de: Wellness-Erholungsaufenthalt
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 15600
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
                               perStay:
                                 amount:
                                   amountMinor: 31200
@@ -537,6 +591,24 @@ paths:
                               perPersonPerNight:
                                 amount:
                                   amountMinor: 7800
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c103
+                                  name:
+                                    cs-CZ: Hotel Bellevue
+                                    de: Hotel Bellevue
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 15600
                                   currency: EUR
                                   currencyExponent: 2
                                 original: null
@@ -822,6 +894,24 @@ paths:
                                   name:
                                     cs-CZ: Klasická lázeňská léčba
                                     de: Klassische Kur
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 420000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
                               perStay:
                                 amount:
                                   amountMinor: 840000
@@ -862,6 +952,27 @@ paths:
                                   name:
                                     cs-CZ: Klasická lázeňská léčba
                                     de: Klassische Kur
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 1008000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 1120000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
                               perStay:
                                 amount:
                                   amountMinor: 1260000
@@ -887,6 +998,24 @@ paths:
                               perPersonPerNight:
                                 amount:
                                   amountMinor: 210000
+                                  currency: CZK
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 420000
                                   currency: CZK
                                   currencyExponent: 2
                                 original: null
@@ -943,6 +1072,24 @@ paths:
                                   name:
                                     cs-CZ: Klasická lázeňská léčba
                                     de: Klassische Kur
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 16800
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
                               perStay:
                                 amount:
                                   amountMinor: 33600
@@ -983,6 +1130,27 @@ paths:
                                   name:
                                     cs-CZ: Klasická lázeňská léčba
                                     de: Klassische Kur
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 40320
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original:
+                                  amountMinor: 44800
+                                  currency: EUR
+                                  currencyExponent: 2
+                                nights: 7
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b801
+                                  name:
+                                    cs-CZ: Klasická lázeňská léčba
+                                    de: Klassische Kur
                               perStay:
                                 amount:
                                   amountMinor: 50400
@@ -1008,6 +1176,24 @@ paths:
                               perPersonPerNight:
                                 amount:
                                   amountMinor: 8400
+                                  currency: EUR
+                                  currencyExponent: 2
+                                original: null
+                                nights: 2
+                                occupancy: 2
+                                hotel:
+                                  id: 6720c0a1b2c3d4e5f6a7c101
+                                  name:
+                                    cs-CZ: Hotel Pramen
+                                    de: Hotel Pramen
+                                visitType:
+                                  id: 6720c0a1b2c3d4e5f6a7b803
+                                  name:
+                                    cs-CZ: Relaxační wellness pobyt
+                                    de: Wellness-Erholungsaufenthalt
+                              perPersonPerStay:
+                                amount:
+                                  amountMinor: 16800
                                   currency: EUR
                                   currencyExponent: 2
                                 original: null
@@ -1687,6 +1873,27 @@ paths:
                                 name:
                                   cs-CZ: Klasická lázeňská léčba
                                   de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 1008000
+                                currency: CZK
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 1120000
+                                currency: CZK
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
                             perStay:
                               amount:
                                 amountMinor: 1260000
@@ -1716,6 +1923,27 @@ paths:
                                 currencyExponent: 2
                               original:
                                 amountMinor: 6400
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 40320
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 44800
                                 currency: EUR
                                 currencyExponent: 2
                               nights: 7
@@ -1787,6 +2015,27 @@ paths:
                                     name:
                                       cs-CZ: Klasická lázeňská léčba
                                       de: Klassische Kur
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 1008000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  original:
+                                    amountMinor: 1120000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  nights: 7
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b801
+                                    name:
+                                      cs-CZ: Klasická lázeňská léčba
+                                      de: Klassische Kur
                                 perStay:
                                   amount:
                                     amountMinor: 1260000
@@ -1816,6 +2065,27 @@ paths:
                                     currencyExponent: 2
                                   original:
                                     amountMinor: 6400
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  nights: 7
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b801
+                                    name:
+                                      cs-CZ: Klasická lázeňská léčba
+                                      de: Klassische Kur
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 40320
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original:
+                                    amountMinor: 44800
                                     currency: EUR
                                     currencyExponent: 2
                                   nights: 7
@@ -1962,6 +2232,24 @@ paths:
                                 name:
                                   cs-CZ: Relaxační wellness pobyt
                                   de: Wellness-Erholungsaufenthalt
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 390000
+                                currency: CZK
+                                currencyExponent: 2
+                              original: null
+                              nights: 2
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b803
+                                name:
+                                  cs-CZ: Relaxační wellness pobyt
+                                  de: Wellness-Erholungsaufenthalt
                             perStay:
                               amount:
                                 amountMinor: 780000
@@ -1984,6 +2272,24 @@ paths:
                             perPersonPerNight:
                               amount:
                                 amountMinor: 7800
+                                currency: EUR
+                                currencyExponent: 2
+                              original: null
+                              nights: 2
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b803
+                                name:
+                                  cs-CZ: Relaxační wellness pobyt
+                                  de: Wellness-Erholungsaufenthalt
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 15600
                                 currency: EUR
                                 currencyExponent: 2
                               original: null
@@ -2040,6 +2346,24 @@ paths:
                                     name:
                                       cs-CZ: Relaxační wellness pobyt
                                       de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 390000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c103
+                                    name:
+                                      cs-CZ: Hotel Bellevue
+                                      de: Hotel Bellevue
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
                                 perStay:
                                   amount:
                                     amountMinor: 780000
@@ -2062,6 +2386,24 @@ paths:
                                 perPersonPerNight:
                                   amount:
                                     amountMinor: 7800
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c103
+                                    name:
+                                      cs-CZ: Hotel Bellevue
+                                      de: Hotel Bellevue
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 15600
                                     currency: EUR
                                     currencyExponent: 2
                                   original: null
@@ -2116,6 +2458,24 @@ paths:
                                     name:
                                       cs-CZ: Relaxační wellness pobyt
                                       de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 420000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
                                 perStay:
                                   amount:
                                     amountMinor: 840000
@@ -2138,6 +2498,24 @@ paths:
                                 perPersonPerNight:
                                   amount:
                                     amountMinor: 8400
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 16800
                                     currency: EUR
                                     currencyExponent: 2
                                   original: null
@@ -2416,6 +2794,24 @@ paths:
                                 name:
                                   cs-CZ: Komplexní lázeňská péče
                                   de: Komplexe Kurbehandlung
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 210000
+                                currency: EUR
+                                currencyExponent: 2
+                              original: null
+                              nights: 21
+                              occupancy: 1
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b802
+                                name:
+                                  cs-CZ: Komplexní lázeňská péče
+                                  de: Komplexe Kurbehandlung
                             perStay:
                               amount:
                                 amountMinor: 210000
@@ -2444,6 +2840,24 @@ paths:
                                 perPersonPerNight:
                                   amount:
                                     amountMinor: 10000
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 21
+                                  occupancy: 1
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b802
+                                    name:
+                                      cs-CZ: Komplexní lázeňská péče
+                                      de: Komplexe Kurbehandlung
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 210000
                                     currency: EUR
                                     currencyExponent: 2
                                   original: null
@@ -2625,6 +3039,27 @@ paths:
                                 name:
                                   cs-CZ: Klasická lázeňská léčba
                                   de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 1008000
+                                currency: CZK
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 1120000
+                                currency: CZK
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
                             perStay:
                               amount:
                                 amountMinor: 1260000
@@ -2654,6 +3089,27 @@ paths:
                                 currencyExponent: 2
                               original:
                                 amountMinor: 6400
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 40320
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 44800
                                 currency: EUR
                                 currencyExponent: 2
                               nights: 7
@@ -2731,6 +3187,27 @@ paths:
                                     name:
                                       cs-CZ: Klasická lázeňská léčba
                                       de: Klassische Kur
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 1008000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  original:
+                                    amountMinor: 1120000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  nights: 7
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b801
+                                    name:
+                                      cs-CZ: Klasická lázeňská léčba
+                                      de: Klassische Kur
                                 perStay:
                                   amount:
                                     amountMinor: 1260000
@@ -2760,6 +3237,27 @@ paths:
                                     currencyExponent: 2
                                   original:
                                     amountMinor: 6400
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  nights: 7
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b801
+                                    name:
+                                      cs-CZ: Klasická lázeňská léčba
+                                      de: Klassische Kur
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 40320
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original:
+                                    amountMinor: 44800
                                     currency: EUR
                                     currencyExponent: 2
                                   nights: 7
@@ -2912,6 +3410,24 @@ paths:
                                 name:
                                   cs-CZ: Relaxační wellness pobyt
                                   de: Wellness-Erholungsaufenthalt
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 390000
+                                currency: CZK
+                                currencyExponent: 2
+                              original: null
+                              nights: 2
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b803
+                                name:
+                                  cs-CZ: Relaxační wellness pobyt
+                                  de: Wellness-Erholungsaufenthalt
                             perStay:
                               amount:
                                 amountMinor: 780000
@@ -2934,6 +3450,24 @@ paths:
                             perPersonPerNight:
                               amount:
                                 amountMinor: 7800
+                                currency: EUR
+                                currencyExponent: 2
+                              original: null
+                              nights: 2
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b803
+                                name:
+                                  cs-CZ: Relaxační wellness pobyt
+                                  de: Wellness-Erholungsaufenthalt
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 15600
                                 currency: EUR
                                 currencyExponent: 2
                               original: null
@@ -2990,6 +3524,24 @@ paths:
                                     name:
                                       cs-CZ: Relaxační wellness pobyt
                                       de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 390000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c103
+                                    name:
+                                      cs-CZ: Hotel Bellevue
+                                      de: Hotel Bellevue
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
                                 perStay:
                                   amount:
                                     amountMinor: 780000
@@ -3012,6 +3564,24 @@ paths:
                                 perPersonPerNight:
                                   amount:
                                     amountMinor: 7800
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c103
+                                    name:
+                                      cs-CZ: Hotel Bellevue
+                                      de: Hotel Bellevue
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 15600
                                     currency: EUR
                                     currencyExponent: 2
                                   original: null
@@ -3072,6 +3642,24 @@ paths:
                                     name:
                                       cs-CZ: Relaxační wellness pobyt
                                       de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 420000
+                                    currency: CZK
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
                                 perStay:
                                   amount:
                                     amountMinor: 840000
@@ -3094,6 +3682,24 @@ paths:
                                 perPersonPerNight:
                                   amount:
                                     amountMinor: 8400
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 2
+                                  occupancy: 2
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b803
+                                    name:
+                                      cs-CZ: Relaxační wellness pobyt
+                                      de: Wellness-Erholungsaufenthalt
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 16800
                                     currency: EUR
                                     currencyExponent: 2
                                   original: null
@@ -3390,6 +3996,24 @@ paths:
                                 name:
                                   cs-CZ: Komplexní lázeňská péče
                                   de: Komplexe Kurbehandlung
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 210000
+                                currency: EUR
+                                currencyExponent: 2
+                              original: null
+                              nights: 21
+                              occupancy: 1
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b802
+                                name:
+                                  cs-CZ: Komplexní lázeňská péče
+                                  de: Komplexe Kurbehandlung
                             perStay:
                               amount:
                                 amountMinor: 210000
@@ -3424,6 +4048,24 @@ paths:
                                 perPersonPerNight:
                                   amount:
                                     amountMinor: 10000
+                                    currency: EUR
+                                    currencyExponent: 2
+                                  original: null
+                                  nights: 21
+                                  occupancy: 1
+                                  hotel:
+                                    id: 6720c0a1b2c3d4e5f6a7c101
+                                    name:
+                                      cs-CZ: Hotel Pramen
+                                      de: Hotel Pramen
+                                  visitType:
+                                    id: 6720c0a1b2c3d4e5f6a7b802
+                                    name:
+                                      cs-CZ: Komplexní lázeňská péče
+                                      de: Komplexe Kurbehandlung
+                                perPersonPerStay:
+                                  amount:
+                                    amountMinor: 210000
                                     currency: EUR
                                     currencyExponent: 2
                                   original: null
@@ -3692,6 +4334,27 @@ paths:
                             name:
                               cs-CZ: Klasická lázeňská léčba
                               de: Klassische Kur
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 1008000
+                            currency: CZK
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 1120000
+                            currency: CZK
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b801
+                            name:
+                              cs-CZ: Klasická lázeňská léčba
+                              de: Klassische Kur
                         perStay:
                           amount:
                             amountMinor: 1260000
@@ -3721,6 +4384,27 @@ paths:
                             currencyExponent: 2
                           original:
                             amountMinor: 6400
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b801
+                            name:
+                              cs-CZ: Klasická lázeňská léčba
+                              de: Klassische Kur
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 40320
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 44800
                             currency: EUR
                             currencyExponent: 2
                           nights: 7
@@ -3792,6 +4476,27 @@ paths:
                                 name:
                                   cs-CZ: Klasická lázeňská léčba
                                   de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 1008000
+                                currency: CZK
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 1120000
+                                currency: CZK
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
                             perStay:
                               amount:
                                 amountMinor: 1260000
@@ -3821,6 +4526,27 @@ paths:
                                 currencyExponent: 2
                               original:
                                 amountMinor: 6400
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 40320
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 44800
                                 currency: EUR
                                 currencyExponent: 2
                               nights: 7
@@ -3997,6 +4723,27 @@ paths:
                             name:
                               cs-CZ: Klasická lázeňská léčba
                               de: Klassische Kur
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 1008000
+                            currency: CZK
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 1120000
+                            currency: CZK
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b801
+                            name:
+                              cs-CZ: Klasická lázeňská léčba
+                              de: Klassische Kur
                         perStay:
                           amount:
                             amountMinor: 1260000
@@ -4026,6 +4773,27 @@ paths:
                             currencyExponent: 2
                           original:
                             amountMinor: 6400
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b801
+                            name:
+                              cs-CZ: Klasická lázeňská léčba
+                              de: Klassische Kur
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 40320
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 44800
                             currency: EUR
                             currencyExponent: 2
                           nights: 7
@@ -4103,6 +4871,27 @@ paths:
                                 name:
                                   cs-CZ: Klasická lázeňská léčba
                                   de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 1008000
+                                currency: CZK
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 1120000
+                                currency: CZK
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
                             perStay:
                               amount:
                                 amountMinor: 1260000
@@ -4132,6 +4921,27 @@ paths:
                                 currencyExponent: 2
                               original:
                                 amountMinor: 6400
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b801
+                                name:
+                                  cs-CZ: Klasická lázeňská léčba
+                                  de: Klassische Kur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 40320
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 44800
                                 currency: EUR
                                 currencyExponent: 2
                               nights: 7
@@ -4266,6 +5076,24 @@ paths:
                             name:
                               cs-CZ: Komplexní lázeňská péče
                               de: Komplexe Kurbehandlung
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 210000
+                            currency: EUR
+                            currencyExponent: 2
+                          original: null
+                          nights: 21
+                          occupancy: 1
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b802
+                            name:
+                              cs-CZ: Komplexní lázeňská péče
+                              de: Komplexe Kurbehandlung
                         perStay:
                           amount:
                             amountMinor: 210000
@@ -4294,6 +5122,24 @@ paths:
                             perPersonPerNight:
                               amount:
                                 amountMinor: 10000
+                                currency: EUR
+                                currencyExponent: 2
+                              original: null
+                              nights: 21
+                              occupancy: 1
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b802
+                                name:
+                                  cs-CZ: Komplexní lázeňská péče
+                                  de: Komplexe Kurbehandlung
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 210000
                                 currency: EUR
                                 currencyExponent: 2
                               original: null
@@ -4455,6 +5301,27 @@ paths:
                             currencyExponent: 2
                           original:
                             amountMinor: 11000
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c103
+                            name:
+                              cs-CZ: Hotel Bellevue
+                              de: Hotel Bellevue
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b804
+                            name:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 49368
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 77000
                             currency: EUR
                             currencyExponent: 2
                           nights: 7
@@ -5021,6 +5888,27 @@ paths:
                                 name:
                                   cs-CZ: Zimní lázeňský pobyt
                                   de: Winterkur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 49368
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 77000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c103
+                                name:
+                                  cs-CZ: Hotel Bellevue
+                                  de: Hotel Bellevue
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
                             perStay:
                               amount:
                                 amountMinor: 98736
@@ -5390,6 +6278,27 @@ paths:
                                 currencyExponent: 2
                               original:
                                 amountMinor: 10000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 53550
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 70000
                                 currency: EUR
                                 currencyExponent: 2
                               nights: 7
@@ -5884,6 +6793,27 @@ paths:
                             currencyExponent: 2
                           original:
                             amountMinor: 11000
+                            currency: EUR
+                            currencyExponent: 2
+                          nights: 7
+                          occupancy: 2
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c103
+                            name:
+                              cs-CZ: Hotel Bellevue
+                              de: Hotel Bellevue
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b804
+                            name:
+                              cs-CZ: Zimní lázeňský pobyt
+                              de: Winterkur
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 49368
+                            currency: EUR
+                            currencyExponent: 2
+                          original:
+                            amountMinor: 77000
                             currency: EUR
                             currencyExponent: 2
                           nights: 7
@@ -6450,6 +7380,27 @@ paths:
                                 name:
                                   cs-CZ: Zimní lázeňský pobyt
                                   de: Winterkur
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 53550
+                                currency: EUR
+                                currencyExponent: 2
+                              original:
+                                amountMinor: 70000
+                                currency: EUR
+                                currencyExponent: 2
+                              nights: 7
+                              occupancy: 2
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b804
+                                name:
+                                  cs-CZ: Zimní lázeňský pobyt
+                                  de: Winterkur
                             perStay:
                               amount:
                                 amountMinor: 64260
@@ -6935,6 +7886,24 @@ paths:
                             name:
                               cs-CZ: Pozastavený lázeňský pobyt
                               de: Pozastavený lázeňský pobyt
+                        perPersonPerStay:
+                          amount:
+                            amountMinor: 70000
+                            currency: EUR
+                            currencyExponent: 2
+                          original: null
+                          nights: 7
+                          occupancy: 1
+                          hotel:
+                            id: 6720c0a1b2c3d4e5f6a7c101
+                            name:
+                              cs-CZ: Hotel Pramen
+                              de: Hotel Pramen
+                          visitType:
+                            id: 6720c0a1b2c3d4e5f6a7b805
+                            name:
+                              cs-CZ: Pozastavený lázeňský pobyt
+                              de: Pozastavený lázeňský pobyt
                         perStay:
                           amount:
                             amountMinor: 70000
@@ -6961,6 +7930,24 @@ paths:
                             perPersonPerNight:
                               amount:
                                 amountMinor: 10000
+                                currency: EUR
+                                currencyExponent: 2
+                              original: null
+                              nights: 7
+                              occupancy: 1
+                              hotel:
+                                id: 6720c0a1b2c3d4e5f6a7c101
+                                name:
+                                  cs-CZ: Hotel Pramen
+                                  de: Hotel Pramen
+                              visitType:
+                                id: 6720c0a1b2c3d4e5f6a7b805
+                                name:
+                                  cs-CZ: Pozastavený lázeňský pobyt
+                                  de: Pozastavený lázeňský pobyt
+                            perPersonPerStay:
+                              amount:
+                                amountMinor: 70000
                                 currency: EUR
                                 currencyExponent: 2
                               original: null
@@ -8090,7 +9077,7 @@ components:
               $ref: "#/components/schemas/HotelPriceFromCurrency"
           description: >-
             Lowest prices the hotel sells for arrivals from today onward, per currency: across all
-            packages (`all`) and per category (`health`, `wellness`), each with two independent
+            packages (`all`) and per category (`health`, `wellness`), each with three independent
             minima. A currency is present only when it has an eligible priced stay. Null when the hotel has
             none. See [Prices](/api/prices).
         roomTypes:
@@ -8354,6 +9341,24 @@ components:
                   name:
                     cs-CZ: Klasická lázeňská léčba
                     de: Klassische Kur
+              perPersonPerStay:
+                amount:
+                  amountMinor: 420000
+                  currency: CZK
+                  currencyExponent: 2
+                original: null
+                nights: 2
+                occupancy: 2
+                hotel:
+                  id: 6720c0a1b2c3d4e5f6a7c101
+                  name:
+                    cs-CZ: Hotel Pramen
+                    de: Hotel Pramen
+                visitType:
+                  id: 6720c0a1b2c3d4e5f6a7b803
+                  name:
+                    cs-CZ: Relaxační wellness pobyt
+                    de: Wellness-Erholungsaufenthalt
               perStay:
                 amount:
                   amountMinor: 840000
@@ -8394,6 +9399,27 @@ components:
                   name:
                     cs-CZ: Klasická lázeňská léčba
                     de: Klassische Kur
+              perPersonPerStay:
+                amount:
+                  amountMinor: 1008000
+                  currency: CZK
+                  currencyExponent: 2
+                original:
+                  amountMinor: 1120000
+                  currency: CZK
+                  currencyExponent: 2
+                nights: 7
+                occupancy: 2
+                hotel:
+                  id: 6720c0a1b2c3d4e5f6a7c101
+                  name:
+                    cs-CZ: Hotel Pramen
+                    de: Hotel Pramen
+                visitType:
+                  id: 6720c0a1b2c3d4e5f6a7b801
+                  name:
+                    cs-CZ: Klasická lázeňská léčba
+                    de: Klassische Kur
               perStay:
                 amount:
                   amountMinor: 1260000
@@ -8419,6 +9445,24 @@ components:
               perPersonPerNight:
                 amount:
                   amountMinor: 210000
+                  currency: CZK
+                  currencyExponent: 2
+                original: null
+                nights: 2
+                occupancy: 2
+                hotel:
+                  id: 6720c0a1b2c3d4e5f6a7c101
+                  name:
+                    cs-CZ: Hotel Pramen
+                    de: Hotel Pramen
+                visitType:
+                  id: 6720c0a1b2c3d4e5f6a7b803
+                  name:
+                    cs-CZ: Relaxační wellness pobyt
+                    de: Wellness-Erholungsaufenthalt
+              perPersonPerStay:
+                amount:
+                  amountMinor: 420000
                   currency: CZK
                   currencyExponent: 2
                 original: null
@@ -8475,6 +9519,24 @@ components:
                   name:
                     cs-CZ: Klasická lázeňská léčba
                     de: Klassische Kur
+              perPersonPerStay:
+                amount:
+                  amountMinor: 16800
+                  currency: EUR
+                  currencyExponent: 2
+                original: null
+                nights: 2
+                occupancy: 2
+                hotel:
+                  id: 6720c0a1b2c3d4e5f6a7c101
+                  name:
+                    cs-CZ: Hotel Pramen
+                    de: Hotel Pramen
+                visitType:
+                  id: 6720c0a1b2c3d4e5f6a7b803
+                  name:
+                    cs-CZ: Relaxační wellness pobyt
+                    de: Wellness-Erholungsaufenthalt
               perStay:
                 amount:
                   amountMinor: 33600
@@ -8515,6 +9577,27 @@ components:
                   name:
                     cs-CZ: Klasická lázeňská léčba
                     de: Klassische Kur
+              perPersonPerStay:
+                amount:
+                  amountMinor: 40320
+                  currency: EUR
+                  currencyExponent: 2
+                original:
+                  amountMinor: 44800
+                  currency: EUR
+                  currencyExponent: 2
+                nights: 7
+                occupancy: 2
+                hotel:
+                  id: 6720c0a1b2c3d4e5f6a7c101
+                  name:
+                    cs-CZ: Hotel Pramen
+                    de: Hotel Pramen
+                visitType:
+                  id: 6720c0a1b2c3d4e5f6a7b801
+                  name:
+                    cs-CZ: Klasická lázeňská léčba
+                    de: Klassische Kur
               perStay:
                 amount:
                   amountMinor: 50400
@@ -8540,6 +9623,24 @@ components:
               perPersonPerNight:
                 amount:
                   amountMinor: 8400
+                  currency: EUR
+                  currencyExponent: 2
+                original: null
+                nights: 2
+                occupancy: 2
+                hotel:
+                  id: 6720c0a1b2c3d4e5f6a7c101
+                  name:
+                    cs-CZ: Hotel Pramen
+                    de: Hotel Pramen
+                visitType:
+                  id: 6720c0a1b2c3d4e5f6a7b803
+                  name:
+                    cs-CZ: Relaxační wellness pobyt
+                    de: Wellness-Erholungsaufenthalt
+              perPersonPerStay:
+                amount:
+                  amountMinor: 16800
                   currency: EUR
                   currencyExponent: 2
                 original: null
@@ -8667,7 +9768,8 @@ components:
           minimum: 1
           description: >-
             Standard occupancy of the offer's room type. `perStay` amounts cover this many guests;
-            `perPersonPerNight` amounts are averaged over them.
+            `perPersonPerNight` and `perPersonPerStay` amounts are averaged over them. A per-person
+            price with occupancy 2 assumes two guests sharing the room, not single use.
         hotel:
           allOf:
             - $ref: "#/components/schemas/PriceFromHotel"
@@ -8699,20 +9801,26 @@ components:
             de: Klassische Kur
     PriceFromPair:
       type: object
-      required: [ perPersonPerNight, perStay ]
+      required: [ perPersonPerNight, perPersonPerStay, perStay ]
       properties:
         perPersonPerNight:
           allOf:
             - $ref: "#/components/schemas/PriceFromMinimum"
           description: The offer with the lowest average price per guest per night.
+        perPersonPerStay:
+          allOf:
+            - $ref: "#/components/schemas/PriceFromMinimum"
+          description: >-
+            The offer with the lowest price per guest for the whole shortest permitted stay,
+            at standard room occupancy. Selected independently of both other minima (**Draft**).
         perStay:
           allOf:
             - $ref: "#/components/schemas/PriceFromMinimum"
           description: >-
             The offer with the lowest total for the whole room and stay at its standard occupancy.
-            Selected independently of `perPersonPerNight`; the two can be different offers.
-      description: Two independently selected minima for one currency. See
-        [Prices](/api/prices#two-independent-minima).
+            Selected independently of both per-person minima; each can be a different offer.
+      description: Three independently selected minima for one currency. See
+        [Prices](/api/prices#three-independent-minima).
     HotelPriceFromCurrency:
       type: object
       required: [ all ]
@@ -9055,6 +10163,27 @@ components:
                 name:
                   cs-CZ: Klasická lázeňská léčba
                   de: Klassische Kur
+            perPersonPerStay:
+              amount:
+                amountMinor: 1008000
+                currency: CZK
+                currencyExponent: 2
+              original:
+                amountMinor: 1120000
+                currency: CZK
+                currencyExponent: 2
+              nights: 7
+              occupancy: 2
+              hotel:
+                id: 6720c0a1b2c3d4e5f6a7c101
+                name:
+                  cs-CZ: Hotel Pramen
+                  de: Hotel Pramen
+              visitType:
+                id: 6720c0a1b2c3d4e5f6a7b801
+                name:
+                  cs-CZ: Klasická lázeňská léčba
+                  de: Klassische Kur
             perStay:
               amount:
                 amountMinor: 1260000
@@ -9084,6 +10213,27 @@ components:
                 currencyExponent: 2
               original:
                 amountMinor: 6400
+                currency: EUR
+                currencyExponent: 2
+              nights: 7
+              occupancy: 2
+              hotel:
+                id: 6720c0a1b2c3d4e5f6a7c101
+                name:
+                  cs-CZ: Hotel Pramen
+                  de: Hotel Pramen
+              visitType:
+                id: 6720c0a1b2c3d4e5f6a7b801
+                name:
+                  cs-CZ: Klasická lázeňská léčba
+                  de: Klassische Kur
+            perPersonPerStay:
+              amount:
+                amountMinor: 40320
+                currency: EUR
+                currencyExponent: 2
+              original:
+                amountMinor: 44800
                 currency: EUR
                 currencyExponent: 2
               nights: 7
@@ -9476,6 +10626,27 @@ components:
                     name:
                       cs-CZ: Klasická lázeňská léčba
                       de: Klassische Kur
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 1008000
+                    currency: CZK
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 1120000
+                    currency: CZK
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  visitType:
+                    id: 6720c0a1b2c3d4e5f6a7b801
+                    name:
+                      cs-CZ: Klasická lázeňská léčba
+                      de: Klassische Kur
                 perStay:
                   amount:
                     amountMinor: 1260000
@@ -9505,6 +10676,27 @@ components:
                     currencyExponent: 2
                   original:
                     amountMinor: 6400
+                    currency: EUR
+                    currencyExponent: 2
+                  nights: 7
+                  occupancy: 2
+                  hotel:
+                    id: 6720c0a1b2c3d4e5f6a7c101
+                    name:
+                      cs-CZ: Hotel Pramen
+                      de: Hotel Pramen
+                  visitType:
+                    id: 6720c0a1b2c3d4e5f6a7b801
+                    name:
+                      cs-CZ: Klasická lázeňská léčba
+                      de: Klassische Kur
+                perPersonPerStay:
+                  amount:
+                    amountMinor: 40320
+                    currency: EUR
+                    currencyExponent: 2
+                  original:
+                    amountMinor: 44800
                     currency: EUR
                     currencyExponent: 2
                   nights: 7
