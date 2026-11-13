@@ -5,7 +5,9 @@ icon: "clock-rotate-left"
 hidden: true
 ---
 
-## Draft: procedure assignments and descriptions
+## 2026-11-13
+
+### Procedure assignments and descriptions
 
 - Hotel `procedures[]` changes from a flat catalogue object to
   `{ code, images, procedure? }`. `images` contains that hotel's procedure
@@ -17,8 +19,7 @@ hidden: true
   to embed the shared catalogue object, including localized `description`,
   as `procedure`. Existing procedure codes remain stable; five codes are added.
 - **Breaking change:** clients that read catalogue fields from assignment
-  items must request the expansion and read `item.procedure`. Coordinate
-  SpaBooking and company website updates before this change is released.
+  items must request the expansion and read `item.procedure`.
 
 ## 2026-11-10 (v3.2.38)
 

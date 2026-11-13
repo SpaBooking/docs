@@ -147,8 +147,7 @@ paths:
         website key and `Accept-Language: cs-CZ,de` on 2026-10-30; both hotels
         fit on one page.
 
-
-        **Draft — procedure assignments:** `images` contains assignment photos; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/hotels?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
+        `procedures[].images` contains the hotel's procedure photos; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/hotels?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -213,7 +212,7 @@ paths:
                 - roomTypes
                 - amenityLabels
                 - procedures
-          description: "Comma-separated expansions, for example `roomTypes,amenityLabels`. `amenityLabels` adds localized labels to amenity categories, amenities, and options, including those of embedded room types; see [Labels](/api/amenities#labels). `roomTypes` embeds each hotel's enabled, non-draft room types (otherwise fetch them via `GET /room-types?hotelId={hotelId}`). Draft: `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
+          description: "Comma-separated expansions, for example `roomTypes,amenityLabels`. `amenityLabels` adds localized labels to amenity categories, amenities, and options, including those of embedded room types; see [Labels](/api/amenities#labels). `roomTypes` embeds each hotel's enabled, non-draft room types (otherwise fetch them via `GET /room-types?hotelId={hotelId}`). `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
       responses:
         "200":
           description: A paginated list of hotels.
@@ -2268,8 +2267,7 @@ paths:
         with the company's own website key and `Accept-Language: cs-CZ,de` on
         2026-10-30.
 
-
-        **Draft — procedure assignments:** `images` contains assignment photos; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/hotels/6720c0a1b2c3d4e5f6a7c101?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
+        `procedures[].images` contains the hotel's procedure photos; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/hotels/6720c0a1b2c3d4e5f6a7c101?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -2292,7 +2290,7 @@ paths:
                 - roomTypes
                 - amenityLabels
                 - procedures
-          description: "Comma-separated expansions, for example `roomTypes,amenityLabels`. `amenityLabels` adds localized labels to amenity categories, amenities, and options, including those of embedded room types; see [Labels](/api/amenities#labels). `roomTypes` embeds the hotel's enabled, non-draft room types (otherwise fetch them via `GET /room-types?hotelId={hotelId}`). Draft: `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
+          description: "Comma-separated expansions, for example `roomTypes,amenityLabels`. `amenityLabels` adds localized labels to amenity categories, amenities, and options, including those of embedded room types; see [Labels](/api/amenities#labels). `roomTypes` embeds the hotel's enabled, non-draft room types (otherwise fetch them via `GET /room-types?hotelId={hotelId}`). `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
       responses:
         "200":
           description: The hotel.
@@ -3751,8 +3749,7 @@ paths:
         the same request with `expand=hotel` (`expand-hotel`), both sent with the company's own
         website key and `Accept-Language: cs-CZ,de` on 2026-11-03.
 
-
-        **Draft — procedure assignments:** `images` contains assignment photos; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/visit-types?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
+        `treatment.procedures.items[].images` contains procedure photos from the listed hotels; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/visit-types?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -3892,7 +3889,7 @@ paths:
               enum:
                 - hotel
                 - procedures
-          description: "`hotel` adds `hotelListings[].hotel`. `priceFromPeriods` is accepted only by the detail endpoint and returns `400` here. See [Expand](/api/expand). Draft: `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
+          description: "`hotel` adds `hotelListings[].hotel`. `priceFromPeriods` is accepted only by the detail endpoint and returns `400` here. See [Expand](/api/expand). `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
       responses:
         "200":
           description: A page of visit types.
@@ -7581,7 +7578,7 @@ paths:
         - `disabled-with-price`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b805`, a package switched off in SpaPortal, with its price
         - `ended-with-price-periods`: `GET /visit-types/6720c0a1b2c3d4e5f6a7b806?expand=priceFromPeriods`, an ended package with empty price-period arrays
 
-        **Draft — procedure assignments:** `images` contains assignment photos; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/visit-types/6720c0a1b2c3d4e5f6a7b801?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
+        `treatment.procedures.items[].images` contains procedure photos from the listed hotels; request `expand=procedures` for shared catalogue details. The `expand-procedures` response example uses `GET /api/v2/visit-types/6720c0a1b2c3d4e5f6a7b801?expand=procedures` with `Accept-Language: cs-CZ,de` and the same public key as the response without expansions.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguage"
         - $ref: "#/components/parameters/RequestId"
@@ -7604,7 +7601,7 @@ paths:
                 - hotel
                 - priceFromPeriods
                 - procedures
-          description: "Comma-separated expansions. `hotel` adds `hotelListings[].hotel`; `priceFromPeriods` adds price periods to the package and to each listing, and also returns ended promotions. See [Expand](/api/expand). Draft: `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
+          description: "Comma-separated expansions. `hotel` adds `hotelListings[].hotel`; `priceFromPeriods` adds price periods to the package and to each listing, and also returns ended promotions. See [Expand](/api/expand). `procedures` adds the shared catalogue object, including the localized description, as `procedure` on each procedure assignment."
         - name: hotelId
           in: query
           schema:
@@ -12744,7 +12741,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/HotelProcedureAssignment"
-          description: Draft. Procedures offered by the hotel as assignments with code and hotel-specific images; each code once, in configured order. Empty when none are published. Use expand=procedures to include catalogue details.
+          description: Procedures offered by the hotel as assignments with code and hotel-specific images; each code once, in configured order. Empty when none are published. Use expand=procedures to include catalogue details.
         staffLanguages:
           type: array
           description: Languages spoken by hotel staff.
@@ -14945,7 +14942,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/Procedure"
           description: Present only with expand=procedures.
-      description: Draft. A package procedure assignment. Its count and hotel photos are separate from the shared catalogue data.
+      description: A package procedure assignment. Its count and hotel photos are separate from the shared catalogue data.
     TreatmentProcedureCategory:
       type: object
       required: [ code, label ]
@@ -15810,7 +15807,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/Procedure"
           description: Present only with expand=procedures.
-      description: Draft. A procedure assigned to a hotel, with the hotel-specific photos.
+      description: A procedure assigned to a hotel, with the hotel-specific photos.
     ProcedureHotelImage:
       allOf:
         - $ref: "#/components/schemas/Image"
