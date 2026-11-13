@@ -30,6 +30,28 @@ GET /api/v2/room-types?expand=hotel,amenityLabels
 GET /api/v2/visit-types?expand=hotel
 ```
 
+## Procedure details
+
+<Warning>
+**Draft:** `expand=procedures` and the assignment photo fields are not yet released.
+</Warning>
+
+Both hotel and visit type list/detail endpoints accept `procedures`. It adds
+`procedure` to each procedure assignment: the shared catalogue `code`,
+`label`, `category`, `naturalSource`, and localized `description`. Assignment
+photos and package counts are present independently of this expansion.
+
+```http
+GET /api/v2/hotels?expand=procedures
+GET /api/v2/hotels/{hotelId}?expand=roomTypes,amenityLabels,procedures
+GET /api/v2/visit-types?expand=hotel,procedures
+GET /api/v2/visit-types/{visitTypeId}?expand=hotel,procedures,priceFromPeriods
+```
+
+See the [Procedure](/api/objects/procedure),
+[hotel assignment](/api/objects/hotel#procedures), and
+[package assignment](/api/objects/treatment#procedures) for the field meanings.
+
 ## With and without expand
 
 A hotel does not include its room types by default. Without `expand` you get the

@@ -1,18 +1,24 @@
 ---
 title: "Procedure"
-description: "A treatment procedure with its localized label, category, and natural source."
+description: "A shared catalogue procedure with localized name and description, category, and natural source."
 openapi-schema: "/api/v2/openapi.yaml Procedure"
 ---
 
-A procedure is identified by `code` and carries a localized `label`, a
-`category` with its own `code` and localized `label`, and `naturalSource`.
-Labels follow [Localization](/api/localization); a missing translation is
-`null`.
+<Warning>
+**Draft:** Procedure assignments, their photos, localized descriptions, and
+`expand=procedures` are not yet released. This page shows the target contract.
+</Warning>
 
-A hotel's [`procedures`](/api/objects/hotel#procedures) lists the procedures
-it offers as plain Procedure objects. A package's
-[treatment items](/api/objects/treatment#procedures) add `count` to the same
-fields. Match the two by `code`.
+A procedure is identified by `code` and carries a localized `label` and
+`description`, a `category` with its own `code` and localized `label`, and
+`naturalSource`. The description is shared by every hotel. Texts follow
+[Localization](/api/localization); a missing translation is `null`.
+
+Hotel and package responses contain assignments that reference this object
+by `code`. Use [expand=procedures](/api/expand#procedure-details) to include
+it as `procedure`. Hotel photos and package counts belong to the
+[hotel assignment](/api/objects/hotel#procedures) or
+[package assignment](/api/objects/treatment#procedures).
 
 ```json
 {
@@ -28,7 +34,11 @@ fields. Match the two by `code`.
       "de": "Hydrotherapie"
     }
   },
-  "naturalSource": "carbon_dioxide"
+  "naturalSource": "carbon_dioxide",
+  "description": {
+    "cs-CZ": "Koupel v minerální vodě s oxidem uhličitým při 28–34 °C. Tradičně se používá k úpravě krevního tlaku a k odlehčení srdce.",
+    "de": "Bad in kohlensäurehaltigem Mineralwasser bei 28–34 °C. Wird traditionell angewendet, um den Blutdruck zu regulieren und das Herz zu entlasten."
+  }
 }
 ```
 
@@ -99,6 +109,11 @@ the label in the requested languages. New codes can be added; see
 | `ecg` | `diagnostics` | ECG (electrocardiogram) |
 | `inbody_diagnostics` | `diagnostics` | InBody diagnostics |
 | `vascular_condition_measurement` | `diagnostics` | Vascular condition measurement |
+| `dry_hydromassage` | `hydrotherapy` | Dry hydromassage |
+| `salt_cave` | `inhalation` | Salt cave |
+| `group_exercise` | `physiotherapy` | Group therapeutic exercise |
+| `group_pool_exercise` | `physiotherapy` | Group therapeutic pool exercise |
+| `breathing_exercise` | `physiotherapy` | Breathing exercise |
 
 ## Category codes
 

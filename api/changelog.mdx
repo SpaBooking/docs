@@ -5,6 +5,21 @@ icon: "clock-rotate-left"
 hidden: true
 ---
 
+## Draft: procedure assignments and descriptions
+
+- Hotel `procedures[]` changes from a flat catalogue object to
+  `{ code, images, procedure? }`. `images` contains that hotel's procedure
+  photos, first photo main, or `[]` when none are assigned.
+- Package `treatment.procedures.items[]` changes to
+  `{ code, count, images, procedure? }`. Photos come from the returned hotel
+  listings and each includes `hotelId`.
+- Both hotel and visit type list/detail endpoints accept `expand=procedures`
+  to embed the shared catalogue object, including localized `description`,
+  as `procedure`. Existing procedure codes remain stable; five codes are added.
+- **Breaking change:** clients that read catalogue fields from assignment
+  items must request the expansion and read `item.procedure`. Coordinate
+  SpaBooking and company website updates before this change is released.
+
 ## 2026-11-10 (v3.2.38)
 
 ### Indicative prices
