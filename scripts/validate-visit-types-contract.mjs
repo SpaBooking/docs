@@ -77,10 +77,17 @@ const arrivals = [
 ];
 for (const [value, valid] of arrivals) expectSchema('VisitTypeArrival', value, valid, JSON.stringify(value));
 const procedure = clone(base.treatment.procedures.items[0]);
-delete procedure.count;
-expectSchema('Procedure', procedure, true, 'hotel procedure');
-expectSchema('Procedure', { ...procedure, count: 2 }, false, 'hotel procedure has no count');
-expectSchema('TreatmentProcedure', { ...procedure, count: 2 }, true, 'treatment procedure count');
+const catalogueProcedure = clone(schemas.Procedure.example);
+expectSchema('Procedure', catalogueProcedure, true, 'shared catalogue procedure');
+expectSchema('Procedure', { ...catalogueProcedure, count: 2 }, false, 'catalogue procedure has no count');
+expectSchema('HotelProcedureAssignment', { code: procedure.code, images: [] }, true, 'hotel assignment without photos');
+expectSchema('HotelProcedureAssignment', { code: procedure.code }, false, 'hotel assignment requires photos array');
+expectSchema('TreatmentProcedure', { ...procedure, count: 2 }, true, 'package assignment count');
+expectSchema('TreatmentProcedure', { ...procedure, procedure: catalogueProcedure }, true, 'expanded assignment');
+{
+  const value = clone(catalogueProcedure); delete value.description;
+  expectSchema('Procedure', value, false, 'catalogue description is required');
+}
 for (const [selection, count, hasItems, valid] of [
   ['fixed', 2, true, true],
   ['fixed', null, true, false],
@@ -389,7 +396,7 @@ for (const path of ['/visit-types', '/visit-types/{visitTypeId}']) {
   const operation = doc.paths[path].get;
   const parameters = operation.parameters.filter(p => p.name);
   const detail = path.includes('{');
-  assert.deepEqual(parameters.find(p => p.name === 'expand').schema.items.enum, detail ? ['hotel', 'priceFromPeriods'] : ['hotel']);
+  assert.deepEqual(parameters.find(p => p.name === 'expand').schema.items.enum, detail ? ['hotel', 'priceFromPeriods', 'procedures'] : ['hotel', 'procedures']);
   if (!detail) {
     for (const field of ['category', 'payer', 'board', 'collection']) assert(parameters.some(p => p.name === field));
     for (const field of ['stayCategory', 'paymentType', 'meal']) assert(!parameters.some(p => p.name === field));
@@ -544,7 +551,9 @@ for (const [name, example] of listExamples('/hotels')) {
       }
     }
   }
-  assert.deepEqual(data.find(h => h.id === schemas.Hotel.example.id), schemas.Hotel.example, `${name}: the Hotel example is the same hotel as in the list`);
+  const hotelWithoutExpansion = clone(data.find(h => h.id === schemas.Hotel.example.id));
+  for (const assignment of hotelWithoutExpansion.procedures) delete assignment.procedure;
+  assert.deepEqual(hotelWithoutExpansion, schemas.Hotel.example, `${name}: the Hotel example is the same hotel as in the list`);
 }
 // Independent arithmetic oracle for the documented composition example.
 assert.equal(1000 * (1 - 0.10) * (1 - 0.15), 765);

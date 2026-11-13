@@ -107,46 +107,48 @@ structure and labels.
 
 ## Procedures
 
-`procedures` lists the procedures the hotel offers, in its configured order,
-each code once. Items use the [Procedure](/api/objects/procedure) object
-without a `count`. An empty array means the hotel publishes no procedures.
+`procedures` lists assignments in configured order, each code once. Each
+item contains `code` and this hotel's `images` using the shared
+[image fields](/api/images). The first photo is main; `images: []` means
+that the assignment has no photos. An empty `procedures` array means the
+hotel publishes no procedures. Both hotel list and detail use this shape.
+
+Use `expand=procedures` to add the shared [Procedure](/api/objects/procedure)
+object as `procedure` on every assignment. Without expansion, catalogue
+fields are omitted from each item. The expansion combines with
+`roomTypes` and `amenityLabels`.
 
 The list is independent of what a package includes: a package's
 [treatment](/api/objects/treatment) says which procedures its guests receive.
-Join the two by `code`.
+Join the two by `code`. A missing photo `alt` falls back to the localized
+procedure label, and an explicit empty string remains empty.
+
+For example, without expansion:
 
 ```json
 {
   "procedures": [
     {
       "code": "carbon_dioxide_bath",
-      "label": {
-        "cs-CZ": "Kysličníková koupel",
-        "de": "Kohlensäurebad"
-      },
-      "category": {
-        "code": "hydrotherapy",
-        "label": {
-          "cs-CZ": "Vodoléčba",
-          "de": "Hydrotherapie"
+      "images": [
+        {
+          "url": "https://files.example.com/procedures/carbon-dioxide-bath.jpg",
+          "width": 1280,
+          "height": 853,
+          "alt": {
+            "cs-CZ": "Kysličníková koupel",
+            "de": "Kohlensäurebad"
+          },
+          "variants": {
+            "w480": "https://files.example.com/procedures/carbon-dioxide-bath-w480.webp",
+            "w960": "https://files.example.com/procedures/carbon-dioxide-bath-w960.webp"
+          }
         }
-      },
-      "naturalSource": "carbon_dioxide"
+      ]
     },
     {
       "code": "peat_wrap",
-      "label": {
-        "cs-CZ": "Rašelinový zábal",
-        "de": "Moorpackung"
-      },
-      "category": {
-        "code": "thermotherapy",
-        "label": {
-          "cs-CZ": "Teploléčba",
-          "de": "Thermotherapie"
-        }
-      },
-      "naturalSource": "peat"
+      "images": []
     }
   ]
 }

@@ -29,10 +29,21 @@ examinations, and `procedures`, the included procedure allowance.
 | `from_list` | The guest chooses from the listed procedures. | The choices, each with `count: null`. |
 | `fixed` | The listed procedures are included. | The procedures with their counts. |
 
-Each item is a [Procedure](/api/objects/procedure) with an added `count`: how
-many times it is included during the whole stay. It is a positive integer for
+Each item is an assignment with `code`, `count`, and `images`. `count` says
+how many times the procedure is included during the whole stay. It is a positive integer for
 `fixed` and `null` otherwise. Item counts do not use `per` and need not add up
 to `count`; see
 [Allowances and fixed lists](/api/treatment#allowances-and-fixed-lists).
+
+`images` collects the procedure photos from the returned `hotelListings`, in
+listing order and then each hotel's configured photo order. Each image uses
+the shared [image fields](/api/images) and adds `hotelId`. With a detail
+`hotelId` filter, only that hotel's photos remain. When none of the listed
+hotels has photos, the array is empty. To show a package for one hotel,
+select the images whose `hotelId` matches that listing.
+
+Use `expand=procedures` to add the shared
+[Procedure](/api/objects/procedure), including its localized description,
+as `procedure`. Without expansion, catalogue fields are omitted.
 
 ## Fields

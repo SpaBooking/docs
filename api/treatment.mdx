@@ -6,8 +6,10 @@ icon: "stethoscope"
 
 A package's [Treatment](/api/objects/treatment) says what the stay includes.
 A hotel's [`procedures`](/api/objects/hotel#procedures) say what the hotel can
-provide. Both use the [Procedure](/api/objects/procedure) object, so you can
-join them by `code`.
+provide. Both contain assignments linked to the shared
+[Procedure](/api/objects/procedure), so you can join them by `code`.
+Use [expand=procedures](/api/expand#procedure-details) for catalogue text;
+see the [assignment fields](/api/objects/treatment#procedures) for hotel photos.
 
 ## Examinations depend on stay length
 
